@@ -32,17 +32,6 @@ Some benefits of e-commerce include its around-the-clock availability, the speed
   * __Conversations:__ An inbox service is provided to the users, where they can see messages from other users (either hosts or tenants) and reply back to them. All messages are grouped based on the subject of the conversation. As a result, two tables are created. In this table, the only necessary fields are the sender's and receiver's (user) id and the subject of the conversation.
   * __Messages:__ In addition to the above, there is the messages table with more data, such as the body of the message and a timestamp of the date in order to keep in track every action of sending/receiving and make a proper management. Moreover, the messages are linked to a conversation ("converations" table) based on the field "conversation\_id", in order for all the messages with the same subject to be grouped together.
   
-  All above tables have a field id which is unique and auto-increment. 
-  For our Database Model to become more clear, an Entity Relationship model was designed, showing only the most important fields of the Database, as per below:
-  
-  ![Entity Relationship Model] (https://drive.google.com/open?id=0B6sh2sNO52YecFhNNFhJTXVwbWc)
-  
-  In above Model, all entities, their relationship and the main fields are shown. All primary keys are underlined and the foreign keys are emphasized with Italics. 
-    
-	Furthermore, the Enhanced Entity Relationship Model was extracted from MySQL Workbench, also showing the relations between the tables.
-  
-  ![Enhanced Entity Relationship Model] (https://drive.google.com/open?id=0B6sh2sNO52YeUFdJNmlLRjhxME0)
-  
   ### RESTful Services
   
   The way that the application communicates with the stored information, relies absolutely to the implementation of RESTful web services. REST describes any simple interface that transmits data over a standardized interface (such as HTTP). It provides an architectural set of design rules for creating stateless services that are viewed as resources, or sources of specific information (data and functionality). Each resource can be identified by its unique Uniform Resource Identifiers (URIs). Consequently, a client (either a consumer or a business) accesses a resource using only a URI that returns the proper information needed, in a specific format that the client can handle as they want. No extra keys or credentials are required for this connection as the permissions for this access have already been set between the client and the provider of the REST service.
