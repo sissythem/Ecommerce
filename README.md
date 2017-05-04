@@ -35,6 +35,14 @@ Some benefits of e-commerce include its around-the-clock availability, the speed
   All above tables have a field id which is unique and auto-increment. 
   For our Database Model to become more clear, an Entity Relationship model was designed, showing only the most important fields of the Database, as per below:
   
+  ![Entity Relationship Model] (https://drive.google.com/open?id=0B6sh2sNO52YecFhNNFhJTXVwbWc)
+  
+  In above Model, all entities, their relationship and the main fields are shown. All primary keys are underlined and the foreign keys are emphasized with Italics. 
+    
+	Furthermore, the Enhanced Entity Relationship Model was extracted from MySQL Workbench, also showing the relations between the tables.
+  
+  ![Enhanced Entity Relationship Model] (https://drive.google.com/open?id=0B6sh2sNO52YeUFdJNmlLRjhxME0)
+  
   ### RESTful Services
   
   The way that the application communicates with the stored information, relies absolutely to the implementation of RESTful web services. REST describes any simple interface that transmits data over a standardized interface (such as HTTP). It provides an architectural set of design rules for creating stateless services that are viewed as resources, or sources of specific information (data and functionality). Each resource can be identified by its unique Uniform Resource Identifiers (URIs). Consequently, a client (either a consumer or a business) accesses a resource using only a URI that returns the proper information needed, in a specific format that the client can handle as they want. No extra keys or credentials are required for this connection as the permissions for this access have already been set between the client and the provider of the REST service.
