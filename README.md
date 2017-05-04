@@ -1,22 +1,22 @@
-#Android Application for leasing residences
+# Android Application for leasing residences
 
-##Introduction
+## Introduction
 
-###Description of E-commerce
+### Description of E-commerce
 
 Electronic commerce (e-commerce) is a type of a business model, or a segment of a larger business model, that enables a firm or an individual to conduct business over an electronic network, typically the Internet. Electronic commerce operates in all four of the major market segments: business to business, business to consumer, consumer to consumer and consumer to business. Almost any product or service can be offered via e-commerce, from books and music to financial services and plane tickets. E-commerce has allowed firms to establish a market presence, or to enhance an existing market position, by providing a cheaper and more efficient distribution chain for their products or services.
 	There are several types of electronic commerce. The most common is business to consumer, in which a business sells products or services directly to consumers over the Internet. An example of a business to consumer e-commerce transaction would be to individually purchasing a pair of sneakers through Nike's website. As of business to business type of electronic commerce, companies can sell their products or services to other companies over the Internet. An example would be the company GoDaddy, which sells domain names, websites, and hosting services to other businesses. Consumer to business electronic commerce involves consumers selling products or services to businesses. You've taken part in this form of e-commerce if you've ever completed an online payment survey where you've given your opinion about a product. Finally, regarding consumer to consumer e-commerce, consumers can sell products to other consumers via a website such as Amazon or eBay.
 	The rise of e-commerce forces IT personnel to move beyond infrastructure design and maintenance and consider numerous customer-facing aspects such as consumer data privacy and security. When developing IT systems and applications to accommodate e-commerce activities, several things must be taken into consideration, like data governance related regulatory compliance mandates, personally identifiable information privacy rules and information protection protocols.
 	Some benefits of e-commerce include its around-the-clock availability, the speed of access, the wide availability of goods and services for the consumer, easy accessibility, and international reach. Its perceived downsides include sometimes-limited customer service, consumers not being able to see or touch a product prior to purchase, and the necessitated wait time for product shipping.
   
-  ###Purpose of the application
+  ### Purpose of the application
   
   As described above, e-commerce has changed the way commerce is performed for both products and services. One of the fields affected by e-commerce is tourism. Many sites and applications are implemented in order to facilitate all relevant services and transactions, like Booking, TripAdvisor, Airbnb, Trivago etc.
 	The purpose of this project is the development of an Android Application for booking rooms/residences, enabling users to lease or rent short-term lodging including vacation rentals, apartment rentals, homestays, hostel beds, or hotel rooms. Therefore, in this application each user can have two roles. Once someone is registered, by default has the tenant (user) role. This means that he can search a residence, make a reservation, review/comment, check the inbox and send messages etc. However, there is also the ability to take over the role of host and upload information regarding residences for booking, followed by specific characteristics and availability periods.
   
-  ##Connection details
+  ## Connection details
   
-  ###MySQL DataBase
+  ### MySQL DataBase
   
   For the successful initialization of the application, seven tables have been created: users, residences, rooms, reservations, reviews, conversations and messages.
   
@@ -31,7 +31,7 @@ Electronic commerce (e-commerce) is a type of a business model, or a segment of 
   All above tables have a field id which is unique and auto-increment. 
   For our Database Model to become more clear, an Entity Relationship model was designed, showing only the most important fields of the Database, as per below:
   
-  ###RESTful Services
+  ### RESTful Services
   
   The way that the application communicates with the stored information, relies absolutely to the implementation of RESTful web services. REST describes any simple interface that transmits data over a standardized interface (such as HTTP). It provides an architectural set of design rules for creating stateless services that are viewed as resources, or sources of specific information (data and functionality). Each resource can be identified by its unique Uniform Resource Identifiers (URIs). Consequently, a client (either a consumer or a business) accesses a resource using only a URI that returns the proper information needed, in a specific format that the client can handle as they want. No extra keys or credentials are required for this connection as the permissions for this access have already been set between the client and the provider of the REST service.
 	
@@ -47,7 +47,7 @@ Electronic commerce (e-commerce) is a type of a business model, or a segment of 
   
   Something important that has to be mentioned, is the fact that the RESTful Web Service and the database should exist under the same technical environment / server, or at least under the same network. In this way, we can ensure the safety of the database, without having it open to the rest of the world and increase its vulnerability. The external client can be connected from everywhere, as it only needs a URI and the correct guidelines to make its application run.
   
-  ##Android Application
+  ## Android Application
   
   In this section, all screens of the application will be described, including the design decisions and the functionalities used. 
 	
@@ -55,7 +55,7 @@ Electronic commerce (e-commerce) is a type of a business model, or a segment of 
     
     Furthermore, related to POST requests, the application should sent also the user input. For this purpose, the input is stored each time to a HashMap using as key the same name with the relevant field in the database and as value the user's input (i.e. for your reference "RegisterParameters.java"). 
     
-  ###Register/Log in
+  ### Register/Log in
   
   The first screen of our application is related to GreetingActivity.java and activity\_greeting.xml, welcomes the user to the application and gives him the choice either to log in to the application, if he has already an account, or to register. However, this screen appears only the first time user enters the application or if he logs out. When user is logged in, the first screen that appears is the home screen.
     
