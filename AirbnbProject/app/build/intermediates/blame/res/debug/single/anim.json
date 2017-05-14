@@ -1,0 +1,42 @@
+[
+    {
+        "merged": "/home/sissy/Documents/Software/AndroidStudioProjects/AirbnbProject/app/build/intermediates/res/merged/debug/anim/abc_slide_in_top.xml",
+        "source": "/home/sissy/.android/build-cache/675a2fabeee93bb3e67b21bd2c4902839c5f37c8/output/res/anim/abc_slide_in_top.xml"
+    },
+    {
+        "merged": "/home/sissy/Documents/Software/AndroidStudioProjects/AirbnbProject/app/build/intermediates/res/merged/debug/anim/abc_grow_fade_in_from_bottom.xml",
+        "source": "/home/sissy/.android/build-cache/675a2fabeee93bb3e67b21bd2c4902839c5f37c8/output/res/anim/abc_grow_fade_in_from_bottom.xml"
+    },
+    {
+        "merged": "/home/sissy/Documents/Software/AndroidStudioProjects/AirbnbProject/app/build/intermediates/res/merged/debug/anim/abc_popup_exit.xml",
+        "source": "/home/sissy/.android/build-cache/675a2fabeee93bb3e67b21bd2c4902839c5f37c8/output/res/anim/abc_popup_exit.xml"
+    },
+    {
+        "merged": "/home/sissy/Documents/Software/AndroidStudioProjects/AirbnbProject/app/build/intermediates/res/merged/debug/anim/abc_fade_in.xml",
+        "source": "/home/sissy/.android/build-cache/675a2fabeee93bb3e67b21bd2c4902839c5f37c8/output/res/anim/abc_fade_in.xml"
+    },
+    {
+        "merged": "/home/sissy/Documents/Software/AndroidStudioProjects/AirbnbProject/app/build/intermediates/res/merged/debug/anim/abc_fade_out.xml",
+        "source": "/home/sissy/.android/build-cache/675a2fabeee93bb3e67b21bd2c4902839c5f37c8/output/res/anim/abc_fade_out.xml"
+    },
+    {
+        "merged": "/home/sissy/Documents/Software/AndroidStudioProjects/AirbnbProject/app/build/intermediates/res/merged/debug/anim/abc_slide_in_bottom.xml",
+        "source": "/home/sissy/.android/build-cache/675a2fabeee93bb3e67b21bd2c4902839c5f37c8/output/res/anim/abc_slide_in_bottom.xml"
+    },
+    {
+        "merged": "/home/sissy/Documents/Software/AndroidStudioProjects/AirbnbProject/app/build/intermediates/res/merged/debug/anim/abc_popup_enter.xml",
+        "source": "/home/sissy/.android/build-cache/675a2fabeee93bb3e67b21bd2c4902839c5f37c8/output/res/anim/abc_popup_enter.xml"
+    },
+    {
+        "merged": "/home/sissy/Documents/Software/AndroidStudioProjects/AirbnbProject/app/build/intermediates/res/merged/debug/anim/abc_shrink_fade_out_from_bottom.xml",
+        "source": "/home/sissy/.android/build-cache/675a2fabeee93bb3e67b21bd2c4902839c5f37c8/output/res/anim/abc_shrink_fade_out_from_bottom.xml"
+    },
+    {
+        "merged": "/home/sissy/Documents/Software/AndroidStudioProjects/AirbnbProject/app/build/intermediates/res/merged/debug/anim/abc_slide_out_top.xml",
+        "source": "/home/sissy/.android/build-cache/675a2fabeee93bb3e67b21bd2c4902839c5f37c8/output/res/anim/abc_slide_out_top.xml"
+    },
+    {
+        "merged": "/home/sissy/Documents/Software/AndroidStudioProjects/AirbnbProject/app/build/intermediates/res/merged/debug/anim/abc_slide_out_bottom.xml",
+        "source": "/home/sissy/.android/build-cache/675a2fabeee93bb3e67b21bd2c4902839c5f37c8/output/res/anim/abc_slide_out_bottom.xml"
+    }
+]

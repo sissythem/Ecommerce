@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "/home/sissy/Documents/Software/AndroidStudioProjects/AirbnbProject/app/build/intermediates/res/merged/debug/mipmap-xxhdpi/ic_launcher_round.png",
+        "source": "/home/sissy/Documents/Software/AndroidStudioProjects/AirbnbProject/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "/home/sissy/Documents/Software/AndroidStudioProjects/AirbnbProject/app/build/intermediates/res/merged/debug/mipmap-xxhdpi/ic_launcher.png",
+        "source": "/home/sissy/Documents/Software/AndroidStudioProjects/AirbnbProject/app/src/main/res/mipmap-xxhdpi/ic_launcher.png"
+    }
+]

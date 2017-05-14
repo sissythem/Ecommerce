@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="true"
+        jar="/home/sissy/Documents/Software/AndroidStudioProjects/AirbnbProject/app/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="caff8e51a24901cfc9cd7e1cf83d84f4cb0c103b">
+        <dex dex="/home/sissy/Documents/Software/AndroidStudioProjects/AirbnbProject/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run_15a04ec958bb2d81a85d63229d03d90b97581fdf/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/home/sissy/Documents/Software/AndroidStudioProjects/AirbnbProject/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="ac9dd1bbaf77e4a2830bb162fdc2ec49da2acb13">
+        <dex dex="/home/sissy/Documents/Software/AndroidStudioProjects/AirbnbProject/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_b22d6ac747e4855a8701c7ff8cfa9933323de764/classes.dex" />
+    </item>
+
+</items>

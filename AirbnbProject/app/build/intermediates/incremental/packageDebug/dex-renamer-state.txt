@@ -1,0 +1,7 @@
+#Sun May 14 11:15:58 EEST 2017
+base.0=/home/sissy/Documents/Software/AndroidStudioProjects/AirbnbProject/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run_15a04ec958bb2d81a85d63229d03d90b97581fdf
+renamed.1=classes.dex
+renamed.0=classes2.dex
+file.1=/home/sissy/Documents/Software/AndroidStudioProjects/AirbnbProject/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_b22d6ac747e4855a8701c7ff8cfa9933323de764/classes.dex
+base.1=/home/sissy/Documents/Software/AndroidStudioProjects/AirbnbProject/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_b22d6ac747e4855a8701c7ff8cfa9933323de764
+file.0=/home/sissy/Documents/Software/AndroidStudioProjects/AirbnbProject/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run_15a04ec958bb2d81a85d63229d03d90b97581fdf/classes.dex

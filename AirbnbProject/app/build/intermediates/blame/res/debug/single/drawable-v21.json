@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "/home/sissy/Documents/Software/AndroidStudioProjects/AirbnbProject/app/build/intermediates/res/merged/debug/drawable-v21/abc_btn_colored_material.xml",
+        "source": "/home/sissy/.android/build-cache/675a2fabeee93bb3e67b21bd2c4902839c5f37c8/output/res/drawable-v21/abc_btn_colored_material.xml"
+    },
+    {
+        "merged": "/home/sissy/Documents/Software/AndroidStudioProjects/AirbnbProject/app/build/intermediates/res/merged/debug/drawable-v21/abc_edit_text_material.xml",
+        "source": "/home/sissy/.android/build-cache/675a2fabeee93bb3e67b21bd2c4902839c5f37c8/output/res/drawable-v21/abc_edit_text_material.xml"
+    },
+    {
+        "merged": "/home/sissy/Documents/Software/AndroidStudioProjects/AirbnbProject/app/build/intermediates/res/merged/debug/drawable-v21/abc_action_bar_item_background_material.xml",
+        "source": "/home/sissy/.android/build-cache/675a2fabeee93bb3e67b21bd2c4902839c5f37c8/output/res/drawable-v21/abc_action_bar_item_background_material.xml"
+    },
+    {
+        "merged": "/home/sissy/Documents/Software/AndroidStudioProjects/AirbnbProject/app/build/intermediates/res/merged/debug/drawable-v21/notification_action_background.xml",
+        "source": "/home/sissy/.android/build-cache/675a2fabeee93bb3e67b21bd2c4902839c5f37c8/output/res/drawable-v21/notification_action_background.xml"
+    }
+]
