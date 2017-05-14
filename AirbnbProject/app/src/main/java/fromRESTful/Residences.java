@@ -380,6 +380,6 @@ public class Residences implements Serializable, Comparable {
     public int compareTo(@NonNull Object o) {
         Double averageRating = this.getAverageRating();
         Double otherAverageRating = ((Residences) o).getAverageRating();
-        return  averageRating.compareTo(otherAverageRating);
+        return  -averageRating.compareTo(otherAverageRating);
     }
 }

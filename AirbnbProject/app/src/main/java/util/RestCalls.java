@@ -1,5 +1,7 @@
 package util;
 
+import android.graphics.Bitmap;
+
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -113,5 +115,14 @@ public class RestCalls {
             reviewsByResidenceId.add(review);
         }
         return reviewsByResidenceId;
+    }
+    public static Bitmap getPhoto (String url){
+        ArrayList<Bitmap> Response  = new ArrayList<>();
+        RestCallManager photoManager = new RestCallManager();
+        RestCallParameters photoParams = new RestCallParameters(url, "GET", "TEXT", "", "STREAM");
+        photoManager.execute(photoParams);
+
+        return photoManager.getSingleBitmap();
+
     }
 }

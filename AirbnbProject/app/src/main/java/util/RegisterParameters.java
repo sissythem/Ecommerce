@@ -17,7 +17,7 @@ public class RegisterParameters {
     public RegisterParameters(String firstname, String lastname, String phonenumber, String email, String username, String password){
 
         RegisterParameters = new HashMap<>();
-        RegisterParameters.put("first_name", firstname);
+        RegisterParameters.put("firstName", firstname);
         RegisterParameters.put("last_name", lastname);
         RegisterParameters.put("phone_number", phonenumber);
         RegisterParameters.put("email", email);

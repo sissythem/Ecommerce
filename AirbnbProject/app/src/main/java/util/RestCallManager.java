@@ -1,5 +1,7 @@
 package util;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 
 import org.json.JSONArray;
@@ -23,12 +25,12 @@ import java.util.concurrent.TimeoutException;
  * Created by sissy on 1/5/2017.
  */
 
-public class RestCallManager extends AsyncTask<RestCallParameters, Integer, ArrayList<String>> {
+public class RestCallManager extends AsyncTask<RestCallParameters, Integer, ArrayList<Object>> {
     static final int TIMEOUT_SECONDS = 1000;
-    ArrayList<String> Responses=null;
+    ArrayList<Object> Responses=null;
     RestCallParameters[] Params;
 
-    protected ArrayList<String> doInBackground(RestCallParameters... parameters) {
+    protected ArrayList<Object> doInBackground(RestCallParameters... parameters) {
         Responses = new ArrayList<>();
         Params = parameters;
 
@@ -37,7 +39,10 @@ public class RestCallManager extends AsyncTask<RestCallParameters, Integer, Arra
             try {
                 if(parameters[i].getRequestType().equals("GET"))
                 {
-                    Responses.add(sendGET(parameters[i].getUrl()));
+                    if(parameters[i].getCallResource().equals("STREAM"))
+                        Responses.add(sendGETStream(parameters[i].getUrl()));
+                    else
+                        Responses.add(sendGET(parameters[i].getUrl()));
                 }
                 else
                 {
@@ -65,7 +70,7 @@ public class RestCallManager extends AsyncTask<RestCallParameters, Integer, Arra
 
     public ArrayList<JSONObject> getSingleJSONArray()
     {
-        ArrayList<String> ResponsesToGet = new ArrayList<>();
+        ArrayList<Object> ResponsesToGet = new ArrayList<>();
 
         // call has not been done
         try {
@@ -78,16 +83,13 @@ public class RestCallManager extends AsyncTask<RestCallParameters, Integer, Arra
             e.printStackTrace();
         }
 
-
-
         ArrayList<JSONObject> jsonResult = new ArrayList<>();
         if(ResponsesToGet.isEmpty()) return jsonResult;
-
 
         if( ! Params[0].getReturnType().equals(RestCallParameters.DATA_TYPE.JSON.toString())) return jsonResult;
 
         // parse json
-        String resp = ResponsesToGet.get(0);
+        String resp = (String) ResponsesToGet.get(0);
         try {
             JSONArray arr = ((new JSONArray(resp)));
             for(int i=0;i< arr.length(); ++i)
@@ -105,11 +107,45 @@ public class RestCallManager extends AsyncTask<RestCallParameters, Integer, Arra
          return jsonResult;
     }
 
+    public ArrayList<Object> getRawResponse (){
+        ArrayList<Object> Response = new ArrayList<>();
+        // call has not been done
+        try {
+            Response = this.get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (TimeoutException e) {
+            e.printStackTrace();
+        }
+        return Response;
+    }
+
+    public Bitmap getSingleBitmap(){
+        ArrayList<Object> Response = new ArrayList<>();
+        // call has not been done
+        try {
+            Response = this.get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (TimeoutException e) {
+            e.printStackTrace();
+        }
+
+        Bitmap bm = BitmapFactory.decodeStream((InputStream) Response.get(0));
+
+        return bm;
+    }
+
     public static String sendGET(String address) throws IOException {
         StringBuilder result = new StringBuilder();
         URL url = new URL(address);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
+
         BufferedReader rd = null;
         try {
             InputStream instr = conn.getInputStream();
@@ -126,6 +162,22 @@ public class RestCallManager extends AsyncTask<RestCallParameters, Integer, Arra
         rd.close();
         if(conn!=null) conn.disconnect();
         return result.toString();
+    }
+
+    public static InputStream sendGETStream(String address) throws IOException {
+        StringBuilder result = new StringBuilder();
+        URL url = new URL(address);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("GET");
+        try {
+            InputStream instr = conn.getInputStream();
+            return instr;
+        }catch( Exception ex)
+        {
+            ex.printStackTrace();
+        }
+        if(conn!=null) conn.disconnect();
+        return null;
     }
 
     public static String sendPOST(String payload, String address)

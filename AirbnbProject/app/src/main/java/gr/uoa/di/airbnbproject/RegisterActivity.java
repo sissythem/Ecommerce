@@ -17,9 +17,6 @@ import android.widget.Toast;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import util.RegisterParameters;
 import util.RestCallManager;
@@ -175,27 +172,16 @@ public class RegisterActivity extends AppCompatActivity {
         RestCallManager userpost = new RestCallManager();
         RestCallParameters postparameters = new RestCallParameters(usersposturl, "POST", "", UserParameters.getRegisterParameters());
 
-        ArrayList<String> PostResponse ;
-        try {
-            userpost.execute(postparameters);
-            PostResponse = userpost.get(1000, TimeUnit.SECONDS);
-            String result = PostResponse.get(0);
-            if (result.equals("OK")) ;
-            else success = false;
+//        ArrayList<String> PostResponse ;
+        String response;
 
-        } catch (InterruptedException e) {
-            success = false;
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            success = false;
-            e.printStackTrace();
-        } catch (TimeoutException e) {
-            success = false;
-            e.printStackTrace();
-        } catch (Exception e) {
-            success = false;
-            e.printStackTrace();
-        }
+        userpost.execute(postparameters);
+//            PostResponse = userpost.get(1000, TimeUnit.SECONDS);
+        response = (String)userpost.getRawResponse().get(0);
+//            String result = PostResponse.get(0);
+        if (response.equals("OK")) ;
+        else success = false;
+
         return success;
     }
 

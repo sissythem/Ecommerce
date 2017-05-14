@@ -1,57 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_gravity="fill_horizontal"
     android:layout_height="wrap_content">
-
     <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:id="@+id/scrollView"
         android:fillViewport="true">
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:orientation="vertical"
             android:id="@+id/linearlayout">
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/searchToolbar"
+                android:minHeight="?attr/actionBarSize"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fitsSystemWindows="true"
+                app:titleTextColor="@android:color/white"
+                android:background="@color/colorPrimary"
+                android:layout_alignParentTop="true"
+                android:weightSum="1">
+                <SearchView
+                    android:layout_width="357dp"
+                    android:layout_height="match_parent">
 
+                </SearchView>
+            </android.support.v7.widget.Toolbar>
             <ListView
                 android:id="@+id/list"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:divider="#b5b5b5"
                 android:dividerHeight="1dp"
-                android:listSelector="@drawable/list_selector" >
-
+                android:listSelector="@drawable/list_selector">
             </ListView>
         </LinearLayout>
     </ScrollView>
-
     <LinearLayout android:id="@+id/footer"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_alignParentBottom="true"
-        style="@android:style/ButtonBar">
-        <Button android:id="@+id/inbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Inbox" />
+        android:background="@color/colorPrimary"
+        style="@android:style/ButtonBar"
+        android:weightSum="1">
 
-        <Button android:id="@+id/profile"
-            android:layout_width="wrap_content"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/footerToolbar"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Profile" />
-        <Button android:id="@+id/host"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Residences" />
-        <Button android:id="@+id/logout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Log Out" />
+            android:layout_alignParentTop="true"
+            android:background="@color/colorPrimary"
+            android:fitsSystemWindows="true"
+            android:minHeight="?attr/actionBarSize"
+            app:titleTextColor="@android:color/white">
 
+            <ImageButton
+                android:id="@+id/inbox"
+                android:layout_width="94dp"
+                android:layout_height="match_parent"
+                android:text="Inbox"
+                android:background="@color/colorPrimary"
+                app:srcCompat="@android:drawable/ic_dialog_email"/>
+
+            <ImageButton
+                android:id="@+id/profile"
+                android:layout_width="94dp"
+                android:layout_height="match_parent"
+                android:text="Profile"
+                android:background="@color/colorPrimary"
+                app:srcCompat="@android:drawable/ic_menu_edit"/>
+
+            <ImageButton
+                android:id="@+id/host"
+                android:layout_width="82dp"
+                android:layout_height="match_parent"
+                android:text="Residences"
+                android:background="@color/colorPrimary"
+                app:srcCompat="@android:drawable/ic_input_add"/>
+
+            <ImageButton
+                android:id="@+id/logout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Log Out"
+                android:background="@color/colorPrimary"
+                app:srcCompat="@android:drawable/ic_lock_power_off"/>
+        </android.support.v7.widget.Toolbar>
     </LinearLayout>
 </RelativeLayout>

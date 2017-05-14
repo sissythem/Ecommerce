@@ -8,11 +8,9 @@
         android:id="@+id/representativePhoto"
         android:layout_width="100dp"
         android:layout_height="120dp"
-        android:layout_weight="1"
-        android:src="@mipmap/ic_launcher"
+        android:layout_weight="0.60"
         android:layout_marginTop="5dp"
-        android:layout_marginLeft="5dp"
-        app:srcCompat="@drawable/buttonstextcolor" />
+        android:layout_marginLeft="5dp" />
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

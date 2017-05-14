@@ -1,4 +1,0 @@
-#Sun May 14 11:15:57 EEST 2017
-base.0=/home/sissy/Documents/Software/AndroidStudioProjects/AirbnbProject/app/build/intermediates/transforms/dex/debug/folders/1000/5/slice_9
-renamed.0=classes.dex
-file.0=/home/sissy/Documents/Software/AndroidStudioProjects/AirbnbProject/app/build/intermediates/transforms/dex/debug/folders/1000/5/slice_9/classes.dex
