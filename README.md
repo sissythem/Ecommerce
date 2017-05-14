@@ -68,7 +68,7 @@ Some benefits of e-commerce include its around-the-clock availability, the speed
   
   On the other hand, when user clicks the Login button, the relevant form appears and asks him to fill in the username and the password(LoginActivity and activity_login). Following a similar logic to the above process, a GET request is sent in order to check if username and password are correct. For this purpose, respective query and method in RESTful services have been created. If user inserts wrong details(based on the comparison between user input and GET result) a message appears and fields should be filled again, otherwise the home screen appears and user now is logged in.
   
-  ###Home Screen
+  ### Home Screen
   
   In this activity, it is checked if user is logged in, if not the application is redirected to the Greeting Activity as mentioned above. Otherwise, user can see the home page, where a search field is located on the top of the screen. Below, a list of recommendations is presented to user, based on his search activity (if user is new the most popular residences appear).
   
@@ -80,5 +80,5 @@ Some benefits of e-commerce include its around-the-clock availability, the speed
   
   Having the reviewedResidences, we can now get the related Rooms and Reviews for each residence. This information can be stored to this object (reviewedResidences), since class Residences has two collections (for Rooms and Reviews). Reviews are needed in order to sort the Residences based on rating (calculating the average rating). In Residences class, a compareTo method, compares two Residences based on their average rating (getAverageRating method). Finally, sorted residences are passed to the onCreate method as result. In order to show the results to user, a listview layout was implemented. Each list item shows the representative photo of a residence, its price, the city and the price. An adapter (CustomListAdapter) was used so as to create the list items.
   
-  ###Search
+  ### Search
  
