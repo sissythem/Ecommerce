@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
@@ -31,6 +30,7 @@ public class HostActivity extends AppCompatActivity {
 
     HostViewResidencesListAdapter adapter;
     ListView residencesList;
+    int[] residenceId;
 
     Boolean user;
     private static final String USER_LOGIN_PREFERENCES = "login_preferences";
@@ -65,7 +65,8 @@ public class HostActivity extends AppCompatActivity {
         manageFooter();
         baddResidence = (ImageButton)findViewById(R.id.addResidence);
 
-        baddResidence.setOnClickListener(new View.OnClickListener() {
+        baddResidence.setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View v) {
                 Intent addResidenceIntent = new Intent(HostActivity.this, AddResidenceActivity.class);
@@ -87,34 +88,38 @@ public class HostActivity extends AppCompatActivity {
         String[] city = new String[storedResidences.size()];
         Double[] price = new Double[storedResidences.size()];
         float[] rating = new float[storedResidences.size()];
+        residenceId = new int[storedResidences.size()];
 
         for(int i=0; i<storedResidences.size();i++){
             representativePhoto[i] = storedResidences.get(i).getPhotos();
             city[i] = storedResidences.get(i).getCity();
             price[i] = storedResidences.get(i).getMinPrice();
             rating[i] = (float)storedResidences.get(i).getAverageRating();
+            residenceId[i] = storedResidences.get(i).getId();
         }
 
-        adapter=new HostViewResidencesListAdapter(this, representativePhoto, city, price, rating);
+        adapter=new HostViewResidencesListAdapter(this, representativePhoto, city, price, rating, residenceId);
         residencesList = (ListView)findViewById(R.id.residenceList);
         residencesList.setAdapter(adapter);
 
-        residencesList.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent showResidenceIntent = new Intent(HostActivity.this, ResidenceActivity.class);
-                Bundle btype = new Bundle();
-                btype.putBoolean("type",user);
-                showResidenceIntent.putExtras(btype);
-                try {
-                    startActivity(showResidenceIntent);
-                } catch (Exception ex) {
-                    System.out.println(ex.getMessage());
-                    ex.printStackTrace();
-                }
-            }
-        });
+//        residencesList.setOnItemClickListener(new AdapterView.OnItemClickListener()
+//        {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+//            {
+//                Intent showResidenceIntent = new Intent(HostActivity.this, ResidenceActivity.class);
+//                Bundle btype = new Bundle();
+//                btype.putBoolean("type",user);
+//                btype.putInt("residenceId", residenceId[position]);
+//                showResidenceIntent.putExtras(btype);
+//                try {
+//                    startActivity(showResidenceIntent);
+//                } catch (Exception ex) {
+//                    System.out.println(ex.getMessage());
+//                    ex.printStackTrace();
+//                }
+//            }
+//        });
     }
 
     @Override

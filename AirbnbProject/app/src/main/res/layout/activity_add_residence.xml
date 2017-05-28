@@ -275,14 +275,14 @@
                 android:id="@+id/btnStartDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_above="@+id/etEndDate"
+                android:layout_above="@+id/tvEndDate"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/etAdditionalCost"
                 app:srcCompat="@drawable/ic_calendar" />
 
-            <EditText
-                android:id="@+id/etStartDate"
+            <TextView
+                android:id="@+id/tvStartDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/etAdditionalCost"
@@ -301,14 +301,14 @@
                 android:layout_above="@+id/etCancellationPolicy"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_below="@+id/etStartDate"
+                android:layout_below="@+id/tvStartDate"
                 app:srcCompat="@drawable/ic_calendar" />
 
-            <EditText
-                android:id="@+id/etEndDate"
+            <TextView
+                android:id="@+id/tvEndDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/etStartDate"
+                android:layout_below="@+id/tvStartDate"
                 android:layout_toRightOf="@+id/btnEndDate"
                 android:layout_toEndOf="@+id/btnEndDate"
                 android:layout_alignParentRight="true"
@@ -322,7 +322,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:layout_below="@+id/etEndDate"
+                android:layout_below="@+id/tvEndDate"
                 android:inputType="textPersonName"
                 android:hint="Cancellation Policy"
                 android:layout_alignParentRight="true"

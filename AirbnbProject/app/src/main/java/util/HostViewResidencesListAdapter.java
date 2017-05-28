@@ -8,11 +8,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
 import gr.uoa.di.airbnbproject.EditResidenceActivity;
 import gr.uoa.di.airbnbproject.R;
+import gr.uoa.di.airbnbproject.ResidenceActivity;
 
 /**
  * Created by sissy on 27/5/2017.
@@ -25,8 +27,9 @@ public class HostViewResidencesListAdapter extends ArrayAdapter<String>
     private final String[] city;
     private final Double[] price;
     private final float[] rating;
+    private final int[] residenceId;
 
-    public HostViewResidencesListAdapter(Activity context, String[] representativePhoto, String[] city, Double[] price, float[] rating) {
+    public HostViewResidencesListAdapter(Activity context, String[] representativePhoto, String[] city, Double[] price, float[] rating, int[] residenceId) {
         super(context, R.layout.host_residences_list_layout, city);
 
         this.representativePhoto=representativePhoto;
@@ -34,15 +37,16 @@ public class HostViewResidencesListAdapter extends ArrayAdapter<String>
         this.city=city;
         this.price=price;
         this.rating=rating;
+        this.residenceId=residenceId;
     }
 
 
-    public View getView(int position, View view, ViewGroup parent)
+    public View getView(final int position, View view, ViewGroup parent)
     {
         LayoutInflater inflater = context.getLayoutInflater();
         View rowView = inflater.inflate(R.layout.host_residences_list_layout, null, true);
 
-        //ImageView imageView = (ImageView) rowView.findViewById(R.id.representativePhoto);
+        ImageView imageView = (ImageView) rowView.findViewById(R.id.representativePhoto);
         TextView tvCity = (TextView) rowView.findViewById(R.id.city);
         TextView tvPrice = (TextView) rowView.findViewById(R.id.price);
         RatingBar ratingBar = (RatingBar) rowView.findViewById(R.id.rating);
@@ -72,9 +76,29 @@ public class HostViewResidencesListAdapter extends ArrayAdapter<String>
                 Intent editResidenceIntent = new Intent(context, EditResidenceActivity.class);
                 Bundle btype = new Bundle();
                 btype.putBoolean("type", user);
+                btype.putInt("residenceId", residenceId[position]);
                 editResidenceIntent.putExtras(btype);
                 try {
                     context.startActivity(editResidenceIntent);
+                } catch (Exception ex) {
+                    System.out.println(ex.getMessage());
+                    ex.printStackTrace();
+                }
+            }
+        });
+        imageView.setTag(position);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                boolean user=false;
+                Intent showResidenceIntent = new Intent(context, ResidenceActivity.class);
+                Bundle btype = new Bundle();
+                btype.putBoolean("type",user);
+                btype.putInt("residenceId", residenceId[position]);
+                showResidenceIntent.putExtras(btype);
+                try {
+                    context.startActivity(showResidenceIntent);
                 } catch (Exception ex) {
                     System.out.println(ex.getMessage());
                     ex.printStackTrace();

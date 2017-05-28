@@ -14,6 +14,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Calendar;
@@ -26,10 +27,6 @@ import util.RestCallParameters;
 import util.RestCalls;
 import util.RestPaths;
 import util.Utils;
-
-import static android.R.attr.country;
-import static android.R.attr.type;
-import static gr.uoa.di.airbnbproject.R.id.city;
 
 public class AddResidenceActivity extends AppCompatActivity {
 
@@ -50,7 +47,8 @@ public class AddResidenceActivity extends AppCompatActivity {
 
     ImageView imageToUpload;
     EditText etUpload, etType, etAbout, etAddress, etCity, etCountry, etAmenities, etFloor, etRooms, etBaths, etView;
-    EditText etSpaceArea, etGuests, etMinPrice, etAdditionalCost, etStartDate, etEndDate, etCancellationPolicy, etRules;
+    EditText etSpaceArea, etGuests, etMinPrice, etAdditionalCost, etCancellationPolicy, etRules;
+    TextView tvStartDate, tvEndDate;
 
     private int mStartYear, mStartMonth, mStartDay, mEndYear, mEndMonth, mEndDay;
 
@@ -116,25 +114,25 @@ public class AddResidenceActivity extends AppCompatActivity {
 
     public void userInputLayout ()
     {
-        etUpload            = (EditText)findViewById(R.id.etUpload);
-        etType              = (EditText)findViewById(R.id.etType);
-        etAbout             = (EditText)findViewById(R.id.etAbout);
-        etAddress           = (EditText)findViewById(R.id.etAddress);
-        etCity              = (EditText)findViewById(R.id.etCity);
-        etCountry           = (EditText)findViewById(R.id.etCountry);
-        etAmenities         = (EditText)findViewById(R.id.etAmenities);
-        etFloor             = (EditText)findViewById(R.id.etFloor);
-        etRooms             = (EditText)findViewById(R.id.etRooms);
-        etBaths             = (EditText)findViewById(R.id.etBaths);
-        etView              = (EditText)findViewById(R.id.etView);
-        etSpaceArea         = (EditText)findViewById(R.id.etSpaceArea);
-        etGuests            = (EditText)findViewById(R.id.etGuests);
-        etMinPrice          = (EditText)findViewById(R.id.etMinPrice);
-        etAdditionalCost    = (EditText)findViewById(R.id.etAdditionalCost);
-        etStartDate         = (EditText)findViewById(R.id.etStartDate);
-        etEndDate           = (EditText)findViewById(R.id.etEndDate);
+        etUpload             = (EditText)findViewById(R.id.etUpload);
+        etType               = (EditText)findViewById(R.id.etType);
+        etAbout              = (EditText)findViewById(R.id.etAbout);
+        etAddress            = (EditText)findViewById(R.id.etAddress);
+        etCity               = (EditText)findViewById(R.id.etCity);
+        etCountry            = (EditText)findViewById(R.id.etCountry);
+        etAmenities          = (EditText)findViewById(R.id.etAmenities);
+        etFloor              = (EditText)findViewById(R.id.etFloor);
+        etRooms              = (EditText)findViewById(R.id.etRooms);
+        etBaths              = (EditText)findViewById(R.id.etBaths);
+        etView               = (EditText)findViewById(R.id.etView);
+        etSpaceArea          = (EditText)findViewById(R.id.etSpaceArea);
+        etGuests             = (EditText)findViewById(R.id.etGuests);
+        etMinPrice           = (EditText)findViewById(R.id.etMinPrice);
+        etAdditionalCost     = (EditText)findViewById(R.id.etAdditionalCost);
+        tvStartDate          = (TextView) findViewById(R.id.tvStartDate);
+        tvEndDate            = (TextView)findViewById(R.id.tvEndDate);
         etCancellationPolicy = (EditText)findViewById(R.id.etCancellationPolicy);
-        etRules             = (EditText)findViewById(R.id.etRules);
+        etRules              = (EditText)findViewById(R.id.etRules);
 
         btnStartDate        = (ImageButton)findViewById(R.id.btnStartDate);
         btnEndDate          = (ImageButton)findViewById(R.id.btnEndDate);
@@ -171,7 +169,7 @@ public class AddResidenceActivity extends AppCompatActivity {
                     DatePickerDialog datePickerDialog = new DatePickerDialog(AddResidenceActivity.this, new DatePickerDialog.OnDateSetListener() {
                         @Override
                         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                            etStartDate.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+                            tvStartDate.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
                         }
                     }, mStartYear, mStartMonth, mStartDay);
                     datePickerDialog.show();
@@ -192,7 +190,7 @@ public class AddResidenceActivity extends AppCompatActivity {
                     DatePickerDialog datePickerDialog = new DatePickerDialog(AddResidenceActivity.this, new DatePickerDialog.OnDateSetListener() {
                         @Override
                         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                            etEndDate.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+                            tvEndDate.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
                         }
                     }, mEndYear, mEndMonth, mEndDay);
                     datePickerDialog.show();
@@ -224,8 +222,8 @@ public class AddResidenceActivity extends AppCompatActivity {
                 final String guests = etGuests.getText().toString();
                 final String minPrice = etMinPrice.getText().toString();
                 final String additionalCostPerPerson = etAdditionalCost.getText().toString();
-                final String availableStartDate = etStartDate.getText().toString();
-                final String availableEndDate = etEndDate.getText().toString();
+                final String availableStartDate = tvStartDate.getText().toString();
+                final String availableEndDate = tvEndDate.getText().toString();
                 final String cancellationPolicy = etCancellationPolicy.getText().toString();
                 final String rules = etRules.getText().toString();
                 final String kitchen = Boolean.toString(bkitchen);

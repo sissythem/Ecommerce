@@ -104,6 +104,19 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
+    <TextView
+        android:id="@+id/tvExplanationTypeBed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/etSpaceArea"
+        android:text="*Bed Type: For single bed choose 1, for double bed choose 2 etc" />
+    <TextView
+        android:id="@+id/tvBathsExplanation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvExplanationTypeBed"
+        android:text="**Baths: Baths inside the bedroom" />
+
     <ImageButton
         android:id="@+id/ibSave"
         android:layout_width="wrap_content"
@@ -116,4 +129,6 @@
         android:layout_marginTop="11dp"
         android:background="@color/colorPrimary"
         app:srcCompat="@drawable/ic_save" />
+
+
 </RelativeLayout>

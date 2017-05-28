@@ -58,6 +58,7 @@ public class HomeActivity extends AppCompatActivity
     ImageButton blogout;
 
     CustomListAdapter adapter;
+    int[]residenceId;
 
     EditText field_city, field_guests, startDate, endDate;
     Button btnStartDatePicker, btnEndDatePicker, field_search;
@@ -99,12 +100,14 @@ public class HomeActivity extends AppCompatActivity
         String[] city = new String[Recommendations.size()];
         Double[] price = new Double[Recommendations.size()];
         float[] rating = new float[Recommendations.size()];
+        residenceId = new int[Recommendations.size()];
 
         for(int i=0; i<Recommendations.size();i++){
             representativePhoto[i] = Recommendations.get(i).getPhotos();
             city[i] = Recommendations.get(i).getCity();
             price[i] = Recommendations.get(i).getMinPrice();
             rating[i] = (float)Recommendations.get(i).getAverageRating();
+            residenceId[i] = Recommendations.get(i).getId();
         }
         adapter=new CustomListAdapter(this, representativePhoto, city, price, rating);
         list=(ListView)findViewById(R.id.list);
@@ -112,9 +115,19 @@ public class HomeActivity extends AppCompatActivity
 
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
                 Intent showResidenceIntent = new Intent(HomeActivity.this, ResidenceActivity.class);
-                HomeActivity.this.startActivity(showResidenceIntent);
+                Bundle btype = new Bundle();
+                btype.putBoolean("type",user);
+                btype.putInt("residenceId", residenceId[position]);
+                showResidenceIntent.putExtras(btype);
+                try {
+                    startActivity(showResidenceIntent);
+                } catch (Exception ex) {
+                    System.out.println(ex.getMessage());
+                    ex.printStackTrace();
+                }
             }
         });
 

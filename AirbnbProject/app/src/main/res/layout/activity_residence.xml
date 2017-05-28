@@ -1,9 +1,354 @@
-<?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="gr.uoa.di.airbnbproject.ResidenceActivity">
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_gravity="fill_horizontal"
+    android:layout_height="wrap_content">
 
-</android.support.constraint.ConstraintLayout>
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/backToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="@color/colorPrimary"
+        android:fitsSystemWindows="true"
+        android:minHeight="?attr/actionBarSize"
+        android:weightSum="1"
+        app:titleTextColor="@android:color/white">
+
+        <ImageButton
+            android:id="@+id/back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            app:srcCompat="@drawable/ic_back" />
+
+        <TextView
+            android:id="@+id/tvResidenceView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="View Residence"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textSize="18sp" />
+
+    </android.support.v7.widget.Toolbar>
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/backToolbar">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/ivResidencePhotos"
+                android:layout_width="wrap_content"
+                android:layout_height="100dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                app:srcCompat="@android:drawable/ic_menu_camera"/>
+
+            <TextView
+                android:id="@+id/tvType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/ivResidencePhotos"
+                android:layout_marginTop="12dp"
+                android:text="Title"
+                android:textSize="25sp" />
+
+            <TextView
+                android:id="@+id/tvAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/tvType"
+                android:layout_toLeftOf="@+id/tvCity"
+                android:layout_toStartOf="@+id/tvCity"
+                android:text="Address"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/tvCity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/tvType"
+                android:text="Residence City"
+                android:textSize="18sp"
+                android:layout_toRightOf="@+id/tvMapTitle"
+                android:layout_toEndOf="@+id/tvMapTitle" />
+
+            <TextView
+                android:id="@+id/tvCountry"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/tvCity"
+                android:text="Residence Country"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/tvHostName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="HostName"
+                android:textSize="18sp"
+                android:layout_above="@+id/tvAboutTitle"
+                android:layout_toRightOf="@+id/ivHostPic"
+                android:layout_toEndOf="@+id/ivHostPic"
+                android:layout_marginBottom="18dp" />
+
+            <ImageView
+                android:id="@+id/ivHostPic"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                app:srcCompat="@drawable/ic_profile"
+                android:layout_below="@+id/tvCountry"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignRight="@+id/tvHostAbout"
+                android:layout_alignEnd="@+id/tvHostAbout" />
+
+            <ImageButton
+                android:id="@+id/ibContact"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@android:drawable/ic_dialog_email"
+                android:layout_below="@+id/tvCountry"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_above="@+id/tvAboutTitle" />
+
+            <TextView
+                android:id="@+id/tvContact"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/ibContact"
+                android:layout_marginTop="15dp"
+                android:layout_toLeftOf="@+id/ibContact"
+                android:layout_toStartOf="@+id/ibContact"
+                android:text="Contact Host"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/tvAboutTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="About this Residence"
+                android:textSize="20sp"
+                android:layout_below="@+id/ivHostPic"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+
+            <TextView
+                android:id="@+id/tvAboutText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/tvAboutTitle"
+                android:text="About"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/tvAmenitiesTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/tvAboutText"
+                android:text="What we will provide"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/tvAmenities"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/tvAmenitiesTitle"
+                android:text="Amenities"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/tvCancellationPolicyTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@+id/tvAmenities"
+                android:text="Our Cancellation Policy"
+                android:textSize="20sp"/>
+            <TextView
+                android:id="@+id/tvCancellationPolicy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cancellation Policy"
+                android:textSize="18sp"
+                android:layout_below="@+id/tvCancellationPolicyTitle"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+
+            <TextView
+                android:id="@+id/tvHostTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/tvCancellationPolicy"
+                android:text="About your host"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/tvHostAbout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="About host"
+                android:textSize="18sp"
+                android:layout_below="@+id/tvHostTitle"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <TextView
+                android:id="@+id/tvMapTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/tvHostAbout"
+                android:text="Where you will find us"
+                android:textSize="20sp" />
+
+            <com.google.android.gms.maps.MapView
+                android:id="@+id/mapResidence"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvMapTitle"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"/>
+
+            <TextView
+                android:id="@+id/tvAvailabilityTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/mapResidence"
+                android:text="Availability"
+                android:textSize="20sp" />
+
+            <CalendarView
+                android:id="@+id/calendar1stMonth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvAvailabilityTitle" />
+
+
+            <TextView
+                android:id="@+id/tvRulesTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/calendar1stMonth"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:text="Guest requirements"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/tvRules"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/tvRulesTitle"
+                android:text="Rules"
+                android:textSize="18sp" />
+
+        </RelativeLayout>
+    </ScrollView>
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/footerToolbar"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorPrimary"
+        android:fitsSystemWindows="true"
+        android:minHeight="?attr/actionBarSize"
+        android:titleTextColor="@android:color/white">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true">
+
+            <TextView
+                android:id="@+id/price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/rating"
+                android:text="Price"/>
+            <RatingBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:isIndicator="true"
+                android:numStars="5"
+                android:stepSize="1"
+                android:rating="5"
+                android:id="@+id/rating"
+                style="?android:attr/ratingBarStyleSmall"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <Button
+                android:id="@+id/btnReservation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="23dp"
+                android:layout_marginRight="23dp"
+                android:text="Book now" />
+        </RelativeLayout>
+    </android.support.v7.widget.Toolbar>
+
+    <Button
+        android:id="@+id/btnReviews"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/scrollView"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:text="Reviews"
+        android:layout_alignParentTop="true" />
+</RelativeLayout>
