@@ -17,6 +17,7 @@ import java.util.ArrayList;
 
 import util.RestCallManager;
 import util.RestCallParameters;
+import util.RestPaths;
 
 /**
  * Created by sissy on 30/4/2017.
@@ -74,7 +75,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 //check if the user is correct
-                String loginurl = "http://192.168.1.6:8080/ecommerce_restful/webresources/users/login?username="+Username+"&password"+password;
+                String loginurl = RestPaths.getLoginUser(Username, password);
 
                 RestCallManager loginManager = new RestCallManager();
                 RestCallParameters loginParameters = new RestCallParameters(loginurl, "GET", "JSON", "");
@@ -106,27 +107,6 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
-
-        // do a dummy login
-       //dummyLogin();
-    }
-
-    void dummyLogin()
-    {
-        try {
-            final String Username = "sissythem";
-            isUserLoggedIn = sharedPrefs.getBoolean("userLoggedInState", false);
-            editor = sharedPrefs.edit();
-            editor.putBoolean("userLoggedInState", true);
-            editor.putString("currentLoggedInUser", Username);
-            editor.commit();
-            Intent homeintent = new Intent(LoginActivity.this, HomeActivity.class);
-
-            LoginActivity.this.startActivity(homeintent);
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-            ex.printStackTrace();
-        }
     }
 
     @Override
@@ -138,6 +118,11 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(intent);
             super.onBackPressed();
             return;
+        }
+        else {
+            Intent greetingIntent = new Intent(this, GreetingActivity.class);
+            startActivity(greetingIntent);
+            super.onBackPressed();
         }
     }
 }

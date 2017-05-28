@@ -3,6 +3,7 @@ package util;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,6 +27,7 @@ import java.util.concurrent.TimeoutException;
  */
 
 public class RestCallManager extends AsyncTask<RestCallParameters, Integer, ArrayList<Object>> {
+    static final String TAG = "REST_CALL_MNGER";
     static final int TIMEOUT_SECONDS = 1000;
     ArrayList<Object> Responses=null;
     RestCallParameters[] Params;
@@ -37,18 +39,32 @@ public class RestCallManager extends AsyncTask<RestCallParameters, Integer, Arra
         int i;
         for (i=0; i<parameters.length;i++){
             try {
+                Log.i(TAG,"Calling " + parameters[i].getRequestType() + " rest with data: " + parameters[i].getparameters());
+
                 if(parameters[i].getRequestType().equals("GET"))
                 {
+
                     if(parameters[i].getCallResource().equals("STREAM"))
                         Responses.add(sendGETStream(parameters[i].getUrl()));
                     else
                         Responses.add(sendGET(parameters[i].getUrl()));
                 }
-                else
+                else if(parameters[i].getRequestType().equals("POST"))
                 {
                     Responses.add(sendPOST(parameters[i].getparameters(), parameters[i].getUrl()));
                     if(parameters[i].getReturnType().isEmpty())
                         Responses.set(i,"OK");
+                }
+                else if(parameters[i].getRequestType().equals("PUT"))
+                {
+
+                    Responses.add(sendPUT(parameters[i].getparameters(), parameters[i].getUrl()));
+                    if(parameters[i].getReturnType().isEmpty())
+                        Responses.set(i,"OK");
+                }
+                else if(parameters[i].getRequestType().equals("DELETE")){
+                    Responses.add(sendDELETE( parameters[i].getUrl()));
+
                 }
 
             } catch (IOException e) {
@@ -100,8 +116,12 @@ public class RestCallManager extends AsyncTask<RestCallParameters, Integer, Arra
         }
         catch (JSONException e)
         {
-            e.printStackTrace();
-            return new ArrayList<>();
+            try {
+                JSONObject jsonObject = ((new JSONObject(resp)));
+                jsonResult.add(jsonObject);
+            } catch (JSONException e1) {
+                e1.printStackTrace();
+            }
         }
 
          return jsonResult;
@@ -245,6 +265,113 @@ public class RestCallManager extends AsyncTask<RestCallParameters, Integer, Arra
         }
         return resp;
     }
+
+    public static String sendPUT(String payload, String address)
+    {
+        URL url;
+        HttpURLConnection connection = null;
+        String resp = "";
+        try
+        {
+            // open connection, set JSONic properties
+            url = new URL(address);
+            connection = (HttpURLConnection)url.openConnection();
+            connection.setRequestMethod("PUT");
+            connection.setRequestProperty("Content-Type","application/json");
+            connection.setRequestProperty("Accept","application/json");
+            connection.setRequestProperty("Content-Length",
+                    Integer.toString(payload.getBytes().length));
+            connection.setRequestProperty("Content-Language", "en-US");
+
+            connection.setUseCaches(false);
+            connection.setDoOutput(true);
+
+            //Send request
+            DataOutputStream wr = new DataOutputStream (
+                    connection.getOutputStream());
+            wr.writeBytes(payload);
+//            String encodedPayload = URLEncoder.encode(payload,"UTF-8");
+//            wr.write(encodedPayload.getBytes());
+
+
+            wr.close();
+            //Get Responses
+            int status = connection.getResponseCode();
+            if(status >= 400)
+            {
+                InputStream error = connection.getErrorStream();
+                resp = readStream(error);
+                throw  new MalformedURLException(resp);
+            }
+
+            InputStream is = connection.getInputStream();
+            resp = readStream(is);
+
+            //System.out.println("server Responses:\n\t" + resp);
+        }
+        catch(MalformedURLException exc)
+        {
+            System.err.println("Malformed event processing URL:\n\t" + address);
+            System.err.println("payload/address: ["+payload+"] , ["+address+"]");
+
+            resp="";
+        }
+        catch(IOException exc)
+        {
+
+            System.err.println(exc.getMessage());
+            System.err.println("payload/address: ["+payload+"] , ["+address+"]");
+            exc.printStackTrace();
+            resp="";
+        }
+        finally
+        {
+            if(connection != null)
+                connection.disconnect();
+        }
+        return resp;
+    }
+    public static String sendDELETE (String address){
+        URL url = null;
+        String resp = "";
+        try {
+            url = new URL(address);
+        } catch (MalformedURLException exception) {
+            exception.printStackTrace();
+        }
+        HttpURLConnection httpURLConnection = null;
+        try {
+            httpURLConnection = (HttpURLConnection) url.openConnection();
+            httpURLConnection.setRequestProperty("Content-Type",
+                    "application/x-www-form-urlencoded");
+            httpURLConnection.setRequestMethod("DELETE");
+            int respcode = httpURLConnection.getResponseCode();
+
+            if(respcode >= 400)
+            {
+                InputStream error = httpURLConnection.getErrorStream();
+                resp = readStream(error);
+                throw  new MalformedURLException(resp);
+            }
+
+        } catch (IOException exception) {
+            exception.printStackTrace();
+            return "ERROR";
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return "ERROR";
+        }
+        finally
+         {
+            if (httpURLConnection != null) {
+                httpURLConnection.disconnect();
+            }
+        }
+        resp = "OK";
+        return resp;
+    }
+
 
     static   String readStream(InputStream istr) throws IOException {
         String resp = "";

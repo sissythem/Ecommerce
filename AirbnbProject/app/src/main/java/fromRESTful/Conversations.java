@@ -12,6 +12,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import util.Utils;
+
 public class Conversations implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -77,11 +79,17 @@ public class Conversations implements Serializable {
         Conversations c = new Conversations();
         try {
             c.id = (Integer) obj.get("id");
-            c.subject = (String) obj.get("subject");
+            c.subject="";
+            if(Utils.isFieldOK(obj, "subject"))
+                c.subject = (String) obj.get("subject");
+
             JSONObject senderObj = (JSONObject)obj.get("senderId");
             JSONObject receiverObj = (JSONObject)obj.get("receiverId") ;
-            c.senderId = Users.fromJSON(senderObj);
-            c.receiverId = Users.fromJSON(receiverObj);
+            Users sender = Users.fromJSON(senderObj);
+            Users receiver = Users.fromJSON(receiverObj);
+
+            c.senderId = sender;
+            c.receiverId = receiver;
 
             ArrayList<Messages> messagesList = new ArrayList<>();
             JSONArray jsonArrayMessages = (JSONArray)obj.get("Messages");

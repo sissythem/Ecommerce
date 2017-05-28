@@ -32,6 +32,7 @@ public class CustomListAdapter extends ArrayAdapter<String> {
         this.rating=rating;
     }
 
+
     public View getView(int position, View view, ViewGroup parent) {
         LayoutInflater inflater=context.getLayoutInflater();
         View rowView=inflater.inflate(R.layout.list_layout, null,true);

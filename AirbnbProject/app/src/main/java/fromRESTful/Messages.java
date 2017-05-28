@@ -10,6 +10,8 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.sql.Date;
 
+import util.Utils;
+
 public class Messages implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -68,10 +70,23 @@ public class Messages implements Serializable {
 
         try {
             m.id = (Integer) obj.get("id");
-            m.body = (String) obj.get("body");
+            m.body="";
+            if(Utils.isFieldOK(obj, "body"))
+                m.body = (String) obj.get("body");
+
             m.timestamp = (Date) obj.get("timestamp");
+            String dateString;
+            java.util.Date date;
+            if(Utils.isFieldOK(obj,"timestamp")) {
+                dateString = (String) obj.get("timestamp");
+                 date = Utils.ConvertStringToDate(dateString, Utils.DATABASE_DATETIME);
+                m.timestamp = new java.sql.Date(date.getTime());
+            }
+
             JSONObject conversationObj = (JSONObject)obj.get("conversationId");
-            m.conversationId = Conversations.fromJSON(conversationObj);
+            Conversations conversation = Conversations.fromJSON(conversationObj);
+            m.conversationId = conversation;
+
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <LinearLayout android:id="@+id/footer"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorPrimary"
+        style="@android:style/ButtonBar"
+        android:weightSum="1"
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/footerToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:background="@color/colorPrimary"
+            android:fitsSystemWindows="true"
+            android:minHeight="?attr/actionBarSize"
+            android:titleTextColor="@android:color/white">
+
+            <ImageButton
+                android:id="@+id/home"
+                android:layout_width="70dp"
+                android:layout_height="match_parent"
+                android:background="@color/colorPrimary"
+                android:text="Inbox"
+                android:weightSum="0.2"
+                app:srcCompat="@android:drawable/ic_menu_search" />
+
+            <ImageButton
+                android:id="@+id/inbox"
+                android:layout_width="70dp"
+                android:layout_height="match_parent"
+                android:text="Inbox"
+                android:background="@color/colorPrimary"
+                android:weightSum="0.2"
+                app:srcCompat="@android:drawable/ic_dialog_email"
+                android:layout_weight="12" />
+
+            <ImageButton
+                android:id="@+id/profile"
+                android:layout_width="70dp"
+                android:layout_height="match_parent"
+                android:background="@color/colorPrimary"
+                android:text="Profile"
+                android:weightSum="0.2"
+                app:srcCompat="@drawable/ic_profile" />
+
+            <ImageButton
+                android:id="@+id/host"
+                android:layout_width="70dp"
+                android:layout_height="match_parent"
+                android:layout_weight="5.13"
+                android:background="@color/colorPrimary"
+                android:text="Residences"
+                android:weightSum="0.2"
+                app:srcCompat="@drawable/ic_switchrole"/>
+
+            <ImageButton
+                android:id="@+id/logout"
+                android:layout_width="70dp"
+                android:layout_height="match_parent"
+                android:text="Log Out"
+                android:weightSum="0.2"
+                android:background="@color/colorPrimary"
+                app:srcCompat="@android:drawable/ic_lock_power_off"/>
+        </android.support.v7.widget.Toolbar>
+    </LinearLayout>
+</RelativeLayout>

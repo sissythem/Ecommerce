@@ -1,5 +1,6 @@
 package gr.uoa.di.airbnbproject;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,7 +10,9 @@ import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,10 +20,14 @@ import android.widget.Toast;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import util.RegisterParameters;
 import util.RestCallManager;
 import util.RestCallParameters;
+import util.RestPaths;
+import util.Utils;
 
 /**
  * Created by sissy on 30/4/2017.
@@ -38,6 +45,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     ImageView imageToUpload;
     EditText uploadImageName;
+    private int mYear, mMonth, mDay;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,6 +59,8 @@ public class RegisterActivity extends AppCompatActivity {
         //Create variables for storing user input
         final EditText firstname = (EditText) findViewById(R.id.firstname);
         final EditText lastname = (EditText) findViewById(R.id.lastname);
+        final TextView birthdate = (TextView)findViewById(R.id.tvBirthDate);
+        final ImageButton btnBirthDate = (ImageButton)findViewById(R.id.btnBirthDate);
         final EditText phonenumber = (EditText) findViewById(R.id.phonenumber);
         final EditText email = (EditText) findViewById(R.id.email);
         final EditText username = (EditText) findViewById(R.id.username);
@@ -79,6 +89,27 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
+        btnBirthDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (v == btnBirthDate) {
+                    // Get Current Date
+                    final Calendar c = Calendar.getInstance();
+                    mYear = c.get(Calendar.YEAR);
+                    mMonth = c.get(Calendar.MONTH);
+                    mDay = c.get(Calendar.DAY_OF_MONTH);
+
+                    DatePickerDialog datePickerDialog = new DatePickerDialog(RegisterActivity.this, new DatePickerDialog.OnDateSetListener() {
+                        @Override
+                        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                            birthdate.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+                        }
+                    }, mYear, mMonth, mDay);
+                    datePickerDialog.show();
+                }
+            }
+        });
+
         //when register button is clicked, data are sent to be stored to the database
         bregister.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,17 +117,18 @@ public class RegisterActivity extends AppCompatActivity {
                 //gets user input in string format
                 final String firstName = firstname.getText().toString();
                 final String lastName = lastname.getText().toString();
+                final String BirthDate = birthdate.getText().toString();
                 final String phoneNumber = phonenumber.getText().toString();
                 final String Email = email.getText().toString();
                 final String Username = username.getText().toString();
                 final String Password = password.getText().toString();
                 final String ConfirmPassword = confirmpassword.getText().toString();
-                boolean userIsNew=false;
-                boolean emailIsNew=false;
+                boolean userIsNew;
+                boolean emailIsNew;
 
                 //check if user has filled all fields of the registration form
                 if(Username.length() == 0 || firstName.length() == 0 || lastName.length() == 0 || phoneNumber.length() == 0 || Email.length() == 0 || Password.length() == 0
-                        || ConfirmPassword.length() == 0)
+                        || ConfirmPassword.length() == 0 || BirthDate.length() == 0)
                 {
                     //if something is not filled in, user must fill again the form
                     Toast.makeText(c, "Please fill in all fields!", Toast.LENGTH_SHORT).show();
@@ -111,11 +143,14 @@ public class RegisterActivity extends AppCompatActivity {
                     return;
                 }
 
+                Date bdate = Utils.ConvertStringToDate(BirthDate,Utils.APP_DATE_FORMAT );
+                String stringBirthDate = Utils.ConvertDateToString(bdate,Utils.DATABASE_DATE_FORMAT);
+
                 userIsNew = checkUsername(Username);
                 emailIsNew = checkEmail(Email);
                 //if username and email are new the application sends the data with sendPOST method to be stored in the database
                 if(userIsNew && emailIsNew) {
-                        boolean success = PostResult(firstName, lastName, phoneNumber, Email, Username, Password);
+                        boolean success = PostResult(firstName, lastName, phoneNumber, Email, Username, Password, stringBirthDate);
                     if (success) {
                         //if data are stored successfully in the data base, the user is now logged in and the home activity starts
                         isUserLoggedIn = sharedPrefs.getBoolean("userLoggedInState", false);
@@ -164,10 +199,10 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
-    public boolean PostResult(String firstName, String lastName, String phoneNumber, String Email, String Username, String Password) {
+    public boolean PostResult(String firstName, String lastName, String phoneNumber, String Email, String Username, String Password, String BirthDate) {
         boolean success = true;
-        String usersposturl = "http://192.168.1.6:8080/ecommerce_restful/webresources/users";
-        RegisterParameters UserParameters = new RegisterParameters(firstName, lastName, phoneNumber, Email, Username, Password);
+        String usersposturl = RestPaths.AllUsers;
+        RegisterParameters UserParameters = new RegisterParameters(firstName, lastName, phoneNumber, Email, Username, Password, BirthDate);
 
         RestCallManager userpost = new RestCallManager();
         RestCallParameters postparameters = new RestCallParameters(usersposturl, "POST", "", UserParameters.getRegisterParameters());
@@ -190,7 +225,7 @@ public class RegisterActivity extends AppCompatActivity {
         boolean userIsNew = false;
         //check if username already exist in the database
         //calls the function from RESTful with path users/username and as parameter user's input
-        String usernameurl = "http://192.168.1.6:8080/ecommerce_restful/webresources/users/username?username=" + Username;
+        String usernameurl = RestPaths.getUserByUsername(Username);
         //create an object of type RestCallManager to get the result of the query
         RestCallManager UsernameManager = new RestCallManager();
         RestCallParameters usernameparameters = new RestCallParameters(usernameurl, "GET", "JSON", "");
@@ -206,7 +241,7 @@ public class RegisterActivity extends AppCompatActivity {
     public boolean checkEmail (String Email){
         boolean emailIsNew=false;
         //same process for email
-        String emailurl = "http://192.168.1.6:8080/ecommerce_restful/webresources/users/email?email=" + Email;
+        String emailurl = RestPaths.getUserByEmail(Email);
         RestCallManager EmailManager = new RestCallManager();
         RestCallParameters emailparameters = new RestCallParameters(emailurl, "GET", "JSON", "");
         EmailManager.execute(emailparameters);
@@ -225,6 +260,11 @@ public class RegisterActivity extends AppCompatActivity {
             startActivity(intent);
             super.onBackPressed();
             return;
+        }
+        else{
+            Intent greetingIntent = new Intent(this, GreetingActivity.class);
+            startActivity(greetingIntent);
+            super.onBackPressed();
         }
     }
 }

@@ -26,7 +26,13 @@
         <activity android:name=".LoginActivity" />
         <activity android:name=".InboxActivity" />
         <activity android:name=".ProfileActivity" />
-        <activity android:name=".ResidenceActivity"></activity>
+        <activity android:name=".ResidenceActivity" />
+        <activity android:name=".HostActivity" />
+        <activity android:name=".EditProfileActivity" />
+        <activity android:name=".SearchResultsActivity" />
+        <activity android:name=".AddResidenceActivity" />
+        <activity android:name=".EditResidenceActivity" />
+        <activity android:name=".AddRoomsActivity"></activity>
     </application>
 
 </manifest>

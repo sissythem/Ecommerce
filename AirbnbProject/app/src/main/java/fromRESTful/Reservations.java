@@ -103,15 +103,26 @@ public class Reservations implements Serializable {
 
         try {
             r.id = (Integer) obj.get("id");
-            String startDateString = (String)obj.get("startDate");
-            r.startDate = Utils.ConvertStringToDate(startDateString, "yyyy-MM-dd'T'hh:mm:ssz");
-            String endDateString = (String)obj.get("endDate");
-            r.endDate = Utils.ConvertStringToDate(endDateString, "yyyy-MM-dd'T'hh:mm:ssz");
-            r.guests = (int) obj.get("guests");
+            if(Utils.isFieldOK(obj, "startDate")) {
+                String startDateString = (String) obj.get("startDate");
+                r.startDate = Utils.ConvertStringToDate(startDateString, Utils.DATABASE_DATE_FORMAT);
+            }
+            if(Utils.isFieldOK(obj, "endDate")) {
+                String endDateString = (String) obj.get("endDate");
+                r.endDate = Utils.ConvertStringToDate(endDateString, Utils.DATABASE_DATE_FORMAT);
+            }
+            r.guests=0;
+            if(Utils.isFieldOK(obj, "guests"))
+                r.guests = (int) obj.get("guests");
+
             JSONObject roomObject = (JSONObject)obj.get("roomId");
-            r.roomId = Rooms.fromJSON(roomObject);
+            Rooms room = Rooms.fromJSON(roomObject);
+            r.roomId = room;
+
             JSONObject tenantObject = (JSONObject)obj.get("tenantId");
-            r.tenantId = Users.fromJSON(tenantObject);
+            Users tenantUser = Users.fromJSON(tenantObject);
+            r.tenantId = tenantUser;
+
         } catch (JSONException e) {
             e.printStackTrace();
         }

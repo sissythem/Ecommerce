@@ -14,12 +14,12 @@ public class RegisterParameters {
     //private static final String REGISTER_REQUEST_URL = "http://192.168.1.6:8080/ecommerce_restful/webresources/users";
     private Map<String, String> RegisterParameters;
 
-    public RegisterParameters(String firstname, String lastname, String phonenumber, String email, String username, String password){
+    public RegisterParameters(String firstname, String lastname, String phonenumber, String email, String username, String password, String birthdate){
 
         RegisterParameters = new HashMap<>();
         RegisterParameters.put("firstName", firstname);
-        RegisterParameters.put("last_name", lastname);
-        RegisterParameters.put("phone_number", phonenumber);
+        RegisterParameters.put("lastName", lastname);
+        RegisterParameters.put("phoneNumber", phonenumber);
         RegisterParameters.put("email", email);
         RegisterParameters.put("username", username);
         RegisterParameters.put("password", password);
@@ -27,7 +27,7 @@ public class RegisterParameters {
         RegisterParameters.put("city", "athens");
         RegisterParameters.put("photo", "photo");
         RegisterParameters.put("about", "about");
-        RegisterParameters.put("birth_date", "1990-08-05");
+        RegisterParameters.put("birthDate", birthdate);
         RegisterParameters.put("host", "0");
     }
 

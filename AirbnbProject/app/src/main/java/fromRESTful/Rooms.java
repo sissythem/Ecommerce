@@ -12,6 +12,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import util.Utils;
+
 public class Rooms implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -115,14 +117,26 @@ public class Rooms implements Serializable {
         Rooms r = new Rooms();
         try {
             r.id = (Integer) obj.get("id");
-            r.beds = (Integer) obj.get("beds");
-            r.bedType = (int) obj.get("bedType");
-            r.bathrooms = (Integer) obj.get("bathrooms");
-            r.spaceArea = (double) obj.get("spaceArea");
-            r.view = (String) obj.get("view");
+            r.beds = 0;
+            if(Utils.isFieldOK(obj, "beds"))
+                r.beds = (Integer) obj.get("beds");
+            r.bedType=0;
+            if(Utils.isFieldOK(obj, "bedType"))
+                r.bedType = (int) obj.get("bedType");
+            r.bathrooms = 0;
+            if(Utils.isFieldOK(obj, "bathrooms"))
+                r.bathrooms = (Integer) obj.get("bathrooms");
+            r.spaceArea = 0.0;
+            if(Utils.isFieldOK(obj, "spaceArea"))
+                r.spaceArea = (double) obj.get("spaceArea");
+            r.view="";
+            if(Utils.isFieldOK(obj, "view"))
+                r.view = (String) obj.get("view");
+
             JSONObject userobject = (JSONObject)obj.get("hostId");
             Users hostUser = Users.fromJSON(userobject);
             r.hostId = hostUser;
+
             JSONObject residenceObject = (JSONObject)obj.get("residenceId");
             Residences residence = Residences.fromJSON(residenceObject);
             r.residenceId = residence;

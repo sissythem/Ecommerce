@@ -6,6 +6,7 @@
 package service;
 
 import dbpackage.Residences;
+import dbpackage.Users;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -21,6 +22,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  *
@@ -43,7 +45,7 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
     public void create(Residences entity) {
         super.create(entity);
     }
-
+    
     @PUT
     @Path("{id}")
     @Consumes({MediaType.APPLICATION_JSON})
@@ -72,6 +74,21 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
     }
     
     @GET
+    @Path("maxId/{hostId}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Residences maxResidenceId(@PathParam("hostId") Integer hostId){
+        List<Residences> residences = findByHostId(hostId);
+        int maxId=0;
+        for(int i=0; i<residences.size();i++){
+            if(residences.get(i).getId()> maxId){
+                maxId=residences.get(i).getId();
+            }
+        }
+        
+        return super.find(maxId);
+    }
+    
+    @GET
     @Path("city")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Residences> findbyCity(@QueryParam("city")String city) {
@@ -79,6 +96,17 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
         
         Query query = em.createNamedQuery("Residences.findByCity");
         query.setParameter("city", city);
+        return query.getResultList();
+    }
+    
+    @GET
+    @Path("hostId")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Residences> findByHostId(@QueryParam("hostId")Integer hostId) {
+        //http://192.168.1.6:8080/ecommerce_restful/webresources/residences/city?city="Athens"
+        
+        Query query = em.createNamedQuery("Residences.findByHostId");
+        query.setParameter("hostId", hostId);
         return query.getResultList();
     }
 

@@ -30,13 +30,9 @@ public class RestCallParameters {
     }
 
     String Url;
-    String RequestType; //GET or POST
+    String RequestType; //GET or POST or PUT or DELETE
     String ReturnType;  //JSON or Plain Text
     String parameters;
-
-    public String getParameters() {
-        return parameters;
-    }
 
     public String getCallResource() {
         return CallResource;

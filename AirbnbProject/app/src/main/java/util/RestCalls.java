@@ -22,14 +22,8 @@ public class RestCalls {
     public static int getUserId (String username){
         int userId;
         //get UserId based on username
-        String getUserIdurl = "http://192.168.1.6:8080/ecommerce_restful/webresources/users/username?username=" + username;
-
-        //create an object of type RestCallManager to get the result of the query
-        RestCallManager UsernameManager = new RestCallManager();
-        RestCallParameters usernameparameters = new RestCallParameters(getUserIdurl, "GET", "JSON", "");
-        UsernameManager.execute(usernameparameters);
-
-        ArrayList<JSONObject> jsonArrayUsers = UsernameManager.getSingleJSONArray();
+        String getUserIdurl = RestPaths.getUserByUsername(username);
+        ArrayList<JSONObject> jsonArrayUsers = callWebService(getUserIdurl, "GET", "JSON", "");
 
         JSONObject userRow = jsonArrayUsers.get(0);
         Users loggedinUser = Users.fromJSON(userRow);
@@ -39,13 +33,9 @@ public class RestCalls {
     }
     public static Set<String> getSearchedCities (int userId){
         //get all searched cities by user
-        String getSearchedCitiesUrl = "http://192.168.1.6:8080/ecommerce_restful/webresources/searches/city?userId=" + Integer.toString(userId);
+        String getSearchedCitiesUrl = RestPaths.getCitiesByUser(Integer.toString(userId));
 
-        RestCallManager searchedCitiesManager = new RestCallManager();
-        RestCallParameters searchedCitiesParameters = new RestCallParameters(getSearchedCitiesUrl, "GET", "JSON", "");
-        searchedCitiesManager.execute(searchedCitiesParameters);
-
-        ArrayList<JSONObject> jsonArraySearchedCities = searchedCitiesManager.getSingleJSONArray();
+        ArrayList<JSONObject> jsonArraySearchedCities = callWebService(getSearchedCitiesUrl, "GET", "JSON", "");
 
         //keep city info where user has made reservations. Info from searches table
         Set<String> relevantCity = new HashSet<>();
@@ -59,13 +49,9 @@ public class RestCalls {
     public static ArrayList<Reviews> getReviews(){
         ArrayList<Reviews> reviews = new ArrayList<>();
         // specify call url, parameters and create call manager object
-        String findPopularResidencesUrl = "http://192.168.1.6:8080/ecommerce_restful/webresources/reviews";
-        RestCallManager getPopularResidencesManager = new RestCallManager();
-        RestCallParameters getResidencesParameters = new RestCallParameters(findPopularResidencesUrl, "GET", "JSON", "");
-        // set the call to be executed
-        getPopularResidencesManager.execute(getResidencesParameters);
+        String findPopularResidencesUrl = RestPaths.AllReviews;
         // get call results
-        ArrayList<JSONObject> jsonArrayPopularResidences = getPopularResidencesManager.getSingleJSONArray();
+        ArrayList<JSONObject> jsonArrayPopularResidences = callWebService(findPopularResidencesUrl, "GET", "JSON", "");
 
         for (int i=0;i<jsonArrayPopularResidences.size();i++) {
             reviews.add(Reviews.fromJSON(jsonArrayPopularResidences.get(i)));
@@ -74,11 +60,8 @@ public class RestCalls {
     }
     public static ArrayList<Residences> getResidenceByCity(String city){
         ArrayList<Residences> reviewedResidences = new ArrayList<>();
-        String getCityResidences = "http://192.168.1.6:8080/ecommerce_restful/webresources/residences/city?city=" + city;
-        RestCallManager residenceManager = new RestCallManager();
-        RestCallParameters residenceParameters = new RestCallParameters(getCityResidences, "GET", "JSON", "");
-        residenceManager.execute(residenceParameters);
-        ArrayList<JSONObject> jsonArrayResidences = residenceManager.getSingleJSONArray();
+        String getCityResidences = RestPaths.getResidenceByCity(city);
+        ArrayList<JSONObject> jsonArrayResidences = callWebService(getCityResidences, "GET", "JSON", "");
 
         for (int i=0;i<jsonArrayResidences.size();i++) {
             JSONObject residenceObject = jsonArrayResidences.get(i);
@@ -89,11 +72,9 @@ public class RestCalls {
     }
     public static ArrayList<Rooms>getRoomsByResidenceId(int residenceId){
         ArrayList<Rooms> roomsByResidence = new ArrayList<>();
-        String roomsByResidenceURL = "http://192.168.1.6:8080/ecommerce_restful/webresources/rooms/residenceId?residenceId="+ Integer.toString(residenceId);
-        RestCallManager roomsManager = new RestCallManager();
-        RestCallParameters roomsParameters = new RestCallParameters(roomsByResidenceURL, "GET", "JSON", "");
-        roomsManager.execute(roomsParameters);
-        ArrayList<JSONObject> jsonArrayRooms = roomsManager.getSingleJSONArray();
+        String roomsByResidenceURL = RestPaths.getRoomsByResidence(Integer.toString(residenceId));
+
+        ArrayList<JSONObject> jsonArrayRooms = callWebService(roomsByResidenceURL, "GET", "JSON", "");
 
         for (int i=0;i<jsonArrayRooms.size();i++){
             JSONObject roomObject = jsonArrayRooms.get(i);
@@ -104,11 +85,9 @@ public class RestCalls {
     }
     public static ArrayList<Reviews>getReviewsByResidenceId(int residenceId){
         ArrayList<Reviews>reviewsByResidenceId = new ArrayList<>();
-        String reviewsByResidenceURL = "http://192.168.1.6:8080/ecommerce_restful/webresources/reviews/residence?residenceId="+ Integer.toString(residenceId);
-        RestCallManager reviewsManager = new RestCallManager();
-        RestCallParameters reviewsParameters = new RestCallParameters(reviewsByResidenceURL, "GET", "JSON", "");
-        reviewsManager.execute(reviewsParameters);
-        ArrayList<JSONObject> jsonArrayReviews = reviewsManager.getSingleJSONArray();
+        String reviewsByResidenceURL = RestPaths.getReviewsByResidence(Integer.toString(residenceId));
+
+        ArrayList<JSONObject> jsonArrayReviews = callWebService(reviewsByResidenceURL, "GET", "JSON", "");
         for (int i=0;i<jsonArrayReviews.size();i++){
             JSONObject reviewObject = jsonArrayReviews.get(i);
             Reviews review = Reviews.fromJSON(reviewObject);
@@ -124,5 +103,65 @@ public class RestCalls {
 
         return photoManager.getSingleBitmap();
 
+    }
+    public static Users getUser (String username){
+        Users user = new Users();
+        String findUserUrl = RestPaths.getUserByUsername(username);
+
+        ArrayList<JSONObject>jsonArrayUser = callWebService(findUserUrl, "GET", "JSON", "");
+        for(int i=0;i<jsonArrayUser.size();i++){
+            user = Users.fromJSON(jsonArrayUser.get(i));
+        }
+        return user;
+    }
+    public static ArrayList<Residences> getResidencesbyHostId (int hostId){
+        ArrayList<Residences> storedResidences = new ArrayList<>();
+        String residencesByHostURL = RestPaths.getResidencesByHostId(Integer.toString(hostId));
+
+        ArrayList<JSONObject> jsonArrayResidences = callWebService(residencesByHostURL, "GET", "JSON", "");
+        for (int i=0;i<jsonArrayResidences.size();i++) {
+            JSONObject residenceObject = jsonArrayResidences.get(i);
+            Residences residence = Residences.fromJSON(residenceObject);
+            storedResidences.add(residence);
+        }
+        return storedResidences;
+    }
+    public static int getMaxResidenceId(int hostId){
+        int maxId;
+
+        String residenceURL = RestPaths.getMaxIdResidence(hostId);
+        ArrayList<JSONObject> jsonResidence = callWebService(residenceURL, "GET", "JSON", "");
+        JSONObject recentRes = jsonResidence.get(0);
+        Residences recentResidence = Residences.fromJSON(recentRes);
+        maxId = recentResidence.getId();
+        return maxId;
+    }
+    public static Residences getResidenceById (int residenceId)
+    {
+        String residenceByIdURL = RestPaths.getResidencesById(residenceId);
+        ArrayList<JSONObject> jsonResidence = callWebService(residenceByIdURL, "GET", "JSON", "");
+        JSONObject uploadedres = jsonResidence.get(0);
+        Residences uploadedResidence = Residences.fromJSON(uploadedres);
+        return uploadedResidence;
+    }
+    public static ArrayList<Residences> getAllResidences(){
+        ArrayList<Residences> allStoredResidences = new ArrayList<>();
+        String residencesURL = RestPaths.AllResidences;
+        ArrayList<JSONObject> jsonResidence = callWebService(residencesURL, "GET", "JSON", "");
+        for(int i=0; i<jsonResidence.size();i++){
+            JSONObject residenceObject = jsonResidence.get(i);
+            Residences residence = Residences.fromJSON(residenceObject);
+            allStoredResidences.add(residence);
+        }
+        return allStoredResidences;
+    }
+
+
+    /** create an object of type RestCallManager to get the result of the query **/
+    public static ArrayList<JSONObject> callWebService(String url, String type, String returnType, String params) {
+        RestCallManager dataManager = new RestCallManager();
+        RestCallParameters dataParams = new RestCallParameters(url, type, returnType, params);
+        dataManager.execute(dataParams);
+        return dataManager.getSingleJSONArray();
     }
 }

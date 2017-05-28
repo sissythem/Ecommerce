@@ -10,6 +10,8 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 
+import util.Utils;
+
 
 public class Reviews implements Serializable {
 
@@ -87,12 +89,17 @@ public class Reviews implements Serializable {
         Reviews r = new Reviews();
         try {
             r.id = (Integer) obj.get("id");
-            r.comment = (String) obj.get("comment");
-            r.rating = (double) obj.get("rating");
+            r.comment="";
+            if(Utils.isFieldOK(obj, "comment"))
+                r.comment = (String) obj.get("comment");
+            r.rating=0.0;
+            if(Utils.isFieldOK(obj, "rating"))
+                r.rating = (double) obj.get("rating");
 
             JSONObject residenceObject = (JSONObject)obj.get("residenceId");
             Residences ratedResidence = Residences.fromJSON(residenceObject);
             r.residenceId = ratedResidence;
+
             JSONObject userobject = (JSONObject)obj.get("hostId");
             Users hostUser = Users.fromJSON(userobject);
             r.hostId = hostUser;

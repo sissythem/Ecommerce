@@ -9,6 +9,8 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 
+import util.Utils;
+
 public class Searches implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -52,7 +54,9 @@ public class Searches implements Serializable {
 
         try {
             s.id = (Integer) obj.get("id");
-            s.city = (String) obj.get("city");
+            s.city = "";
+            if(Utils.isFieldOK(obj, "city"))
+                s.city = (String) obj.get("city");
             JSONObject userobject = (JSONObject)obj.get("userId");
             Users user = Users.fromJSON(userobject);
             s.userId = user;

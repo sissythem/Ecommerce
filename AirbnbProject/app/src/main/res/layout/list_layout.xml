@@ -8,9 +8,7 @@
         android:id="@+id/representativePhoto"
         android:layout_width="100dp"
         android:layout_height="120dp"
-        android:layout_weight="0.60"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="5dp" />
+        android:layout_weight="0.60" />
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -19,13 +17,11 @@
             android:id="@+id/city"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
             android:textSize = "20sp"/>
         <TextView
             android:id="@+id/price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
             android:textSize = "20sp"/>
         <RatingBar
             android:layout_width="wrap_content"
