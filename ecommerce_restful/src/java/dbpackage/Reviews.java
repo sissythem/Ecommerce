@@ -43,22 +43,21 @@ public class Reviews implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
-    
+    @Basic(optional = false)
+    @NotNull
     @Size(min = 1, max = 255)
     @Column(name = "comment")
     private String comment;
-    
+    @Basic(optional = false)
+    @NotNull
     @Column(name = "rating")
     private double rating;
-    
     @JoinColumn(name = "residence_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Residences residenceId;
-    
     @JoinColumn(name = "host_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Users hostId;
-    
     @JoinColumn(name = "tenant_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Users tenantId;

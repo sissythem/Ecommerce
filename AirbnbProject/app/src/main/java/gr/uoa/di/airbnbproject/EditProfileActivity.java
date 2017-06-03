@@ -259,6 +259,7 @@ public class EditProfileActivity extends AppCompatActivity {
                 profileintent.putExtras(buser);
                 try {
                     startActivity(profileintent);
+                    finish();
                 } catch (Exception ex) {
                     System.out.println(ex.getMessage());
                     ex.printStackTrace();

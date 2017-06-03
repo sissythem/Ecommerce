@@ -262,10 +262,14 @@
                 android:textSize="20sp" />
 
             <CalendarView
-                android:id="@+id/calendar1stMonth"
+                android:id="@+id/calendar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvAvailabilityTitle" />
+                android:layout_below="@+id/tvAvailabilityTitle"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
 
 
             <TextView
@@ -274,7 +278,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_below="@+id/calendar1stMonth"
+                android:layout_below="@+id/calendar"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
                 android:text="Guest requirements"

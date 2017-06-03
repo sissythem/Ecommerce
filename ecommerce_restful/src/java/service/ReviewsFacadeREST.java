@@ -1,4 +1,4 @@
-/*
+/* 
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -56,7 +56,17 @@ public class ReviewsFacadeREST extends AbstractFacade<Reviews> {
     public void remove(@PathParam("id") Integer id) {
         super.remove(super.find(id));
     }
-
+    
+    @DELETE
+    @Path("delete")
+    public void removeByResidence(@QueryParam("residenceId")Integer residenceId){
+        List<Reviews> reviews = findbyResidence(residenceId);
+        for(int i=0;i<reviews.size();i++){
+            super.remove(super.find(reviews.get(i).getId()));
+        }
+        
+    }
+    
     @GET
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})

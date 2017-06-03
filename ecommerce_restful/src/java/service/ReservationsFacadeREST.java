@@ -56,6 +56,26 @@ public class ReservationsFacadeREST extends AbstractFacade<Reservations> {
     public void remove(@PathParam("id") Integer id) {
         super.remove(super.find(id));
     }
+    
+    @DELETE
+    @Path("delete")
+    public void removeByResidence(@QueryParam("residenceId")Integer residenceId){
+        List<Reservations> reservations = findbyResidenceId(residenceId);
+        for(int i=0;i<reservations.size();i++){
+            super.remove(super.find(reservations.get(i).getId()));
+        }
+    }
+    
+    @GET
+    @Path("residence")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Reservations> findbyResidenceId(@QueryParam("residenceId")Integer residenceId) {
+        //http://192.168.2.2:8080/ecommerce/webresources/users/username?username=sissy
+        
+        Query query = em.createNamedQuery("Reservations.findByResidenceId");
+        query.setParameter("residenceId", residenceId);
+        return query.getResultList();
+    }
 
     @GET
     @Path("{id}")
@@ -70,7 +90,7 @@ public class ReservationsFacadeREST extends AbstractFacade<Reservations> {
     public List<Reservations> findAll() {
         return super.findAll();
     }
-    
+
     @GET
     @Path("tenant")
     @Produces(MediaType.APPLICATION_JSON)
@@ -81,7 +101,7 @@ public class ReservationsFacadeREST extends AbstractFacade<Reservations> {
         query.setParameter("tenantId", tenantId);
         return query.getResultList();
     }
-
+    
     @GET
     @Path("{from}/{to}")
     @Produces({MediaType.APPLICATION_JSON})

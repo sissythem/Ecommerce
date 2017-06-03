@@ -37,7 +37,6 @@ import java.util.Set;
 
 import fromRESTful.Residences;
 import fromRESTful.Reviews;
-import fromRESTful.Rooms;
 import util.CustomListAdapter;
 import util.RestCalls;
 
@@ -60,7 +59,8 @@ public class HomeActivity extends AppCompatActivity
     CustomListAdapter adapter;
     int[]residenceId;
 
-    EditText field_city, field_guests, startDate, endDate;
+    EditText field_city, field_guests;
+    TextView startDate, endDate;
     Button btnStartDatePicker, btnEndDatePicker, field_search;
     private int mStartYear, mStartMonth, mStartDay, mEndYear, mEndMonth, mEndDay;
 
@@ -69,6 +69,8 @@ public class HomeActivity extends AppCompatActivity
     SharedPreferences sharedPrefs;
     SharedPreferences.Editor editor;
     private boolean isUserLoggedIn;
+
+    String date_start, date_end;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -320,6 +322,7 @@ public class HomeActivity extends AppCompatActivity
                 perms.put(Manifest.permission.ACCESS_NETWORK_STATE, PackageManager.PERMISSION_GRANTED);
                 perms.put(Manifest.permission.READ_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
                 perms.put(Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.ACCESS_FINE_LOCATION, PackageManager.PERMISSION_GRANTED);
 
                 // Fill with results
                 for (int i = 0; i < permissions.length; i++)
@@ -328,7 +331,8 @@ public class HomeActivity extends AppCompatActivity
                 if (perms.get(Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED
                         && perms.get(Manifest.permission.ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED
                         && perms.get(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-                        && perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+                        && perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                        && perms.get(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
 
                 {
                     // All Permissions Granted
@@ -351,7 +355,6 @@ public class HomeActivity extends AppCompatActivity
 
         int userId = RestCalls.getUserId(username);
         Set<String> relevantCity = RestCalls.getSearchedCities(userId);
-        ArrayList<Rooms> roomsByResidence;
         ArrayList<Reviews> reviewsByResidence;
         int residenceId;
         //if user has not searched anything yet, most popular residences will appear
@@ -379,9 +382,7 @@ public class HomeActivity extends AppCompatActivity
         //get all relevant rooms and reviews
         for(int i=0; i<reviewedResidences.size();i++){
             residenceId = reviewedResidences.get(i).getId();
-            roomsByResidence = RestCalls.getRoomsByResidenceId(residenceId);
             reviewsByResidence = RestCalls.getReviewsByResidenceId(residenceId);
-            reviewedResidences.get(i).setRoomsCollection(roomsByResidence);
             reviewedResidences.get(i).setReviewsCollection(reviewsByResidence);
         }
         //sort the results
@@ -416,33 +417,14 @@ public class HomeActivity extends AppCompatActivity
         });
 
         field_city = (EditText) findViewById(R.id.field_city);
-        field_city.setText(field_city.getText().toString());
-        //field_city.addTextChangedListener(new GenericTextWatcher(field_city));
-
         field_guests = (EditText) findViewById(R.id.field_guests);
-        field_guests.setText(field_guests.getText().toString());
-        //field_guests.addTextChangedListener(new GenericTextWatcher(field_guests));
-
-        field_search = (Button) findViewById(R.id.field_search);
-
-        field_search.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent searchintent = new Intent(HomeActivity.this, SearchResultsActivity.class);
-                HomeActivity.this.startActivity(searchintent);
-
-                /** Vasso's version **/
-//                reviewedResidences = RestCalls.getRecommendations(userID, field_city.toString(), startDate.toString(), endDate.toString(), Integer.parseInt(field_guests.toString()));
-//                System.out.println(reviewedResidences);
-            }
-        });
 
         /**** Dates Selector ****/
         btnStartDatePicker = (Button)findViewById(R.id.btn_start_date);
-        startDate = (EditText)findViewById(R.id.start_date);
+        startDate = (TextView)findViewById(R.id.start_date);
 
         btnEndDatePicker = (Button)findViewById(R.id.btn_end_date);
-        endDate = (EditText)findViewById(R.id.end_date);
+        endDate = (TextView)findViewById(R.id.end_date);
 
         btnStartDatePicker.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -454,10 +436,12 @@ public class HomeActivity extends AppCompatActivity
                     mStartMonth = c.get(Calendar.MONTH);
                     mStartDay = c.get(Calendar.DAY_OF_MONTH);
 
+                    date_start = "";
                     DatePickerDialog datePickerDialog = new DatePickerDialog(HomeActivity.this, new DatePickerDialog.OnDateSetListener() {
                         @Override
                         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                             startDate.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+                            date_start = year + "-" + dayOfMonth + "-" + (monthOfYear + 1);
                         }
                     }, mStartYear, mStartMonth, mStartDay);
                     datePickerDialog.show();
@@ -475,10 +459,12 @@ public class HomeActivity extends AppCompatActivity
                     mEndMonth = c.get(Calendar.MONTH);
                     mEndDay = c.get(Calendar.DAY_OF_MONTH);
 
+                    date_end = "";
                     DatePickerDialog datePickerDialog = new DatePickerDialog(HomeActivity.this, new DatePickerDialog.OnDateSetListener() {
                         @Override
                         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                             endDate.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+                            date_end = year + "-" + dayOfMonth + "-" + (monthOfYear + 1);
                         }
                     }, mEndYear, mEndMonth, mEndDay);
                     datePickerDialog.show();
@@ -486,15 +472,24 @@ public class HomeActivity extends AppCompatActivity
             }
         });
 
+
+        field_search = (Button) findViewById(R.id.field_search);
         field_search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent searchintent = new Intent(HomeActivity.this, SearchResultsActivity.class);
-                HomeActivity.this.startActivity(searchintent);
+                Bundle bsearch = new Bundle();
+//            Integer userID = RestCalls.getUserId(username);
 
-                /** Vasso's version **/
-//                reviewedResidences = RestCalls.getRecommendations(userID, field_city.toString(), startDate.toString(), endDate.toString(), Integer.parseInt(field_guests.toString()));
-//                System.out.println(reviewedResidences);
+                bsearch.putString("username", username);
+                bsearch.putString("city", field_city.getText().toString());
+                bsearch.putString("guests", field_guests.getText().toString());
+                bsearch.putString("startDate", date_start);
+                bsearch.putString("endDate", date_end);
+                bsearch.putBoolean("type", user);
+                searchintent.putExtras(bsearch);
+
+                startActivity(searchintent);
             }
         });
     }
@@ -515,6 +510,8 @@ public class HomeActivity extends AppCompatActivity
                 permissionsNeeded.add("Access External Storage");
             if (!addPermission(permissionsList, Manifest.permission.WRITE_EXTERNAL_STORAGE))
                 permissionsNeeded.add("Write to External Storage");
+            if(!addPermission(permissionsList, Manifest.permission.ACCESS_FINE_LOCATION))
+                permissionsNeeded.add("Access Fine Location");
 
             if (permissionsList.size() > 0) {
                 if (permissionsNeeded.size() > 0) {

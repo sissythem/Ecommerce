@@ -17,6 +17,10 @@ public class Utils {
     public static final String APP_DATE_FORMAT = "dd-MM-yyyy";
     public static final String DATABASE_DATE_FORMAT = "yyyy-MM-dd'T'hh:mm:ss";
     public static final String DATABASE_DATETIME = "yyyy-MM-dd'T'hh:mm:ssz";
+
+    public static final String DATE_YEAR_FIRST = "yyyy-MM-dd";
+    public static final String DATE_TEXT_MONTH = "dd MMMM";
+
     public static Date ConvertStringToDate (String date, String format){
         Date convertedDate= Calendar.getInstance().getTime();
         try {
@@ -50,5 +54,43 @@ public class Utils {
             return false;
         }
         return true;
+    }
+
+    public static boolean isThisDateValid(String dateToValidate, String dateFormat){
+        if(dateToValidate == null){
+            return false;
+        }
+
+        SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
+        sdf.setLenient(false);
+
+        try {
+            //if not valid, it will throw ParseException
+            Date date = sdf.parse(dateToValidate);
+            System.out.println(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public static String getCurrentDate(String format) {
+        String currentdate = new SimpleDateFormat(format).format(new Date());
+        return currentdate;
+    }
+
+    public static String getDefaultEndDate(String format) {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, +7);
+        Date defaultenddate = cal.getTime();
+
+        return ConvertDateToString(defaultenddate, format);
+    }
+
+    public static String formatDate(String strdate, String format) {
+        Date date = ConvertStringToDate(strdate, format);
+        String formatteddate = new SimpleDateFormat(format).format(date);
+        return formatteddate;
     }
 }

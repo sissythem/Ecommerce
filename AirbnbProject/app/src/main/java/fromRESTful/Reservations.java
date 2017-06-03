@@ -26,7 +26,7 @@ public class Reservations implements Serializable {
     private Date startDate;
     private Date endDate;
     private int guests;
-    private Rooms roomId;
+    private Residences residenceId;
     private Users tenantId;
 
     public Reservations() {
@@ -75,12 +75,12 @@ public class Reservations implements Serializable {
         this.guests = guests;
     }
 
-    public Rooms getRoomId() {
-        return roomId;
+    public Residences getResidenceId() {
+        return residenceId;
     }
 
-    public void setRoomId(Rooms roomId) {
-        this.roomId = roomId;
+    public void setResidenceId(Residences residenceId) {
+        this.residenceId= residenceId;
     }
 
     public Users getTenantId() {
@@ -115,9 +115,9 @@ public class Reservations implements Serializable {
             if(Utils.isFieldOK(obj, "guests"))
                 r.guests = (int) obj.get("guests");
 
-            JSONObject roomObject = (JSONObject)obj.get("roomId");
-            Rooms room = Rooms.fromJSON(roomObject);
-            r.roomId = room;
+            JSONObject roomObject = (JSONObject)obj.get("residenceId");
+            Residences residence = Residences.fromJSON(roomObject);
+            r.residenceId = residence;
 
             JSONObject tenantObject = (JSONObject)obj.get("tenantId");
             Users tenantUser = Users.fromJSON(tenantObject);

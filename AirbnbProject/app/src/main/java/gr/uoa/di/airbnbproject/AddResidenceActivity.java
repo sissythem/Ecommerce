@@ -251,16 +251,13 @@ public class AddResidenceActivity extends AppCompatActivity {
 
                     if (success)
                     {
-                        int hostId = RestCalls.getUserId(username);
-                        int residenceId = RestCalls.getMaxResidenceId(hostId);
-                        Intent roomIntent = new Intent(AddResidenceActivity.this, AddRoomsActivity.class);
+                        Intent hostIntent = new Intent(AddResidenceActivity.this, HostActivity.class);
                         Bundle bhost = new Bundle();
-                        int numberOfRooms = Integer.parseInt(rooms);
-                        bhost.putInt("numberOfRooms", numberOfRooms);
-                        bhost.putInt("residenceId", residenceId);
-                        roomIntent.putExtras(bhost);
+                        user=false;
+                        bhost.putBoolean("type", user);
+                        hostIntent.putExtras(bhost);
                         try {
-                            startActivity(roomIntent);
+                            startActivity(hostIntent);
                             finish();
                         } catch (Exception e) {
                             Log.e("",e.getMessage());

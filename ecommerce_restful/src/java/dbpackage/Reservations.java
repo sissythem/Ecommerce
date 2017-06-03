@@ -17,6 +17,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -33,11 +34,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "Reservations.findAll", query = "SELECT r FROM Reservations r"),
     @NamedQuery(name = "Reservations.findById", query = "SELECT r FROM Reservations r WHERE r.id = :id"),
+    @NamedQuery(name = "Reservations.findByResidenceId", query = "SELECT r FROM Reservations r WHERE r.residenceId = :residenceId"),
     @NamedQuery(name = "Reservations.findByStartDate", query = "SELECT r FROM Reservations r WHERE r.startDate = :startDate"),
     @NamedQuery(name = "Reservations.findByEndDate", query = "SELECT r FROM Reservations r WHERE r.endDate = :endDate"),
     @NamedQuery(name = "Reservations.findByGuests", query = "SELECT r FROM Reservations r WHERE r.guests = :guests"),
     @NamedQuery(name = "Reservations.findbyTenants", query = "SELECT r FROM Reservations r WHERE r.tenantId.id = :tenantId")
-    
 })
 public class Reservations implements Serializable {
 
@@ -47,22 +48,21 @@ public class Reservations implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
-    
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "residence_id")
+    private int residenceId;
     @Column(name = "start_date")
     @Temporal(TemporalType.DATE)
     private Date startDate;
-    
     @Column(name = "end_date")
     @Temporal(TemporalType.DATE)
     private Date endDate;
-    
     @Column(name = "guests")
-    private int guests;
-    
-    @JoinColumn(name = "room_id", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private Rooms roomId;
-    
+    private Integer guests;
+    @JoinColumn(name = "id", referencedColumnName = "id", insertable = false, updatable = false)
+    @OneToOne(optional = false)
+    private Residences residences;
     @JoinColumn(name = "tenant_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Users tenantId;
@@ -74,11 +74,9 @@ public class Reservations implements Serializable {
         this.id = id;
     }
 
-    public Reservations(Integer id, Date startDate, Date endDate, int guests) {
+    public Reservations(Integer id, int residenceId) {
         this.id = id;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.guests = guests;
+        this.residenceId = residenceId;
     }
 
     public Integer getId() {
@@ -87,6 +85,14 @@ public class Reservations implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public int getResidenceId() {
+        return residenceId;
+    }
+
+    public void setResidenceId(int residenceId) {
+        this.residenceId = residenceId;
     }
 
     public Date getStartDate() {
@@ -105,20 +111,20 @@ public class Reservations implements Serializable {
         this.endDate = endDate;
     }
 
-    public int getGuests() {
+    public Integer getGuests() {
         return guests;
     }
 
-    public void setGuests(int guests) {
+    public void setGuests(Integer guests) {
         this.guests = guests;
     }
 
-    public Rooms getRoomId() {
-        return roomId;
+    public Residences getResidences() {
+        return residences;
     }
 
-    public void setRoomId(Rooms roomId) {
-        this.roomId = roomId;
+    public void setResidences(Residences residences) {
+        this.residences = residences;
     }
 
     public Users getTenantId() {

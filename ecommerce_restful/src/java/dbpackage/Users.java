@@ -21,6 +21,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -49,12 +50,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Users.findByBirthDate", query = "SELECT u FROM Users u WHERE u.birthDate = :birthDate"),
     @NamedQuery(name = "Users.findByHost", query = "SELECT u FROM Users u WHERE u.host = :host"),
     @NamedQuery(name = "loginUser", query = "SELECT u FROM Users u WHERE u.username = :username AND u.password = :password")
-
 })
 public class Users implements Serializable {
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "hostId")
-    private Collection<Residences> residencesCollection;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -90,6 +87,8 @@ public class Users implements Serializable {
     @Size(max = 45)
     @Column(name = "photo")
     private String photo;
+    @Basic(optional = false)
+    @NotNull
     @Column(name = "registration_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date registrationDate;
@@ -102,12 +101,31 @@ public class Users implements Serializable {
     @Size(max = 45)
     @Column(name = "host")
     private String host;
+    @OneToMany(mappedBy = "userId")
+    private Collection<Searches> searchesCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tenantId")
+    private Collection<Reservations> reservationsCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "hostId")
+    private Collection<Reviews> reviewsCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tenantId")
+    private Collection<Reviews> reviewsCollection1;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "hostId")
+    private Collection<Residences> residencesCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "senderId")
+    private Collection<Conversations> conversationsCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "receiverId")
+    private Collection<Conversations> conversationsCollection1;
 
     public Users() {
     }
 
     public Users(Integer id) {
         this.id = id;
+    }
+
+    public Users(Integer id, Date registrationDate) {
+        this.id = id;
+        this.registrationDate = registrationDate;
     }
 
     public Integer getId() {
@@ -222,6 +240,69 @@ public class Users implements Serializable {
         this.host = host;
     }
 
+    @XmlTransient
+    public Collection<Searches> getSearchesCollection() {
+        return searchesCollection;
+    }
+
+    public void setSearchesCollection(Collection<Searches> searchesCollection) {
+        this.searchesCollection = searchesCollection;
+    }
+
+    @XmlTransient
+    public Collection<Reservations> getReservationsCollection() {
+        return reservationsCollection;
+    }
+
+    public void setReservationsCollection(Collection<Reservations> reservationsCollection) {
+        this.reservationsCollection = reservationsCollection;
+    }
+
+    @XmlTransient
+    public Collection<Reviews> getReviewsCollection() {
+        return reviewsCollection;
+    }
+
+    public void setReviewsCollection(Collection<Reviews> reviewsCollection) {
+        this.reviewsCollection = reviewsCollection;
+    }
+
+    @XmlTransient
+    public Collection<Reviews> getReviewsCollection1() {
+        return reviewsCollection1;
+    }
+
+    public void setReviewsCollection1(Collection<Reviews> reviewsCollection1) {
+        this.reviewsCollection1 = reviewsCollection1;
+    }
+
+    @XmlTransient
+    public Collection<Residences> getResidencesCollection() {
+        return residencesCollection;
+    }
+
+    public void setResidencesCollection(Collection<Residences> residencesCollection) {
+        this.residencesCollection = residencesCollection;
+    }
+
+    @XmlTransient
+    public Collection<Conversations> getConversationsCollection() {
+        return conversationsCollection;
+    }
+
+    public void setConversationsCollection(Collection<Conversations> conversationsCollection) {
+        this.conversationsCollection = conversationsCollection;
+    }
+
+    @XmlTransient
+    public Collection<Conversations> getConversationsCollection1() {
+        return conversationsCollection1;
+    }
+
+    public void setConversationsCollection1(Collection<Conversations> conversationsCollection1) {
+        this.conversationsCollection1 = conversationsCollection1;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -245,15 +326,6 @@ public class Users implements Serializable {
     @Override
     public String toString() {
         return "dbpackage.Users[ id=" + id + " ]";
-    }
-
-    @XmlTransient
-    public Collection<Residences> getResidencesCollection() {
-        return residencesCollection;
-    }
-
-    public void setResidencesCollection(Collection<Residences> residencesCollection) {
-        this.residencesCollection = residencesCollection;
     }
     
 }

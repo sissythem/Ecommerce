@@ -51,7 +51,6 @@ public class Residences implements Serializable, Comparable {
     private Date availableDateEnd;
     private double minPrice;
     private double additionalCostPerPerson;
-    private Collection<Rooms> roomsCollection;
     private Collection<Reviews> reviewsCollection;
 
     public Residences() {
@@ -271,14 +270,6 @@ public class Residences implements Serializable, Comparable {
         this.additionalCostPerPerson = additionalCostPerPerson;
     }
 
-    public Collection<Rooms> getRoomsCollection() {
-        return roomsCollection;
-    }
-
-    public void setRoomsCollection(Collection<Rooms> roomsCollection) {
-        this.roomsCollection = roomsCollection;
-    }
-
     public Collection<Reviews> getReviewsCollection() {
         return reviewsCollection;
     }
@@ -361,17 +352,7 @@ public class Residences implements Serializable, Comparable {
             r.additionalCostPerPerson=0.0;
             if(Utils.isFieldOK(obj, "additionalCostPerPerson"))
                 r.additionalCostPerPerson = (double) obj.get("additionalCostPerPerson");
-            if(Utils.isFieldOK(obj, "Rooms"))
-            {
-                ArrayList<Rooms> roomsList = new ArrayList<>();
-                JSONArray joRooms = (JSONArray) obj.get("Rooms");
-                for (int i = 0; i < joRooms.length(); i++) {
-                    JSONObject object = (JSONObject) joRooms.get(i);
-                    Rooms room = Rooms.fromJSON(object);
-                    roomsList.add(room);
-                }
-                r.roomsCollection = roomsList;
-            }
+
             if(Utils.isFieldOK(obj, "Reviews"))
             {
                 ArrayList<Reviews> reviewsList = new ArrayList<>();

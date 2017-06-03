@@ -6,7 +6,6 @@
 package service;
 
 import dbpackage.Residences;
-import dbpackage.Users;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -22,7 +21,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 /**
  *
@@ -45,7 +43,7 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
     public void create(Residences entity) {
         super.create(entity);
     }
-    
+
     @PUT
     @Path("{id}")
     @Consumes({MediaType.APPLICATION_JSON})
@@ -54,7 +52,7 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
     }
 
     @DELETE
-    @Path("{id}")
+    @Path("delete/{id}")
     public void remove(@PathParam("id") Integer id) {
         super.remove(super.find(id));
     }
@@ -71,21 +69,6 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
     @Produces({MediaType.APPLICATION_JSON})
     public List<Residences> findAll() {
         return super.findAll();
-    }
-    
-    @GET
-    @Path("maxId/{hostId}")
-    @Produces({MediaType.APPLICATION_JSON})
-    public Residences maxResidenceId(@PathParam("hostId") Integer hostId){
-        List<Residences> residences = findByHostId(hostId);
-        int maxId=0;
-        for(int i=0; i<residences.size();i++){
-            if(residences.get(i).getId()> maxId){
-                maxId=residences.get(i).getId();
-            }
-        }
-        
-        return super.find(maxId);
     }
     
     @GET

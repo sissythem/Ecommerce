@@ -79,7 +79,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentStart="true"
                 android:ems="10"
-                android:hint="Type"
+                android:hint="Type/Short Description"
                 android:inputType="textPersonName" />
 
             <EditText
@@ -356,6 +356,6 @@
         android:layout_marginRight="25dp"
         android:layout_marginTop="11dp"
         android:background="@color/colorPrimary"
-        app:srcCompat="@drawable/ic_continue" />
+        app:srcCompat="@drawable/ic_save" />
 </RelativeLayout>
 

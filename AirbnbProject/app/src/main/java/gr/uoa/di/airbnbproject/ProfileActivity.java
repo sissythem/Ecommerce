@@ -61,8 +61,6 @@ public class ProfileActivity extends AppCompatActivity {
         Toolbar backToolbar = (Toolbar) findViewById(R.id.backToolbar);
         setSupportActionBar(backToolbar);
         getSupportActionBar().setTitle(null);
-        Toolbar footerToolbar = (Toolbar) findViewById(R.id.footerToolbar);
-        setSupportActionBar(footerToolbar);
 
         Bundle buser = getIntent().getExtras();
         user = buser.getBoolean("type");

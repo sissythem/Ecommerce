@@ -16,13 +16,16 @@ public class RestPaths
     public static String CitiesByUser               =   restPath + "searches/city";
     public static String AllReviews                 =   restPath + "reviews";
     public static String ReviewsByResidence         =   restPath + "reviews/residence";
-    public static String RoomsByResidence           =   restPath + "rooms/residenceId";
     public static String EditUser                   =   restPath + "users/put";
     public static String DeleteUser                 =   restPath + "users/delete";
     public static String ResidencesByHostId         =   restPath + "residences/hostId";
     public static String AllResidences              =   restPath + "residences";
-    public static String MaxResidenceId             =   restPath + "residences/maxId";
-    public static String AllRooms                   =   restPath + "rooms";
+    public static String FrontResidences            =   restPath + "residences/front";
+    public static String getReservationsByTenant    =   restPath + "reservations/tenant";
+    public static String DeleteResidence            =   restPath + "residences/delete";
+    public static String AllReservations            =   restPath + "reservations";
+    public static String DeleteReviews              =   restPath + "reviews/delete";
+    public static String DeleteReservations         =   restPath + "reservations/delete";
 
     public RestPaths() {}
 
@@ -41,9 +44,6 @@ public class RestPaths
     public static String getReviewsByResidence(String residence_id) {
         return ReviewsByResidence + "?residenceId=" + residence_id;
     }
-    public static String getRoomsByResidence(String residence_id) {
-        return RoomsByResidence + "?residenceId=" + residence_id;
-    }
     public static String getCitiesByUser(String user_id) {
         return CitiesByUser + "?userId=" + user_id;
     }
@@ -52,7 +52,14 @@ public class RestPaths
     }
     public static String deleteUserById (String id){ return DeleteUser + "/" +id;}
     public static String getResidencesByHostId (String id) { return ResidencesByHostId + "?hostId=" + id;}
-    public static String getMaxIdResidence (int hostId) {return MaxResidenceId + "/" +hostId;}
     public static String getResidencesById (int residenceId){ return AllResidences + "/" +residenceId;}
+    public static String getFrontResidences(String user_id, String city, String start_date, String end_date, Integer guests) {
+        return FrontResidences + "?userId=" + user_id + "&city=" + city + "&startDate=" + start_date + "&endDate=" + end_date + "&guests=" + guests;
+    }
+    public static String getUserById (int userId){ return  AllUsers +"/" + userId;}
+    public static String getReservationsByTenantId (int tenantId){ return  getReservationsByTenant + "?tenantId=" + tenantId;}
+    public static String deleteResidenceById (String id) { return DeleteResidence +"/" + id;}
+    public static String deleteReviewsByResidence (String residenceId) { return DeleteReviews + "?residenceId=" + residenceId;}
+    public static String deleteReservationsByResidence(String residenceId){ return DeleteReservations + "?residenceId=" + residenceId; }
 }
 

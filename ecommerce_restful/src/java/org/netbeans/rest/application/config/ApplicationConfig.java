@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package service;
+package org.netbeans.rest.application.config;
 
 import java.util.Set;
 import javax.ws.rs.core.Application;
@@ -34,7 +34,6 @@ public class ApplicationConfig extends Application {
         resources.add(service.ReservationsFacadeREST.class);
         resources.add(service.ResidencesFacadeREST.class);
         resources.add(service.ReviewsFacadeREST.class);
-        resources.add(service.RoomsFacadeREST.class);
         resources.add(service.SearchesFacadeREST.class);
         resources.add(service.UsersFacadeREST.class);
     }
