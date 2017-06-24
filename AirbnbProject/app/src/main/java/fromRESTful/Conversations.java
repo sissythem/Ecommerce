@@ -1,9 +1,5 @@
 package fromRESTful;
 
-/**
- * Created by sissy on 8/5/2017.
- */
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,9 +18,11 @@ public class Conversations implements Serializable {
     private Collection<Messages> messagesCollection;
     private Users senderId;
     private Users receiverId;
+    private Residences residenceId;
+    private short readFromSender;
+    private short readFromReceiver;
 
-    public Conversations() {
-    }
+    public Conversations() {}
 
     public Conversations(Integer id) {
         this.id = id;
@@ -51,6 +49,7 @@ public class Conversations implements Serializable {
         this.subject = subject;
     }
 
+//    @XmlTransient
     public Collection<Messages> getMessagesCollection() {
         return messagesCollection;
     }
@@ -75,36 +74,28 @@ public class Conversations implements Serializable {
         this.receiverId = receiverId;
     }
 
-    public static Conversations fromJSON(JSONObject obj){
-        Conversations c = new Conversations();
-        try {
-            c.id = (Integer) obj.get("id");
-            c.subject="";
-            if(Utils.isFieldOK(obj, "subject"))
-                c.subject = (String) obj.get("subject");
+    public Residences getResidenceId() {
+        return residenceId;
+    }
 
-            JSONObject senderObj = (JSONObject)obj.get("senderId");
-            JSONObject receiverObj = (JSONObject)obj.get("receiverId") ;
-            Users sender = Users.fromJSON(senderObj);
-            Users receiver = Users.fromJSON(receiverObj);
+    public void setResidenceId(Residences residenceId) {
+        this.residenceId = residenceId;
+    }
 
-            c.senderId = sender;
-            c.receiverId = receiver;
+    public short getReadFromSender() {
+        return readFromSender;
+    }
 
-            ArrayList<Messages> messagesList = new ArrayList<>();
-            JSONArray jsonArrayMessages = (JSONArray)obj.get("Messages");
+    public void setReadFromSender(short readFromSender) {
+        this.readFromSender = readFromSender;
+    }
 
-            for(int i=0;i<jsonArrayMessages.length();i++){
-                JSONObject object = (JSONObject)jsonArrayMessages.get(i);
-                Messages message = Messages.fromJSON(object);
-                messagesList.add(message);
-            }
-            c.messagesCollection = messagesList;
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    public short getReadFromReceiver() {
+        return readFromReceiver;
+    }
 
-        return c;
+    public void setReadFromReceiver(short readFromReceiver) {
+        this.readFromReceiver = readFromReceiver;
     }
 
     @Override
@@ -132,5 +123,48 @@ public class Conversations implements Serializable {
         return "dbpackage.Conversations[ id=" + id + " ]";
     }
 
-}
+    public static Conversations fromJSON(JSONObject obj){
+        System.out.println(obj);
+        Conversations c = new Conversations();
+        System.out.println(c);
+        try {
+            c.id = (Integer) obj.get("id");
+            c.subject="";
+            if(Utils.isFieldOK(obj, "subject")) c.subject = (String) obj.get("subject");
 
+            c.senderId = Users.fromJSON((JSONObject)obj.get("senderId"));
+            c.receiverId = Users.fromJSON((JSONObject)obj.get("receiverId"));
+
+            if(Utils.isFieldOK(obj, "readFromSender")) c.readFromSender = Short.parseShort(obj.get("readFromSender").toString());
+            if(Utils.isFieldOK(obj, "readFromReceiver")) c.readFromReceiver = Short.parseShort(obj.get("readFromReceiver").toString());
+
+            if (Utils.isFieldOK(obj, "Messages")) {
+                ArrayList<Messages> messagesList = new ArrayList<>();
+                JSONArray jsonArrayMessages = (JSONArray)obj.get("Messages");
+
+                for(int i=0;i<jsonArrayMessages.length();i++){
+                    JSONObject object = (JSONObject)jsonArrayMessages.get(i);
+                    Messages message = Messages.fromJSON(object);
+                    messagesList.add(message);
+                }
+                c.messagesCollection = messagesList;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return c;
+    }
+
+    public JSONObject toJSON () {
+        JSONObject jsonConversation = new JSONObject();
+        try {
+            jsonConversation.put("id", id.toString());
+            jsonConversation.put("senderId", senderId.toJSON());
+            jsonConversation.put("receiverId", receiverId.toJSON());
+            jsonConversation.put("subject", subject);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonConversation;
+    }
+}

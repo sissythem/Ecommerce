@@ -9,11 +9,14 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,7 +31,7 @@ import util.RestCalls;
 import util.RestPaths;
 import util.Utils;
 
-public class AddResidenceActivity extends AppCompatActivity {
+public class AddResidenceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private static final int RESULT_LOAD_IMAGE =1;
 
@@ -40,23 +43,16 @@ public class AddResidenceActivity extends AppCompatActivity {
     SharedPreferences.Editor editor;
     private boolean isUserLoggedIn;
 
-    ImageButton bcontinue;
-    ImageButton btnStartDate;
-    ImageButton btnEndDate;
-    ImageButton bback;
-
+    ImageButton bcontinue, btnStartDate, btnEndDate;
     ImageView imageToUpload;
-    EditText etUpload, etType, etAbout, etAddress, etCity, etCountry, etAmenities, etFloor, etRooms, etBaths, etView;
-    EditText etSpaceArea, etGuests, etMinPrice, etAdditionalCost, etCancellationPolicy, etRules;
+    Spinner etType;
+    String resType;
+    EditText etUpload, etAbout, etAddress, etCity, etCountry, etAmenities, etFloor, etRooms, etBaths, etView, etTitle, etSpaceArea, etGuests, etMinPrice, etAdditionalCost, etCancellationPolicy, etRules;
     TextView tvStartDate, tvEndDate;
+    CheckBox cbKitchen, cbLivingRoom;
+    boolean bkitchen, blivingRoom;
 
     private int mStartYear, mStartMonth, mStartDay, mEndYear, mEndMonth, mEndDay;
-
-    CheckBox cbKitchen;
-    CheckBox cbLivingRoom;
-
-    boolean bkitchen;
-    boolean blivingRoom;
 
     Context c;
     Users host;
@@ -80,42 +76,28 @@ public class AddResidenceActivity extends AppCompatActivity {
             return;
         }
 
-        setContentView(R.layout.activity_add_residence);
+        setContentView(R.layout.layout_residence_editfields);
 
         Bundle buser = getIntent().getExtras();
         user = buser.getBoolean("type");
         user=false;
 
-        c=this;
-        bback = (ImageButton)findViewById(R.id.ibBack);
-
-        bback.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent hostIntent = new Intent(AddResidenceActivity.this, HostActivity.class);
-                Bundle buser = new Bundle();
-                buser.putBoolean("type",user);
-                hostIntent.putExtras(buser);
-                try {
-                    startActivity(hostIntent);
-                } catch (Exception ex) {
-                    System.out.println(ex.getMessage());
-                    ex.printStackTrace();
-                }
-            }
-        });
-
+        c = this;
         userInputLayout();
-
         host = RestCalls.getUser(username);
 
+        TextView residencetxt = (TextView) findViewById(R.id.residencetxt);
+        residencetxt.setText("Add New Residence");
+
         saveResidence();
+
+        /** BACK BUTTON **/
+        Utils.manageBackButton(this, HostActivity.class);
     }
 
-    public void userInputLayout ()
-    {
+    public void userInputLayout () {
         etUpload             = (EditText)findViewById(R.id.etUpload);
-        etType               = (EditText)findViewById(R.id.etType);
+        etTitle              = (EditText)findViewById(R.id.etTitle);
         etAbout              = (EditText)findViewById(R.id.etAbout);
         etAddress            = (EditText)findViewById(R.id.etAddress);
         etCity               = (EditText)findViewById(R.id.etCity);
@@ -146,9 +128,7 @@ public class AddResidenceActivity extends AppCompatActivity {
         bcontinue = (ImageButton)findViewById(R.id.ibContinue);
 
 //        imageToUpload = (ImageView)findViewById(R.id.imageToUpload);
-//
 //        imageToUpload.setOnClickListener(new View.OnClickListener(){
-//
 //            @Override
 //            public void onClick(View v) {
 //                Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -197,37 +177,51 @@ public class AddResidenceActivity extends AppCompatActivity {
                 }
             }
         });
+
+        etType = (Spinner) findViewById(R.id.etType);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> spinneradapter = ArrayAdapter.createFromResource(this, R.array.residence_types_array, android.R.layout.simple_spinner_item);
+
+        // Specify the layout to use when the list of choices appears
+        spinneradapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // Apply the adapter to the spinner
+        etType.setAdapter(spinneradapter);
+        etType.setOnItemSelectedListener(this);
     }
 
+    /**  An item was selected. You can retrieve the selected item using parent.getItemAtPosition(pos) **/
+    public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) { resType = parent.getItemAtPosition(pos).toString(); }
+    /** Another interface callback **/
+    public void onNothingSelected(AdapterView<?> parent) { resType = "Residence Title"; }
 
-    public void saveResidence ()
-    {
+    public void saveResidence () {
         bcontinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 //Log.w("","SETTING HARDCODED RESIDENCE VALUES FOR DEBUGGING!");
-                final String photo = etUpload.getText().toString();
-                final String type = etType.getText().toString();
-                final String about = etAbout.getText().toString();
-                final String address = etAddress.getText().toString();
-                final String city = etCity.getText().toString();
-                final String country = etCountry.getText().toString();
-                final String amenities = etAmenities.getText().toString();
-                final String floor = etFloor.getText().toString();
-                final String rooms = etRooms.getText().toString();
-                final String baths = etBaths.getText().toString();
-                final String view = etView.getText().toString();
-                final String spaceArea = etSpaceArea.getText().toString();
-                final String guests = etGuests.getText().toString();
-                final String minPrice = etMinPrice.getText().toString();
-                final String additionalCostPerPerson = etAdditionalCost.getText().toString();
-                final String availableStartDate = tvStartDate.getText().toString();
-                final String availableEndDate = tvEndDate.getText().toString();
-                final String cancellationPolicy = etCancellationPolicy.getText().toString();
-                final String rules = etRules.getText().toString();
-                final String kitchen = Boolean.toString(bkitchen);
-                final String livingRoom = Boolean.toString(blivingRoom);
+                final String photo                      = etUpload.getText().toString();
+                final String title                      = etTitle.getText().toString();
+                final String type                       = resType;
+                final String about                      = etAbout.getText().toString();
+                final String address                    = etAddress.getText().toString();
+                final String city                       = etCity.getText().toString();
+                final String country                    = etCountry.getText().toString();
+                final String amenities                  = etAmenities.getText().toString();
+                final String floor                      = etFloor.getText().toString();
+                final String rooms                      = etRooms.getText().toString();
+                final String baths                      = etBaths.getText().toString();
+                final String view                       = etView.getText().toString();
+                final String spaceArea                  = etSpaceArea.getText().toString();
+                final String guests                     = etGuests.getText().toString();
+                final String minPrice                   = etMinPrice.getText().toString();
+                final String additionalCostPerPerson    = etAdditionalCost.getText().toString();
+                final String availableStartDate         = tvStartDate.getText().toString();
+                final String availableEndDate           = tvEndDate.getText().toString();
+                final String cancellationPolicy         = etCancellationPolicy.getText().toString();
+                final String rules                      = etRules.getText().toString();
+                final String kitchen                    = Boolean.toString(bkitchen);
+                final String livingRoom                 = Boolean.toString(blivingRoom);
 
                 Date startDate = Utils.ConvertStringToDate(availableStartDate, Utils.APP_DATE_FORMAT);
                 String convertedStartDate = Utils.ConvertDateToString(startDate, Utils.DATABASE_DATE_FORMAT);
@@ -235,22 +229,18 @@ public class AddResidenceActivity extends AppCompatActivity {
                 Date endDate = Utils.ConvertStringToDate(availableEndDate, Utils.APP_DATE_FORMAT);
                 String convertedEndDate = Utils.ConvertDateToString(endDate, Utils.DATABASE_DATE_FORMAT);
 
-                if (type.length() == 0 || about.length() == 0 || address.length() == 0 || city.length() == 0 || country.length() == 0 || amenities.length() == 0 || floor.length() == 0
+                if (title.length() == 0 || type.length() == 0 || about.length() == 0 || address.length() == 0 || city.length() == 0 || country.length() == 0 || amenities.length() == 0 || floor.length() == 0
                         || rooms.length() == 0 || baths.length() == 0 || view.length() == 0 || spaceArea.length() == 0 || guests.length() == 0 || minPrice.length() == 0
                         || additionalCostPerPerson.length() == 0 || cancellationPolicy.length() == 0 || rules.length() == 0 || kitchen.length() == 0 || livingRoom.length() == 0
                         || convertedStartDate.length() == 0 || convertedEndDate.length() == 0 || photo.length() == 0)
                 {
                     Toast.makeText(c, "Please fill in all fields!", Toast.LENGTH_SHORT).show();
                     return;
-                }
-                else
-                    {
-
-                    boolean success = PostResult(host, type, about, address, city, country, amenities, floor, rooms, baths, view, spaceArea, guests, minPrice, additionalCostPerPerson,
+                } else {
+                    boolean success = PostResult(host, title, type, about, address, city, country, amenities, floor, rooms, baths, view, spaceArea, guests, minPrice, additionalCostPerPerson,
                             cancellationPolicy, rules, kitchen, livingRoom, convertedStartDate, convertedEndDate, photo);
 
-                    if (success)
-                    {
+                    if (success) {
                         Intent hostIntent = new Intent(AddResidenceActivity.this, HostActivity.class);
                         Bundle bhost = new Bundle();
                         user=false;
@@ -269,21 +259,19 @@ public class AddResidenceActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 
-    public boolean PostResult(Users host, String type, String about, String address, String city, String country, String amenities, String floor, String rooms, String baths, String view,
-                              String spaceArea, String guests, String minPrice, String additionalCostPerPerson, String cancellationPolicy, String rules,
-                              String kitchen, String livingRoom, String startDate, String endDate, String photo)
+    public boolean PostResult(Users host, String title, String type, String about, String address, String city, String country, String amenities, String floor, String rooms, String baths, String view,
+            String spaceArea, String guests, String minPrice, String additionalCostPerPerson, String cancellationPolicy, String rules,
+            String kitchen, String livingRoom, String startDate, String endDate, String photo)
     {
         boolean success = true;
 
-        String residencePostURL = RestPaths.AllResidences;
-        AddResidenceParameters ResidenceParameters = new AddResidenceParameters(host, type, about, address, city, country, amenities, floor, rooms, baths,
+        AddResidenceParameters ResidenceParameters = new AddResidenceParameters(host, title, type, about, address, city, country, amenities, floor, rooms, baths,
                 view, spaceArea, guests, minPrice, additionalCostPerPerson, startDate, endDate, cancellationPolicy, rules, photo, kitchen, livingRoom);
 
         RestCallManager residencePostManager = new RestCallManager();
-        RestCallParameters residencePostParameters = new RestCallParameters(residencePostURL, "POST", "", ResidenceParameters.getAddResidenceParameters());
+        RestCallParameters residencePostParameters = new RestCallParameters(RestPaths.AllResidences, "POST", "", ResidenceParameters.getAddResidenceParameters());
 
 //        ArrayList<String> PostResponse ;
         String response;
@@ -299,11 +287,9 @@ public class AddResidenceActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == RESULT_LOAD_IMAGE && requestCode == RESULT_OK && data != null)
-        {
+        if(requestCode == RESULT_LOAD_IMAGE && requestCode == RESULT_OK && data != null) {
             Uri selectedImage = data.getData();
             imageToUpload.setImageURI(selectedImage);
         }

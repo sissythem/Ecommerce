@@ -1,15 +1,5 @@
 package fromRESTful;
 
-/**
- * Created by sissy on 8/5/2017.
- */
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -17,7 +7,6 @@ import java.io.Serializable;
 import java.util.Date;
 
 import util.Utils;
-
 
 public class Reservations implements Serializable {
 
@@ -29,8 +18,7 @@ public class Reservations implements Serializable {
     private Residences residenceId;
     private Users tenantId;
 
-    public Reservations() {
-    }
+    public Reservations() {}
 
     public Reservations(Integer id) {
         this.id = id;

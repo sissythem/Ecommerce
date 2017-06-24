@@ -2,8 +2,9 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical"
     android:layout_gravity="fill_horizontal"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <android.support.v7.widget.Toolbar
@@ -17,26 +18,26 @@
         android:weightSum="1"
         app:titleTextColor="@android:color/white">
 
-            <ImageButton
-                android:id="@+id/ibBack"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@color/colorPrimary"
-                app:srcCompat="@drawable/ic_back" />
+        <ImageButton
+            android:id="@+id/ibBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            app:srcCompat="@drawable/ic_back" />
 
-            <TextView
-                android:id="@+id/profiletxt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Edit Profile"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:textSize="18sp" />
+        <TextView
+            android:id="@+id/profiletxt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Edit Profile"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textSize="18sp" />
 
     </android.support.v7.widget.Toolbar>
 
     <ImageView
         android:id="@+id/profilepic"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
@@ -45,20 +46,21 @@
         android:layout_marginTop="60dp"
         app:srcCompat="@drawable/ic_profile" />
 
-    <Button
-        android:id="@+id/post"
-        android:layout_width="wrap_content"
+    <TextView
+        android:id="@+id/etUsername"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="SAVE"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="54dp"
-        android:layout_above="@+id/etName" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/profilepic"
+        android:textAlignment="center"
+        android:text="Username" />
 
     <EditText
         android:id="@+id/etName"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
@@ -67,11 +69,11 @@
         android:layout_below="@+id/profilepic"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="Name" />
+        android:hint="First Name" />
 
     <EditText
         android:id="@+id/etLastName"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
@@ -80,11 +82,11 @@
         android:layout_below="@+id/etName"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="Last Name" />
+        android:hint="Last Name" />
 
     <EditText
-        android:id="@+id/etUsername"
-        android:layout_width="wrap_content"
+        android:id="@+id/etPassword"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
@@ -92,25 +94,12 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/etLastName"
         android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Username" />
-
-    <EditText
-        android:id="@+id/etPassword"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/etUsername"
-        android:ems="10"
         android:inputType="textPassword"
-        android:text="Password" />
+        android:hint="Password" />
 
     <EditText
         android:id="@+id/etEmail"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
@@ -119,11 +108,11 @@
         android:layout_below="@+id/etPassword"
         android:ems="10"
         android:inputType="textEmailAddress"
-        android:text="Email" />
+        android:hint="Email" />
 
     <EditText
         android:id="@+id/etPhoneNumber"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
@@ -132,11 +121,11 @@
         android:layout_below="@+id/etEmail"
         android:ems="10"
         android:inputType="phone"
-        android:text="Phone Number" />
+        android:hint="Phone Number" />
 
     <EditText
         android:id="@+id/etCountry"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
@@ -145,11 +134,11 @@
         android:layout_below="@+id/etPhoneNumber"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="Country" />
+        android:hint="Country" />
 
     <EditText
         android:id="@+id/etCity"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
@@ -158,7 +147,7 @@
         android:layout_below="@+id/etCountry"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="City" />
+        android:hint="City" />
 
     <ImageButton
         android:id="@+id/btnBirthDate"
@@ -169,21 +158,19 @@
 
     <TextView
         android:id="@+id/tvBirthDate"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
         android:layout_below="@+id/etCity"
         android:layout_marginTop="16dp"
         android:ems="10"
-        android:hint="Birth Date"
+        android:hint="Date of Birth"
         android:textSize="18sp"
         android:layout_toRightOf="@+id/btnBirthDate"
         android:layout_toEndOf="@+id/btnBirthDate" />
 
     <EditText
         android:id="@+id/etAbout"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textMultiLine"
@@ -192,7 +179,14 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:text="About"/>
+        android:hint="About"/>
+
+    <Button
+        android:id="@+id/post"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Save changes"
+        android:layout_alignParentBottom="true" />
 
 
 </RelativeLayout>

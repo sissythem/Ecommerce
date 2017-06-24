@@ -4,5 +4,5 @@ AirbnbProject/build/
 AirbnbProject/.gradle/
 AirbnbProject/.idea/
 AirbnbProject/app/build/
-ecommerce_restful/build/
-ecommerce_restful/dist/
+ecommerce_rest/build/
+ecommerce_rest/dist/

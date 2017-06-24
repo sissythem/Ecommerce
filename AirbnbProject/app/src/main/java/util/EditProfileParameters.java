@@ -5,12 +5,6 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-
-/**
- * Created by sissy on 20/5/2017.
- */
-
-
 public class EditProfileParameters {
     private Map<String, String> EditProfileParams;
     public EditProfileParameters (String userId, String firstname, String lastname, String phonenumber, String email, String username, String password, String photo, String country,

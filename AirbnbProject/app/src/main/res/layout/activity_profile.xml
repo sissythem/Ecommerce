@@ -17,7 +17,7 @@
         app:titleTextColor="@android:color/white">
 
         <ImageButton
-            android:id="@+id/back"
+            android:id="@+id/ibBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"

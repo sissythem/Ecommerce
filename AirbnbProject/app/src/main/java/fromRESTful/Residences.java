@@ -1,15 +1,5 @@
 package fromRESTful;
 
-/**
- * Created by sissy on 8/5/2017.
- */
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 import android.support.annotation.NonNull;
 
 import org.json.JSONArray;
@@ -30,6 +20,7 @@ public class Residences implements Serializable, Comparable {
     private static final long serialVersionUID = 1L;
     private Integer id;
     private Users hostId;
+    private String title;
     private String type;
     private String about;
     private String cancellationPolicy;
@@ -52,20 +43,21 @@ public class Residences implements Serializable, Comparable {
     private double minPrice;
     private double additionalCostPerPerson;
     private Collection<Reviews> reviewsCollection;
+    private Collection<Conversations> conversationsCollection;
 
-    public Residences() {
-    }
+    public Residences() {}
 
     public Residences(Integer id) {
         this.id = id;
     }
 
-    public Residences(Integer id, Users hostId, String type, String about, String cancellationPolicy, String country, String city, String address, String rules, String amenities,
-                      int floor, int rooms, int baths, double spaceArea, String photos, int guests, Date availableDateStart, Date availableDateEnd, double minPrice,
-                      double additionalCostPerPerson)
-    {
+    public Residences(Integer id, Users hostId, String title, String type, String about, String cancellationPolicy, String country, String city, String address, String rules, String amenities,
+        int floor, int rooms, int baths, double spaceArea, String photos, int guests, Date availableDateStart, Date availableDateEnd, double minPrice,
+        double additionalCostPerPerson) {
+
         this.id = id;
         this.hostId = hostId;
+        this.title = title;
         this.type = type;
         this.about = about;
         this.cancellationPolicy = cancellationPolicy;
@@ -100,6 +92,14 @@ public class Residences implements Serializable, Comparable {
 
     public void setHostId(Users hostId) {
         this.hostId = hostId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getType() {
@@ -158,9 +158,7 @@ public class Residences implements Serializable, Comparable {
         this.rules = rules;
     }
 
-    public String getAmenities() {
-        return amenities;
-    }
+    public String getAmenities() { return amenities; }
 
     public void setAmenities(String amenities) {
         this.amenities = amenities;
@@ -278,6 +276,14 @@ public class Residences implements Serializable, Comparable {
         this.reviewsCollection = reviewsCollection;
     }
 
+    public Collection<Conversations> getConversationsCollection() {
+        return conversationsCollection;
+    }
+
+    public void setConversationsCollection(Collection<Conversations> conversationsCollection) {
+        this.conversationsCollection = conversationsCollection;
+    }
+
     public static Residences fromJSON (JSONObject obj){
         Residences r = new Residences();
         try {
@@ -287,57 +293,44 @@ public class Residences implements Serializable, Comparable {
             Users hostUser = Users.fromJSON(userobject);
             r.hostId = hostUser;
 
+            r.title="";
+            if(Utils.isFieldOK(obj, "title")) r.title = (String) obj.get("title");
+
             r.type="";
-            if(Utils.isFieldOK(obj, "type"))
-                r.type = (String) obj.get("type");
+            if(Utils.isFieldOK(obj, "type")) r.type = (String) obj.get("type");
             r.about="";
-            if(Utils.isFieldOK(obj, "about"))
-                r.about = (String) obj.get("about");
+            if(Utils.isFieldOK(obj, "about")) r.about = (String) obj.get("about");
             r.cancellationPolicy="";
-            if(Utils.isFieldOK(obj, "cancellationPolicy"))
-                r.cancellationPolicy = (String) obj.get("cancellationPolicy");
+            if(Utils.isFieldOK(obj, "cancellationPolicy")) r.cancellationPolicy = (String) obj.get("cancellationPolicy");
             r.country="";
-            if(Utils.isFieldOK(obj, "country"))
-                r.country = (String) obj.get("country");
+            if(Utils.isFieldOK(obj, "country")) r.country = (String) obj.get("country");
             r.city="";
-            if(Utils.isFieldOK(obj, "city"))
-                r.city = (String) obj.get("city");
+            if(Utils.isFieldOK(obj, "city")) r.city = (String) obj.get("city");
             r.address="";
-            if(Utils.isFieldOK(obj, "address"))
-                r.address = (String) obj.get("address");
+            if(Utils.isFieldOK(obj, "address")) r.address = (String) obj.get("address");
             r.rules="";
-            if(Utils.isFieldOK(obj, "rules"))
-                r.rules = (String) obj.get("rules");
+            if(Utils.isFieldOK(obj, "rules")) r.rules = (String) obj.get("rules");
             r.amenities="";
-            if(Utils.isFieldOK(obj, "amenties"))
-                r.amenities = (String) obj.get("amenities");
+            if(Utils.isFieldOK(obj, "amenities")) r.amenities = (String) obj.get("amenities");
             r.floor=0;
-            if(Utils.isFieldOK(obj, "floor"))
-                r.floor = (int) obj.get("floor");
+            if(Utils.isFieldOK(obj, "floor")) r.floor = (int) obj.get("floor");
             r.rooms=0;
-            if(Utils.isFieldOK(obj, "rooms"))
-                r.rooms = (int) obj.get("rooms");
+            if(Utils.isFieldOK(obj, "rooms")) r.rooms = (int) obj.get("rooms");
             r.baths=0;
-            if(Utils.isFieldOK(obj, "baths"))
-                r.baths = (int) obj.get("baths");
+            if(Utils.isFieldOK(obj, "baths")) r.baths = (int) obj.get("baths");
             r.kitchen=false;
-            if(Utils.isFieldOK(obj, "kitchen"))
-                r.kitchen = (Boolean) obj.get("kitchen");
+            if(Utils.isFieldOK(obj, "kitchen")) r.kitchen = (Boolean) obj.get("kitchen");
             r.livingRoom=false;
-            if(Utils.isFieldOK(obj, "livingRoom"))
-                r.livingRoom = (Boolean) obj.get("livingRoom");
+            if(Utils.isFieldOK(obj, "livingRoom")) r.livingRoom = (Boolean) obj.get("livingRoom");
             r.view="";
-            if(Utils.isFieldOK(obj, "view"))
-                r.view = (String) obj.get("view");
+            if(Utils.isFieldOK(obj, "view")) r.view = (String) obj.get("view");
             r.spaceArea=0.0;
-            if(Utils.isFieldOK(obj, "spaceArea"))
-                r.spaceArea = (double) obj.get("spaceArea");
+            if(Utils.isFieldOK(obj, "spaceArea")) r.spaceArea = (double) obj.get("spaceArea");
             r.photos="";
-            if(Utils.isFieldOK(obj, "photos"))
-                r.photos = (String) obj.get("photos");
+            if(Utils.isFieldOK(obj, "photos")) r.photos = (String) obj.get("photos");
             r.guests=0;
-            if(Utils.isFieldOK(obj, "guests"))
-                r.guests = (int) obj.get("guests");
+            if(Utils.isFieldOK(obj, "guests")) r.guests = (int) obj.get("guests");
+
             if(Utils.isFieldOK(obj, "availableDateStart")) {
                 String availableDateStartString = (String) obj.get("availableDateStart");
                 r.availableDateStart = Utils.ConvertStringToDate(availableDateStartString, DATABASE_DATE_FORMAT);
@@ -347,8 +340,7 @@ public class Residences implements Serializable, Comparable {
                 r.availableDateEnd = Utils.ConvertStringToDate(availableDateEndString, DATABASE_DATE_FORMAT);
             }
             r.minPrice=0.0;
-            if(Utils.isFieldOK(obj, "minPrice"))
-                 r.minPrice = (double) obj.get("minPrice");
+            if(Utils.isFieldOK(obj, "minPrice")) r.minPrice = (double) obj.get("minPrice");
             r.additionalCostPerPerson=0.0;
             if(Utils.isFieldOK(obj, "additionalCostPerPerson"))
                 r.additionalCostPerPerson = (double) obj.get("additionalCostPerPerson");
@@ -377,8 +369,11 @@ public class Residences implements Serializable, Comparable {
         JSONObject jsonResidence = new JSONObject();
         try {
             jsonResidence.put("id", id.toString());
+
             JSONObject jsonUser = hostId.toJSON();
             jsonResidence.put("hostId", jsonUser);
+
+            jsonResidence.put("title", title);
             jsonResidence.put("type", type);
             jsonResidence.put("about", about);
             jsonResidence.put("cancellationPolicy", cancellationPolicy);

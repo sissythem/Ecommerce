@@ -81,7 +81,6 @@ public class RegisterActivity extends AppCompatActivity {
         imageToUpload = (ImageView)findViewById(R.id.imageToUpload);
 
         imageToUpload.setOnClickListener(new View.OnClickListener(){
-
             @Override
             public void onClick(View v) {
                 Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -150,7 +149,7 @@ public class RegisterActivity extends AppCompatActivity {
                 emailIsNew = checkEmail(Email);
                 //if username and email are new the application sends the data with sendPOST method to be stored in the database
                 if(userIsNew && emailIsNew) {
-                        boolean success = PostResult(firstName, lastName, phoneNumber, Email, Username, Password, stringBirthDate);
+                    boolean success = PostResult(firstName, lastName, phoneNumber, Email, Username, Password, stringBirthDate);
                     if (success) {
                         //if data are stored successfully in the data base, the user is now logged in and the home activity starts
                         isUserLoggedIn = sharedPrefs.getBoolean("userLoggedInState", false);
@@ -186,6 +185,8 @@ public class RegisterActivity extends AppCompatActivity {
                 }
             }
         });
+
+
     }
 
     @Override
@@ -201,19 +202,13 @@ public class RegisterActivity extends AppCompatActivity {
 
     public boolean PostResult(String firstName, String lastName, String phoneNumber, String Email, String Username, String Password, String BirthDate) {
         boolean success = true;
-        String usersposturl = RestPaths.AllUsers;
         RegisterParameters UserParameters = new RegisterParameters(firstName, lastName, phoneNumber, Email, Username, Password, BirthDate);
-
         RestCallManager userpost = new RestCallManager();
-        RestCallParameters postparameters = new RestCallParameters(usersposturl, "POST", "", UserParameters.getRegisterParameters());
-
-//        ArrayList<String> PostResponse ;
+        RestCallParameters postparameters = new RestCallParameters(RestPaths.AllUsers, "POST", "", UserParameters.getRegisterParameters());
         String response;
 
         userpost.execute(postparameters);
-//            PostResponse = userpost.get(1000, TimeUnit.SECONDS);
         response = (String)userpost.getRawResponse().get(0);
-//            String result = PostResponse.get(0);
         if (response.equals("OK")) ;
         else success = false;
 
@@ -223,12 +218,9 @@ public class RegisterActivity extends AppCompatActivity {
     public boolean checkUsername (String Username)
     {
         boolean userIsNew = false;
-        //check if username already exist in the database
-        //calls the function from RESTful with path users/username and as parameter user's input
-        String usernameurl = RestPaths.getUserByUsername(Username);
         //create an object of type RestCallManager to get the result of the query
         RestCallManager UsernameManager = new RestCallManager();
-        RestCallParameters usernameparameters = new RestCallParameters(usernameurl, "GET", "JSON", "");
+        RestCallParameters usernameparameters = new RestCallParameters(RestPaths.getUserByUsername(Username), "GET", "JSON", "");
 
         UsernameManager.execute(usernameparameters);
 
@@ -240,10 +232,8 @@ public class RegisterActivity extends AppCompatActivity {
 
     public boolean checkEmail (String Email){
         boolean emailIsNew=false;
-        //same process for email
-        String emailurl = RestPaths.getUserByEmail(Email);
         RestCallManager EmailManager = new RestCallManager();
-        RestCallParameters emailparameters = new RestCallParameters(emailurl, "GET", "JSON", "");
+        RestCallParameters emailparameters = new RestCallParameters(RestPaths.getUserByEmail(Email), "GET", "JSON", "");
         EmailManager.execute(emailparameters);
 
         ArrayList<JSONObject> jsonArrayEmail = EmailManager.getSingleJSONArray();
@@ -268,5 +258,3 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 }
-
-

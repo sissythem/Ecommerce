@@ -19,12 +19,7 @@ import util.RestCallManager;
 import util.RestCallParameters;
 import util.RestPaths;
 
-/**
- * Created by sissy on 30/4/2017.
- */
-
 public class LoginActivity extends AppCompatActivity {
-
     Context c;
 
     private static final String USER_LOGIN_PREFERENCES = "login_preferences";

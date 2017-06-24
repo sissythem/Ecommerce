@@ -2,20 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="gr.uoa.di.airbnbproject">
 
-    <permission
-        android:name="package.name.permission.MAPS_RECEIVE"
-        android:protectionLevel="signature" />
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="package.name.permission.MAPS_RECEIVE" />
-    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-
-    <uses-library android:name="com.google.android.maps" />
 
     <application
         android:allowBackup="true"
@@ -36,15 +26,15 @@
         <activity android:name=".LoginActivity" />
         <activity android:name=".InboxActivity" />
         <activity android:name=".ProfileActivity" />
-        <activity android:name=".ResidenceActivity" />
-        <activity android:name=".HostActivity" />
-        <activity android:name=".EditProfileActivity" />
         <activity android:name=".SearchResultsActivity" />
+        <activity android:name=".HostActivity" />
+        <activity android:name=".ResidenceActivity" />
+        <activity android:name=".EditProfileActivity" />
+        <activity android:name=".MessageActivity" />
         <activity android:name=".AddResidenceActivity" />
         <activity android:name=".EditResidenceActivity" />
-        <activity android:name=".NewMessageActivity" />
-        <activity android:name=".ReviewsActivity" />
         <activity android:name=".ViewHostProfileActivity" />
+        <activity android:name=".ReviewsActivity" />
         <activity android:name=".ShowCalendarActivity"></activity>
     </application>
 

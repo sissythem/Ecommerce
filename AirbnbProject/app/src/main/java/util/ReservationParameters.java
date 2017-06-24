@@ -1,22 +1,13 @@
 package util;
-
 import org.json.JSONObject;
-
 import java.util.HashMap;
 import java.util.Map;
-
 import fromRESTful.Residences;
 import fromRESTful.Users;
 
-/**
- * Created by sissy on 3/6/2017.
- */
-
-public class ReservationParameters
-{
+public class ReservationParameters {
     private Map<String, Object> ReservationParams;
     public ReservationParameters (Users tenant, Residences residence, String startDate, String endDate, String guests){
-
         ReservationParams = new HashMap<>();
         JSONObject jsonObjectTenant = tenant.toJSON();
         JSONObject jsonObjectResidence = residence.toJSON();

@@ -3,8 +3,7 @@ package gr.uoa.di.airbnbproject;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class ReviewsActivity extends AppCompatActivity
-{
+public class ReviewsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

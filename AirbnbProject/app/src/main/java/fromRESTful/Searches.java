@@ -1,9 +1,5 @@
 package fromRESTful;
 
-/**
- * Created by sissy on 8/5/2017.
- */
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -18,8 +14,7 @@ public class Searches implements Serializable {
     private String city;
     private Users userId;
 
-    public Searches() {
-    }
+    public Searches() {}
 
     public Searches(Integer id) {
         this.id = id;

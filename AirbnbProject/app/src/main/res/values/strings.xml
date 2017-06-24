@@ -1,3 +1,30 @@
 <resources>
     <string name="app_name">AirbnbProject</string>
+
+    <!-- TYPES OF RESIDENCES -->
+    <string-array name="residence_types_array">
+        <item>Apartrment</item>
+        <item>House</item>
+        <item>Bed and Breakfast</item>
+        <item>Loft</item>
+        <item>Townhouse</item>
+        <item>Condominium</item>
+        <item>Bungalow</item>
+        <item>Cabin</item>
+        <item>Villa</item>
+        <item>Castle</item>
+        <item>Dorm</item>
+        <item>Treehouse</item>
+        <item>Boat</item>
+        <item>Plane</item>
+        <item>RV</item>
+        <item>Igloo</item>
+        <item>Lighthouse</item>
+        <item>Yurt</item>
+        <item>Cave</item>
+        <item>Island</item>
+        <item>Tent</item>
+        <item>Other</item>
+    </string-array>
+
 </resources>

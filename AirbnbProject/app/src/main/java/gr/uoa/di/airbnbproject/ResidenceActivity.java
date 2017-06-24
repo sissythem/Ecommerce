@@ -25,14 +25,11 @@ import util.RestCallManager;
 import util.RestCallParameters;
 import util.RestCalls;
 import util.RestPaths;
+import util.Utils;
 
-public class ResidenceActivity extends AppCompatActivity implements OnMapReadyCallback
-{
-    String username;
+public class ResidenceActivity extends AppCompatActivity implements OnMapReadyCallback  {
     Boolean user;
-    String date_start;
-    String date_end;
-    String guests;
+    String username, date_start, date_end, guests;
 
     private static final String USER_LOGIN_PREFERENCES = "login_preferences";
     SharedPreferences sharedPrefs;
@@ -42,9 +39,7 @@ public class ResidenceActivity extends AppCompatActivity implements OnMapReadyCa
     int residenceId;
     Context c;
 
-    ImageButton bback;
-
-    TextView tvTitle, tvAddress, tvCity, tvCountry, tvHostName, tvAbout, tvAmenities, tvCancellationPolicy, tvHostAbout, tvRules, tvPrice;
+    TextView tvTitle, tvType, tvAddress, tvCity, tvCountry, tvHostName, tvAbout, tvAmenities, tvCancellationPolicy, tvHostAbout, tvRules, tvPrice;
     ImageButton ibContact;
     Button bReviews, bBook;
     RatingBar rating;
@@ -55,16 +50,14 @@ public class ResidenceActivity extends AppCompatActivity implements OnMapReadyCa
     Residences selectedResidence;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         sharedPrefs = getApplicationContext().getSharedPreferences(USER_LOGIN_PREFERENCES, Context.MODE_PRIVATE);
         isUserLoggedIn = sharedPrefs.getBoolean("userLoggedInState", false);
         username = sharedPrefs.getString("currentLoggedInUser", "");
 
-        if (!isUserLoggedIn)
-        {
+        if (!isUserLoggedIn) {
             Intent intent = new Intent(this, GreetingActivity.class);
             startActivity(intent);
             return;
@@ -76,62 +69,29 @@ public class ResidenceActivity extends AppCompatActivity implements OnMapReadyCa
         }
 
         setContentView(R.layout.activity_residence);
-        c=this;
+        c = this;
 
-        Bundle buser = getIntent().getExtras();
-        user = buser.getBoolean("type");
-        date_start = buser.getString("startDate");
-        date_end = buser.getString("endDate");
-        guests = buser.getString("guests");
+        Bundle buser        = getIntent().getExtras();
+        user                = buser.getBoolean("type");
+        date_start          = buser.getString("startDate");
+        date_end            = buser.getString("endDate");
+        guests              = buser.getString("guests");
 
-        residenceId = buser.getInt("residenceId");
-        loggedinUser = RestCalls.getUser(username);
-        selectedResidence = RestCalls.getResidenceById(residenceId);
-
-        bback = (ImageButton)findViewById(R.id.back);
-
-        bback.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(user)
-                {
-                    Intent homeintent = new Intent(ResidenceActivity.this, HomeActivity.class);
-                    Bundle buser = new Bundle();
-                    buser.putBoolean("type",user);
-                    homeintent.putExtras(buser);
-                    try {
-                        startActivity(homeintent);
-                    } catch (Exception ex) {
-                        System.out.println(ex.getMessage());
-                        ex.printStackTrace();
-                    }
-                }
-                else
-                {
-                    Intent hostintent = new Intent(ResidenceActivity.this, HostActivity.class);
-                    Bundle bhost = new Bundle();
-                    user=false;
-                    bhost.putBoolean("type", user);
-                    hostintent.putExtras(bhost);
-                    try{
-                        startActivity(hostintent);
-                    }
-                    catch (Exception e){
-                        System.out.println(e.getMessage());
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
+        residenceId         = buser.getInt("residenceId");
+        loggedinUser        = RestCalls.getUser(username);
+        selectedResidence   = RestCalls.getResidenceById(residenceId);
 
         setUpResidenceView();
+
+        /** BACK BUTTON **/
+        Utils.manageBackButton(this, (user)?HomeActivity.class:HostActivity.class);
     }
 
-    public void setUpResidenceView ()
-    {
+    public void setUpResidenceView () {
         host = selectedResidence.getHostId();
 
-        tvTitle                 = (TextView)findViewById(R.id.tvType);
+        tvTitle                 = (TextView)findViewById(R.id.tvTitle);
+        tvType                  = (TextView)findViewById(R.id.tvType);
         tvAddress               = (TextView)findViewById(R.id.tvAddress);
         tvCity                  = (TextView)findViewById(R.id.tvCity);
         tvCountry               = (TextView)findViewById(R.id.tvCountry);
@@ -149,20 +109,16 @@ public class ResidenceActivity extends AppCompatActivity implements OnMapReadyCa
 
         Date startDate = selectedResidence.getAvailableDateStart();
         Date endDate = selectedResidence.getAvailableDateEnd();
-        if(user == false) {
-            bBook.setText("DELETE");
-        }
-        if(date_start == null || date_end == null)
-        {
-            bBook.setText("See Dates");
-        }
+        if(user == false) bBook.setText("DELETE");
+        if(date_start == null || date_end == null) bBook.setText("See Dates");
 
         ibContact               = (ImageButton) findViewById(R.id.ibContact);
-        availabilityCalendar = (CalendarView)findViewById(R.id.calendar);
+        availabilityCalendar    = (CalendarView)findViewById(R.id.calendar);
         availabilityCalendar.setMinDate(startDate.getTime());
         availabilityCalendar.setMaxDate(endDate.getTime());
 
-        tvTitle.setText(selectedResidence.getType());
+        tvTitle.setText(selectedResidence.getTitle());
+        tvType.setText(selectedResidence.getType());
         tvAddress.setText(selectedResidence.getAddress());
         tvCity.setText(selectedResidence.getCity());
         tvCountry.setText(selectedResidence.getCountry());
@@ -193,18 +149,20 @@ public class ResidenceActivity extends AppCompatActivity implements OnMapReadyCa
 
         rating.setRating((float)selectedResidence.getAverageRating());
 
-        ibContact.setOnClickListener(new View.OnClickListener()
-        {
+        ibContact.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
-                Intent inboxIntent = new Intent(ResidenceActivity.this, NewMessageActivity.class);
-                Bundle buser = new Bundle();
-                buser.putBoolean("type", user);
-                buser.putInt("host", host.getId());
-                inboxIntent.putExtras(buser);
+            public void onClick(View v) {
+                Intent messageIntent = new Intent(ResidenceActivity.this, MessageActivity.class);
+
+                Bundle bmessage = new Bundle();
+                bmessage.putBoolean("type", user);
+                bmessage.putInt("currentUserId", RestCalls.getUserId(username));
+                bmessage.putInt("toUserId", host.getId());
+                bmessage.putString("msgSubject", tvTitle.getText().toString());
+                bmessage.putInt("residenceId", residenceId);
+                messageIntent.putExtras(bmessage);
                 try{
-                    startActivity(inboxIntent);
+                    startActivity(messageIntent);
                 }
                 catch (Exception e){
                     System.out.println(e.getMessage());
@@ -213,21 +171,17 @@ public class ResidenceActivity extends AppCompatActivity implements OnMapReadyCa
             }
         });
 
-        bReviews.setOnClickListener(new View.OnClickListener()
-        {
+        bReviews.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent reviewsIntent = new Intent(ResidenceActivity.this, ReviewsActivity.class);
                 Bundle buser = new Bundle();
                 buser.putBoolean("type", user);
                 reviewsIntent.putExtras(buser);
-                try
-                {
+                try {
                     startActivity(reviewsIntent);
-
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -235,10 +189,8 @@ public class ResidenceActivity extends AppCompatActivity implements OnMapReadyCa
 
         bBook.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
-                if(!user)
-                {
+            public void onClick(View v) {
+                if(!user) {
                     boolean result = deleteResidence(Integer.toString(residenceId));
                     if(result){
                         Intent hostIntent = new Intent(ResidenceActivity.this, HostActivity.class);
@@ -255,11 +207,8 @@ public class ResidenceActivity extends AppCompatActivity implements OnMapReadyCa
                             e.printStackTrace();
                         }
                     }
-                }
-                else
-                {
-                    if(date_start == null || date_end == null || guests == null)
-                    {
+                } else {
+                    if(date_start == null || date_end == null || guests == null) {
                         Intent bookIntent = new Intent(ResidenceActivity.this, ShowCalendarActivity.class);
                         Bundle bundle = new Bundle();
                         user=true;
@@ -267,9 +216,7 @@ public class ResidenceActivity extends AppCompatActivity implements OnMapReadyCa
                         bundle.putInt("residenceId", residenceId);
                         bookIntent.putExtras(bundle);
                         startActivity(bookIntent);
-                    }
-                    else
-                    {
+                    } else {
                         boolean success = PostResult();
                         if(success){
                             Intent homeIntent = new Intent(ResidenceActivity.this, HomeActivity.class);
@@ -290,8 +237,7 @@ public class ResidenceActivity extends AppCompatActivity implements OnMapReadyCa
         });
     }
 
-    public Boolean deleteResidence (String id)
-    {
+    public Boolean deleteResidence (String id) {
         boolean success = true;
         String deleteReviewsURL = RestPaths.deleteReviewsByResidence(Integer.toString(residenceId));
         RestCallManager deleteReviewsManager = new RestCallManager();
@@ -310,10 +256,8 @@ public class ResidenceActivity extends AppCompatActivity implements OnMapReadyCa
         reservationsResponse = (String)deleteReservationsManager.getRawResponse().get(0);
 
         //TODO delete all data from all other tables
-        String deleteResidenceURL = RestPaths.deleteResidenceById(id);
-
         RestCallManager deleteResidenceManager = new RestCallManager();
-        RestCallParameters deleteParameters = new RestCallParameters(deleteResidenceURL, "DELETE", "TEXT", "");
+        RestCallParameters deleteParameters = new RestCallParameters(RestPaths.deleteResidenceById(id), "DELETE", "TEXT", "");
 
         String response;
         deleteResidenceManager.execute(deleteParameters);
@@ -326,8 +270,7 @@ public class ResidenceActivity extends AppCompatActivity implements OnMapReadyCa
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap)
-    {
+    public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
@@ -336,14 +279,12 @@ public class ResidenceActivity extends AppCompatActivity implements OnMapReadyCa
 //        mMap.moveCamera(CameraUpdateFactory.newLatLng(address));
     }
 
-    public boolean PostResult()
-    {
+    public boolean PostResult() {
         boolean success = true;
-        String reservationURL = RestPaths.AllReservations;
         ReservationParameters reservationParameters = new ReservationParameters(loggedinUser, selectedResidence, date_start, date_end, guests);
 
         RestCallManager reservationPostManager = new RestCallManager();
-        RestCallParameters postparameters = new RestCallParameters(reservationURL, "POST", "", reservationParameters.getReservationParameters());
+        RestCallParameters postparameters = new RestCallParameters(RestPaths.AllReservations, "POST", "", reservationParameters.getReservationParameters());
 
 //        ArrayList<String> PostResponse ;
         String response;

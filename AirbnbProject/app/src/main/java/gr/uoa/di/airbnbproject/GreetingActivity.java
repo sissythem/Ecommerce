@@ -7,10 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
-/**
- * Created by sissy on 30/4/2017.
- */
-
 public class GreetingActivity extends AppCompatActivity {
 
     Context c;
@@ -28,7 +24,6 @@ public class GreetingActivity extends AppCompatActivity {
                 Intent registerintent = new Intent(GreetingActivity.this, RegisterActivity.class);
                 GreetingActivity.this.startActivity(registerintent);
             }
-
         });
 
         //Initialize button for log in
@@ -38,7 +33,6 @@ public class GreetingActivity extends AppCompatActivity {
                 //if log in button is clicked log in activity is launched
                 Intent loginintent = new Intent(GreetingActivity.this, LoginActivity.class);
                 GreetingActivity.this.startActivity(loginintent);
-
             }
         });
     }

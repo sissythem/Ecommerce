@@ -18,16 +18,13 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-/**
- * Created by sissy on 1/5/2017.
- */
-
 public class RestCallManager extends AsyncTask<RestCallParameters, Integer, ArrayList<Object>> {
-    static final String TAG = "REST_CALL_MNGER";
+    static final String TAG = "REST_CALL_MANAGER";
     static final int TIMEOUT_SECONDS = 1000;
     ArrayList<Object> Responses=null;
     RestCallParameters[] Params;
@@ -41,26 +38,20 @@ public class RestCallManager extends AsyncTask<RestCallParameters, Integer, Arra
             try {
                 Log.i(TAG,"Calling " + parameters[i].getRequestType() + " rest with data: " + parameters[i].getparameters());
 
-                if(parameters[i].getRequestType().equals("GET"))
-                {
-
+                if(parameters[i].getRequestType().equals("GET")) {
                     if(parameters[i].getCallResource().equals("STREAM"))
                         Responses.add(sendGETStream(parameters[i].getUrl()));
                     else
                         Responses.add(sendGET(parameters[i].getUrl()));
                 }
-                else if(parameters[i].getRequestType().equals("POST"))
-                {
+                else if(parameters[i].getRequestType().equals("POST")) {
                     Responses.add(sendPOST(parameters[i].getparameters(), parameters[i].getUrl()));
                     if(parameters[i].getReturnType().isEmpty())
                         Responses.set(i,"OK");
                 }
-                else if(parameters[i].getRequestType().equals("PUT"))
-                {
-
+                else if(parameters[i].getRequestType().equals("PUT")) {
                     Responses.add(sendPUT(parameters[i].getparameters(), parameters[i].getUrl()));
-                    if(parameters[i].getReturnType().isEmpty())
-                        Responses.set(i,"OK");
+                    if(parameters[i].getReturnType().isEmpty()) Responses.set(i,"OK");
                 }
                 else if(parameters[i].getRequestType().equals("DELETE")){
                     Responses.add(sendDELETE( parameters[i].getUrl()));
@@ -76,18 +67,14 @@ public class RestCallManager extends AsyncTask<RestCallParameters, Integer, Arra
         return Responses;
     }
 
-    protected void onProgressUpdate(Integer... progress) {
-
-    }
+    protected void onProgressUpdate(Integer... progress) {}
 
     protected void onPostExecute(ArrayList<String> result) {
         long id  = Thread.currentThread().getId(); // todo why the fuck debug fucks up
     }
 
-    public ArrayList<JSONObject> getSingleJSONArray()
-    {
+    public ArrayList<JSONObject> getSingleJSONArray() {
         ArrayList<Object> ResponsesToGet = new ArrayList<>();
-
         // call has not been done
         try {
             ResponsesToGet = this.get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
@@ -102,20 +89,17 @@ public class RestCallManager extends AsyncTask<RestCallParameters, Integer, Arra
         ArrayList<JSONObject> jsonResult = new ArrayList<>();
         if(ResponsesToGet.isEmpty()) return jsonResult;
 
-        if( ! Params[0].getReturnType().equals(RestCallParameters.DATA_TYPE.JSON.toString())) return jsonResult;
+        if(!Params[0].getReturnType().equals(RestCallParameters.DATA_TYPE.JSON.toString())) return jsonResult;
 
         // parse json
         String resp = (String) ResponsesToGet.get(0);
         try {
             JSONArray arr = ((new JSONArray(resp)));
-            for(int i=0;i< arr.length(); ++i)
-            {
+            for(int i=0;i< arr.length(); ++i) {
                 Object o = arr.get(i);
                 jsonResult.add((JSONObject) o);
             }
-        }
-        catch (JSONException e)
-        {
+        } catch (JSONException e) {
             try {
                 JSONObject jsonObject = ((new JSONObject(resp)));
                 jsonResult.add(jsonObject);
@@ -123,8 +107,7 @@ public class RestCallManager extends AsyncTask<RestCallParameters, Integer, Arra
                 e1.printStackTrace();
             }
         }
-
-         return jsonResult;
+        return jsonResult;
     }
 
     public ArrayList<Object> getRawResponse (){
@@ -200,13 +183,11 @@ public class RestCallManager extends AsyncTask<RestCallParameters, Integer, Arra
         return null;
     }
 
-    public static String sendPOST(String payload, String address)
-    {
+    public static String sendPOST(String payload, String address) {
         URL url;
         HttpURLConnection connection = null;
         String resp = "";
-        try
-        {
+        try {
             // open connection, set JSONic properties
             url = new URL(address);
             connection = (HttpURLConnection)url.openConnection();
@@ -242,37 +223,27 @@ public class RestCallManager extends AsyncTask<RestCallParameters, Integer, Arra
             resp = readStream(is);
 
             //System.out.println("server Responses:\n\t" + resp);
-        }
-        catch(MalformedURLException exc)
-        {
+        } catch(MalformedURLException exc) {
             System.err.println("Malformed event processing URL:\n\t" + address);
             System.err.println("payload/address: ["+payload+"] , ["+address+"]");
 
             resp="";
-        }
-        catch(IOException exc)
-        {
-
+        } catch(IOException exc) {
             System.err.println(exc.getMessage());
             System.err.println("payload/address: ["+payload+"] , ["+address+"]");
             exc.printStackTrace();
             resp="";
-        }
-        finally
-        {
-            if(connection != null)
-                connection.disconnect();
+        } finally {
+            if(connection != null) connection.disconnect();
         }
         return resp;
     }
 
-    public static String sendPUT(String payload, String address)
-    {
+    public static String sendPUT(String payload, String address) {
         URL url;
         HttpURLConnection connection = null;
         String resp = "";
-        try
-        {
+        try {
             // open connection, set JSONic properties
             url = new URL(address);
             connection = (HttpURLConnection)url.openConnection();
@@ -309,16 +280,12 @@ public class RestCallManager extends AsyncTask<RestCallParameters, Integer, Arra
 
             //System.out.println("server Responses:\n\t" + resp);
         }
-        catch(MalformedURLException exc)
-        {
+        catch(MalformedURLException exc) {
             System.err.println("Malformed event processing URL:\n\t" + address);
             System.err.println("payload/address: ["+payload+"] , ["+address+"]");
-
             resp="";
         }
-        catch(IOException exc)
-        {
-
+        catch(IOException exc) {
             System.err.println(exc.getMessage());
             System.err.println("payload/address: ["+payload+"] , ["+address+"]");
             exc.printStackTrace();
@@ -346,14 +313,11 @@ public class RestCallManager extends AsyncTask<RestCallParameters, Integer, Arra
                     "application/x-www-form-urlencoded");
             httpURLConnection.setRequestMethod("DELETE");
             int respcode = httpURLConnection.getResponseCode();
-
-            if(respcode >= 400)
-            {
+            if(respcode >= 400) {
                 InputStream error = httpURLConnection.getErrorStream();
                 resp = readStream(error);
                 throw  new MalformedURLException(resp);
             }
-
         } catch (IOException exception) {
             exception.printStackTrace();
             return "ERROR";
@@ -362,18 +326,14 @@ public class RestCallManager extends AsyncTask<RestCallParameters, Integer, Arra
             e.printStackTrace();
             return "ERROR";
         }
-        finally
-         {
-            if (httpURLConnection != null) {
-                httpURLConnection.disconnect();
-            }
+        finally {
+            if (httpURLConnection != null) httpURLConnection.disconnect();
         }
         resp = "OK";
         return resp;
     }
 
-
-    static   String readStream(InputStream istr) throws IOException {
+    static String readStream(InputStream istr) throws IOException {
         String resp = "";
         BufferedReader rd = new BufferedReader(new InputStreamReader(istr));
         // parse to string
@@ -388,5 +348,3 @@ public class RestCallManager extends AsyncTask<RestCallParameters, Integer, Arra
         return resp;
     }
 }
-
-

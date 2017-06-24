@@ -38,28 +38,16 @@ public class EditProfileActivity extends AppCompatActivity {
     SharedPreferences.Editor editor;
     private boolean isUserLoggedIn;
 
-    String username;
-    String userId;
-    Boolean user;
-    String email;
-
     Context c;
 
-    ImageButton bback;
-    Button bsave;
+    Boolean user;
+
     ImageButton btnBirthDate;
+    Button bsave;
 
-    EditText etName;
-    EditText etLastName;
-    EditText etPhoneNumber;
-    EditText etEmail;
-    EditText etUsername;
-    EditText etPassword;
-    EditText etCountry;
-    EditText etCity;
-    TextView tvBirthDate;
-    EditText etAbout;
-
+    EditText etName, etLastName, etPhoneNumber, etEmail, etPassword, etCountry, etCity, etAbout;
+    TextView etUsername, tvBirthDate;
+    String username, userId, email;
     private int mYear, mMonth, mDay;
 
     @Override
@@ -76,10 +64,7 @@ public class EditProfileActivity extends AppCompatActivity {
         }
         setContentView(R.layout.activity_edit_profile);
 
-        c=this;
-        Toolbar backToolbar = (Toolbar) findViewById(R.id.backToolbar);
-        setSupportActionBar(backToolbar);
-        getSupportActionBar().setTitle(null);
+        c = this;
 
         Toolbar footerToolbar = (Toolbar) findViewById(R.id.footerToolbar);
         setSupportActionBar(footerToolbar);
@@ -88,37 +73,20 @@ public class EditProfileActivity extends AppCompatActivity {
         user = buser.getBoolean("type");
 
         bsave = (Button)findViewById(R.id.post);
-        bback = (ImageButton) findViewById(R.id.ibBack);
 
-        bback.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent profileIntent = new Intent(EditProfileActivity.this, ProfileActivity.class);
-                Bundle buser = new Bundle();
-                buser.putBoolean("type",user);
-                profileIntent.putExtras(buser);
-                try {
-                    startActivity(profileIntent);
-                } catch (Exception ex) {
-                    System.out.println(ex.getMessage());
-                    ex.printStackTrace();
-                }
-            }
-        });
-
-        Users loggedinUser = RestCalls.getUser(username);
-        userId = loggedinUser.getId().toString();
-        etName = (EditText) findViewById(R.id.etName);
-        etLastName = (EditText) findViewById(R.id.etLastName);
-        etPhoneNumber = (EditText) findViewById(R.id.etPhoneNumber);
-        etEmail = (EditText) findViewById(R.id.etEmail);
-        etUsername = (EditText) findViewById(R.id.etUsername);
-        etPassword = (EditText) findViewById(R.id.etPassword);
-        etCountry = (EditText)findViewById(R.id.etCountry);
-        etCity = (EditText)findViewById(R.id.etCity);
-        tvBirthDate = (TextView) findViewById(R.id.tvBirthDate);
-        etAbout = (EditText)findViewById(R.id.etAbout);
-        btnBirthDate = (ImageButton)findViewById(R.id.btnBirthDate);
+        Users loggedinUser  = RestCalls.getUser(username);
+        userId              = loggedinUser.getId().toString();
+        etName              = (EditText) findViewById(R.id.etName);
+        etLastName          = (EditText) findViewById(R.id.etLastName);
+        etPhoneNumber       = (EditText) findViewById(R.id.etPhoneNumber);
+        etEmail             = (EditText) findViewById(R.id.etEmail);
+        etUsername          = (TextView) findViewById(R.id.etUsername);
+        etPassword          = (EditText) findViewById(R.id.etPassword);
+        etCountry           = (EditText)findViewById(R.id.etCountry);
+        etCity              = (EditText)findViewById(R.id.etCity);
+        tvBirthDate         = (TextView) findViewById(R.id.tvBirthDate);
+        etAbout             = (EditText)findViewById(R.id.etAbout);
+        btnBirthDate        = (ImageButton)findViewById(R.id.btnBirthDate);
 
         etName.setText(loggedinUser.getFirstName());
         etLastName.setText(loggedinUser.getLastName());
@@ -167,6 +135,9 @@ public class EditProfileActivity extends AppCompatActivity {
                 saveUserProfile();
             }
         });
+
+        /** BACK BUTTON **/
+        Utils.manageBackButton(EditProfileActivity.this, ProfileActivity.class);
     }
 
     public boolean checkEmail (String Email){
@@ -183,13 +154,12 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     public boolean PutResult(String userId, String firstName, String lastName, String phoneNumber, String Email, String Username, String Password, String photo, String Country,
-                              String City, String BirthDate, String About) {
+                             String City, String BirthDate, String About) {
         boolean success = true;
-        String usersposturl = RestPaths.editUserById(userId);
         EditProfileParameters UserParameters = new EditProfileParameters(userId, firstName, lastName, phoneNumber, Email, Username, Password, photo, Country, City, BirthDate, About);
 
         RestCallManager userpost = new RestCallManager();
-        RestCallParameters postparameters = new RestCallParameters(usersposturl, "PUT", "", UserParameters.getEditProfileParameters());
+        RestCallParameters postparameters = new RestCallParameters(RestPaths.editUserById(Integer.parseInt(userId)), "PUT", "", UserParameters.getEditProfileParameters());
 
 //        ArrayList<String> PostResponse ;
         String response;

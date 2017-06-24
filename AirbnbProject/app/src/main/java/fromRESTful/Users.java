@@ -1,9 +1,5 @@
 package fromRESTful;
 
-/**
- * Created by sissy on 8/5/2017.
- */
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -33,8 +29,7 @@ public class Users implements Serializable {
     private Date birthDate;
     private String host;
 
-    public Users() {
-    }
+    public Users() {}
 
     public Users(Integer id) {
         this.id = id;
@@ -163,14 +158,11 @@ public class Users implements Serializable {
             u.email = (String) obj.get("email");
             u.phoneNumber = (String) obj.get("phoneNumber");
             u.country = "";
-            if(Utils.isFieldOK(obj, "country"))
-                u.country = (String) obj.get("country");
+            if(Utils.isFieldOK(obj, "country")) u.country = (String) obj.get("country");
             u.city = "";
-            if(Utils.isFieldOK(obj, "city"))
-                u.city = (String) obj.get("city");
+            if(Utils.isFieldOK(obj, "city")) u.city = (String) obj.get("city");
             u.photo = "";
-            if(Utils.isFieldOK(obj, "photo"))
-                u.photo = (String) obj.get("photo");
+            if(Utils.isFieldOK(obj, "photo")) u.photo = (String) obj.get("photo");
 
             String dateString;
             if(Utils.isFieldOK(obj,"registrationDate")) {
@@ -178,8 +170,7 @@ public class Users implements Serializable {
                 u.registrationDate = Utils.ConvertStringToDate(dateString, DATABASE_DATETIME);
             }
             u.about="";
-            if(Utils.isFieldOK(obj, "about"))
-                u.about = (String) obj.get("about");
+            if(Utils.isFieldOK(obj, "about")) u.about = (String) obj.get("about");
             String birthDateString;
 
             if(Utils.isFieldOK(obj,"birthDate")) {
@@ -220,7 +211,7 @@ public class Users implements Serializable {
         return jsonUser;
     }
 
-//    public String[] getUserDetails (String username)
+    //    public String[] getUserDetails (String username)
 //    {
 //        String[] userdetails = new String[10];
 //        userdetails[0] = this.firstName;

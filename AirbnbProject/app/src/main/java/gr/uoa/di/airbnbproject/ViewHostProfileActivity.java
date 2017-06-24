@@ -14,12 +14,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import fromRESTful.Users;
-import util.ProfileListAdapter;
+import util.ListAdapterProfile;
 import util.RestCalls;
 import util.Utils;
 
-public class ViewHostProfileActivity extends AppCompatActivity
-{
+public class ViewHostProfileActivity extends AppCompatActivity {
 
     private static final String USER_LOGIN_PREFERENCES = "login_preferences";
     SharedPreferences sharedPrefs;
@@ -34,7 +33,7 @@ public class ViewHostProfileActivity extends AppCompatActivity
 
     ImageButton bback;
 
-    ProfileListAdapter adapter;
+    ListAdapterProfile adapter;
     String[] userdetails;
     Boolean user;
 
@@ -93,7 +92,7 @@ public class ViewHostProfileActivity extends AppCompatActivity
             }
         }
         userdetails[8] = date;
-        adapter = new ProfileListAdapter(this, userdetails);
+        adapter = new ListAdapterProfile(this, userdetails);
         list = (ListView)findViewById(R.id.profilelist);
         list.setAdapter(adapter);
     }

@@ -1,17 +1,11 @@
 package fromRESTful;
 
-/**
- * Created by sissy on 8/5/2017.
- */
-
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
 
 import util.Utils;
-
 
 public class Reviews implements Serializable {
 
@@ -24,8 +18,7 @@ public class Reviews implements Serializable {
     private Users hostId;
     private Users tenantId;
 
-    public Reviews() {
-    }
+    public Reviews() {}
 
     public Reviews(Integer id) {
         this.id = id;
@@ -140,4 +133,3 @@ public class Reviews implements Serializable {
     }
 
 }
-

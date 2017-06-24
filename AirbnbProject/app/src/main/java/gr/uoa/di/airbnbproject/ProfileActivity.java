@@ -15,7 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import fromRESTful.Users;
-import util.ProfileListAdapter;
+import util.ListAdapterProfile;
 import util.RestCallManager;
 import util.RestCallParameters;
 import util.RestCalls;
@@ -34,11 +34,9 @@ public class ProfileActivity extends AppCompatActivity {
     ListView list;
     Context c;
 
-    ImageButton bback;
-    ImageButton bedit;
-    ImageButton bdelete;
+    ImageButton bedit, bdelete;
 
-    ProfileListAdapter adapter;
+    ListAdapterProfile adapter;
     String[] userdetails;
     Boolean user;
 
@@ -54,24 +52,19 @@ public class ProfileActivity extends AppCompatActivity {
             startActivity(intent);
             return;
         }
-        c=this;
+        c = this;
 
         setContentView(R.layout.activity_profile);
-
-        Toolbar backToolbar = (Toolbar) findViewById(R.id.backToolbar);
-        setSupportActionBar(backToolbar);
-        getSupportActionBar().setTitle(null);
 
         Bundle buser = getIntent().getExtras();
         user = buser.getBoolean("type");
 
-        bback = (ImageButton)findViewById(R.id.back);
         bedit = (ImageButton)findViewById(R.id.editprofile);
         bdelete = (ImageButton)findViewById(R.id.delete);
 
         userdetails = new String[9];
 
-        manageBackToolbar();
+        manageToolbarButtons();
 
         loggedinUser = RestCalls.getUser(username);
         userdetails[0] = loggedinUser.getFirstName();
@@ -94,54 +87,15 @@ public class ProfileActivity extends AppCompatActivity {
             }
         }
         userdetails[8] = date;
-        adapter = new ProfileListAdapter(this, userdetails);
+        adapter = new ListAdapterProfile(this, userdetails);
         list = (ListView)findViewById(R.id.profilelist);
         list.setAdapter(adapter);
 
+        /** BACK BUTTON **/
+        Utils.manageBackButton(this, (user)?HomeActivity.class:HostActivity.class);
     }
 
-    public void logout() {
-        sharedPrefs = getApplicationContext().getSharedPreferences(USER_LOGIN_PREFERENCES, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPrefs.edit();
-        editor.clear();
-        editor.commit();
-
-        Intent greetingintent = new Intent(ProfileActivity.this, GreetingActivity.class);
-        ProfileActivity.this.startActivity(greetingintent);
-    }
-    public void manageBackToolbar(){
-        bback.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(user){
-                    Intent homeintent = new Intent(ProfileActivity.this, HomeActivity.class);
-                    Bundle buser = new Bundle();
-                    buser.putBoolean("type",user);
-                    homeintent.putExtras(buser);
-                    try {
-                        startActivity(homeintent);
-                    } catch (Exception ex) {
-                        System.out.println(ex.getMessage());
-                        ex.printStackTrace();
-                    }
-                }
-                else{
-                    Intent hostintent = new Intent(ProfileActivity.this, HostActivity.class);
-                    Bundle bhost = new Bundle();
-                    user=false;
-                    bhost.putBoolean("type", user);
-                    hostintent.putExtras(bhost);
-                    try{
-                        startActivity(hostintent);
-                    }
-                    catch (Exception e){
-                        System.out.println(e.getMessage());
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
-
+    public void manageToolbarButtons() {
         bedit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -166,7 +120,7 @@ public class ProfileActivity extends AppCompatActivity {
                 if(deletionStatus)
                 {
                     Toast.makeText(c, "Account deleted!", Toast.LENGTH_SHORT).show();
-                    logout();
+                    Utils.logout(ProfileActivity.this);
                     Intent greetingIntent = new Intent (ProfileActivity.this, GreetingActivity.class);
                     startActivity(greetingIntent);
                     finish();

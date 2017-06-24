@@ -43,4 +43,5 @@
                 android:listSelector="@drawable/list_selector" />
         </LinearLayout>
     </ScrollView>
+    <include layout="@layout/footer" />
 </RelativeLayout>
