@@ -1,18 +1,12 @@
 package gr.uoa.di.airbnbproject;
 
-import android.Manifest;
 import android.app.DatePickerDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -22,15 +16,11 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import fromRESTful.Residences;
@@ -41,8 +31,6 @@ import util.Utils;
 
 public class HomeActivity extends AppCompatActivity
 {
-    final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
-
     ListAdapterResidences adapter;
     SharedPreferences sharedPrefs;
     SharedPreferences.Editor editor;
@@ -81,6 +69,7 @@ public class HomeActivity extends AppCompatActivity
             return;
         }
         setContentView(R.layout.activity_home);
+
 
         /**SEARCH VIEW EXPANDABLE START **/
         setupSearchView();
@@ -126,6 +115,7 @@ public class HomeActivity extends AppCompatActivity
         /** FOOTER TOOLBAR **/
         Utils.manageFooter(HomeActivity.this, true);
     }
+
 
     public void setupSearchView() {
         final TextView searchlist = (TextView) findViewById(R.id.searchlist);
@@ -317,106 +307,4 @@ public class HomeActivity extends AppCompatActivity
         moveTaskToBack(true);
     }
 
-    //addPermission method, used below for Runtime Permissions. Checks if permission is already approved by the user
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    private boolean addPermission(List<String> permissionsList, String permission) {
-        if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
-            permissionsList.add(permission);
-            // Check for Rationale Option
-            if (!shouldShowRequestPermissionRationale(permission))
-                return false;
-        }
-        return true;
-    }
-
-    //method used for runtime permissions as well, message shown to user in order to approve permissions
-    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
-        new AlertDialog.Builder(HomeActivity.this)
-                .setMessage(message)
-                .setPositiveButton("OK", okListener)
-                .setNegativeButton("Cancel", null)
-                .create()
-                .show();
-    }
-
-    //Below method is used when multiple permission are asked, in this case was not necessary to use this method
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS: {
-                Map<String, Integer> perms = new HashMap<String, Integer>();
-                // Initial
-                perms.put(Manifest.permission.INTERNET, PackageManager.PERMISSION_GRANTED);
-                perms.put(Manifest.permission.ACCESS_NETWORK_STATE, PackageManager.PERMISSION_GRANTED);
-                perms.put(Manifest.permission.READ_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
-                perms.put(Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
-                perms.put(Manifest.permission.ACCESS_FINE_LOCATION, PackageManager.PERMISSION_GRANTED);
-
-                // Fill with results
-                for (int i = 0; i < permissions.length; i++)
-                    perms.put(permissions[i], grantResults[i]);
-                // Check for ACCESS_FINE_LOCATION
-                if (perms.get(Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED
-                        && perms.get(Manifest.permission.ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED
-                        && perms.get(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-                        && perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-                        && perms.get(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-
-                {
-                    // All Permissions Granted
-                    popularRecommendations();
-                } else {
-                    // Permission Denied
-                    Toast.makeText(HomeActivity.this, "Some Permission is Denied", Toast.LENGTH_SHORT).show();
-                }
-            }
-            break;
-            default:
-                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-    }
-
-    public void getPermissions(){
-        //Runtime permissions
-        if (Build.VERSION.SDK_INT >= 23) {
-            // Marshmallow+
-            List<String> permissionsNeeded = new ArrayList<>();
-
-            final List<String> permissionsList = new ArrayList<>();
-
-            if (!addPermission(permissionsList, Manifest.permission.INTERNET))
-                permissionsNeeded.add("Access Internet");
-            if (!addPermission(permissionsList, Manifest.permission.ACCESS_NETWORK_STATE))
-                permissionsNeeded.add("Access Network State");
-            if (!addPermission(permissionsList, Manifest.permission.READ_EXTERNAL_STORAGE))
-                permissionsNeeded.add("Access External Storage");
-            if (!addPermission(permissionsList, Manifest.permission.WRITE_EXTERNAL_STORAGE))
-                permissionsNeeded.add("Write to External Storage");
-            if(!addPermission(permissionsList, Manifest.permission.ACCESS_FINE_LOCATION))
-                permissionsNeeded.add("Access Fine Location");
-
-            if (permissionsList.size() > 0) {
-                if (permissionsNeeded.size() > 0) {
-                    // Need Rationale
-                    String message = "You need to grant access to " + permissionsNeeded.get(0);
-                    for (int i = 1; i < permissionsNeeded.size(); i++)
-                        message = message + ", " + permissionsNeeded.get(i);
-                    showMessageOKCancel(message,
-                            new DialogInterface.OnClickListener() {
-                                @RequiresApi(api = Build.VERSION_CODES.M)
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    requestPermissions(permissionsList.toArray(new String[permissionsList.size()]),
-                                            REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
-                                }
-                            });
-                    return;
-                }
-                requestPermissions(permissionsList.toArray(new String[permissionsList.size()]),
-                        REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
-                return;
-            }
-        }
-    }
 }

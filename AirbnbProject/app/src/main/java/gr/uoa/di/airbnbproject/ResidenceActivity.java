@@ -6,8 +6,8 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -18,8 +18,14 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.roomorama.caldroid.CaldroidFragment;
 import com.roomorama.caldroid.CaldroidListener;
 
@@ -39,7 +45,7 @@ import util.RestCalls;
 import util.RestPaths;
 import util.Utils;
 
-public class ResidenceActivity extends AppCompatActivity implements OnMapReadyCallback
+public class ResidenceActivity extends FragmentActivity implements OnMapReadyCallback
 {
     Boolean user;
     String username, date_start, date_end, guests;
@@ -59,6 +65,7 @@ public class ResidenceActivity extends AppCompatActivity implements OnMapReadyCa
     Button bReviews, bBook;
     RatingBar rating;
     EditText etGuests;
+    MapView mapView;
     GoogleMap mMap;
 
     Users loggedinUser, host;
@@ -89,6 +96,7 @@ public class ResidenceActivity extends AppCompatActivity implements OnMapReadyCa
         }
 
         setContentView(R.layout.activity_residence);
+
         c = this;
 
         Bundle buser        = getIntent().getExtras();
@@ -102,8 +110,10 @@ public class ResidenceActivity extends AppCompatActivity implements OnMapReadyCa
         selectedResidence   = RestCalls.getResidenceById(residenceId);
 
         setUpResidenceView();
-//        if(user == false) bBook.setText("DELETE");
-//        if(date_start == null || date_end == null) bBook.setText("See Dates");
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.mapResidence);
+        mapFragment.getMapAsync(this);
 
         /** BACK BUTTON **/
         Utils.manageBackButton(this, (user)?HomeActivity.class:HostActivity.class);
@@ -134,6 +144,7 @@ public class ResidenceActivity extends AppCompatActivity implements OnMapReadyCa
         bReviews                = (Button)findViewById(R.id.btnReviews);
         bBook                   = (Button)findViewById(R.id.btnReservation);
         etGuests                = (EditText)findViewById(R.id.etGuests);
+        etGuests.setSelected(false);
 
         ibContact = (ImageButton) findViewById(R.id.ibContact);
         tvTitle.setText(selectedResidence.getTitle());
@@ -159,11 +170,13 @@ public class ResidenceActivity extends AppCompatActivity implements OnMapReadyCa
                 }
             }
         });
+
         tvAbout.setText(selectedResidence.getAbout());
         tvAmenities.setText(selectedResidence.getAmenities());
         tvCancellationPolicy.setText(selectedResidence.getCancellationPolicy());
         tvHostAbout.setText(host.getAbout());
         tvRules.setText(selectedResidence.getRules());
+
         setCalendar();
 
         tvPrice.setText(Double.toString(selectedResidence.getMinPrice()));
@@ -215,6 +228,7 @@ public class ResidenceActivity extends AppCompatActivity implements OnMapReadyCa
             public void onClick(View v)
             {
                 guests = etGuests.getText().toString();
+                //gets selected dates from user input
                 if(selectedDates[0] != null && selectedDates[1] != null)
                 {
                     if (selectedDates[0].before(selectedDates[1])) {
@@ -231,11 +245,11 @@ public class ResidenceActivity extends AppCompatActivity implements OnMapReadyCa
                         date_end = Utils.ConvertDateToString(selectedEndDate, Utils.DATABASE_DATE_FORMAT);
                     }
                 }
+                //in case user has not specified the period for booking or the number of guests, reservation cannot be performed
                 if(date_start == null || date_end == null || guests == null)
                 {
                     Toast.makeText(c, "Please fill in the dates and the number of guests", Toast.LENGTH_SHORT).show();
                     return;
-
                 }
                 else
                 {
@@ -258,49 +272,8 @@ public class ResidenceActivity extends AppCompatActivity implements OnMapReadyCa
         });
     }
 
-    public Boolean deleteResidence (String id) {
-        boolean success = true;
-        String deleteReviewsURL = RestPaths.deleteReviewsByResidence(Integer.toString(residenceId));
-        RestCallManager deleteReviewsManager = new RestCallManager();
-        RestCallParameters deleteReviewsParams = new RestCallParameters(deleteReviewsURL, "DELETE", "TEXT", "");
-
-        String reviewsResponse;
-        deleteReviewsManager.execute(deleteReviewsParams);
-        reviewsResponse = (String)deleteReviewsManager.getRawResponse().get(0);
-
-        String deleteReservationsURL = RestPaths.deleteReservationsByResidence(Integer.toString(residenceId));
-        RestCallManager deleteReservationsManager = new RestCallManager();
-        RestCallParameters deleteReservationsParams = new RestCallParameters(deleteReservationsURL, "DELETE", "TEXT", "");
-
-        String reservationsResponse;
-        deleteReservationsManager.execute(deleteReservationsParams);
-        reservationsResponse = (String)deleteReservationsManager.getRawResponse().get(0);
-
-        //TODO delete all data from all other tables
-        RestCallManager deleteResidenceManager = new RestCallManager();
-        RestCallParameters deleteParameters = new RestCallParameters(RestPaths.deleteResidenceById(id), "DELETE", "TEXT", "");
-
-        String response;
-        deleteResidenceManager.execute(deleteParameters);
-
-        response = (String)deleteResidenceManager.getRawResponse().get(0);
-        if (response.equals("OK") && reviewsResponse.equals("OK") && reservationsResponse.equals("OK")) ;
-        else success = false;
-
-        return  success;
-    }
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-
-        // Add a marker in Sydney and move the camera
-//        LatLng address = new LatLng(lat,longt);
-//        mMap.addMarker(new MarkerOptions().position(address).title("Marker in Sydney"));
-//        mMap.moveCamera(CameraUpdateFactory.newLatLng(address));
-    }
-
-    public boolean PostResult() {
+    public boolean PostResult()
+    {
         boolean success = true;
         ReservationParameters reservationParameters = new ReservationParameters(loggedinUser, selectedResidence, date_start, date_end, guests);
 
@@ -506,5 +479,19 @@ public class ResidenceActivity extends AppCompatActivity implements OnMapReadyCa
         }
         caldroidFragment.setDisableDates(datesDisabled_byGuestCount);
         caldroidFragment.refreshView();
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap)
+    {
+        mMap = googleMap;
+        LatLng address = RestCalls.findCoodrinates(selectedResidence.getAddress(), selectedResidence.getCity(), selectedResidence.getCountry());
+        mMap.addMarker(new MarkerOptions().position(address).title("Residence Address"));
+        CameraUpdate center = CameraUpdateFactory.newLatLng(address);
+        CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
+
+        mMap.moveCamera(center);
+        mMap.animateCamera(zoom);
+        //mMap.moveCamera(CameraUpdateFactory.newLatLng(address));
     }
 }

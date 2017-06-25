@@ -68,8 +68,7 @@ public class ReservationsFacadeREST extends AbstractFacade<Reservations> {
     @Override
     @Produces({MediaType.APPLICATION_JSON})
     public List<Reservations> findAll() {
-        List<Reservations>  rrr = super.findAll();
-        return rrr;
+        return super.findAll();
     }
 
     @GET
