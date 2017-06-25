@@ -25,8 +25,10 @@ import java.util.Set;
 
 import fromRESTful.Residences;
 import fromRESTful.Reviews;
+import fromRESTful.Searches;
+import fromRESTful.Users;
 import util.ListAdapterResidences;
-import util.RestCalls;
+import util.RetrofitCalls;
 import util.Utils;
 
 public class HomeActivity extends AppCompatActivity
@@ -47,6 +49,7 @@ public class HomeActivity extends AppCompatActivity
     String username, date_start, date_end;
 
     Boolean user;
+    Users loggedInUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -220,18 +223,27 @@ public class HomeActivity extends AppCompatActivity
         });
     }
 
-    public ArrayList<Residences> popularRecommendations() {
-        Integer userID = RestCalls.getUserId(username);
+    public ArrayList<Residences> popularRecommendations()
+    {
+        ArrayList<Users> Users;
+        RetrofitCalls retrofitCalls = new RetrofitCalls();
+        Users = retrofitCalls.getUserbyUsername(username);
+        loggedInUser = Users.get(0);
 
         ArrayList<Residences> reviewedResidences = new ArrayList<>();
         ArrayList<Reviews> reviewsByResidence;
         int residenceId;
 
-        Set<String> relevantCities = RestCalls.getSearchedCities(userID);
+        ArrayList<Searches> searchedCities;
+        searchedCities = retrofitCalls.getSearchedCities(loggedInUser.getId());
+        Set<String> relevantCities = new HashSet<>();
+        for(int i = 0;i<searchedCities.size();i++){
+            relevantCities.add(searchedCities.get(i).getCity());
+        }
 
 		/* if user has not searched anything yet, most popular residences will appear */
         if (relevantCities.size() == 0) {
-            ArrayList<Reviews> reviews = RestCalls.getReviews();
+            ArrayList<Reviews> reviews = retrofitCalls.getAllReviews();
             for (int i=0;i<reviews.size();i++) {
                 reviewedResidences.add(reviews.get(i).getResidenceId());
             }
@@ -239,7 +251,7 @@ public class HomeActivity extends AppCompatActivity
         /* if user has already searched, we will show the most popular residences in the relevant cities */
         else {
             for (String city : relevantCities) {
-                reviewedResidences = RestCalls.getResidenceByCity(city);
+                reviewedResidences = retrofitCalls.getResidencesByCity(city);
             }
         }
 
@@ -248,12 +260,12 @@ public class HomeActivity extends AppCompatActivity
         hs.addAll(reviewedResidences);
         reviewedResidences.clear();
         reviewedResidences.addAll(hs);
-        if(reviewedResidences.size() ==0) reviewedResidences = RestCalls.getAllResidences();
+        if(reviewedResidences.size() ==0) reviewedResidences = retrofitCalls.getAllResidences();
 
         /** get all relevant rooms and reviews **/
         for(int i=0; i < reviewedResidences.size(); i++){
             residenceId = reviewedResidences.get(i).getId();
-            reviewsByResidence = RestCalls.getReviewsByResidenceId(residenceId);
+            reviewsByResidence = retrofitCalls.getReviewsByResidenceId(residenceId);
             reviewedResidences.get(i).setReviewsCollection(reviewsByResidence);
         }
         //sort the results

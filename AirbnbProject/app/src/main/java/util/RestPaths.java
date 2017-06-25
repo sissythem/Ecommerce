@@ -16,7 +16,7 @@ public class RestPaths {
     /** Users Facade Methods **/
     public static String getUserByUsername(String username) { return AllUsers + "username?username=" + username; }
     public static String getUserByEmail(String email) { return AllUsers + "email?email=" + email; }
-    public static String getLoginUser(String username, String password) { return AllUsers + "login?username=" + username + "&email=" + password; }
+    public static String getLoginUser(String username, String password) { return AllUsers + "login?username=" + username + "&password=" + password; }
     public static String getUserById(int userId){ return  AllUsers + userId; }
     public static String editUserById (Integer id) { return AllUsers +"put?id=" + id; }
     public static String deleteUserById (String id){ return AllUsers + "delete/" +id; }
