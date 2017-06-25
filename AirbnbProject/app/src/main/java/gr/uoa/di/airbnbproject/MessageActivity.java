@@ -171,6 +171,7 @@ public class MessageActivity extends AppCompatActivity {
                         Intent currentIntent = getIntent();
                         currentIntent.putExtras(bupdated);
                         startActivity(currentIntent);
+                        finish();
                     } else {
                         Toast.makeText(c, "Message failed to send!", Toast.LENGTH_SHORT).show();
                         return;

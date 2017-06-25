@@ -1,6 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_gravity="fill_horizontal"
     android:layout_height="wrap_content">
 
@@ -34,11 +35,11 @@
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/backToolbar">
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:id="@+id/ivResidencePhotos"
@@ -118,21 +119,20 @@
                 android:layout_height="wrap_content"
                 android:text="HostName"
                 android:textSize="18sp"
-                android:layout_above="@+id/tvAboutTitle"
-                android:layout_toRightOf="@+id/ivHostPic"
-                android:layout_toEndOf="@+id/ivHostPic"
-                android:layout_marginBottom="18dp" />
+                android:layout_below="@+id/ivHostPic"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
 
             <ImageView
                 android:id="@+id/ivHostPic"
                 android:layout_width="wrap_content"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
                 app:srcCompat="@drawable/ic_profile"
                 android:layout_below="@+id/tvCountry"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_alignRight="@+id/tvHostAbout"
-                android:layout_alignEnd="@+id/tvHostAbout" />
+                android:layout_alignRight="@+id/tvAvailabilityTitle"
+                android:layout_alignEnd="@+id/tvAvailabilityTitle" />
 
             <ImageButton
                 android:id="@+id/ibContact"
@@ -142,18 +142,17 @@
                 android:layout_below="@+id/tvCountry"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                android:layout_above="@+id/tvAboutTitle" />
+                android:layout_above="@+id/tvHostName" />
 
             <TextView
                 android:id="@+id/tvContact"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignTop="@+id/ibContact"
-                android:layout_marginTop="15dp"
-                android:layout_toLeftOf="@+id/ibContact"
-                android:layout_toStartOf="@+id/ibContact"
                 android:text="Contact Host"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:layout_alignBottom="@+id/ibContact"
+                android:layout_toLeftOf="@+id/ibContact"
+                android:layout_toStartOf="@+id/ibContact" />
 
             <TextView
                 android:id="@+id/tvAboutTitle"
@@ -161,7 +160,7 @@
                 android:layout_height="wrap_content"
                 android:text="About this Residence"
                 android:textSize="20sp"
-                android:layout_below="@+id/ivHostPic"
+                android:layout_below="@+id/tvHostName"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentRight="true"
@@ -225,12 +224,36 @@
                 android:layout_alignParentEnd="true" />
 
             <TextView
+                android:id="@+id/tvRulesTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/tvCancellationPolicy"
+                android:text="Guest requirements"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/tvRules"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/tvRulesTitle"
+                android:text="Rules"
+                android:textSize="18sp" />
+
+            <TextView
                 android:id="@+id/tvHostTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_below="@+id/tvCancellationPolicy"
+                android:layout_below="@+id/tvRules"
                 android:text="About your host"
                 android:textSize="20sp" />
 
@@ -264,50 +287,32 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"/>
 
+            <EditText
+                android:id="@+id/etGuests"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/mapResidence"
+                android:ems="10"
+                android:hint="Number of guests"
+                android:inputType="number" />
+
             <TextView
                 android:id="@+id/tvAvailabilityTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_below="@+id/mapResidence"
+                android:layout_below="@+id/etGuests"
                 android:text="Availability"
                 android:textSize="20sp" />
 
-            <CalendarView
+            <LinearLayout
                 android:id="@+id/calendar"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvAvailabilityTitle"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
-
-
-            <TextView
-                android:id="@+id/tvRulesTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/calendar"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                android:text="Guest requirements"
-                android:textSize="20sp" />
-
-            <TextView
-                android:id="@+id/tvRules"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/tvRulesTitle"
-                android:text="Rules"
-                android:textSize="18sp" />
+                android:orientation="vertical"
+                android:layout_below="@+id/tvAvailabilityTitle">
+            </LinearLayout>
 
         </RelativeLayout>
     </ScrollView>

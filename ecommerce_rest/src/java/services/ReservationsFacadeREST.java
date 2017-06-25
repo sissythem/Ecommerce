@@ -68,7 +68,8 @@ public class ReservationsFacadeREST extends AbstractFacade<Reservations> {
     @Override
     @Produces({MediaType.APPLICATION_JSON})
     public List<Reservations> findAll() {
-        return super.findAll();
+        List<Reservations>  rrr = super.findAll();
+        return rrr;
     }
 
     @GET
@@ -97,6 +98,15 @@ public class ReservationsFacadeREST extends AbstractFacade<Reservations> {
     public List<Reservations> findbyTenants(@QueryParam("tenantId")Integer tenantId) {
         Query query = em.createNamedQuery("Reservations.findbyTenants");
         query.setParameter("tenantId", tenantId);
+        return query.getResultList();
+    }
+    
+    @GET
+    @Path("residence")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Reservations> findbyResidence(@QueryParam("residenceId")Integer residenceId) {
+        Query query = em.createNamedQuery("Reservations.findbyResidence");
+        query.setParameter("residenceId", residenceId);
         return query.getResultList();
     }
     

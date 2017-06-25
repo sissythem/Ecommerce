@@ -1,7 +1,7 @@
 package util;
 
 public class RestPaths {
-    public static final String restPath = "http://172.20.10.3:8080/ecommerce_restful/webresources/";
+    public static final String restPath = "http://192.168.1.6:8080/ecommerce_rest/webresources/";
 
     public static String AllUsers           = restPath + "users/";
     public static String AllSearches        = restPath + "searches/";
@@ -50,6 +50,7 @@ public class RestPaths {
 
     /** Reservations Facade Methods **/
     public static String getReservationsByTenantId (int tenantId){ return AllReservations + "tenant?tenantId=" + tenantId; }
+    public static String getReservationsByResidenceId (int residenceId){ return AllReservations + "residence?residenceId=" + residenceId;}
     public static String deleteReservationsByResidence(String residenceId){ return AllReservations + "delete?residenceId=" + residenceId; }
 
     /** Reviews Facade Methods **/

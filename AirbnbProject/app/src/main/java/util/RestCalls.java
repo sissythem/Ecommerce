@@ -4,10 +4,8 @@ import android.graphics.Bitmap;
 
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import fromRESTful.Conversations;
@@ -22,7 +20,6 @@ public class RestCalls {
 
     /** TO FIX: GET ID FROM LOGIN DIRECTLY - NO NEED TO MAKE EXTRA CALLS **/
     public static int getUserId (String username){
-        int userId;
         ArrayList<JSONObject> jsonArrayUsers = callWebService(RestPaths.getUserByUsername(username), "GET", "JSON", "");
         Users loggedinUser = Users.fromJSON(jsonArrayUsers.get(0));
         return loggedinUser.getId();
@@ -188,6 +185,18 @@ public class RestCalls {
             allReservationsByUser.add(reservation);
         }
         return allReservationsByUser;
+    }
+
+    public static ArrayList<Reservations> getReservationsByResidenceId (int residenceId){
+        ArrayList<Reservations> allReservationsByResidence = new ArrayList<>();
+        String reservationsURL = RestPaths.getReservationsByResidenceId(residenceId);
+        ArrayList<JSONObject> jsonReservations = callWebService(reservationsURL, "GET", "JSON", "");
+        for(int i=0;i<jsonReservations.size();i++){
+            JSONObject reservationsObj = jsonReservations.get(i);
+            Reservations reservation = Reservations.fromJSON(reservationsObj);
+            allReservationsByResidence.add(reservation);
+        }
+        return allReservationsByResidence;
     }
 
     /** create an object of type RestCallManager to get the result of the query **/

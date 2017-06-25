@@ -103,10 +103,6 @@ public class Reservations implements Serializable {
             if(Utils.isFieldOK(obj, "guests"))
                 r.guests = (int) obj.get("guests");
 
-            JSONObject roomObject = (JSONObject)obj.get("residenceId");
-            Residences residence = Residences.fromJSON(roomObject);
-            r.residenceId = residence;
-
             JSONObject tenantObject = (JSONObject)obj.get("tenantId");
             Users tenantUser = Users.fromJSON(tenantObject);
             r.tenantId = tenantUser;

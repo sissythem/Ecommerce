@@ -18,7 +18,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -36,7 +35,8 @@ public class RestCallManager extends AsyncTask<RestCallParameters, Integer, Arra
         int i;
         for (i=0; i<parameters.length;i++){
             try {
-                Log.i(TAG,"Calling " + parameters[i].getRequestType() + " rest with data: " + parameters[i].getparameters());
+                Log.i(TAG,"Calling " + parameters[i].getRequestType() + " rest with parameters: [" + parameters[i].getparameters() + "]" + " url: [" +
+                        parameters[i].getUrl() + "]");
 
                 if(parameters[i].getRequestType().equals("GET")) {
                     if(parameters[i].getCallResource().equals("STREAM"))
@@ -107,6 +107,8 @@ public class RestCallManager extends AsyncTask<RestCallParameters, Integer, Arra
                 e1.printStackTrace();
             }
         }
+        Log.i(TAG,"Getting single json response: ["  + jsonResult.toString()+ "]");
+
         return jsonResult;
     }
 
@@ -122,6 +124,8 @@ public class RestCallManager extends AsyncTask<RestCallParameters, Integer, Arra
         } catch (TimeoutException e) {
             e.printStackTrace();
         }
+        Log.i(TAG, String.format("Getting raw response of size %d", Response.size()));
+
         return Response;
     }
 

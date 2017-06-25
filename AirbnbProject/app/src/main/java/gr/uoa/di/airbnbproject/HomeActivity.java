@@ -39,7 +39,8 @@ import util.ListAdapterResidences;
 import util.RestCalls;
 import util.Utils;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity
+{
     final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
 
     ListAdapterResidences adapter;
@@ -55,7 +56,7 @@ public class HomeActivity extends AppCompatActivity {
 
     int[]residenceId;
     private int mStartYear, mStartMonth, mStartDay, mEndYear, mEndMonth, mEndDay;
-    String username, currentUser, date_start, date_end;
+    String username, date_start, date_end;
 
     Boolean user;
 

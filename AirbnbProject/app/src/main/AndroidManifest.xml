@@ -35,7 +35,6 @@
         <activity android:name=".EditResidenceActivity" />
         <activity android:name=".ViewHostProfileActivity" />
         <activity android:name=".ReviewsActivity" />
-        <activity android:name=".ShowCalendarActivity"></activity>
     </application>
 
 </manifest>
