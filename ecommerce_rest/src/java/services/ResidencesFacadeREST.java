@@ -30,10 +30,10 @@ import utils.General;
 
 /**
  *
- * @author vasso
+ * @author sissy
  */
 @Stateless
-@Path("residences")
+@Path("domain.residences")
 public class ResidencesFacadeREST extends AbstractFacade<Residences> {
 
     @PersistenceContext(unitName = "ecommerce_restPU")
@@ -49,12 +49,18 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
     public void create(Residences entity) {
         super.create(entity);
     }
-    
+
     @PUT
-    @Path("edit/{id}")
+    @Path("put")
     @Consumes({MediaType.APPLICATION_JSON})
     public void edit(@PathParam("id") Integer id, Residences entity) {
         super.edit(entity);
+    }
+
+    @DELETE
+    @Path("delete/{id}")
+    public void remove(@PathParam("id") Integer id) {
+        super.remove(super.find(id));
     }
 
     @GET
@@ -88,13 +94,6 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
     @Override
     protected EntityManager getEntityManager() {
         return em;
-    }
-    
-    /*** CUSTOM METHODS ***/
-    @DELETE
-    @Path("delete/{id}")
-    public void remove(@PathParam("id") Integer id) {
-        super.remove(super.find(id));
     }
     
     @GET
@@ -175,5 +174,5 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
 
         return query.getResultList();
     }
-    
+
 }

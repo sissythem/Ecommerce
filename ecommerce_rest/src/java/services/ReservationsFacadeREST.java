@@ -24,10 +24,10 @@ import javax.ws.rs.core.MediaType;
 
 /**
  *
- * @author vasso
+ * @author sissy
  */
 @Stateless
-@Path("reservations")
+@Path("domain.reservations")
 public class ReservationsFacadeREST extends AbstractFacade<Reservations> {
 
     @PersistenceContext(unitName = "ecommerce_restPU")
@@ -108,5 +108,4 @@ public class ReservationsFacadeREST extends AbstractFacade<Reservations> {
         query.setParameter("residenceId", residenceId);
         return query.getResultList();
     }
-    
 }

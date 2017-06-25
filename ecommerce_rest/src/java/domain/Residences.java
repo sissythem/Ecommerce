@@ -34,10 +34,7 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-/**
- *
- * @author vasso
- */
+
 @Entity
 @Table(name = "residences")
 @XmlRootElement
@@ -71,6 +68,13 @@ import javax.xml.bind.annotation.XmlTransient;
     
 })
 public class Residences implements Serializable {
+
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "active")
+    private short active;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "residenceId")
+    private Collection<Reservations> reservationsCollection;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "residenceId")
     private Collection<Conversations> conversationsCollection;
@@ -389,6 +393,23 @@ public class Residences implements Serializable {
 
     public void setConversationsCollection(Collection<Conversations> conversationsCollection) {
         this.conversationsCollection = conversationsCollection;
+    }
+
+    public short getActive() {
+        return active;
+    }
+
+    public void setActive(short active) {
+        this.active = active;
+    }
+
+    @XmlTransient
+    public Collection<Reservations> getReservationsCollection() {
+        return reservationsCollection;
+    }
+
+    public void setReservationsCollection(Collection<Reservations> reservationsCollection) {
+        this.reservationsCollection = reservationsCollection;
     }
     
 }

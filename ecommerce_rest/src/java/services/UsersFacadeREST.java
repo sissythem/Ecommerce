@@ -24,10 +24,10 @@ import javax.ws.rs.core.MediaType;
 
 /**
  *
- * @author vasso
+ * @author sissy
  */
 @Stateless
-@Path("users")
+@Path("domain.users")
 public class UsersFacadeREST extends AbstractFacade<Users> {
 
     @PersistenceContext(unitName = "ecommerce_restPU")
@@ -42,6 +42,19 @@ public class UsersFacadeREST extends AbstractFacade<Users> {
     @Consumes({MediaType.APPLICATION_JSON})
     public void create(Users entity) {
         super.create(entity);
+    }
+
+    @PUT
+    @Path("put")
+    @Consumes({MediaType.APPLICATION_JSON})
+    public void edit(@PathParam("id") Integer id, Users entity) {
+        super.edit(entity);
+    }
+
+    @DELETE
+    @Path("delete")
+    public void remove(Integer id) {
+        super.remove(super.find(id));
     }
 
     @GET
@@ -78,19 +91,14 @@ public class UsersFacadeREST extends AbstractFacade<Users> {
     }
     
     /*** CUSTOM METHODS ***/
-    @PUT
-    @Path("put")
-    @Consumes({MediaType.APPLICATION_JSON})
-    public void edit(@PathParam("id") Integer id, Users entity) {
-        super.edit(entity);
-    }
-
-    @DELETE
-    @Path("delete")
-    public void remove(Integer id) {
-        super.remove(super.find(id));
-    }
+   
     
+    /**
+     *
+     * @param username
+     * @param password
+     * @return
+     */
     @GET
     @Path("login")
     @Produces(MediaType.APPLICATION_JSON)
@@ -118,5 +126,5 @@ public class UsersFacadeREST extends AbstractFacade<Users> {
         query.setParameter("email", email);
         return query.getResultList();
     }
-    
+
 }
