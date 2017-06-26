@@ -13,6 +13,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import fromRESTful.Users;
@@ -21,6 +22,7 @@ import util.RestCallManager;
 import util.RestCallParameters;
 import util.RestCalls;
 import util.RestPaths;
+import util.RetrofitCalls;
 import util.Utils;
 
 public class ProfileActivity extends AppCompatActivity
@@ -66,8 +68,9 @@ public class ProfileActivity extends AppCompatActivity
         userdetails = new String[9];
 
         manageToolbarButtons();
-
-        loggedinUser = RestCalls.getUser(username);
+        RetrofitCalls retrofitCalls = new RetrofitCalls();
+        ArrayList<Users> userLoggedIn = retrofitCalls.getUserbyUsername(username);
+        loggedinUser = userLoggedIn.get(0);
         userdetails[0] = loggedinUser.getFirstName();
         userdetails[1] = loggedinUser.getLastName();
         userdetails[2] = loggedinUser.getUsername();
@@ -98,6 +101,7 @@ public class ProfileActivity extends AppCompatActivity
 
     public void manageToolbarButtons() {
 
+        //TODO fix if statements, menu does not work
         btnMenu.setOnClickListener(new View.OnClickListener()
         {
             @Override

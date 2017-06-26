@@ -11,13 +11,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 
-import util.RestCallManager;
-import util.RestCallParameters;
-import util.RestPaths;
+import fromRESTful.Users;
+import util.RetrofitCalls;
 
 public class LoginActivity extends AppCompatActivity {
     Context c;
@@ -70,22 +67,19 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 //check if the user is correct
-                String loginurl = RestPaths.getLoginUser(Username, password);
+                RetrofitCalls retrofitCalls = new RetrofitCalls();
+                ArrayList<Users> existingUsers = retrofitCalls.getLoginUser(Username, password);
 
-                RestCallManager loginManager = new RestCallManager();
-                RestCallParameters loginParameters = new RestCallParameters(loginurl, "GET", "JSON", "");
-                loginManager.execute(loginParameters);
-
-                ArrayList<JSONObject> jsonArrayLogin = loginManager.getSingleJSONArray();
-                if(jsonArrayLogin.size() == 0) userExists = false;
+                if(existingUsers.size() == 0) userExists = false;
 
 
-                if(userExists){
+                if(!userExists)
+                {
                     Toast.makeText(c, "User does not exist, please click on Register to create a new account", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                else{
-
+                else
+                {
                     isUserLoggedIn = sharedPrefs.getBoolean("userLoggedInState", false);
                     editor = sharedPrefs.edit();
                     editor.putBoolean("userLoggedInState", true);

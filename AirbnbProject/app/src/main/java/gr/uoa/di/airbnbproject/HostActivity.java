@@ -12,12 +12,14 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 import fromRESTful.Residences;
+import fromRESTful.Users;
 import util.ListAdapterHostResidences;
-import util.RestCalls;
+import util.RetrofitCalls;
 import util.Utils;
 
 public class HostActivity extends AppCompatActivity {
     String username;
+    Users host;
 
     ImageButton baddResidence;
 
@@ -57,7 +59,8 @@ public class HostActivity extends AppCompatActivity {
 
         baddResidence = (ImageButton)findViewById(R.id.addResidence);
 
-        baddResidence.setOnClickListener(new View.OnClickListener() {
+        baddResidence.setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View v) {
                 Intent addResidenceIntent = new Intent(HostActivity.this, AddResidenceActivity.class);
@@ -72,8 +75,10 @@ public class HostActivity extends AppCompatActivity {
                 }
             }
         });
-        int hostId = RestCalls.getUserId(username);
-        ArrayList<Residences> storedResidences = RestCalls.getResidencesbyHostId(hostId);
+        RetrofitCalls retrofitCalls = new RetrofitCalls();
+        ArrayList<Users> hostUsers = retrofitCalls.getUserbyUsername(username);
+        host = hostUsers.get(0);
+        ArrayList<Residences> storedResidences = retrofitCalls.getResidencesByHost(host.getId());
 
         String[] representativePhoto    = new String [storedResidences.size()];
         String[] title                  = new String[storedResidences.size()];

@@ -24,7 +24,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import util.ListAdapterReviews;
 import util.RestAPI;
-import util.RestCalls;
 import util.RestClient;
 import util.RetrofitCalls;
 import util.Utils;
@@ -83,11 +82,10 @@ public class ReviewsActivity extends AppCompatActivity
         RetrofitCalls retrofitCalls = new RetrofitCalls();
         ArrayList<Users> getUserByUsername = retrofitCalls.getUserbyUsername(loggedInUsername);
         loggedinUser        = getUserByUsername.get(0);
-        ArrayList<Residences> getResidenceById = retrofitCalls.getResidenceById(residenceId);
-        selectedResidence   = getResidenceById.get(0);
+        selectedResidence   = retrofitCalls.getResidenceById(residenceId);
         host                = selectedResidence.getHostId();
 
-        ArrayList<Reviews> reviewsForSelectedResidence = RestCalls.getReviewsByResidenceId(residenceId);
+        ArrayList<Reviews> reviewsForSelectedResidence = retrofitCalls.getReviewsByResidenceId(residenceId);
         String[] representativePhoto    = new String [reviewsForSelectedResidence.size()];
         String[] username               = new String[reviewsForSelectedResidence.size()];
         String[] comment                = new String[reviewsForSelectedResidence.size()];

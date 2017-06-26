@@ -15,7 +15,7 @@ import java.util.Date;
 
 import fromRESTful.Users;
 import util.ListAdapterProfile;
-import util.RestCalls;
+import util.RetrofitCalls;
 import util.Utils;
 
 public class ViewHostProfileActivity extends AppCompatActivity {
@@ -64,7 +64,8 @@ public class ViewHostProfileActivity extends AppCompatActivity {
         user = buser.getBoolean("type");
         hostId = buser.getInt("host");
 
-        host = RestCalls.getUserById(hostId);
+        RetrofitCalls retrofitCalls = new RetrofitCalls();
+        host = retrofitCalls.getUserbyId(hostId);
 
         bback = (ImageButton)findViewById(R.id.back);
 

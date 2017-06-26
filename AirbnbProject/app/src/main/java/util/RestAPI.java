@@ -27,7 +27,7 @@ public interface RestAPI
 {
     /** Users Facade Methods **/
     @GET("users/{userId}")
-    Call<List<Users>> getUserById(@Path("userId") int userId);
+    Call<Users> getUserById(@Path("userId") int userId);
 
     @GET("users/username")
     Call<List<Users>> getUserByUsername(@Query("username") String username);
@@ -66,7 +66,7 @@ public interface RestAPI
     Call<List<Residences>> getResidencesByHostId(@Query("hostId") int hostId);
 
     @GET("residences/{residenceId}")
-    Call<List<Residences>> getResidencesById (@Path("residenceId") int residenceId);
+    Call<Residences> getResidencesById (@Path("residenceId") int residenceId);
 
     @DELETE("residences/delete/{id}")
     Call<Residences> deleteResidenceById(@Path("id") int id);
@@ -88,7 +88,8 @@ public interface RestAPI
     Call<List<Messages>> getMessagesByConversation(@Query("conversationId") int conversationId);
 
     @POST("messages/addmessage")
-    Call<Messages> postMessage();
+    @FormUrlEncoded
+    Call<Messages> postMessage(@Body Messages message);
 
 
     /** Conversations Facade Methods **/
@@ -97,7 +98,7 @@ public interface RestAPI
     Call<List<Conversations>> getConversations(@Query("userId") int userId);
 
     @GET("conversations/{conversationId}")
-    Call<List<Conversations>> getConversationById(@Path("conversationId") int conversationId);
+    Call<Conversations> getConversationById(@Path("conversationId") int conversationId);
 
     @GET("conversations/last")
     Call<List<Conversations>> lastConversationEntry(@Query("senderId") int senderId, @Query("receiverId") int receiverId);
@@ -122,6 +123,10 @@ public interface RestAPI
 
     @GET("reservations/comment")
     Call<List<Reservations>> getReservationsByTenantIdAndResidenceId(@Query("tenantId") int tenantId, @Query("residenceId") int residenceId);
+
+    @POST("reservations")
+    @FormUrlEncoded
+    Call<Reservations> postReservation(@Body Reservations reservation);
 
 
     /** Reviews Facade Methods **/

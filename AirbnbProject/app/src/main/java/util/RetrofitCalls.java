@@ -1,7 +1,6 @@
 package util;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,32 +27,37 @@ public class RetrofitCalls
     ArrayList<Reviews> reviewsList;
     ArrayList<Reservations> reservationsList;
     ArrayList<Searches> searchesList;
-    ArrayList<Users> user;
+    ArrayList<Users> usersList;
     ArrayList<Conversations> conversationsList;
     ArrayList<Messages> messagesList;
+
+    Residences residence;
+    Conversations conversation;
+    Users user;
+
 
     /** Calls for User **/
     private class getUserByUsernameHttpRequestTask extends AsyncTask<String, String, ArrayList<Users>> {
 
         @Override
-        protected ArrayList<Users> doInBackground(String... params) {
-            Log.i("asdgf","Running getUserByUsernameHttpRequestTask dib");
-            user = new ArrayList<>();
-
+        protected ArrayList<Users> doInBackground(String... params)
+        {
+            usersList = new ArrayList<>();
             RestAPI restAPI = RestClient.getClient().create(RestAPI.class);
             Call<List<Users>> call = restAPI.getUserByUsername(params[0]);
             try {
                 Response<List<Users>> resp = call.execute();
-                user.addAll(resp.body());
+                usersList.addAll(resp.body());
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return user;
+            return usersList;
         }
         @Override
         protected void onPostExecute(ArrayList<Users> users) {
         }
     }
+
 
     public ArrayList<Users> getUserbyUsername(String username)
     {
@@ -66,33 +70,65 @@ public class RetrofitCalls
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        return user;
+        return usersList;
     }
 
-    private class getUserByIdHttpRequestTask extends AsyncTask<Integer, Integer, ArrayList<Users>>
+    private class getLoginUserHttpRequestTask extends AsyncTask<String, String, ArrayList<Users>>
+    {
+        @Override
+        protected ArrayList<Users> doInBackground(String... params)
+        {
+            usersList = new ArrayList<>();
+            RestAPI restAPI = RestClient.getClient().create(RestAPI.class);
+            Call<List<Users>> call = restAPI.getLoginUser(params[0], params[1]);
+            try{
+                Response<List<Users>> resp = call.execute();
+                usersList.addAll(resp.body());
+            }
+            catch(IOException e){
+                e.printStackTrace();
+            }
+            return usersList;
+        }
+    }
+
+    public ArrayList<Users> getLoginUser(String username, String password)
+    {
+        getLoginUserHttpRequestTask loginUser = new getLoginUserHttpRequestTask();
+        loginUser.execute(username, password);
+        try{
+            loginUser.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return usersList;
+    }
+
+    private class getUserByIdHttpRequestTask extends AsyncTask<Integer, Integer, Users>
     {
 
         @Override
-        protected ArrayList<Users> doInBackground(Integer... params) {
-            Log.i("asdgf","Running getUserByUsernameHttpRequestTask dib");
-            user = new ArrayList<>();
-
+        protected Users doInBackground(Integer... params)
+        {
+            user = new Users();
             RestAPI restAPI = RestClient.getClient().create(RestAPI.class);
-            Call<List<Users>> call = restAPI.getUserById(params[0]);
+            Call<Users> call = restAPI.getUserById(params[0]);
             try {
-                Response<List<Users>> resp = call.execute();
-                user.addAll(resp.body());
+                Response<Users> resp = call.execute();
+                user = resp.body();
             } catch (IOException e) {
                 e.printStackTrace();
             }
             return user;
         }
         @Override
-        protected void onPostExecute(ArrayList<Users> users) {
+        protected void onPostExecute(Users users) {
         }
     }
 
-    public ArrayList<Users> getUserbyId(int id)
+    public Users getUserbyId(int id)
     {
         getUserByIdHttpRequestTask userById = new getUserByIdHttpRequestTask();
         userById.execute(id);
@@ -323,27 +359,27 @@ public class RetrofitCalls
         return residencesList;
     }
 
-     private class getResidenceByIdHttpRequestTask extends AsyncTask<Integer, Integer, ArrayList<Residences>>
+     private class getResidenceByIdHttpRequestTask extends AsyncTask<Integer, Integer, Residences>
      {
          @Override
-         protected ArrayList<Residences> doInBackground(Integer... params)
+         protected Residences doInBackground(Integer... params)
          {
-             residencesList = new ArrayList<>();
+             residence = new Residences();
              RestAPI restAPI = RestClient.getClient().create(RestAPI.class);
-             Call<List<Residences>> call = restAPI.getResidencesById(params[0]);
+             Call<Residences> call = restAPI.getResidencesById(params[0]);
              try
              {
-                 Response<List<Residences>> resp = call.execute();
-                 residencesList.addAll(resp.body());
+                 Response<Residences> resp = call.execute();
+                 residence = resp.body();
              }
              catch (IOException e) {
                  e.printStackTrace();
              }
-             return residencesList;
+             return residence;
          }
      }
 
-     public ArrayList<Residences> getResidenceById (int id){
+     public Residences getResidenceById (int id){
          getResidenceByIdHttpRequestTask residenceById = new getResidenceByIdHttpRequestTask();
          residenceById.execute(id);
          try {
@@ -353,7 +389,7 @@ public class RetrofitCalls
          } catch (ExecutionException e) {
              e.printStackTrace();
          }
-         return residencesList;
+         return residence;
      }
 
      private class getAllResidencesHttpRequestTask extends AsyncTask<Void, Void, ArrayList<Residences>>
@@ -460,27 +496,27 @@ public class RetrofitCalls
          return conversationsList;
      }
 
-     private class getConversationsByIdHttPRequestTask extends AsyncTask<Integer, Integer, ArrayList<Conversations>>
+     private class getConversationsByIdHttPRequestTask extends AsyncTask<Integer, Integer, Conversations>
      {
          @Override
-         protected ArrayList<Conversations> doInBackground(Integer... params)
+         protected Conversations doInBackground(Integer... params)
          {
-             conversationsList = new ArrayList<>();
+             conversation = new Conversations();
              RestAPI restAPI = RestClient.getClient().create(RestAPI.class);
-             Call<List<Conversations>> call = restAPI.getConversationById(params[0]);
+             Call<Conversations> call = restAPI.getConversationById(params[0]);
              try
              {
-                 Response<List<Conversations>> resp = call.execute();
-                 conversationsList.addAll(resp.body());
+                 Response<Conversations> resp = call.execute();
+                 conversation = resp.body();
              }
              catch (IOException e){
                  e.printStackTrace();
              }
-             return conversationsList;
+             return conversation;
          }
      }
 
-     public ArrayList<Conversations> getConversationsById(int id)
+     public Conversations getConversationsById(int id)
      {
          getConversationsByIdHttPRequestTask conversationsById = new getConversationsByIdHttPRequestTask();
          conversationsById.execute(id);
@@ -491,7 +527,7 @@ public class RetrofitCalls
          } catch (ExecutionException e) {
              e.printStackTrace();
          }
-         return conversationsList;
+         return conversation;
      }
 
      private class getConversationByResidenceIdHttPRequestTask extends AsyncTask<Integer, Integer, ArrayList<Conversations>>

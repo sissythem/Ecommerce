@@ -20,6 +20,15 @@ public class Reservations implements Serializable {
 
     public Reservations() {}
 
+    public Reservations(Users user, Residences residence, Date date_start, Date date_end, int guests)
+    {
+        this.tenantId=user;
+        this.residenceId=residence;
+        this.startDate=date_start;
+        this.endDate=date_end;
+        this.guests=guests;
+    }
+
     public Reservations(Integer id) {
         this.id = id;
     }

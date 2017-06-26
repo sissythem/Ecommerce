@@ -48,6 +48,17 @@ public class Users implements Serializable {
         this.host=host;
     }
 
+    public Users(String firstName, String lastName, String username, String password, String email, String phoneNumber, Date bdate)
+    {
+        this.firstName=firstName;
+        this.lastName=lastName;
+        this.username=username;
+        this.password=password;
+        this.email=email;
+        this.phoneNumber=phoneNumber;
+        this.birthDate=bdate;
+    }
+
     public Users(Integer id) {
         this.id = id;
     }

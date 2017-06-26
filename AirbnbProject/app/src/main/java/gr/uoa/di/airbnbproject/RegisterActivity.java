@@ -23,9 +23,14 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-import util.RegisterParameters;
+import fromRESTful.Users;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import util.RestAPI;
 import util.RestCallManager;
 import util.RestCallParameters;
+import util.RestClient;
 import util.RestPaths;
 import util.Utils;
 
@@ -42,6 +47,8 @@ public class RegisterActivity extends AppCompatActivity {
     SharedPreferences.Editor editor;
     private boolean isUserLoggedIn;
     Context c;
+
+    boolean success;
 
     ImageView imageToUpload;
     EditText uploadImageName;
@@ -142,14 +149,14 @@ public class RegisterActivity extends AppCompatActivity {
                     return;
                 }
 
-                Date bdate = Utils.ConvertStringToDate(BirthDate,Utils.APP_DATE_FORMAT );
+                Date bdate = Utils.ConvertStringToDate(BirthDate,Utils.DATABASE_DATE_FORMAT);
                 String stringBirthDate = Utils.ConvertDateToString(bdate,Utils.DATABASE_DATE_FORMAT);
 
                 userIsNew = checkUsername(Username);
                 emailIsNew = checkEmail(Email);
                 //if username and email are new the application sends the data with sendPOST method to be stored in the database
                 if(userIsNew && emailIsNew) {
-                    boolean success = PostResult(firstName, lastName, phoneNumber, Email, Username, Password, stringBirthDate);
+                    boolean success = PostResult(firstName, lastName, Username, Password, Email, phoneNumber, bdate);
                     if (success) {
                         //if data are stored successfully in the data base, the user is now logged in and the home activity starts
                         isUserLoggedIn = sharedPrefs.getBoolean("userLoggedInState", false);
@@ -200,18 +207,28 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
-    public boolean PostResult(String firstName, String lastName, String phoneNumber, String Email, String Username, String Password, String BirthDate) {
-        boolean success = true;
-        RegisterParameters UserParameters = new RegisterParameters(firstName, lastName, phoneNumber, Email, Username, Password, BirthDate);
-        RestCallManager userpost = new RestCallManager();
-        RestCallParameters postparameters = new RestCallParameters(RestPaths.AllUsers, "POST", "", UserParameters.getRegisterParameters());
-        String response;
+    public boolean PostResult(String firstName, String lastName, String username, String password, String email, String phoneNumber, Date bdate) {
+        success = true;
+        Users UserParameters = new Users(firstName, lastName, phoneNumber, email, username, password, bdate);
+        RestAPI restAPI = RestClient.getClient().create(RestAPI.class);
+        Call<Users> call = restAPI.postUser(UserParameters);
 
-        userpost.execute(postparameters);
-        response = (String)userpost.getRawResponse().get(0);
-        if (response.equals("OK")) ;
-        else success = false;
 
+        call.enqueue(new Callback<Users>() {
+            @Override
+            public void onResponse(Call<Users> call, Response<Users> response) {
+                if(response.isSuccessful())
+                {
+                    success=true;
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Users> call, Throwable t)
+            {
+                success=false;
+            }
+        });
         return success;
     }
 

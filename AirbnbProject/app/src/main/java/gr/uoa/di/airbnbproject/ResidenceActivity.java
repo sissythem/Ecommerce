@@ -38,16 +38,18 @@ import java.util.Map;
 import fromRESTful.Reservations;
 import fromRESTful.Residences;
 import fromRESTful.Users;
-import util.ReservationParameters;
-import util.RestCallManager;
-import util.RestCallParameters;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import util.RestAPI;
 import util.RestCalls;
-import util.RestPaths;
+import util.RestClient;
+import util.RetrofitCalls;
 import util.Utils;
 
 public class ResidenceActivity extends FragmentActivity implements OnMapReadyCallback
 {
-    Boolean user;
+    Boolean user, success;
     String username, date_start, date_end, guests;
 
     static final String TAG = "RESIDENCE_ACTIVITY";
@@ -57,7 +59,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
     SharedPreferences.Editor editor;
     private boolean isUserLoggedIn;
 
-    int residenceId, maxGuests;
+    int residenceId, maxGuests, guestsInt;
     Context c;
 
     TextView tvTitle, tvType, tvAddress, tvCity, tvCountry, tvHostName, tvAbout, tvAmenities, tvCancellationPolicy, tvHostAbout, tvRules, tvPrice;
@@ -73,8 +75,11 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
 
     private CaldroidFragment caldroidFragment;
     Date[] selectedDates;
+    Date selectedStartDate, selectedEndDate;
     Map<Date, Integer> NumGuestsPerDay;
     ArrayList <Date> reservedDates, datesDisabled_byGuestCount;
+
+    RetrofitCalls retrofitCalls;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,10 +109,12 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         date_start          = buser.getString("startDate");
         date_end            = buser.getString("endDate");
         guests              = buser.getString("guests");
-
         residenceId         = buser.getInt("residenceId");
-        loggedinUser        = RestCalls.getUser(username);
-        selectedResidence   = RestCalls.getResidenceById(residenceId);
+
+        retrofitCalls = new RetrofitCalls();
+        ArrayList<Users> userLoggedIn = retrofitCalls.getUserbyUsername(username);
+        loggedinUser = userLoggedIn.get(0);
+        selectedResidence   = retrofitCalls.getResidenceById(residenceId);
 
         setUpResidenceView();
 
@@ -153,9 +160,11 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         tvCity.setText(selectedResidence.getCity());
         tvCountry.setText(selectedResidence.getCountry());
         tvHostName.setText(host.getFirstName() +" " + host.getLastName());
-        tvHostName.setOnClickListener(new View.OnClickListener() {
+        tvHostName.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 Intent profileIntent = new Intent(ResidenceActivity.this, ViewHostProfileActivity.class);
                 Bundle buser = new Bundle();
                 buser.putBoolean("type", user);
@@ -189,7 +198,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
 
                 Bundle bmessage = new Bundle();
                 bmessage.putBoolean("type", user);
-                bmessage.putInt("currentUserId", RestCalls.getUserId(username));
+                bmessage.putInt("currentUserId", loggedinUser.getId());
                 bmessage.putInt("toUserId", host.getId());
                 bmessage.putString("msgSubject", tvTitle.getText().toString());
                 bmessage.putInt("residenceId", residenceId);
@@ -228,25 +237,22 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
             public void onClick(View v)
             {
                 guests = etGuests.getText().toString();
+                guestsInt = Integer.parseInt(guests);
                 //gets selected dates from user input
                 if(selectedDates[0] != null && selectedDates[1] != null)
                 {
                     if (selectedDates[0].before(selectedDates[1])) {
-                        final Date selectedStartDate = selectedDates[0];
-                        final Date selectedEndDate = selectedDates[1];
-                        date_start = Utils.ConvertDateToString(selectedStartDate, Utils.DATABASE_DATE_FORMAT);
-                        date_end = Utils.ConvertDateToString(selectedEndDate, Utils.DATABASE_DATE_FORMAT);
+                        selectedStartDate = selectedDates[0];
+                        selectedEndDate = selectedDates[1];
                     }
                     else
                     {
-                        final Date selectedStartDate = selectedDates[1];
-                        final Date selectedEndDate = selectedDates[0];
-                        date_start = Utils.ConvertDateToString(selectedStartDate, Utils.DATABASE_DATE_FORMAT);
-                        date_end = Utils.ConvertDateToString(selectedEndDate, Utils.DATABASE_DATE_FORMAT);
+                        selectedStartDate = selectedDates[1];
+                        selectedEndDate = selectedDates[0];
                     }
                 }
                 //in case user has not specified the period for booking or the number of guests, reservation cannot be performed
-                if(date_start == null || date_end == null || guests == null)
+                if(selectedStartDate == null || selectedEndDate == null || guests == null)
                 {
                     Toast.makeText(c, "Please fill in the dates and the number of guests", Toast.LENGTH_SHORT).show();
                     return;
@@ -255,7 +261,8 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
                 {
                     //user makes a reservation and goes back to home activity
                     boolean success = PostResult();
-                    if (success) {
+                    if (success)
+                    {
                         Intent homeIntent = new Intent(ResidenceActivity.this, HomeActivity.class);
                         user = true;
                         Bundle buser = new Bundle();
@@ -274,21 +281,27 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
 
     public boolean PostResult()
     {
-        boolean success = true;
-        ReservationParameters reservationParameters = new ReservationParameters(loggedinUser, selectedResidence, date_start, date_end, guests);
+        Reservations reservationParameters = new Reservations(loggedinUser, selectedResidence, selectedStartDate, selectedEndDate, guestsInt);
 
-        RestCallManager reservationPostManager = new RestCallManager();
-        RestCallParameters postparameters = new RestCallParameters(RestPaths.AllReservations, "POST", "", reservationParameters.getReservationParameters());
+        RestAPI restAPI = RestClient.getClient().create(RestAPI.class);
+        Call<Reservations> call = restAPI.postReservation(reservationParameters);
 
-//        ArrayList<String> PostResponse ;
-        String response;
+        call.enqueue(new Callback<Reservations>() {
+            @Override
+            public void onResponse(Call<Reservations> call, Response<Reservations> response) {
+                if(response.isSuccessful())
+                {
+                    success=true;
+                }
+            }
 
-        reservationPostManager.execute(postparameters);
-//            PostResponse = userpost.get(1000, TimeUnit.SECONDS);
-        response = (String)reservationPostManager.getRawResponse().get(0);
-//            String result = PostResponse.get(0);
-        if (response.equals("OK")) ;
-        else success = false;
+            @Override
+            public void onFailure(Call<Reservations> call, Throwable t)
+            {
+                success=false;
+            }
+        });
+
 
         return success;
     }
@@ -322,7 +335,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
             current = calendar.getTime();
         }
         //get all reservations for the selected residence
-        ArrayList<Reservations> allReservationsByResidence = RestCalls.getReservationsByResidenceId(residenceId);
+        ArrayList<Reservations> allReservationsByResidence = retrofitCalls.getReservationsByResidenceId(residenceId);
 
         //get the max guests for this residence
         maxGuests = selectedResidence.getGuests();
@@ -393,12 +406,12 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
 
         if(date_start != null)
         {
-            selectedDates[0] = Utils.ConvertStringToDate(date_start, Utils.APP_DATE_FORMAT);
+            selectedDates[0] = Utils.ConvertStringToDate(date_start, Utils.DATABASE_DATE_FORMAT);
             caldroidFragment.setBackgroundDrawableForDate(blue, selectedDates[0]);
         }
         if(date_end !=null)
         {
-            selectedDates[1] = Utils.ConvertStringToDate(date_end, Utils.APP_DATE_FORMAT);
+            selectedDates[1] = Utils.ConvertStringToDate(date_end, Utils.DATABASE_DATE_FORMAT);
             caldroidFragment.setBackgroundDrawableForDate(blue, selectedDates[1]);
         }
         final CaldroidListener listener = new CaldroidListener()
