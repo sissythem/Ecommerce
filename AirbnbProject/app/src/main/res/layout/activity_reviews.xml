@@ -37,10 +37,58 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/backToolbar"
-        android:layout_above="@+id/footerToolbar"
         android:divider="#b5b5b5"
         android:dividerHeight="1dp"
         android:listSelector="@drawable/list_selector">
     </ListView>
-    <include layout="@layout/footer"/>
+
+    <RatingBar
+        android:id="@+id/rating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/reviewslist"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="325dp" />
+
+    <TextView
+        android:id="@+id/txtRate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/rating"
+        android:layout_marginTop="17dp"
+        android:layout_toEndOf="@+id/rating"
+        android:layout_toRightOf="@+id/rating"
+        android:text="Rate the Residence" />
+
+    <EditText
+        android:id="@+id/writeComment"
+        android:layout_width="wrap_content"
+        android:layout_height="100dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/rating"
+        android:ems="10"
+        android:hint="Write your review"
+        android:inputType="textMultiLine" />
+
+    <Button
+        android:id="@+id/btnreview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/writeComment"
+        android:text="SEND"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <include layout="@layout/footer" />
+
+
 </RelativeLayout>

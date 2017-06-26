@@ -10,7 +10,9 @@ import fromRESTful.Reviews;
 import fromRESTful.Searches;
 import fromRESTful.Users;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.DELETE;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
@@ -37,7 +39,8 @@ public interface RestAPI
     Call<List<Users>> getLoginUser(@Query("username") String username, @Query("password") String password);
 
     @POST("users")
-    Call<Users> postUser();
+    @FormUrlEncoded
+    Call<Users> postUser(@Body Users user);
 
     @PUT("users/put/{id}")
     Call<Users> editUserById(@Path("userId") int userId);
@@ -72,7 +75,8 @@ public interface RestAPI
     Call<Residences> editResidenceById(@Path("id") int id);
 
     @POST("residences")
-    Call<Residences> postResidence();
+    @FormUrlEncoded
+    Call<Residences> postResidence(@Body Residences residence);
 
     @GET("residences")
     Call<List<Residences>> getAllResidences();
@@ -116,6 +120,9 @@ public interface RestAPI
     @DELETE("reservations/delete/{residenceId}")
     Call<Reservations> deleteReservationsByResidence(@Path("residenceId") int residenceId);
 
+    @GET("reservations/comment")
+    Call<List<Reservations>> getReservationsByTenantIdAndResidenceId(@Query("tenantId") int tenantId, @Query("residenceId") int residenceId);
+
 
     /** Reviews Facade Methods **/
 
@@ -125,6 +132,13 @@ public interface RestAPI
     @GET("reviews/residence")
     Call<List<Reviews>> getReviewsByResidence(@Query("residenceId") int residenceId);
 
+    @GET("reviews/tenant")
+    Call<List<Reviews>> getReviewsByTenant(@Query("tenantId") int tenantId);
+
     @DELETE("reviews/delete/{residenceId}")
     Call<Reviews> deleteReviewsByResidence(@Path("residenceId") int residenceId);
+
+    @POST("reviews")
+    @FormUrlEncoded
+    Call<Reviews> postReview(@Body Reviews review);
 }

@@ -27,7 +27,7 @@ import javax.ws.rs.core.MediaType;
  * @author sissy
  */
 @Stateless
-@Path("domain.reservations")
+@Path("reservations")
 public class ReservationsFacadeREST extends AbstractFacade<Reservations> {
 
     @PersistenceContext(unitName = "ecommerce_restPU")
@@ -105,6 +105,16 @@ public class ReservationsFacadeREST extends AbstractFacade<Reservations> {
     @Produces(MediaType.APPLICATION_JSON)
     public List<Reservations> findbyResidence(@QueryParam("residenceId")Integer residenceId) {
         Query query = em.createNamedQuery("Reservations.findbyResidence");
+        query.setParameter("residenceId", residenceId);
+        return query.getResultList();
+    }
+    
+    @GET
+    @Path("comment")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Reservations> review(@QueryParam("tenantId")String tenantId, @QueryParam("residenceId")String residenceId) {
+        Query query = em.createNamedQuery("comment");
+        query.setParameter("tenantId", tenantId);
         query.setParameter("residenceId", residenceId);
         return query.getResultList();
     }

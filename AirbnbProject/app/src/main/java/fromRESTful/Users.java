@@ -29,7 +29,24 @@ public class Users implements Serializable {
     private Date birthDate;
     private String host;
 
-    public Users() {}
+    public Users(){}
+    public Users(String firstName, String lastName, String username, String password, String email, String phoneNumber, String country, String city,
+                 String photo, Date registrationDate, String about, Date birthDate, String host)
+    {
+        this.firstName=firstName;
+        this.lastName=lastName;
+        this.username=username;
+        this.password=password;
+        this.email=email;
+        this.phoneNumber=phoneNumber;
+        this.country=country;
+        this.city=city;
+        this.photo=photo;
+        this.registrationDate=registrationDate;
+        this.about=about;
+        this.birthDate=birthDate;
+        this.host=host;
+    }
 
     public Users(Integer id) {
         this.id = id;

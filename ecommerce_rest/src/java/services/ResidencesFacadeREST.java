@@ -33,7 +33,7 @@ import utils.General;
  * @author sissy
  */
 @Stateless
-@Path("domain.residences")
+@Path("residences")
 public class ResidencesFacadeREST extends AbstractFacade<Residences> {
 
     @PersistenceContext(unitName = "ecommerce_restPU")

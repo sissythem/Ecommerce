@@ -27,7 +27,7 @@ import javax.ws.rs.core.MediaType;
  * @author sissy
  */
 @Stateless
-@Path("domain.users")
+@Path("users")
 public class UsersFacadeREST extends AbstractFacade<Users> {
 
     @PersistenceContext(unitName = "ecommerce_restPU")

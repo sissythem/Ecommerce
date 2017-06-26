@@ -20,8 +20,13 @@ public class Reviews implements Serializable {
 
     public Reviews() {}
 
-    public Reviews(Integer id) {
-        this.id = id;
+    public Reviews(Residences residence, Users host, Users tenant, String comment, double rating)
+    {
+        this.rating = rating;
+        this.comment=comment;
+        this.residenceId=residence;
+        this.hostId=host;
+        this.tenantId=tenant;
     }
 
     public Reviews(Integer id, String comment, double rating) {

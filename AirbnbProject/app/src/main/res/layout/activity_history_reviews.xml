@@ -24,42 +24,23 @@
             app:srcCompat="@drawable/ic_back" />
 
         <TextView
-            android:id="@+id/profiletxt"
+            android:id="@+id/reviewstxt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Profile"
+            android:text="My Reviews"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textSize="18sp" />
-
-
-        <ImageButton
-            android:id="@+id/btnMenu"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginLeft="250dp"
-            android:layout_marginTop="12dp"
-            android:background="@color/colorPrimary"
-            app:srcCompat="@drawable/ic_menu" />
     </android.support.v7.widget.Toolbar>
 
-    <ImageView
-        android:id="@+id/profilepic"
-        android:layout_width="120dp"
-        android:layout_height="85dp"
-        android:layout_below="@+id/backToolbar"
-        app:srcCompat="@drawable/ic_profile" />
-
     <ListView
-        android:id="@+id/profilelist"
+        android:id="@+id/reviewslist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/profilepic"
-        android:layout_above="@+id/footerToolbar"
+        android:layout_below="@+id/backToolbar"
         android:divider="#b5b5b5"
         android:dividerHeight="1dp"
         android:listSelector="@drawable/list_selector">
     </ListView>
+
+    <include layout="@layout/footer" />
 </RelativeLayout>

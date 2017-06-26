@@ -51,11 +51,10 @@ public class Residences implements Serializable, Comparable {
         this.id = id;
     }
 
-    public Residences(Integer id, Users hostId, String title, String type, String about, String cancellationPolicy, String country, String city, String address, String rules, String amenities,
+    public Residences(Users hostId, String title, String type, String about, String cancellationPolicy, String country, String city, String address, String rules, String amenities,
         int floor, int rooms, int baths, double spaceArea, String photos, int guests, Date availableDateStart, Date availableDateEnd, double minPrice,
         double additionalCostPerPerson) {
 
-        this.id = id;
         this.hostId = hostId;
         this.title = title;
         this.type = type;

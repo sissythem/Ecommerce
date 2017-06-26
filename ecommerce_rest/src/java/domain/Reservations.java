@@ -35,7 +35,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     
     /* Custom */
     @NamedQuery(name = "Reservations.findbyTenants", query = "SELECT r FROM Reservations r WHERE r.tenantId.id = :tenantId"),
-    @NamedQuery(name = "Reservations.findbyResidence", query = "SELECT r FROM Reservations r WHERE r.residenceId.id = :residenceId")
+    @NamedQuery(name = "Reservations.findbyResidence", query = "SELECT r FROM Reservations r WHERE r.residenceId.id = :residenceId"),
+    @NamedQuery(name = "Reservations.comment", query = "SELECT r FROM Reservations r WHERE r.tenantId.id = :tenantId AND r.residenceId.id = :residenceId")
 })
 public class Reservations implements Serializable {
 

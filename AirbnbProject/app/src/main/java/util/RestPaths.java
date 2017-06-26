@@ -1,7 +1,7 @@
 package util;
 
 public class RestPaths {
-    public static final String restPath = "http://192.168.1.6:8080/ecommerce_rest/webresources/";
+    public static final String restPath = "192.168.1.16:8080/ecommerce_rest/webresources/";
 
     public static String AllUsers           = restPath + "users/";
     public static String AllSearches        = restPath + "searches/";

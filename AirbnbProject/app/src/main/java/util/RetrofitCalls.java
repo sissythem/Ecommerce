@@ -652,4 +652,73 @@ public class RetrofitCalls
         }
         return reservationsList;
     }
+
+    private class getReservationsByTenantIdAndResidenceIdHttpRequestTask extends AsyncTask<Integer, Integer, ArrayList<Reservations>>
+    {
+        @Override
+        protected ArrayList<Reservations> doInBackground(Integer... params)
+        {
+            reservationsList = new ArrayList<>();
+            RestAPI restAPI = RestClient.getClient().create(RestAPI.class);
+            Call<List<Reservations>> call = restAPI.getReservationsByTenantIdAndResidenceId(params[0], params[1]);
+            try
+            {
+                Response<List<Reservations>> resp = call.execute();
+                reservationsList.addAll(resp.body());
+            }
+            catch (IOException e){
+                e.printStackTrace();
+            }
+            return reservationsList;
+        }
+    }
+
+    public ArrayList<Reservations> getReservationsByTenantIdandResidenceId (int tenantId, int residenceId)
+    {
+        getReservationsByTenantIdAndResidenceIdHttpRequestTask reservations = new getReservationsByTenantIdAndResidenceIdHttpRequestTask();
+        reservations.execute(tenantId, residenceId);
+        try {
+            reservations.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return reservationsList;
+    }
+
+    private class getReviewsByTenantIdHttpRequestTask extends AsyncTask<Integer, Integer, ArrayList<Reviews>>
+    {
+        @Override
+        protected ArrayList<Reviews> doInBackground (Integer... params)
+        {
+            reviewsList = new ArrayList<>();
+            RestAPI restAPI = RestClient.getClient().create(RestAPI.class);
+            Call<List<Reviews>> call = restAPI.getReviewsByTenant(params[0]);
+            try
+            {
+                Response<List<Reviews>> resp = call.execute();
+                reviewsList.addAll(resp.body());
+            }
+            catch (IOException e){
+                e.printStackTrace();
+            }
+            return reviewsList;
+        }
+    }
+
+    public ArrayList<Reviews> getReviewsByTenantId(int tenantId)
+    {
+        getReviewsByTenantIdHttpRequestTask reviewsByTenant = new getReviewsByTenantIdHttpRequestTask();
+        reviewsByTenant.execute(tenantId);
+        try {
+            reviewsByTenant.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return reviewsList;
+    }
+
 }

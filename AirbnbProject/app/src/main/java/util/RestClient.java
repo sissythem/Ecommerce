@@ -17,7 +17,7 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 
 public class RestClient
 {
-    public static final String BASE_URL = "http://192.168.1.6:8080/ecommerce_rest/webresources/";
+    public static final String BASE_URL = "192.168.1.16:8080/ecommerce_rest/webresources/";
     private static Retrofit retrofit = null;
 
     public static Retrofit getClient() {

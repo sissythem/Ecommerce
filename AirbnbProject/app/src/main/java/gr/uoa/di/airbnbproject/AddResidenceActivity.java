@@ -23,12 +23,14 @@ import android.widget.Toast;
 import java.util.Calendar;
 import java.util.Date;
 
+import fromRESTful.Residences;
 import fromRESTful.Users;
-import util.AddResidenceParameters;
-import util.RestCallManager;
-import util.RestCallParameters;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import util.RestAPI;
 import util.RestCalls;
-import util.RestPaths;
+import util.RestClient;
 import util.Utils;
 
 public class AddResidenceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
@@ -50,7 +52,7 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
     EditText etUpload, etAbout, etAddress, etCity, etCountry, etAmenities, etFloor, etRooms, etBaths, etView, etTitle, etSpaceArea, etGuests, etMinPrice, etAdditionalCost, etCancellationPolicy, etRules;
     TextView tvStartDate, tvEndDate;
     CheckBox cbKitchen, cbLivingRoom;
-    boolean bkitchen, blivingRoom;
+    boolean bkitchen, blivingRoom, success;
 
     private int mStartYear, mStartMonth, mStartDay, mEndYear, mEndMonth, mEndDay;
 
@@ -237,8 +239,9 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
                     Toast.makeText(c, "Please fill in all fields!", Toast.LENGTH_SHORT).show();
                     return;
                 } else {
-                    boolean success = PostResult(host, title, type, about, address, city, country, amenities, floor, rooms, baths, view, spaceArea, guests, minPrice, additionalCostPerPerson,
-                            cancellationPolicy, rules, kitchen, livingRoom, convertedStartDate, convertedEndDate, photo);
+                    boolean success = PostResult(host, title, type, about, cancellationPolicy, country, city, address, rules, amenities, Integer.parseInt(floor),
+                            Integer.parseInt(rooms), Integer.parseInt(baths), Double.parseDouble(spaceArea), photo, Integer.parseInt(guests), startDate, endDate,
+                            Double.parseDouble(minPrice), Double.parseDouble(additionalCostPerPerson));
 
                     if (success) {
                         Intent hostIntent = new Intent(AddResidenceActivity.this, HostActivity.class);
@@ -261,28 +264,44 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
         });
     }
 
-    public boolean PostResult(Users host, String title, String type, String about, String address, String city, String country, String amenities, String floor, String rooms, String baths, String view,
-            String spaceArea, String guests, String minPrice, String additionalCostPerPerson, String cancellationPolicy, String rules,
-            String kitchen, String livingRoom, String startDate, String endDate, String photo)
+    public boolean PostResult(Users hostId, String title, String type, String about, String cancellationPolicy, String country, String city, String address, String rules, String amenities,
+                              int floor, int rooms, int baths, double spaceArea, String photos, int guests, Date availableDateStart, Date availableDateEnd, double minPrice,
+                              double additionalCostPerPerson)
     {
-        boolean success = true;
+        Residences ResidenceParameters = new Residences(hostId, title, type, about, cancellationPolicy, country, city, address, rules, amenities, floor, rooms,
+                baths, spaceArea, photos, guests, availableDateStart, availableDateEnd, minPrice, additionalCostPerPerson);
 
-        AddResidenceParameters ResidenceParameters = new AddResidenceParameters(host, title, type, about, address, city, country, amenities, floor, rooms, baths,
-                view, spaceArea, guests, minPrice, additionalCostPerPerson, startDate, endDate, cancellationPolicy, rules, photo, kitchen, livingRoom);
+        RestAPI restAPI = RestClient.getClient().create(RestAPI.class);
+        Call<Residences> call = restAPI.postResidence(ResidenceParameters);
+        call.enqueue(new Callback<Residences>() {
+            @Override
+            public void onResponse(Call<Residences> call, Response<Residences> response) {
+                if(response.isSuccessful())
+                {
+                    success=true;
+                }
+            }
 
-        RestCallManager residencePostManager = new RestCallManager();
-        RestCallParameters residencePostParameters = new RestCallParameters(RestPaths.AllResidences, "POST", "", ResidenceParameters.getAddResidenceParameters());
+            @Override
+            public void onFailure(Call<Residences> call, Throwable t)
+            {
+                success=false;
+            }
+        });
 
-//        ArrayList<String> PostResponse ;
-        String response;
-
-        residencePostManager.execute(residencePostParameters);
-//            PostResponse = userpost.get(1000, TimeUnit.SECONDS);
-        response = (String)residencePostManager.getRawResponse().get(0);
-//            String result = PostResponse.get(0);
-        if (response.equals("OK")) ;
-        else success = false;
-
+//        RestCallManager residencePostManager = new RestCallManager();
+//        RestCallParameters residencePostParameters = new RestCallParameters(RestPaths.AllResidences, "POST", "", ResidenceParameters.getAddResidenceParameters());
+//
+////        ArrayList<String> PostResponse ;
+//        String response;
+//
+//        residencePostManager.execute(residencePostParameters);
+////            PostResponse = userpost.get(1000, TimeUnit.SECONDS);
+//        response = (String)residencePostManager.getRawResponse().get(0);
+////            String result = PostResponse.get(0);
+//        if (response.equals("OK")) ;
+//        else success = false;
+//
         return success;
     }
 

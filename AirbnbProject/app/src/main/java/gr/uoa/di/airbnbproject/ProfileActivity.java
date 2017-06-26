@@ -5,7 +5,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.PopupMenu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -22,7 +23,8 @@ import util.RestCalls;
 import util.RestPaths;
 import util.Utils;
 
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileActivity extends AppCompatActivity
+{
 
     private static final String USER_LOGIN_PREFERENCES = "login_preferences";
     SharedPreferences sharedPrefs;
@@ -34,7 +36,7 @@ public class ProfileActivity extends AppCompatActivity {
     ListView list;
     Context c;
 
-    ImageButton bedit, bdelete;
+    ImageButton btnMenu;
 
     ListAdapterProfile adapter;
     String[] userdetails;
@@ -59,8 +61,7 @@ public class ProfileActivity extends AppCompatActivity {
         Bundle buser = getIntent().getExtras();
         user = buser.getBoolean("type");
 
-        bedit = (ImageButton)findViewById(R.id.editprofile);
-        bdelete = (ImageButton)findViewById(R.id.delete);
+        btnMenu = (ImageButton)findViewById(R.id.btnMenu);
 
         userdetails = new String[9];
 
@@ -96,38 +97,59 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     public void manageToolbarButtons() {
-        bedit.setOnClickListener(new View.OnClickListener() {
+
+        btnMenu.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
-                Intent editIntent = new Intent(ProfileActivity.this, EditProfileActivity.class);
-                Bundle buser = new Bundle();
-                buser.putBoolean("type", user);
-                editIntent.putExtras(buser);
-                try{
-                    startActivity(editIntent);
-                }
-                catch (Exception e){
-                    System.out.println(e.getMessage());
-                    e.printStackTrace();
-                }
-            }
-        });
-        bdelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loggedinUser = RestCalls.getUser(username);
-                boolean deletionStatus = deleteUserAccount(loggedinUser.getId().toString());
-                if(deletionStatus)
-                {
-                    Toast.makeText(c, "Account deleted!", Toast.LENGTH_SHORT).show();
-                    Utils.logout(ProfileActivity.this);
-                    Intent greetingIntent = new Intent (ProfileActivity.this, GreetingActivity.class);
-                    startActivity(greetingIntent);
-                    finish();
-                }
-                else {
-                    Toast.makeText(c, "Something went wrong, account is not deleted. Please try again!", Toast.LENGTH_SHORT).show();
-                }
+            public void onClick(View v)
+            {
+                PopupMenu popup = new PopupMenu(ProfileActivity.this, btnMenu);
+                popup.getMenuInflater().inflate(R.menu.menu_popup, popup.getMenu());
+
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    public boolean onMenuItemClick(MenuItem item)
+                    {
+                        Bundle buser = new Bundle();
+                        buser.putBoolean("type", user);
+                        if(item.getTitle() == "My Reviews")
+                        {
+                            Intent historyReviewsIntent = new Intent(ProfileActivity.this, HistoryReviewsActivity.class);
+                            historyReviewsIntent.putExtras(buser);
+                            startActivity(historyReviewsIntent);
+                        }
+                        else if(item.getTitle() == "My Reservations")
+                        {
+                            Intent historyReservationsIntent = new Intent(ProfileActivity.this, HistoryReservationsActivity.class);
+                            historyReservationsIntent.putExtras(buser);
+                            startActivity(historyReservationsIntent);
+                        }
+                        else if(item.getTitle() == "Edit profile")
+                        {
+                            Intent editIntent = new Intent(ProfileActivity.this, EditProfileActivity.class);
+                            editIntent.putExtras(buser);
+                            startActivity(editIntent);
+                        }
+                        else if(item.getTitle() == "Delete profile")
+                        {
+                            loggedinUser = RestCalls.getUser(username);
+                            boolean deletionStatus = deleteUserAccount(loggedinUser.getId().toString());
+                            if(deletionStatus)
+                            {
+                                Toast.makeText(c, "Account deleted!", Toast.LENGTH_SHORT).show();
+                                Utils.logout(ProfileActivity.this);
+                                Intent greetingIntent = new Intent (ProfileActivity.this, GreetingActivity.class);
+                                startActivity(greetingIntent);
+                                finish();
+                            }
+                            else {
+                                Toast.makeText(c, "Something went wrong, account is not deleted. Please try again!", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                        return true;
+                    }
+                });
+
+                popup.show();
             }
         });
     }

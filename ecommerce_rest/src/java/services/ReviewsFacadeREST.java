@@ -96,4 +96,13 @@ public class ReviewsFacadeREST extends AbstractFacade<Reviews> {
         query.setParameter("residenceId", residenceId);
         return query.getResultList();
     }
+    
+    @GET
+    @Path("tenant")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Reviews> findbyTenant(@QueryParam("tenantId")Integer tenantId) {
+        Query query = em.createNamedQuery("Reviews.findbyTenant");
+        query.setParameter("tenantId", tenantId);
+        return query.getResultList();
+    }
 }
