@@ -44,6 +44,7 @@ public class Residences implements Serializable, Comparable {
     private double additionalCostPerPerson;
     private Collection<Reviews> reviewsCollection;
     private Collection<Conversations> conversationsCollection;
+    private short active;
 
     public Residences() {}
 
@@ -266,6 +267,10 @@ public class Residences implements Serializable, Comparable {
     public void setAdditionalCostPerPerson(double additionalCostPerPerson) {
         this.additionalCostPerPerson = additionalCostPerPerson;
     }
+
+    public short getActive() {return active;}
+
+    public void setActive(short active) {this.active = active;}
 
     public Collection<Reviews> getReviewsCollection() {
         return reviewsCollection;

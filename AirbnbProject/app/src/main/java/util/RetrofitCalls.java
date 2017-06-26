@@ -32,6 +32,7 @@ public class RetrofitCalls
     ArrayList<Conversations> conversationsList;
     ArrayList<Messages> messagesList;
 
+    /** Calls for User **/
     private class getUserByUsernameHttpRequestTask extends AsyncTask<String, String, ArrayList<Users>> {
 
         @Override
@@ -130,6 +131,8 @@ public class RetrofitCalls
         }
     }
 
+
+    /** Calls for Searches**/
     public ArrayList<Searches> getSearchedCities(int userId)
     {
         getSearchedCitiesHttpRequestTask getCities = new getSearchedCitiesHttpRequestTask();
@@ -144,6 +147,8 @@ public class RetrofitCalls
         return searchesList;
     }
 
+
+    /** Calls for Reviews**/
     private class getReviewsHttpRequestTask extends AsyncTask<Void, Void, ArrayList<Reviews>> {
 
         @Override
@@ -236,19 +241,23 @@ public class RetrofitCalls
             return residencesList;
         }
     }
-    public ArrayList<Residences> getResidencesByCity(String city){
-        getResidenceByCityHttpRequestTask residencesByCity = new getResidenceByCityHttpRequestTask();
-        residencesByCity.execute(city);
+
+    public ArrayList<Reviews> getReviewsByTenantId(int tenantId)
+    {
+        getReviewsByTenantIdHttpRequestTask reviewsByTenant = new getReviewsByTenantIdHttpRequestTask();
+        reviewsByTenant.execute(tenantId);
         try {
-            residencesByCity.get();
+            reviewsByTenant.get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        return residencesList;
+        return reviewsList;
     }
 
+
+    /** Calls for Residences**/
     private class getResidencesByHostIdHttpRequestTask extends AsyncTask<Integer, Integer, ArrayList<Residences>>
     {
         @Override
@@ -265,6 +274,39 @@ public class RetrofitCalls
                 e.printStackTrace();
             }
             return residencesList;
+        }
+    }
+
+    public ArrayList<Residences> getResidencesByCity(String city){
+        getResidenceByCityHttpRequestTask residencesByCity = new getResidenceByCityHttpRequestTask();
+        residencesByCity.execute(city);
+        try {
+            residencesByCity.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return residencesList;
+    }
+
+    private class getReviewsByTenantIdHttpRequestTask extends AsyncTask<Integer, Integer, ArrayList<Reviews>>
+    {
+        @Override
+        protected ArrayList<Reviews> doInBackground (Integer... params)
+        {
+            reviewsList = new ArrayList<>();
+            RestAPI restAPI = RestClient.getClient().create(RestAPI.class);
+            Call<List<Reviews>> call = restAPI.getReviewsByTenant(params[0]);
+            try
+            {
+                Response<List<Reviews>> resp = call.execute();
+                reviewsList.addAll(resp.body());
+            }
+            catch (IOException e){
+                e.printStackTrace();
+            }
+            return reviewsList;
         }
     }
 
@@ -381,7 +423,10 @@ public class RetrofitCalls
          return residencesList;
      }
 
-     private class getConversationsHttPRequestTask extends AsyncTask<Integer, Integer, ArrayList<Conversations>>
+
+    /** Calls for Conversations**/
+
+    private class getConversationsHttPRequestTask extends AsyncTask<Integer, Integer, ArrayList<Conversations>>
      {
          @Override
          protected ArrayList<Conversations> doInBackground(Integer... params)
@@ -517,40 +562,6 @@ public class RetrofitCalls
         return conversationsList;
     }
 
-    private class getMessagesByConversationHttpRequestTask extends AsyncTask<Integer, Integer, ArrayList<Messages>>
-    {
-        @Override
-        protected ArrayList<Messages> doInBackground(Integer... params)
-        {
-            messagesList = new ArrayList<>();
-            RestAPI restAPI = RestClient.getClient().create(RestAPI.class);
-            Call<List<Messages>> call = restAPI.getMessagesByConversation(params[0]);
-            try
-            {
-                Response<List<Messages>> resp = call.execute();
-                messagesList.addAll(resp.body());
-            }
-            catch (IOException e){
-                e.printStackTrace();
-            }
-            return messagesList;
-        }
-    }
-
-    public ArrayList<Messages> getMessagesByConversation (int conversationId)
-    {
-        getMessagesByConversationHttpRequestTask messagesByConversation = new getMessagesByConversationHttpRequestTask();
-        messagesByConversation.execute(conversationId);
-        try {
-            messagesByConversation.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        return messagesList;
-    }
-
     private class  updateConversationHttPRequestTask extends AsyncTask<String, String, ArrayList<Conversations>>
     {
         @Override
@@ -585,6 +596,47 @@ public class RetrofitCalls
         return conversationsList;
     }
 
+
+
+    /** Calls for Messages**/
+
+    private class getMessagesByConversationHttpRequestTask extends AsyncTask<Integer, Integer, ArrayList<Messages>>
+    {
+        @Override
+        protected ArrayList<Messages> doInBackground(Integer... params)
+        {
+            messagesList = new ArrayList<>();
+            RestAPI restAPI = RestClient.getClient().create(RestAPI.class);
+            Call<List<Messages>> call = restAPI.getMessagesByConversation(params[0]);
+            try
+            {
+                Response<List<Messages>> resp = call.execute();
+                messagesList.addAll(resp.body());
+            }
+            catch (IOException e){
+                e.printStackTrace();
+            }
+            return messagesList;
+        }
+    }
+
+    public ArrayList<Messages> getMessagesByConversation (int conversationId)
+    {
+        getMessagesByConversationHttpRequestTask messagesByConversation = new getMessagesByConversationHttpRequestTask();
+        messagesByConversation.execute(conversationId);
+        try {
+            messagesByConversation.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return messagesList;
+    }
+
+
+    /** Calls for Reservations**/
+
     private class getReservationsByTenantIdHttpRequestTask extends AsyncTask<Integer, Integer, ArrayList<Reservations>>
     {
         @Override
@@ -604,7 +656,6 @@ public class RetrofitCalls
             return reservationsList;
         }
     }
-
     public ArrayList<Reservations> getReservationsByTenantId (int tenantId)
     {
         getReservationsByTenantIdHttpRequestTask reservationsByTenantId = new getReservationsByTenantIdHttpRequestTask();
@@ -685,40 +736,6 @@ public class RetrofitCalls
             e.printStackTrace();
         }
         return reservationsList;
-    }
-
-    private class getReviewsByTenantIdHttpRequestTask extends AsyncTask<Integer, Integer, ArrayList<Reviews>>
-    {
-        @Override
-        protected ArrayList<Reviews> doInBackground (Integer... params)
-        {
-            reviewsList = new ArrayList<>();
-            RestAPI restAPI = RestClient.getClient().create(RestAPI.class);
-            Call<List<Reviews>> call = restAPI.getReviewsByTenant(params[0]);
-            try
-            {
-                Response<List<Reviews>> resp = call.execute();
-                reviewsList.addAll(resp.body());
-            }
-            catch (IOException e){
-                e.printStackTrace();
-            }
-            return reviewsList;
-        }
-    }
-
-    public ArrayList<Reviews> getReviewsByTenantId(int tenantId)
-    {
-        getReviewsByTenantIdHttpRequestTask reviewsByTenant = new getReviewsByTenantIdHttpRequestTask();
-        reviewsByTenant.execute(tenantId);
-        try {
-            reviewsByTenant.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        return reviewsList;
     }
 
 }
