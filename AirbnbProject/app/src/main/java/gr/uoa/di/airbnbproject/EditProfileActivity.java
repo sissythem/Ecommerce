@@ -143,7 +143,7 @@ public class EditProfileActivity extends AppCompatActivity {
         });
 
         /** BACK BUTTON **/
-        Utils.manageBackButton(EditProfileActivity.this, ProfileActivity.class);
+        Utils.manageBackButton(EditProfileActivity.this, ProfileActivity.class, user);
     }
 
     public boolean checkEmail (String Email){

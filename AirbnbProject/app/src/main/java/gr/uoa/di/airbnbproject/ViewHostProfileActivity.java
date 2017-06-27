@@ -101,7 +101,8 @@ public class ViewHostProfileActivity extends AppCompatActivity {
     public void manageBackToolbar(){
         bback.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 Intent backintent = new Intent(ViewHostProfileActivity.this, ResidenceActivity.class);
                 Bundle buser = new Bundle();
                 buser.putBoolean("type",user);

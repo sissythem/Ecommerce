@@ -128,9 +128,24 @@ public class Utils {
 
         bhome.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                Intent homeintent = new Intent(this_context, HomeActivity.class);
-                this_context.startActivity(homeintent);
+            public void onClick(View v)
+            {
+                Bundle buser = new Bundle();
+                if(this_user == true)
+                {
+                    Intent homeIntent = new Intent(this_context, HomeActivity.class);
+                    buser.putBoolean("type", true);
+                    homeIntent.putExtras(buser);
+                    this_context.startActivity(homeIntent);
+                }
+                else
+                {
+                    Intent hostIntent = new Intent(this_context, HostActivity.class);
+                    buser.putBoolean("type", false);
+                    hostIntent.putExtras(buser);
+                    this_context.startActivity(hostIntent);
+                }
+
             }
         });
 
@@ -166,14 +181,26 @@ public class Utils {
             }
         });
 
+
         bswitch.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                Intent hostintent = new Intent(this_context, HostActivity.class);
+            public void onClick(View v)
+            {
                 Bundle buser = new Bundle();
-                buser.putBoolean("type", false);
-                hostintent.putExtras(buser);
-                this_context.startActivity(hostintent);
+                if(this_user == false)
+                {
+                    Intent homeIntent = new Intent(this_context, HomeActivity.class);
+                    buser.putBoolean("type", true);
+                    homeIntent.putExtras(buser);
+                    this_context.startActivity(homeIntent);
+                }
+                else{
+                    Intent hostIntent = new Intent(this_context, HostActivity.class);
+                    buser.putBoolean("type", false);
+                    hostIntent.putExtras(buser);
+                    this_context.startActivity(hostIntent);
+                }
+
             }
         });
 
@@ -198,16 +225,19 @@ public class Utils {
         context.startActivity(greetingintent);
     }
 
-    public static void manageBackButton(Activity context, Class newContext) {
+    public static void manageBackButton(Activity context, Class newContext, boolean user) {
         final Activity this_context = context;
         final Class this_new_context = newContext;
+        final boolean this_user = user;
 
         ImageButton bback = (ImageButton) this_context.findViewById(R.id.ibBack);
-        bback.setOnClickListener(new View.OnClickListener() {
+        bback.setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View v) {
                 Intent backintent = new Intent(this_context, this_new_context);
                 Bundle buser = new Bundle();
+                buser.putBoolean("type", this_user);
                 if (this_new_context.getClass().toString() == HomeActivity.class.toString()) {
                     buser.putBoolean("type", true);
                 } else if (this_new_context.toString() == HostActivity.class.toString()) {

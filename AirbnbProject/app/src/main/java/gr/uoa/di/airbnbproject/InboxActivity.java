@@ -3,13 +3,12 @@ package gr.uoa.di.airbnbproject;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ImageButton;
 import android.widget.ListView;
+
 import java.util.ArrayList;
 
 import fromRESTful.Conversations;
@@ -88,10 +87,10 @@ public class InboxActivity extends AppCompatActivity {
         });
 
         /** BACK BUTTON **/
-        Utils.manageBackButton(this, (user)?HomeActivity.class:HostActivity.class);
+        Utils.manageBackButton(this, (user)?HomeActivity.class:HostActivity.class, user);
 
         /** FOOTER TOOLBAR **/
-        Utils.manageFooter(InboxActivity.this, true);
+        Utils.manageFooter(InboxActivity.this, user);
     }
 
     protected void setAdapter() {

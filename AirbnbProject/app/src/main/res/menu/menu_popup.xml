@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+
     <item
         android:id="@+id/reviews"
         android:title="My Reviews"/>
@@ -8,10 +9,8 @@
         android:title="My Reservations"/>
     <item
         android:id="@+id/editprofile"
-        android:title="Edit profile"/>
+        android:title="Edit Profile"/>
     <item
         android:id="@+id/deleteProfile"
-        android:title="Delete profile"/>
-
-
+        android:title="Delete Profile"/>
 </menu>

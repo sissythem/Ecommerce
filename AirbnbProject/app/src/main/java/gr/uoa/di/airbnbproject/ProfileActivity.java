@@ -95,13 +95,15 @@ public class ProfileActivity extends AppCompatActivity
         list = (ListView)findViewById(R.id.profilelist);
         list.setAdapter(adapter);
 
+        /** FOOTER TOOLBAR **/
+        Utils.manageFooter(ProfileActivity.this, user);
+
         /** BACK BUTTON **/
-        Utils.manageBackButton(this, (user)?HomeActivity.class:HostActivity.class);
+        Utils.manageBackButton(this, (user)?HomeActivity.class:HostActivity.class, user);
     }
 
-    public void manageToolbarButtons() {
-
-        //TODO fix if statements, menu does not work
+    public void manageToolbarButtons()
+    {
         btnMenu.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -115,25 +117,25 @@ public class ProfileActivity extends AppCompatActivity
                     {
                         Bundle buser = new Bundle();
                         buser.putBoolean("type", user);
-                        if(item.getTitle() == "My Reviews")
+                        if(item.getItemId() == R.id.reviews)
                         {
                             Intent historyReviewsIntent = new Intent(ProfileActivity.this, HistoryReviewsActivity.class);
                             historyReviewsIntent.putExtras(buser);
                             startActivity(historyReviewsIntent);
                         }
-                        else if(item.getTitle() == "My Reservations")
+                        else if(item.getItemId() == R.id.reservations)
                         {
                             Intent historyReservationsIntent = new Intent(ProfileActivity.this, HistoryReservationsActivity.class);
                             historyReservationsIntent.putExtras(buser);
                             startActivity(historyReservationsIntent);
                         }
-                        else if(item.getTitle() == "Edit profile")
+                        else if(item.getItemId() == R.id.editprofile)
                         {
                             Intent editIntent = new Intent(ProfileActivity.this, EditProfileActivity.class);
                             editIntent.putExtras(buser);
                             startActivity(editIntent);
                         }
-                        else if(item.getTitle() == "Delete profile")
+                        else if(item.getItemId() == R.id.deleteProfile)
                         {
                             ArrayList<Users> getUsersByUsername = retrofitCalls.getUserbyUsername(username);
                             loggedinUser = getUsersByUsername.get(0);

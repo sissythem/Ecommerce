@@ -96,6 +96,6 @@ public class SearchResultsActivity extends AppCompatActivity {
         });
 
         /** FOOTER TOOLBAR **/
-        Utils.manageFooter(SearchResultsActivity.this, true);
+        Utils.manageFooter(SearchResultsActivity.this, user);
     }
 }

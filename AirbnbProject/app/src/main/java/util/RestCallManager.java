@@ -70,7 +70,7 @@ public class RestCallManager extends AsyncTask<RestCallParameters, Integer, Arra
     protected void onProgressUpdate(Integer... progress) {}
 
     protected void onPostExecute(ArrayList<String> result) {
-        long id  = Thread.currentThread().getId(); // todo why the fuck debug fucks up
+        long id  = Thread.currentThread().getId();
     }
 
     public ArrayList<JSONObject> getSingleJSONArray() {

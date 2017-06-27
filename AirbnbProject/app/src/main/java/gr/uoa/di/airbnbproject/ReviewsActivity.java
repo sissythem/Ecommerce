@@ -101,9 +101,9 @@ public class ReviewsActivity extends AppCompatActivity
         reviewsList.setAdapter(adapter);
 
         /** FOOTER TOOLBAR **/
-        Utils.manageFooter(ReviewsActivity.this, true);
+        Utils.manageFooter(ReviewsActivity.this, user);
         /** BACK BUTTON **/
-        Utils.manageBackButton(this, ResidenceActivity.class);
+        Utils.manageBackButton(this, ResidenceActivity.class, user);
 
         etcomment = (EditText)findViewById(R.id.writeComment);
         btnreview = (Button)findViewById(R.id.btnreview);

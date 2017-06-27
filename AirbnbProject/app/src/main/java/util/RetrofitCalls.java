@@ -400,7 +400,7 @@ public class RetrofitCalls
          @Override
          protected Residences doInBackground(Integer... params)
          {
-             residence = new Residences(host, title, type, about, address, city, country, amenities, floor, rooms, baths, view, spaceArea, guests, minPrice, additionalCostPerPerson, cancellationPolicy, rules, kitchen, kitchen, livingRoom, startDate, endDate, photo);
+             residence = new Residences();
              RestAPI restAPI = RestClient.getClient().create(RestAPI.class);
              Call<Residences> call = restAPI.getResidencesById(params[0]);
              try

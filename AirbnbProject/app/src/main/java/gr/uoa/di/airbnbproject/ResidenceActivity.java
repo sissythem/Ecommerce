@@ -21,7 +21,6 @@ import android.widget.Toast;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -67,7 +66,6 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
     Button bReviews, bBook;
     RatingBar rating;
     EditText etGuests;
-    MapView mapView;
     GoogleMap mMap;
 
     Users loggedinUser, host;
@@ -123,10 +121,17 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         mapFragment.getMapAsync(this);
 
         /** BACK BUTTON **/
-        Utils.manageBackButton(this, (user)?HomeActivity.class:HostActivity.class);
-        if(!user) {
+        Utils.manageBackButton(this, (user)?HomeActivity.class:HostActivity.class, user);
+        if(!user)
+        {
             //if user is logged in as host, this button does not appear
             bBook.setVisibility(View.INVISIBLE);
+            RatingBar ratingBar = (RatingBar) findViewById(R.id.rating);
+            ratingBar.setVisibility(View.INVISIBLE);
+            TextView tvPrice = (TextView)findViewById(R.id.price);
+            tvPrice.setVisibility(View.INVISIBLE);
+            /** FOOTER TOOLBAR **/
+            Utils.manageFooter(ResidenceActivity.this, user);
         }
     }
 

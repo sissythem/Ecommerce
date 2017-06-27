@@ -103,7 +103,7 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         saveResidence();
 
         /** BACK BUTTON **/
-        Utils.manageBackButton(this, HostActivity.class);
+        Utils.manageBackButton(this, HostActivity.class, user);
     }
 
     public void userInputLayout () {

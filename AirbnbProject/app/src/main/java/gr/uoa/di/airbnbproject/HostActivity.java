@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
@@ -54,8 +55,7 @@ public class HostActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_host);
 
-        Bundle buser = getIntent().getExtras();
-        user = buser.getBoolean("type");
+        user=false;
 
         baddResidence = (ImageButton)findViewById(R.id.addResidence);
 
@@ -100,25 +100,25 @@ public class HostActivity extends AppCompatActivity {
         residencesList = (ListView)findViewById(R.id.residenceList);
         residencesList.setAdapter(adapter);
 
-//        residencesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                Intent showResidenceIntent = new Intent(HostActivity.this, ResidenceActivity.class);
-//                Bundle btype = new Bundle();
-//                btype.putBoolean("type",user);
-//                btype.putInt("residenceId", residenceId[position]);
-//                showResidenceIntent.putExtras(btype);
-//                try {
-//                    startActivity(showResidenceIntent);
-//                } catch (Exception ex) {
-//                    System.out.println(ex.getMessage());
-//                    ex.printStackTrace();
-//                }
-//            }
-//        });
+        residencesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent showResidenceIntent = new Intent(HostActivity.this, ResidenceActivity.class);
+                Bundle btype = new Bundle();
+                btype.putBoolean("type",user);
+                btype.putInt("residenceId", residenceId[position]);
+                showResidenceIntent.putExtras(btype);
+                try {
+                    startActivity(showResidenceIntent);
+                } catch (Exception ex) {
+                    System.out.println(ex.getMessage());
+                    ex.printStackTrace();
+                }
+            }
+        });
 
         /** FOOTER TOOLBAR **/
-        Utils.manageFooter(HostActivity.this, true);
+        Utils.manageFooter(HostActivity.this, user);
     }
 
     @Override

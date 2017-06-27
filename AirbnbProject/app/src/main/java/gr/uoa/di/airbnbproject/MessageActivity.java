@@ -125,7 +125,7 @@ public class MessageActivity extends AppCompatActivity {
         sendMessage();
 
         /** BACK BUTTON **/
-        Utils.manageBackButton(this, InboxActivity.class);
+        Utils.manageBackButton(this, InboxActivity.class, user);
     }
 
     public void sendMessage() {

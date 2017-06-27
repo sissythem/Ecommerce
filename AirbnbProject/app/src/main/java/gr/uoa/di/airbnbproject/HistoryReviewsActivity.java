@@ -19,6 +19,7 @@ public class HistoryReviewsActivity extends AppCompatActivity
 {
     Boolean user;
     String loggedInUsername;
+    Users loggedinUser;
 
     private static final String USER_LOGIN_PREFERENCES = "login_preferences";
     SharedPreferences sharedPrefs;
@@ -28,8 +29,6 @@ public class HistoryReviewsActivity extends AppCompatActivity
     Context c;
     ListAdapterReviews adapter;
     ListView reviewsList;
-
-    Users loggedinUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,12 +60,13 @@ public class HistoryReviewsActivity extends AppCompatActivity
         loggedinUser = getUserByUsername.get(0);
 
         ArrayList<Reviews> userReviews = retrofitCalls.getReviewsByTenantId(loggedinUser.getId());
+
         String[] representativePhoto    = new String [userReviews.size()];
         String[] username               = new String[userReviews.size()];
         String[] comment                = new String[userReviews.size()];
 
         for(int i=0; i<userReviews.size();i++) {
-            representativePhoto[i] = userReviews.get(i).getHostId().getPhoto();
+            representativePhoto[i] = userReviews.get(i).getTenantId().getPhoto();
             username[i] = userReviews.get(i).getHostId().getUsername();
             comment[i] = userReviews.get(i).getComment();
         }
@@ -75,10 +75,11 @@ public class HistoryReviewsActivity extends AppCompatActivity
         reviewsList = (ListView)findViewById(R.id.reviewslist);
         reviewsList.setAdapter(adapter);
 
+
         /** FOOTER TOOLBAR **/
-        Utils.manageFooter(HistoryReviewsActivity.this, true);
+        Utils.manageFooter(HistoryReviewsActivity.this, user);
         /** BACK BUTTON **/
-        Utils.manageBackButton(this, ProfileActivity.class);
+        Utils.manageBackButton(this, ProfileActivity.class, user);
     }
 
     @Override

@@ -80,8 +80,6 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
 
         setContentView(R.layout.layout_residence_editfields);
 
-        Bundle buser = getIntent().getExtras();
-        user = buser.getBoolean("type");
         user=false;
 
         c = this;
@@ -94,7 +92,7 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
         saveResidence();
 
         /** BACK BUTTON **/
-        Utils.manageBackButton(this, HostActivity.class);
+        Utils.manageBackButton(this, HostActivity.class, user);
     }
 
     public void userInputLayout () {
@@ -246,7 +244,6 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
                     if (success) {
                         Intent hostIntent = new Intent(AddResidenceActivity.this, HostActivity.class);
                         Bundle bhost = new Bundle();
-                        user=false;
                         bhost.putBoolean("type", user);
                         hostIntent.putExtras(bhost);
                         try {
