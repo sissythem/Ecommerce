@@ -73,6 +73,42 @@ public class RetrofitCalls
         return usersList;
     }
 
+    private class getUserByEmailHttpRequestTask extends AsyncTask<String, String, ArrayList<Users>> {
+
+        @Override
+        protected ArrayList<Users> doInBackground(String... params)
+        {
+            usersList = new ArrayList<>();
+            RestAPI restAPI = RestClient.getClient().create(RestAPI.class);
+            Call<List<Users>> call = restAPI.getUserByEmail(params[0]);
+            try {
+                Response<List<Users>> resp = call.execute();
+                usersList.addAll(resp.body());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return usersList;
+        }
+        @Override
+        protected void onPostExecute(ArrayList<Users> users) {
+        }
+    }
+
+
+    public ArrayList<Users> getUserbyEmail(String email)
+    {
+        getUserByEmailHttpRequestTask getUserByEmail = new getUserByEmailHttpRequestTask();
+        getUserByEmail.execute(email);
+        try {
+            getUserByEmail.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return usersList;
+    }
+
     private class getLoginUserHttpRequestTask extends AsyncTask<String, String, ArrayList<Users>>
     {
         @Override
@@ -364,7 +400,7 @@ public class RetrofitCalls
          @Override
          protected Residences doInBackground(Integer... params)
          {
-             residence = new Residences();
+             residence = new Residences(host, title, type, about, address, city, country, amenities, floor, rooms, baths, view, spaceArea, guests, minPrice, additionalCostPerPerson, cancellationPolicy, rules, kitchen, kitchen, livingRoom, startDate, endDate, photo);
              RestAPI restAPI = RestClient.getClient().create(RestAPI.class);
              Call<Residences> call = restAPI.getResidencesById(params[0]);
              try

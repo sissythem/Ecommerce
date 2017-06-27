@@ -20,7 +20,6 @@ import fromRESTful.Users;
 import util.ListAdapterProfile;
 import util.RestCallManager;
 import util.RestCallParameters;
-import util.RestCalls;
 import util.RestPaths;
 import util.RetrofitCalls;
 import util.Utils;
@@ -43,6 +42,7 @@ public class ProfileActivity extends AppCompatActivity
     ListAdapterProfile adapter;
     String[] userdetails;
     Boolean user;
+    RetrofitCalls retrofitCalls;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +68,7 @@ public class ProfileActivity extends AppCompatActivity
         userdetails = new String[9];
 
         manageToolbarButtons();
-        RetrofitCalls retrofitCalls = new RetrofitCalls();
+        retrofitCalls = new RetrofitCalls();
         ArrayList<Users> userLoggedIn = retrofitCalls.getUserbyUsername(username);
         loggedinUser = userLoggedIn.get(0);
         userdetails[0] = loggedinUser.getFirstName();
@@ -135,7 +135,8 @@ public class ProfileActivity extends AppCompatActivity
                         }
                         else if(item.getTitle() == "Delete profile")
                         {
-                            loggedinUser = RestCalls.getUser(username);
+                            ArrayList<Users> getUsersByUsername = retrofitCalls.getUserbyUsername(username);
+                            loggedinUser = getUsersByUsername.get(0);
                             boolean deletionStatus = deleteUserAccount(loggedinUser.getId().toString());
                             if(deletionStatus)
                             {
@@ -157,7 +158,8 @@ public class ProfileActivity extends AppCompatActivity
             }
         });
     }
-    public Boolean deleteUserAccount (String id){
+    public Boolean deleteUserAccount (String id)
+    {
         boolean success = true;
 
         //TODO delete all data from all other tables

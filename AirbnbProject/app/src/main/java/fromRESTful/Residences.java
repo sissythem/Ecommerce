@@ -2,18 +2,10 @@ package fromRESTful;
 
 import android.support.annotation.NonNull;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-
-import util.Utils;
-
-import static util.Utils.DATABASE_DATE_FORMAT;
 
 public class Residences implements Serializable, Comparable {
 
@@ -46,10 +38,33 @@ public class Residences implements Serializable, Comparable {
     private Collection<Conversations> conversationsCollection;
     private short active;
 
-    public Residences() {}
-
-    public Residences(Integer id) {
-        this.id = id;
+    public Residences(Users host, String title, String type, String about, String address, String city, String country, String amenities, int floor, int rooms,
+                      int baths, String view, double spaceArea, int guests, double minPrice, double additionalCostPerPerson, String cancellationPolicy,
+                      String rules, boolean kitchen, boolean b, boolean livingRoom, Date startDate, Date endDate, String photo)
+    {
+        this.hostId=host;
+        this.title = title;
+        this.type = type;
+        this.about = about;
+        this.cancellationPolicy = cancellationPolicy;
+        this.country = country;
+        this.city = city;
+        this.address = address;
+        this.rules = rules;
+        this.amenities = amenities;
+        this.floor = floor;
+        this.rooms = rooms;
+        this.baths = baths;
+        this.spaceArea = spaceArea;
+        this.photos = photo;
+        this.guests = guests;
+        this.availableDateStart = startDate;
+        this.availableDateEnd = endDate;
+        this.minPrice = minPrice;
+        this.additionalCostPerPerson = additionalCostPerPerson;
+        this.view=view;
+        this.kitchen=kitchen;
+        this.livingRoom=livingRoom;
     }
 
     public Residences(Users hostId, String title, String type, String about, String cancellationPolicy, String country, String city, String address, String rules, String amenities,
@@ -288,124 +303,124 @@ public class Residences implements Serializable, Comparable {
         this.conversationsCollection = conversationsCollection;
     }
 
-    public static Residences fromJSON (JSONObject obj){
-        Residences r = new Residences();
-        try {
-            r.id = (Integer) obj.get("id");
-
-            JSONObject userobject = (JSONObject)obj.get("hostId");
-            Users hostUser = Users.fromJSON(userobject);
-            r.hostId = hostUser;
-
-            r.title="";
-            if(Utils.isFieldOK(obj, "title")) r.title = (String) obj.get("title");
-
-            r.type="";
-            if(Utils.isFieldOK(obj, "type")) r.type = (String) obj.get("type");
-            r.about="";
-            if(Utils.isFieldOK(obj, "about")) r.about = (String) obj.get("about");
-            r.cancellationPolicy="";
-            if(Utils.isFieldOK(obj, "cancellationPolicy")) r.cancellationPolicy = (String) obj.get("cancellationPolicy");
-            r.country="";
-            if(Utils.isFieldOK(obj, "country")) r.country = (String) obj.get("country");
-            r.city="";
-            if(Utils.isFieldOK(obj, "city")) r.city = (String) obj.get("city");
-            r.address="";
-            if(Utils.isFieldOK(obj, "address")) r.address = (String) obj.get("address");
-            r.rules="";
-            if(Utils.isFieldOK(obj, "rules")) r.rules = (String) obj.get("rules");
-            r.amenities="";
-            if(Utils.isFieldOK(obj, "amenities")) r.amenities = (String) obj.get("amenities");
-            r.floor=0;
-            if(Utils.isFieldOK(obj, "floor")) r.floor = (int) obj.get("floor");
-            r.rooms=0;
-            if(Utils.isFieldOK(obj, "rooms")) r.rooms = (int) obj.get("rooms");
-            r.baths=0;
-            if(Utils.isFieldOK(obj, "baths")) r.baths = (int) obj.get("baths");
-            r.kitchen=false;
-            if(Utils.isFieldOK(obj, "kitchen")) r.kitchen = (Boolean) obj.get("kitchen");
-            r.livingRoom=false;
-            if(Utils.isFieldOK(obj, "livingRoom")) r.livingRoom = (Boolean) obj.get("livingRoom");
-            r.view="";
-            if(Utils.isFieldOK(obj, "view")) r.view = (String) obj.get("view");
-            r.spaceArea=0.0;
-            if(Utils.isFieldOK(obj, "spaceArea")) r.spaceArea = (double) obj.get("spaceArea");
-            r.photos="";
-            if(Utils.isFieldOK(obj, "photos")) r.photos = (String) obj.get("photos");
-            r.guests=0;
-            if(Utils.isFieldOK(obj, "guests")) r.guests = (int) obj.get("guests");
-
-            if(Utils.isFieldOK(obj, "availableDateStart")) {
-                String availableDateStartString = (String) obj.get("availableDateStart");
-                r.availableDateStart = Utils.ConvertStringToDate(availableDateStartString, DATABASE_DATE_FORMAT);
-            }
-            if(Utils.isFieldOK(obj, "availableDateEnd")) {
-                String availableDateEndString = (String) obj.get("availableDateEnd");
-                r.availableDateEnd = Utils.ConvertStringToDate(availableDateEndString, DATABASE_DATE_FORMAT);
-            }
-            r.minPrice=0.0;
-            if(Utils.isFieldOK(obj, "minPrice")) r.minPrice = (double) obj.get("minPrice");
-            r.additionalCostPerPerson=0.0;
-            if(Utils.isFieldOK(obj, "additionalCostPerPerson"))
-                r.additionalCostPerPerson = (double) obj.get("additionalCostPerPerson");
-
-            if(Utils.isFieldOK(obj, "Reviews"))
-            {
-                ArrayList<Reviews> reviewsList = new ArrayList<>();
-                JSONArray jsonArrayReviews = (JSONArray) obj.get("Reviews");
-                for (int i = 0; i < jsonArrayReviews.length(); i++) {
-                    JSONObject object = (JSONObject) jsonArrayReviews.get(i);
-                    Reviews review = Reviews.fromJSON(object);
-                    reviewsList.add(review);
-                }
-                r.reviewsCollection = reviewsList;
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
-        return r;
-    }
-
-    public JSONObject toJSON (){
-        JSONObject jsonResidence = new JSONObject();
-        try {
-            jsonResidence.put("id", id.toString());
-
-            JSONObject jsonUser = hostId.toJSON();
-            jsonResidence.put("hostId", jsonUser);
-
-            jsonResidence.put("title", title);
-            jsonResidence.put("type", type);
-            jsonResidence.put("about", about);
-            jsonResidence.put("cancellationPolicy", cancellationPolicy);
-            jsonResidence.put("address", address);
-            jsonResidence.put("rules", rules);
-            jsonResidence.put("country", country);
-            jsonResidence.put("city", city);
-            jsonResidence.put("amenities", amenities);
-            jsonResidence.put("floor", floor);
-            jsonResidence.put("rooms", rooms);
-            jsonResidence.put("baths", baths);
-            jsonResidence.put("spaceArea", spaceArea);
-            jsonResidence.put("photos", photos);
-            jsonResidence.put("guests", guests);
-            jsonResidence.put("minPrice", minPrice);
-            jsonResidence.put("additionalCostPerPerson", additionalCostPerPerson);
-
-            String startdate = Utils.ConvertDateToString(availableDateStart, DATABASE_DATE_FORMAT);
-            jsonResidence.put("availableDateStart", startdate);
-
-            String enddate = Utils.ConvertDateToString(availableDateEnd, DATABASE_DATE_FORMAT);
-            jsonResidence.put("availableDateEnd", enddate);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return jsonResidence;
-    }
-
+//    public static Residences fromJSON (JSONObject obj){
+//        Residences r = new Residences(host, title, type, about, address, city, country, amenities, floor, rooms, baths, view, spaceArea, guests, minPrice, additionalCostPerPerson, cancellationPolicy, rules, kitchen, kitchen, livingRoom, startDate, endDate, photo);
+//        try {
+//            r.id = (Integer) obj.get("id");
+//
+//            JSONObject userobject = (JSONObject)obj.get("hostId");
+//            Users hostUser = Users.fromJSON(userobject);
+//            r.hostId = hostUser;
+//
+//            r.title="";
+//            if(Utils.isFieldOK(obj, "title")) r.title = (String) obj.get("title");
+//
+//            r.type="";
+//            if(Utils.isFieldOK(obj, "type")) r.type = (String) obj.get("type");
+//            r.about="";
+//            if(Utils.isFieldOK(obj, "about")) r.about = (String) obj.get("about");
+//            r.cancellationPolicy="";
+//            if(Utils.isFieldOK(obj, "cancellationPolicy")) r.cancellationPolicy = (String) obj.get("cancellationPolicy");
+//            r.country="";
+//            if(Utils.isFieldOK(obj, "country")) r.country = (String) obj.get("country");
+//            r.city="";
+//            if(Utils.isFieldOK(obj, "city")) r.city = (String) obj.get("city");
+//            r.address="";
+//            if(Utils.isFieldOK(obj, "address")) r.address = (String) obj.get("address");
+//            r.rules="";
+//            if(Utils.isFieldOK(obj, "rules")) r.rules = (String) obj.get("rules");
+//            r.amenities="";
+//            if(Utils.isFieldOK(obj, "amenities")) r.amenities = (String) obj.get("amenities");
+//            r.floor=0;
+//            if(Utils.isFieldOK(obj, "floor")) r.floor = (int) obj.get("floor");
+//            r.rooms=0;
+//            if(Utils.isFieldOK(obj, "rooms")) r.rooms = (int) obj.get("rooms");
+//            r.baths=0;
+//            if(Utils.isFieldOK(obj, "baths")) r.baths = (int) obj.get("baths");
+//            r.kitchen=false;
+//            if(Utils.isFieldOK(obj, "kitchen")) r.kitchen = (Boolean) obj.get("kitchen");
+//            r.livingRoom=false;
+//            if(Utils.isFieldOK(obj, "livingRoom")) r.livingRoom = (Boolean) obj.get("livingRoom");
+//            r.view="";
+//            if(Utils.isFieldOK(obj, "view")) r.view = (String) obj.get("view");
+//            r.spaceArea=0.0;
+//            if(Utils.isFieldOK(obj, "spaceArea")) r.spaceArea = (double) obj.get("spaceArea");
+//            r.photos="";
+//            if(Utils.isFieldOK(obj, "photos")) r.photos = (String) obj.get("photos");
+//            r.guests=0;
+//            if(Utils.isFieldOK(obj, "guests")) r.guests = (int) obj.get("guests");
+//
+//            if(Utils.isFieldOK(obj, "availableDateStart")) {
+//                String availableDateStartString = (String) obj.get("availableDateStart");
+//                r.availableDateStart = Utils.ConvertStringToDate(availableDateStartString, DATABASE_DATE_FORMAT);
+//            }
+//            if(Utils.isFieldOK(obj, "availableDateEnd")) {
+//                String availableDateEndString = (String) obj.get("availableDateEnd");
+//                r.availableDateEnd = Utils.ConvertStringToDate(availableDateEndString, DATABASE_DATE_FORMAT);
+//            }
+//            r.minPrice=0.0;
+//            if(Utils.isFieldOK(obj, "minPrice")) r.minPrice = (double) obj.get("minPrice");
+//            r.additionalCostPerPerson=0.0;
+//            if(Utils.isFieldOK(obj, "additionalCostPerPerson"))
+//                r.additionalCostPerPerson = (double) obj.get("additionalCostPerPerson");
+//
+//            if(Utils.isFieldOK(obj, "Reviews"))
+//            {
+//                ArrayList<Reviews> reviewsList = new ArrayList<>();
+//                JSONArray jsonArrayReviews = (JSONArray) obj.get("Reviews");
+//                for (int i = 0; i < jsonArrayReviews.length(); i++) {
+//                    JSONObject object = (JSONObject) jsonArrayReviews.get(i);
+//                    Reviews review = Reviews.fromJSON(object);
+//                    reviewsList.add(review);
+//                }
+//                r.reviewsCollection = reviewsList;
+//            }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        catch(Exception e){
+//            e.printStackTrace();
+//        }
+//        return r;
+//    }
+//
+//    public JSONObject toJSON (){
+//        JSONObject jsonResidence = new JSONObject();
+//        try {
+//            jsonResidence.put("id", id.toString());
+//
+//            JSONObject jsonUser = hostId.toJSON();
+//            jsonResidence.put("hostId", jsonUser);
+//
+//            jsonResidence.put("title", title);
+//            jsonResidence.put("type", type);
+//            jsonResidence.put("about", about);
+//            jsonResidence.put("cancellationPolicy", cancellationPolicy);
+//            jsonResidence.put("address", address);
+//            jsonResidence.put("rules", rules);
+//            jsonResidence.put("country", country);
+//            jsonResidence.put("city", city);
+//            jsonResidence.put("amenities", amenities);
+//            jsonResidence.put("floor", floor);
+//            jsonResidence.put("rooms", rooms);
+//            jsonResidence.put("baths", baths);
+//            jsonResidence.put("spaceArea", spaceArea);
+//            jsonResidence.put("photos", photos);
+//            jsonResidence.put("guests", guests);
+//            jsonResidence.put("minPrice", minPrice);
+//            jsonResidence.put("additionalCostPerPerson", additionalCostPerPerson);
+//
+//            String startdate = Utils.ConvertDateToString(availableDateStart, DATABASE_DATE_FORMAT);
+//            jsonResidence.put("availableDateStart", startdate);
+//
+//            String enddate = Utils.ConvertDateToString(availableDateEnd, DATABASE_DATE_FORMAT);
+//            jsonResidence.put("availableDateEnd", enddate);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        return jsonResidence;
+//    }
+//
     public double getAverageRating(){
         double rating = 0.0;
         double averageRating;

@@ -17,8 +17,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -28,10 +26,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import util.RestAPI;
-import util.RestCallManager;
-import util.RestCallParameters;
 import util.RestClient;
-import util.RestPaths;
+import util.RetrofitCalls;
 import util.Utils;
 
 /**
@@ -235,31 +231,26 @@ public class RegisterActivity extends AppCompatActivity {
     public boolean checkUsername (String Username)
     {
         boolean userIsNew = false;
-        //create an object of type RestCallManager to get the result of the query
-        RestCallManager UsernameManager = new RestCallManager();
-        RestCallParameters usernameparameters = new RestCallParameters(RestPaths.getUserByUsername(Username), "GET", "JSON", "");
 
-        UsernameManager.execute(usernameparameters);
-
-        ArrayList<JSONObject> jsonArrayUsername = UsernameManager.getSingleJSONArray();
-        if(jsonArrayUsername.size() == 0) userIsNew = true;
+        RetrofitCalls retrofitCalls = new RetrofitCalls();
+        ArrayList<Users> checkForUser = retrofitCalls.getUserbyUsername(Username);
+        if(checkForUser.size() == 0) userIsNew = true;
         return userIsNew;
 
     }
 
     public boolean checkEmail (String Email){
         boolean emailIsNew=false;
-        RestCallManager EmailManager = new RestCallManager();
-        RestCallParameters emailparameters = new RestCallParameters(RestPaths.getUserByEmail(Email), "GET", "JSON", "");
-        EmailManager.execute(emailparameters);
+        RetrofitCalls retrofitCalls = new RetrofitCalls();
+        ArrayList<Users> checkForUser = retrofitCalls.getUserbyEmail(Email);
 
-        ArrayList<JSONObject> jsonArrayEmail = EmailManager.getSingleJSONArray();
-        if(jsonArrayEmail.size() == 0) emailIsNew = true;
+        if(checkForUser.size() == 0) emailIsNew = true;
         return  emailIsNew;
     }
 
     @Override
-    public void onBackPressed() {
+    public void onBackPressed()
+    {
         isUserLoggedIn = sharedPrefs.getBoolean("userLoggedInState", false);
         if (isUserLoggedIn) {
             Intent intent = new Intent(this, HomeActivity.class);

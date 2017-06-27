@@ -15,21 +15,21 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONObject;
-
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
 import fromRESTful.Users;
-import util.EditProfileParameters;
-import util.RestCallManager;
-import util.RestCallParameters;
-import util.RestCalls;
-import util.RestPaths;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import util.RestAPI;
+import util.RestClient;
+import util.RetrofitCalls;
 import util.Utils;
+
+import static util.Utils.DATABASE_DATE_FORMAT;
 
 public class EditProfileActivity extends AppCompatActivity {
 
@@ -40,14 +40,17 @@ public class EditProfileActivity extends AppCompatActivity {
 
     Context c;
 
-    Boolean user;
+    Boolean user, success;
+    RetrofitCalls retrofitCalls;
+    Users loggedinUser;
 
     ImageButton btnBirthDate;
     Button bsave;
 
     EditText etName, etLastName, etPhoneNumber, etEmail, etPassword, etCountry, etCity, etAbout;
     TextView etUsername, tvBirthDate;
-    String username, userId, email;
+    String username, email;
+    int userId;
     private int mYear, mMonth, mDay;
 
     @Override
@@ -74,8 +77,11 @@ public class EditProfileActivity extends AppCompatActivity {
 
         bsave = (Button)findViewById(R.id.post);
 
-        Users loggedinUser  = RestCalls.getUser(username);
-        userId              = loggedinUser.getId().toString();
+        retrofitCalls = new RetrofitCalls();
+        ArrayList<Users> getUsersByUsername = retrofitCalls.getUserbyUsername(username);
+        loggedinUser  = getUsersByUsername.get(0);
+
+        userId              = loggedinUser.getId();
         etName              = (EditText) findViewById(R.id.etName);
         etLastName          = (EditText) findViewById(R.id.etLastName);
         etPhoneNumber       = (EditText) findViewById(R.id.etPhoneNumber);
@@ -143,38 +149,41 @@ public class EditProfileActivity extends AppCompatActivity {
     public boolean checkEmail (String Email){
         boolean emailIsNew=false;
         //same process for email
-        String emailurl = RestPaths.getUserByEmail(Email);
-        RestCallManager EmailManager = new RestCallManager();
-        RestCallParameters emailparameters = new RestCallParameters(emailurl, "GET", "JSON", "");
-        EmailManager.execute(emailparameters);
-
-        ArrayList<JSONObject> jsonArrayEmail = EmailManager.getSingleJSONArray();
-        if(jsonArrayEmail.size() == 0) emailIsNew = true;
+        ArrayList<Users> users = retrofitCalls.getUserbyEmail(Email);
+        if(users.size() == 0) emailIsNew = true;
         return  emailIsNew;
     }
 
-    public boolean PutResult(String userId, String firstName, String lastName, String phoneNumber, String Email, String Username, String Password, String photo, String Country,
-                             String City, String BirthDate, String About) {
-        boolean success = true;
-        EditProfileParameters UserParameters = new EditProfileParameters(userId, firstName, lastName, phoneNumber, Email, Username, Password, photo, Country, City, BirthDate, About);
+    public boolean PutResult(String firstName, String lastName, String username, String password, String email, String phoneNumber, String country, String city,
+                             String photo, String about, Date birthDate) {
+        success = true;
+        Users UserParameters = new Users(firstName, lastName, username, password, email, phoneNumber, country, city, photo, about, birthDate);
 
-        RestCallManager userpost = new RestCallManager();
-        RestCallParameters postparameters = new RestCallParameters(RestPaths.editUserById(Integer.parseInt(userId)), "PUT", "", UserParameters.getEditProfileParameters());
+        RestAPI restAPI = RestClient.getClient().create(RestAPI.class);
+        Call<Users> call = restAPI.editUserById(loggedinUser.getId(), UserParameters);
 
-//        ArrayList<String> PostResponse ;
-        String response;
+        call.enqueue(new Callback<Users>()
+        {
+            @Override
+            public void onResponse(Call<Users> call, Response<Users> response) {
+                if(response.isSuccessful())
+                {
+                    success=true;
+                }
+            }
 
-        userpost.execute(postparameters);
-//            PostResponse = userpost.get(1000, TimeUnit.SECONDS);
-        response = (String)userpost.getRawResponse().get(0);
-//            String result = PostResponse.get(0);
-        if (response.equals("OK")) ;
-        else success = false;
+            @Override
+            public void onFailure(Call<Users> call, Throwable t)
+            {
+                success=false;
+            }
+        });
 
         return success;
     }
 
-    public void saveUserProfile (){
+    public void saveUserProfile ()
+    {
         final String name = etName.getText().toString();
         final String lastName = etLastName.getText().toString();
         final String phoneNumber = etPhoneNumber.getText().toString();
@@ -184,16 +193,11 @@ public class EditProfileActivity extends AppCompatActivity {
         final String country = etCountry.getText().toString();
         final String city = etCity.getText().toString();
         final String birthdate = tvBirthDate.getText().toString();
-        SimpleDateFormat oldDateFormat = new SimpleDateFormat(Utils.APP_DATE_FORMAT);
-        SimpleDateFormat newDateFormat = new SimpleDateFormat(Utils.DATABASE_DATE_FORMAT);
-        Date bdate = new Date();
-        try {
-            bdate = oldDateFormat.parse(birthdate);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        final String birthDate = newDateFormat.format(bdate);
+        final String photo = "photo path";
         final String about = etAbout.getText().toString();
+
+        Date bdate = Utils.ConvertStringToDate(birthdate, DATABASE_DATE_FORMAT);
+
         boolean emailIsNew;
 
         if(Username.length() == 0 || name.length() == 0 || lastName.length() == 0 || phoneNumber.length() == 0 || Email.length() == 0 || password.length() == 0)
@@ -207,13 +211,13 @@ public class EditProfileActivity extends AppCompatActivity {
             return;
         }
         emailIsNew = checkEmail(Email);
-        if(email.equals(Email)){
+        if(loggedinUser.getEmail().equals(Email)){
             emailIsNew=true;
         }
 
         if(emailIsNew)
         {
-            boolean success = PutResult(userId, name, lastName, phoneNumber, Email, username, password, "", country, city, birthDate, about);
+            success = PutResult(name, lastName, Username, password, Email, phoneNumber, country, city, photo, about, bdate);
             if (success) {
                 //if data are stored successfully in the data base, the user is now logged in and the home activity starts
                 isUserLoggedIn = sharedPrefs.getBoolean("userLoggedInState", false);

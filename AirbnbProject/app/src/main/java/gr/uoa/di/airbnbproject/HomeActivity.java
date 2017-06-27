@@ -208,7 +208,6 @@ public class HomeActivity extends AppCompatActivity
             public void onClick(View v) {
                 Intent searchintent = new Intent(HomeActivity.this, SearchResultsActivity.class);
                 Bundle bsearch = new Bundle();
-//                Integer userID = RestCalls.getUserId(username);
 
                 bsearch.putString("username", username);
                 bsearch.putString("city", field_city.getText().toString());

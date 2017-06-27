@@ -30,8 +30,9 @@ public class Users implements Serializable {
     private String host;
 
     public Users(){}
+    //For edit profile
     public Users(String firstName, String lastName, String username, String password, String email, String phoneNumber, String country, String city,
-                 String photo, Date registrationDate, String about, Date birthDate, String host)
+                 String photo, String about, Date birthDate)
     {
         this.firstName=firstName;
         this.lastName=lastName;
@@ -42,12 +43,11 @@ public class Users implements Serializable {
         this.country=country;
         this.city=city;
         this.photo=photo;
-        this.registrationDate=registrationDate;
         this.about=about;
         this.birthDate=birthDate;
-        this.host=host;
     }
 
+    //For Register
     public Users(String firstName, String lastName, String username, String password, String email, String phoneNumber, Date bdate)
     {
         this.firstName=firstName;

@@ -21,16 +21,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
 import fromRESTful.Residences;
 import fromRESTful.Users;
-import util.AddResidenceParameters;
-import util.RestCallManager;
-import util.RestCallParameters;
-import util.RestCalls;
-import util.RestPaths;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import util.RestAPI;
+import util.RestClient;
+import util.RetrofitCalls;
 import util.Utils;
 
 public class EditResidenceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
@@ -40,7 +42,7 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
     Integer residenceId;
     Residences selectedResidence;
 
-    Boolean user;
+    Boolean user, success;
     private static final String USER_LOGIN_PREFERENCES = "login_preferences";
     SharedPreferences sharedPrefs;
     SharedPreferences.Editor editor;
@@ -60,6 +62,7 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
 
     Context c;
     Users host;
+    RetrofitCalls retrofitCalls;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,12 +89,13 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         user=false;
 
         c = this;
-
+        retrofitCalls = new RetrofitCalls();
         residenceId = buser.getInt("residenceId");
-        selectedResidence = RestCalls.getResidenceById(residenceId);
+        selectedResidence = retrofitCalls.getResidenceById(residenceId);
         userInputLayout();
 
-        host = RestCalls.getUser(username);
+        ArrayList<Users> getUsersByUsername = retrofitCalls.getUserbyUsername(username);
+        host = getUsersByUsername.get(0);
 
         TextView residencetxt = (TextView) findViewById(R.id.residencetxt);
         residencetxt.setText("Edit Residence#" + residenceId);
@@ -266,10 +270,10 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
                 final String kitchen = Boolean.toString(bkitchen);
                 final String livingRoom = Boolean.toString(blivingRoom);
 
-                Date startDate = Utils.ConvertStringToDate(availableStartDate, Utils.APP_DATE_FORMAT);
+                Date startDate = Utils.ConvertStringToDate(availableStartDate, Utils.DATABASE_DATE_FORMAT);
                 String convertedStartDate = Utils.ConvertDateToString(startDate, Utils.DATABASE_DATE_FORMAT);
 
-                Date endDate = Utils.ConvertStringToDate(availableEndDate, Utils.APP_DATE_FORMAT);
+                Date endDate = Utils.ConvertStringToDate(availableEndDate, Utils.DATABASE_DATE_FORMAT);
                 String convertedEndDate = Utils.ConvertDateToString(endDate, Utils.DATABASE_DATE_FORMAT);
 
                 if (type.length() == 0 || title.length() == 0 || about.length() == 0 || address.length() == 0 || city.length() == 0 || country.length() == 0 || amenities.length() == 0 || floor.length() == 0
@@ -280,8 +284,10 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
                     Toast.makeText(c, "Please fill in all fields!", Toast.LENGTH_SHORT).show();
                     return;
                 } else {
-                    boolean success = PutResult(host, title, type, about, address, city, country, amenities, floor, rooms, baths, view, spaceArea, guests, minPrice, additionalCostPerPerson,
-                            cancellationPolicy, rules, kitchen, livingRoom, convertedStartDate, convertedEndDate, photo);
+                    boolean success = PutResult(host, title, type, about, address, city, country, amenities, Integer.parseInt(floor), Integer.parseInt(rooms),
+                            Integer.parseInt(baths), view, Double.parseDouble(spaceArea), Integer.parseInt(guests), Double.parseDouble(minPrice),
+                            Double.parseDouble(additionalCostPerPerson), cancellationPolicy, rules, Boolean.parseBoolean(kitchen),
+                            Boolean.parseBoolean(livingRoom), startDate, endDate, photo);
 
                     if (success) {
                         Intent hostIntent = new Intent(EditResidenceActivity.this, HostActivity.class);
@@ -304,26 +310,33 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         });
 
     }
-    public boolean PutResult(Users host, String title, String type, String about, String address, String city, String country, String amenities, String floor, String rooms, String baths, String view,
-                             String spaceArea, String guests, String minPrice, String additionalCostPerPerson, String cancellationPolicy, String rules,
-                             String kitchen, String livingRoom, String startDate, String endDate, String photo)
+    public boolean PutResult(Users host, String title, String type, String about, String address, String city, String country, String amenities, int floor, int rooms,
+                             int baths, String view, double spaceArea, int guests, double minPrice, double additionalCostPerPerson, String cancellationPolicy,
+                             String rules, boolean kitchen, boolean livingRoom, Date startDate, Date endDate, String photo)
     {
-        boolean success = true;
-        AddResidenceParameters ResidenceParameters = new AddResidenceParameters(host, title, type, about, address, city, country, amenities, floor, rooms, baths,
-                view, spaceArea, guests, minPrice, additionalCostPerPerson, startDate, endDate, cancellationPolicy, rules, photo, kitchen, livingRoom);
+        success = true;
+        Residences ResidenceParameters = new Residences(host, title, type, about, address, city, country, amenities, floor, rooms, baths, view, spaceArea, guests, minPrice,
+                additionalCostPerPerson, cancellationPolicy, rules, kitchen, kitchen, livingRoom, startDate, endDate, photo);
 
-        RestCallManager residencePostManager = new RestCallManager();
-        RestCallParameters residencePostParameters = new RestCallParameters(RestPaths.editResidenceById(residenceId.toString()), "PUT", "", ResidenceParameters.getAddResidenceParameters());
+        RestAPI restAPI = RestClient.getClient().create(RestAPI.class);
+        Call<Residences> call = restAPI.editResidenceById(residenceId, ResidenceParameters);
 
-//        ArrayList<String> PostResponse ;
-        String response;
+        call.enqueue(new Callback<Residences>()
+        {
+            @Override
+            public void onResponse(Call<Residences> call, Response<Residences> response) {
+                if(response.isSuccessful())
+                {
+                    success=true;
+                }
+            }
 
-        residencePostManager.execute(residencePostParameters);
-//            PostResponse = userpost.get(1000, TimeUnit.SECONDS);
-        response = (String)residencePostManager.getRawResponse().get(0);
-//            String result = PostResponse.get(0);
-        if (response.equals("OK")) ;
-        else success = false;
+            @Override
+            public void onFailure(Call<Residences> call, Throwable t)
+            {
+                success=false;
+            }
+        });
 
         return success;
     }

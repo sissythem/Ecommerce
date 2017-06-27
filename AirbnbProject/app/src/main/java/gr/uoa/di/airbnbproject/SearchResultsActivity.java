@@ -13,12 +13,12 @@ import java.util.List;
 
 import fromRESTful.Residences;
 import util.ListAdapterResidences;
-import util.RestCalls;
+import util.RetrofitCalls;
 import util.Utils;
 
 import static android.text.TextUtils.isEmpty;
-import static util.Utils.DATE_YEAR_FIRST;
 import static util.Utils.DATE_TEXT_MONTH;
+import static util.Utils.DATE_YEAR_FIRST;
 
 public class SearchResultsActivity extends AppCompatActivity {
     Boolean user;
@@ -62,7 +62,8 @@ public class SearchResultsActivity extends AppCompatActivity {
         searchlist = (TextView) findViewById(R.id.searchlist);
         searchlist.setText(str_city + ", " + str_startdate + "-" + str_enddate + ", " + str_guests);
 
-        Recommendations = RestCalls.getRecommendations(username, city, startDate, endDate, Integer.parseInt(guests));
+        RetrofitCalls retrofitCalls = new RetrofitCalls();
+        Recommendations = retrofitCalls.getRecommendations(username, city, startDate, endDate, guests);
 
         String[] title                  = new String [Recommendations.size()];
         String[] representativePhoto    = new String [Recommendations.size()];

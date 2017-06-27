@@ -43,10 +43,10 @@ public interface RestAPI
     Call<Users> postUser(@Body Users user);
 
     @PUT("users/put/{id}")
-    Call<Users> editUserById(@Path("userId") int userId);
+    Call<Users> editUserById(@Path("userId") int userId, @Body Users user);
 
     @DELETE("users/delete/{id}")
-    Call<Users> deleteUserById(@Path("userId") int userId);
+    Call<Void> deleteUserById(@Path("userId") int userId);
 
 
     /** Searches Facade Methods **/
@@ -69,10 +69,10 @@ public interface RestAPI
     Call<Residences> getResidencesById (@Path("residenceId") int residenceId);
 
     @DELETE("residences/delete/{id}")
-    Call<Residences> deleteResidenceById(@Path("id") int id);
+    Call<Void> deleteResidenceById(@Path("id") int id);
 
     @PUT("residences/edit/{id}")
-    Call<Residences> editResidenceById(@Path("id") int id);
+    Call<Residences> editResidenceById(@Path("id") int id, @Body Residences residence);
 
     @POST("residences")
     @FormUrlEncoded
@@ -119,7 +119,7 @@ public interface RestAPI
     Call<List<Reservations>> getReservationsByResidenceId(@Query("residenceId") int residenceId);
 
     @DELETE("reservations/delete/{residenceId}")
-    Call<Reservations> deleteReservationsByResidence(@Path("residenceId") int residenceId);
+    Call<Void> deleteReservationsByResidence(@Path("residenceId") int residenceId);
 
     @GET("reservations/comment")
     Call<List<Reservations>> getReservationsByTenantIdAndResidenceId(@Query("tenantId") int tenantId, @Query("residenceId") int residenceId);
@@ -141,7 +141,7 @@ public interface RestAPI
     Call<List<Reviews>> getReviewsByTenant(@Query("tenantId") int tenantId);
 
     @DELETE("reviews/delete/{residenceId}")
-    Call<Reviews> deleteReviewsByResidence(@Path("residenceId") int residenceId);
+    Call<Void> deleteReviewsByResidence(@Path("residenceId") int residenceId);
 
     @POST("reviews")
     @FormUrlEncoded
