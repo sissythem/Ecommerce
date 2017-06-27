@@ -236,7 +236,8 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
                 {
                     Toast.makeText(c, "Please fill in all fields!", Toast.LENGTH_SHORT).show();
                     return;
-                } else {
+                } else
+                {
                     boolean success = PostResult(host, title, type, about, cancellationPolicy, country, city, address, rules, amenities, Integer.parseInt(floor),
                             Integer.parseInt(rooms), Integer.parseInt(baths), Double.parseDouble(spaceArea), photo, Integer.parseInt(guests), startDate, endDate,
                             Double.parseDouble(minPrice), Double.parseDouble(additionalCostPerPerson));

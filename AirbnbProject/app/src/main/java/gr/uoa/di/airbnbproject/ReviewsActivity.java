@@ -92,7 +92,7 @@ public class ReviewsActivity extends AppCompatActivity
 
         for(int i=0; i<reviewsForSelectedResidence.size();i++) {
             representativePhoto[i] = reviewsForSelectedResidence.get(i).getHostId().getPhoto();
-            username[i] = reviewsForSelectedResidence.get(i).getHostId().getUsername();
+            username[i] = reviewsForSelectedResidence.get(i).getTenantId().getUsername();
             comment[i] = reviewsForSelectedResidence.get(i).getComment();
         }
 

@@ -73,6 +73,7 @@ public class HomeActivity extends AppCompatActivity
         }
         setContentView(R.layout.activity_home);
 
+        user=true;
 
         /**SEARCH VIEW EXPANDABLE START **/
         setupSearchView();

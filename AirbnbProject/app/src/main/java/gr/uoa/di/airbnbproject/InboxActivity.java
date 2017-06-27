@@ -45,6 +45,12 @@ public class InboxActivity extends AppCompatActivity {
         isUserLoggedIn = sharedPrefs.getBoolean("userLoggedInState", false);
         username = sharedPrefs.getString("currentLoggedInUser", "");
 
+        if (!isUserLoggedIn) {
+            Intent intent = new Intent(this, GreetingActivity.class);
+            startActivity(intent);
+            return;
+        }
+
         Bundle buser = getIntent().getExtras();
         user = buser.getBoolean("type");
         currentUserId = RestCalls.getUserId(username);

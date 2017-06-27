@@ -239,21 +239,6 @@ public class Users implements Serializable {
         return jsonUser;
     }
 
-    //    public String[] getUserDetails (String username)
-//    {
-//        String[] userdetails = new String[10];
-//        userdetails[0] = this.firstName;
-//        userdetails[1] = this.lastName;
-//        userdetails[2] = this.username;
-//        userdetails[3] = this.password;
-//        userdetails[4] = this.email;
-//        userdetails[5] = this.phoneNumber;
-//        userdetails[6] = this.country;
-//        userdetails[7] = this.city;
-//        userdetails[8] = this.about;
-//        userdetails[9] = this.birthDate.toString();
-//        return userdetails;
-//    }
     @Override
     public int hashCode() {
         int hash = 0;
@@ -263,7 +248,6 @@ public class Users implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Users)) {
             return false;
         }
