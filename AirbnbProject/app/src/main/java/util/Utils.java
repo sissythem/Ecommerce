@@ -116,7 +116,7 @@ public class Utils {
         return true;
     }
 
-    public static void manageFooter(Activity context, Boolean user) {
+    public static void manageFooter(Activity context, Boolean user, final String token) {
         final Activity this_context = context;
         final Boolean this_user = user;
 
@@ -135,6 +135,7 @@ public class Utils {
                 {
                     Intent homeIntent = new Intent(this_context, HomeActivity.class);
                     buser.putBoolean("type", true);
+                    buser.putString("token", token);
                     homeIntent.putExtras(buser);
                     this_context.startActivity(homeIntent);
                 }
@@ -142,6 +143,7 @@ public class Utils {
                 {
                     Intent hostIntent = new Intent(this_context, HostActivity.class);
                     buser.putBoolean("type", false);
+                    buser.putString("token", token);
                     hostIntent.putExtras(buser);
                     this_context.startActivity(hostIntent);
                 }
@@ -153,9 +155,10 @@ public class Utils {
             @Override
             public void onClick(View v) {
                 Intent inboxintent = new Intent(this_context, InboxActivity.class);
-                Bundle btype = new Bundle();
-                btype.putBoolean("type", this_user);
-                inboxintent.putExtras(btype);
+                Bundle buser = new Bundle();
+                buser.putBoolean("type", this_user);
+                buser.putString("token", token);
+                inboxintent.putExtras(buser);
                 try {
                     this_context.startActivity(inboxintent);
                 } catch (Exception ex) {
@@ -171,6 +174,7 @@ public class Utils {
                 Intent profileintent = new Intent(this_context, ProfileActivity.class);
                 Bundle buser = new Bundle();
                 buser.putBoolean("type", this_user);
+                buser.putString("token", token);
                 profileintent.putExtras(buser);
                 try {
                     this_context.startActivity(profileintent);
@@ -191,12 +195,14 @@ public class Utils {
                 {
                     Intent homeIntent = new Intent(this_context, HomeActivity.class);
                     buser.putBoolean("type", true);
+                    buser.putString("token", token);
                     homeIntent.putExtras(buser);
                     this_context.startActivity(homeIntent);
                 }
                 else{
                     Intent hostIntent = new Intent(this_context, HostActivity.class);
                     buser.putBoolean("type", false);
+                    buser.putString("token", token);
                     hostIntent.putExtras(buser);
                     this_context.startActivity(hostIntent);
                 }
@@ -225,7 +231,7 @@ public class Utils {
         context.startActivity(greetingintent);
     }
 
-    public static void manageBackButton(Activity context, Class newContext, boolean user) {
+    public static void manageBackButton(Activity context, Class newContext, boolean user, final String token) {
         final Activity this_context = context;
         final Class this_new_context = newContext;
         final boolean this_user = user;
@@ -240,8 +246,10 @@ public class Utils {
                 buser.putBoolean("type", this_user);
                 if (this_new_context.getClass().toString() == HomeActivity.class.toString()) {
                     buser.putBoolean("type", true);
+                    buser.putString("token", token);
                 } else if (this_new_context.toString() == HostActivity.class.toString()) {
                     buser.putBoolean("type", false);
+                    buser.putString("token", token);
                 }
                 backintent.putExtras(buser);
 

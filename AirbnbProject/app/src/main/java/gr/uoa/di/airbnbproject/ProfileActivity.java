@@ -33,7 +33,7 @@ public class ProfileActivity extends AppCompatActivity
     private boolean isUserLoggedIn;
 
     Users loggedinUser;
-    String username;
+    String username, token;
     ListView list;
     Context c;
 
@@ -62,6 +62,7 @@ public class ProfileActivity extends AppCompatActivity
 
         Bundle buser = getIntent().getExtras();
         user = buser.getBoolean("type");
+        token = buser.getString("token");
 
         btnMenu = (ImageButton)findViewById(R.id.btnMenu);
 
@@ -69,7 +70,7 @@ public class ProfileActivity extends AppCompatActivity
 
         manageToolbarButtons();
         retrofitCalls = new RetrofitCalls();
-        ArrayList<Users> userLoggedIn = retrofitCalls.getUserbyUsername(username);
+        ArrayList<Users> userLoggedIn = retrofitCalls.getUserbyUsername(token, username);
         loggedinUser = userLoggedIn.get(0);
         userdetails[0] = loggedinUser.getFirstName();
         userdetails[1] = loggedinUser.getLastName();
@@ -96,10 +97,10 @@ public class ProfileActivity extends AppCompatActivity
         list.setAdapter(adapter);
 
         /** FOOTER TOOLBAR **/
-        Utils.manageFooter(ProfileActivity.this, user);
+        Utils.manageFooter(ProfileActivity.this, user, token);
 
         /** BACK BUTTON **/
-        Utils.manageBackButton(this, (user)?HomeActivity.class:HostActivity.class, user);
+        Utils.manageBackButton(this, (user)?HomeActivity.class:HostActivity.class, user, token);
     }
 
     public void manageToolbarButtons()
@@ -137,7 +138,7 @@ public class ProfileActivity extends AppCompatActivity
                         }
                         else if(item.getItemId() == R.id.deleteProfile)
                         {
-                            ArrayList<Users> getUsersByUsername = retrofitCalls.getUserbyUsername(username);
+                            ArrayList<Users> getUsersByUsername = retrofitCalls.getUserbyUsername(token, username);
                             loggedinUser = getUsersByUsername.get(0);
                             boolean deletionStatus = deleteUserAccount(loggedinUser.getId().toString());
                             if(deletionStatus)

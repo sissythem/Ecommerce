@@ -24,6 +24,7 @@ public class SearchResultsActivity extends AppCompatActivity {
     Boolean user;
     ListView list;
     TextView searchlist;
+    String token;
 
     ListAdapterResidences adapter;
 
@@ -46,6 +47,7 @@ public class SearchResultsActivity extends AppCompatActivity {
         startDate       = buser.getString("startDate");
         endDate         = buser.getString("endDate");
         user            = buser.getBoolean("type");
+        token           = buser.getString("token");
         user=true;
 
         if (isEmpty(username)) finish();
@@ -63,7 +65,7 @@ public class SearchResultsActivity extends AppCompatActivity {
         searchlist.setText(str_city + ", " + str_startdate + "-" + str_enddate + ", " + str_guests);
 
         RetrofitCalls retrofitCalls = new RetrofitCalls();
-        Recommendations = retrofitCalls.getRecommendations(username, city, startDate, endDate, guests);
+        Recommendations = retrofitCalls.getRecommendations(token, username, city, startDate, endDate, guests);
 
         String[] title                  = new String [Recommendations.size()];
         String[] representativePhoto    = new String [Recommendations.size()];
@@ -91,11 +93,12 @@ public class SearchResultsActivity extends AppCompatActivity {
                 bsearch.putString("guests", guests);
                 bsearch.putString("startDate", startDate);
                 bsearch.putString("endDate", endDate);
+                bsearch.putString("token", token);
                 startActivity(showResidenceIntent);
             }
         });
 
         /** FOOTER TOOLBAR **/
-        Utils.manageFooter(SearchResultsActivity.this, user);
+        Utils.manageFooter(SearchResultsActivity.this, user, token);
     }
 }

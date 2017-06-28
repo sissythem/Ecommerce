@@ -13,6 +13,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import fromRESTful.Reservations;
@@ -20,7 +21,6 @@ import fromRESTful.Residences;
 import fromRESTful.Reviews;
 import fromRESTful.Users;
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 import util.ListAdapterReviews;
 import util.RestAPI;
@@ -30,8 +30,8 @@ import util.Utils;
 
 public class ReviewsActivity extends AppCompatActivity
 {
-    Boolean user, success;
-    String loggedInUsername;
+    Boolean user;
+    String loggedInUsername, token, success;
 
     private static final String USER_LOGIN_PREFERENCES = "login_preferences";
     SharedPreferences sharedPrefs;
@@ -77,15 +77,16 @@ public class ReviewsActivity extends AppCompatActivity
         c = this;
         Bundle buser = getIntent().getExtras();
         user = buser.getBoolean("type");
+        token = buser.getString("token");
 
         residenceId         = buser.getInt("residenceId");
         RetrofitCalls retrofitCalls = new RetrofitCalls();
-        ArrayList<Users> getUserByUsername = retrofitCalls.getUserbyUsername(loggedInUsername);
+        ArrayList<Users> getUserByUsername = retrofitCalls.getUserbyUsername(token, loggedInUsername);
         loggedinUser        = getUserByUsername.get(0);
-        selectedResidence   = retrofitCalls.getResidenceById(residenceId);
+        selectedResidence   = retrofitCalls.getResidenceById(token, Integer.toString(residenceId));
         host                = selectedResidence.getHostId();
 
-        ArrayList<Reviews> reviewsForSelectedResidence = retrofitCalls.getReviewsByResidenceId(residenceId);
+        ArrayList<Reviews> reviewsForSelectedResidence = retrofitCalls.getReviewsByResidenceId(token, Integer.toString(residenceId));
         String[] representativePhoto    = new String [reviewsForSelectedResidence.size()];
         String[] username               = new String[reviewsForSelectedResidence.size()];
         String[] comment                = new String[reviewsForSelectedResidence.size()];
@@ -101,9 +102,9 @@ public class ReviewsActivity extends AppCompatActivity
         reviewsList.setAdapter(adapter);
 
         /** FOOTER TOOLBAR **/
-        Utils.manageFooter(ReviewsActivity.this, user);
+        Utils.manageFooter(ReviewsActivity.this, user, token);
         /** BACK BUTTON **/
-        Utils.manageBackButton(this, ResidenceActivity.class, user);
+        Utils.manageBackButton(this, ResidenceActivity.class, user, token);
 
         etcomment = (EditText)findViewById(R.id.writeComment);
         btnreview = (Button)findViewById(R.id.btnreview);
@@ -118,7 +119,9 @@ public class ReviewsActivity extends AppCompatActivity
             }
         });
 
-        ArrayList<Reservations> reservationsByTenantIdandResidenceId= retrofitCalls.getReservationsByTenantIdandResidenceId(loggedinUser.getId(), selectedResidence.getId());
+        ArrayList<Reservations> reservationsByTenantIdandResidenceId= retrofitCalls.getReservationsByTenantIdandResidenceId(token,
+                loggedinUser.getId().toString(), selectedResidence.getId().toString());
+
         if (reservationsByTenantIdandResidenceId.isEmpty())
         {
             etcomment.setVisibility(View.GONE);
@@ -140,10 +143,15 @@ public class ReviewsActivity extends AppCompatActivity
                     }
                     else
                     {
-                        boolean success = postResult(selectedResidence, host, loggedinUser, comment, ratingfromuser);
-                        if (success)
+                        token = postResult(selectedResidence, host, loggedinUser, comment, ratingfromuser);
+                        if (!token.isEmpty())
                         {
                             Toast.makeText(c, "Your comment has been successfully submitted. Thank you!", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        else
+                            {
+                            Toast.makeText(c, "Your comment has not been successfully submitted. Please try again!", Toast.LENGTH_SHORT).show();
                             return;
                         }
                     }
@@ -163,30 +171,18 @@ public class ReviewsActivity extends AppCompatActivity
         moveTaskToBack(true);
     }
 
-    public Boolean postResult(Residences residence, Users host, Users tenant, String comment, double rating)
+    public String postResult(Residences residence, Users host, Users tenant, String comment, double rating)
     {
-        success=false;
-
         Reviews reviews = new Reviews(residence, host, tenant, comment, rating);
-        RestAPI restAPI = RestClient.getClient().create(RestAPI.class);
-        Call<Reviews> call = restAPI.postReview(reviews);
-        call.enqueue(new Callback<Reviews>()
-        {
-            @Override
-            public void onResponse(Call<Reviews> call, Response<Reviews> response) {
-                if(response.isSuccessful())
-                {
-                    success=true;
-                }
-            }
+        RestAPI restAPI = RestClient.getStringClient().create(RestAPI.class);
+        Call<String> call = restAPI.postReview(reviews);
+        try {
+            Response<String> resp = call.execute();
+            token = resp.body();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-            @Override
-            public void onFailure(Call<Reviews> call, Throwable t)
-            {
-                success=false;
-            }
-        });
-
-        return success;
+        return token;
     }
 }

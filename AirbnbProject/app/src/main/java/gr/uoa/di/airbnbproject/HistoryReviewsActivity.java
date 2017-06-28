@@ -18,7 +18,7 @@ import util.Utils;
 public class HistoryReviewsActivity extends AppCompatActivity
 {
     Boolean user;
-    String loggedInUsername;
+    String loggedInUsername, token;
     Users loggedinUser;
 
     private static final String USER_LOGIN_PREFERENCES = "login_preferences";
@@ -54,12 +54,13 @@ public class HistoryReviewsActivity extends AppCompatActivity
         c = this;
         Bundle buser = getIntent().getExtras();
         user = buser.getBoolean("type");
+        token = buser.getString("token");
 
         RetrofitCalls retrofitCalls = new RetrofitCalls();
-        ArrayList<Users> getUserByUsername = retrofitCalls.getUserbyUsername(loggedInUsername);
+        ArrayList<Users> getUserByUsername = retrofitCalls.getUserbyUsername(token, loggedInUsername);
         loggedinUser = getUserByUsername.get(0);
 
-        ArrayList<Reviews> userReviews = retrofitCalls.getReviewsByTenantId(loggedinUser.getId());
+        ArrayList<Reviews> userReviews = retrofitCalls.getReviewsByTenantId(token, loggedinUser.getId().toString());
 
         String[] representativePhoto    = new String [userReviews.size()];
         String[] username               = new String[userReviews.size()];
@@ -77,9 +78,9 @@ public class HistoryReviewsActivity extends AppCompatActivity
 
 
         /** FOOTER TOOLBAR **/
-        Utils.manageFooter(HistoryReviewsActivity.this, user);
+        Utils.manageFooter(HistoryReviewsActivity.this, user, token);
         /** BACK BUTTON **/
-        Utils.manageBackButton(this, ProfileActivity.class, user);
+        Utils.manageBackButton(this, ProfileActivity.class, user, token);
     }
 
     @Override

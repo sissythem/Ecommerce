@@ -28,6 +28,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.roomorama.caldroid.CaldroidFragment;
 import com.roomorama.caldroid.CaldroidListener;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -38,7 +39,6 @@ import fromRESTful.Reservations;
 import fromRESTful.Residences;
 import fromRESTful.Users;
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 import util.RestAPI;
 import util.RestCalls;
@@ -48,10 +48,8 @@ import util.Utils;
 
 public class ResidenceActivity extends FragmentActivity implements OnMapReadyCallback
 {
-    Boolean user, success;
-    String username, date_start, date_end, guests;
-
-    static final String TAG = "RESIDENCE_ACTIVITY";
+    Boolean user;
+    String username, date_start, date_end, guests, token;
 
     private static final String USER_LOGIN_PREFERENCES = "login_preferences";
     SharedPreferences sharedPrefs;
@@ -108,11 +106,12 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         date_end            = buser.getString("endDate");
         guests              = buser.getString("guests");
         residenceId         = buser.getInt("residenceId");
+        token               = buser.getString("token");
 
         retrofitCalls = new RetrofitCalls();
-        ArrayList<Users> userLoggedIn = retrofitCalls.getUserbyUsername(username);
+        ArrayList<Users> userLoggedIn = retrofitCalls.getUserbyUsername(token, username);
         loggedinUser = userLoggedIn.get(0);
-        selectedResidence   = retrofitCalls.getResidenceById(residenceId);
+        selectedResidence   = retrofitCalls.getResidenceById(token, Integer.toString(residenceId));
 
         setUpResidenceView();
 
@@ -121,7 +120,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         mapFragment.getMapAsync(this);
 
         /** BACK BUTTON **/
-        Utils.manageBackButton(this, (user)?HomeActivity.class:HostActivity.class, user);
+        Utils.manageBackButton(this, (user)?HomeActivity.class:HostActivity.class, user, token);
         if(!user)
         {
             //if user is logged in as host, this button does not appear
@@ -131,7 +130,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
             TextView tvPrice = (TextView)findViewById(R.id.price);
             tvPrice.setVisibility(View.INVISIBLE);
             /** FOOTER TOOLBAR **/
-            Utils.manageFooter(ResidenceActivity.this, user);
+            Utils.manageFooter(ResidenceActivity.this, user, token);
         }
     }
 
@@ -203,6 +202,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
 
                 Bundle bmessage = new Bundle();
                 bmessage.putBoolean("type", user);
+                bmessage.putString("token", token);
                 bmessage.putInt("currentUserId", loggedinUser.getId());
                 bmessage.putInt("toUserId", host.getId());
                 bmessage.putString("msgSubject", tvTitle.getText().toString());
@@ -265,13 +265,14 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
                 else
                 {
                     //user makes a reservation and goes back to home activity
-                    boolean success = PostResult();
-                    if (success)
+                    token = PostResult();
+                    if (!token.isEmpty())
                     {
                         Intent homeIntent = new Intent(ResidenceActivity.this, HomeActivity.class);
                         user = true;
                         Bundle buser = new Bundle();
                         buser.putBoolean("type", user);
+                        buser.putString("token", token);
                         homeIntent.putExtras(buser);
                         startActivity(homeIntent);
                         finish();
@@ -284,31 +285,20 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         });
     }
 
-    public boolean PostResult()
+    public String PostResult()
     {
         Reservations reservationParameters = new Reservations(loggedinUser, selectedResidence, selectedStartDate, selectedEndDate, guestsInt);
 
-        RestAPI restAPI = RestClient.getClient().create(RestAPI.class);
-        Call<Reservations> call = restAPI.postReservation(reservationParameters);
+        RestAPI restAPI = RestClient.getStringClient().create(RestAPI.class);
+        Call<String> call = restAPI.postReservation(reservationParameters);
 
-        call.enqueue(new Callback<Reservations>() {
-            @Override
-            public void onResponse(Call<Reservations> call, Response<Reservations> response) {
-                if(response.isSuccessful())
-                {
-                    success=true;
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Reservations> call, Throwable t)
-            {
-                success=false;
-            }
-        });
-
-
-        return success;
+        try {
+            Response<String> resp = call.execute();
+            token = resp.body();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return token;
     }
 
     public void setCalendar ()
@@ -340,7 +330,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
             current = calendar.getTime();
         }
         //get all reservations for the selected residence
-        ArrayList<Reservations> allReservationsByResidence = retrofitCalls.getReservationsByResidenceId(residenceId);
+        ArrayList<Reservations> allReservationsByResidence = retrofitCalls.getReservationsByResidenceId(token, Integer.toString(residenceId));
 
         //get the max guests for this residence
         maxGuests = selectedResidence.getGuests();

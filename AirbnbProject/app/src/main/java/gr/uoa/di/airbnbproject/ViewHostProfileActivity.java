@@ -30,6 +30,7 @@ public class ViewHostProfileActivity extends AppCompatActivity {
     String username;
     ListView list;
     Context c;
+    String token;
 
     ImageButton bback;
 
@@ -63,15 +64,18 @@ public class ViewHostProfileActivity extends AppCompatActivity {
         Bundle buser = getIntent().getExtras();
         user = buser.getBoolean("type");
         hostId = buser.getInt("host");
-
+        token = buser.getString("token");
         RetrofitCalls retrofitCalls = new RetrofitCalls();
-        host = retrofitCalls.getUserbyId(hostId);
+        host = retrofitCalls.getUserbyId(token, Integer.toString(hostId));
 
         bback = (ImageButton)findViewById(R.id.back);
 
         userdetails = new String[9];
 
         manageBackToolbar();
+
+        /** FOOTER TOOLBAR **/
+        Utils.manageFooter(ViewHostProfileActivity.this, true, token);
 
         userdetails[0] = host.getFirstName();
         userdetails[1] = host.getLastName();
@@ -106,6 +110,7 @@ public class ViewHostProfileActivity extends AppCompatActivity {
                 Intent backintent = new Intent(ViewHostProfileActivity.this, ResidenceActivity.class);
                 Bundle buser = new Bundle();
                 buser.putBoolean("type",user);
+                buser.putString("token", token);
                 backintent.putExtras(buser);
                 try {
                     startActivity(backintent);

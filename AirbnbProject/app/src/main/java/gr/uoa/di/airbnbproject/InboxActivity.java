@@ -17,7 +17,7 @@ import util.RestCalls;
 import util.Utils;
 
 public class InboxActivity extends AppCompatActivity {
-    String username;
+    String username, token;
 
     private static final String USER_LOGIN_PREFERENCES = "login_preferences";
     SharedPreferences sharedPrefs;
@@ -53,6 +53,7 @@ public class InboxActivity extends AppCompatActivity {
 
         Bundle buser = getIntent().getExtras();
         user = buser.getBoolean("type");
+        token = buser.getString("token", token);
         currentUserId = RestCalls.getUserId(username);
 
         loadConversations();
@@ -78,6 +79,7 @@ public class InboxActivity extends AppCompatActivity {
                 Intent showMessageIntent = new Intent(InboxActivity.this, MessageActivity.class);
                 Bundle btype = new Bundle();
                 btype.putBoolean("user", user);
+                btype.putString("token", token);
                 btype.putInt("conversationId", conversationId[position]);
                 btype.putInt("toUserId", toUserId[position]);
                 btype.putInt("currentUserId", currentUserId);
@@ -93,10 +95,10 @@ public class InboxActivity extends AppCompatActivity {
         });
 
         /** BACK BUTTON **/
-        Utils.manageBackButton(this, (user)?HomeActivity.class:HostActivity.class, user);
+        Utils.manageBackButton(this, (user)?HomeActivity.class:HostActivity.class, user, token);
 
         /** FOOTER TOOLBAR **/
-        Utils.manageFooter(InboxActivity.this, user);
+        Utils.manageFooter(InboxActivity.this, user, token);
     }
 
     protected void setAdapter() {

@@ -49,7 +49,7 @@ public class MessageActivity extends AppCompatActivity {
     ArrayList<Messages> Messages;
     Conversations conversation;
 
-    String userType;
+    String userType, token;
     private static final String USER_SENDER = "sender";
     private static final String USER_RECEIVER = "receiver";
 
@@ -76,6 +76,7 @@ public class MessageActivity extends AppCompatActivity {
         currentUserId   = bextras.getInt("currentUserId");
         toUserId        = bextras.getInt("toUserId");
         msgSubject      = bextras.getString("msgSubject");
+        token           =bextras.getString("token");
 
         subject = (TextView) findViewById(R.id.subject);
         subject.setText(msgSubject);
@@ -125,7 +126,7 @@ public class MessageActivity extends AppCompatActivity {
         sendMessage();
 
         /** BACK BUTTON **/
-        Utils.manageBackButton(this, InboxActivity.class, user);
+        Utils.manageBackButton(this, InboxActivity.class, user, token);
     }
 
     public void sendMessage() {
@@ -167,6 +168,7 @@ public class MessageActivity extends AppCompatActivity {
                         bupdated.putInt("toUserId", toUserId);
                         bupdated.putString("msgSubject", msgSubject);
                         bupdated.putInt("conversationId", conversationId);
+                        bupdated.putString("token", token);
 
                         Intent currentIntent = getIntent();
                         currentIntent.putExtras(bupdated);

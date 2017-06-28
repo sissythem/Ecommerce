@@ -21,7 +21,7 @@ import util.Utils;
 public class HistoryReservationsActivity extends AppCompatActivity
 {
     Boolean user;
-    String loggedInUsername;
+    String loggedInUsername, token;
     Users loggedinUser;
     int[]residenceId;
 
@@ -59,12 +59,13 @@ public class HistoryReservationsActivity extends AppCompatActivity
         c = this;
         Bundle buser = getIntent().getExtras();
         user = buser.getBoolean("type");
+        token = buser.getString("token");
 
         RetrofitCalls retrofitCalls = new RetrofitCalls();
-        ArrayList<Users> getUserByUsername = retrofitCalls.getUserbyUsername(loggedInUsername);
+        ArrayList<Users> getUserByUsername = retrofitCalls.getUserbyUsername(token, loggedInUsername);
         loggedinUser = getUserByUsername.get(0);
 
-        ArrayList<Reservations> userReservations = retrofitCalls.getReservationsByResidenceId(loggedinUser.getId());
+        ArrayList<Reservations> userReservations = retrofitCalls.getReservationsByResidenceId(token, loggedinUser.getId().toString());
 
         residenceId             = new int [userReservations.size()];
         String[] residenceTitle = new String[userReservations.size()];
@@ -88,6 +89,7 @@ public class HistoryReservationsActivity extends AppCompatActivity
                 Intent showResidenceIntent = new Intent(HistoryReservationsActivity.this, ResidenceActivity.class);
                 Bundle btype = new Bundle();
                 btype.putBoolean("type", user);
+                btype.putString("token", token);
                 btype.putInt("residenceId", residenceId[position]);
                 showResidenceIntent.putExtras(btype);
                 try {
@@ -100,9 +102,9 @@ public class HistoryReservationsActivity extends AppCompatActivity
         });
 
         /** FOOTER TOOLBAR **/
-        Utils.manageFooter(HistoryReservationsActivity.this, user);
+        Utils.manageFooter(HistoryReservationsActivity.this, user, token);
         /** BACK BUTTON **/
-        Utils.manageBackButton(this, ProfileActivity.class, user);
+        Utils.manageBackButton(this, ProfileActivity.class, user, token);
     }
 
     @Override

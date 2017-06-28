@@ -11,13 +11,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-
-import fromRESTful.Users;
 import util.RetrofitCalls;
 
 public class LoginActivity extends AppCompatActivity {
     Context c;
+    String token;
 
     private static final String USER_LOGIN_PREFERENCES = "login_preferences";
     SharedPreferences sharedPrefs;
@@ -68,9 +66,9 @@ public class LoginActivity extends AppCompatActivity {
 
                 //check if the user is correct
                 RetrofitCalls retrofitCalls = new RetrofitCalls();
-                ArrayList<Users> existingUsers = retrofitCalls.getLoginUser(Username, password);
+                token = retrofitCalls.getLoginUser(Username, password);
 
-                if(existingUsers.size() == 0) userExists = false;
+                if(token.isEmpty()) userExists = false;
 
 
                 if(!userExists)
@@ -87,6 +85,8 @@ public class LoginActivity extends AppCompatActivity {
                     editor.commit();
 
                     Intent homeintent = new Intent(LoginActivity.this, HomeActivity.class);
+                    Bundle btoken = new Bundle();
+                    btoken.putString("token", token);
                     try {
                         LoginActivity.this.startActivity(homeintent);
                     } catch (Exception ex) {

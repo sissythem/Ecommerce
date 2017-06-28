@@ -17,13 +17,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
 import fromRESTful.Users;
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 import util.RestAPI;
 import util.RestClient;
@@ -37,6 +37,10 @@ import util.Utils;
 public class RegisterActivity extends AppCompatActivity {
 
     private static final int RESULT_LOAD_IMAGE =1;
+    String token;
+    public String getToken() {
+        return token;
+    }
 
     private static final String USER_LOGIN_PREFERENCES = "login_preferences";
     SharedPreferences sharedPrefs;
@@ -146,13 +150,12 @@ public class RegisterActivity extends AppCompatActivity {
                 }
 
                 Date bdate = Utils.ConvertStringToDate(BirthDate,Utils.DATABASE_DATE_FORMAT);
-                String stringBirthDate = Utils.ConvertDateToString(bdate,Utils.DATABASE_DATE_FORMAT);
 
                 userIsNew = checkUsername(Username);
                 emailIsNew = checkEmail(Email);
                 //if username and email are new the application sends the data with sendPOST method to be stored in the database
                 if(userIsNew && emailIsNew) {
-                    boolean success = PostResult(firstName, lastName, Username, Password, Email, phoneNumber, bdate);
+                    token = PostResult(firstName, lastName, Username, Password, Email, phoneNumber, bdate);
                     if (success) {
                         //if data are stored successfully in the data base, the user is now logged in and the home activity starts
                         isUserLoggedIn = sharedPrefs.getBoolean("userLoggedInState", false);
@@ -164,6 +167,9 @@ public class RegisterActivity extends AppCompatActivity {
                         //user can continue to the Home Screen
                         Intent homeintent = new Intent(RegisterActivity.this, HomeActivity.class);
                         try {
+                            Bundle btoken = new Bundle();
+                            btoken.putString("token", token);
+                            homeintent.putExtras(btoken);
                             RegisterActivity.this.startActivity(homeintent);
                             finish();
                         } catch (Exception ex) {
@@ -203,29 +209,19 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
-    public boolean PostResult(String firstName, String lastName, String username, String password, String email, String phoneNumber, Date bdate) {
-        success = true;
+    public String PostResult(String firstName, String lastName, String username, String password, String email, String phoneNumber, Date bdate)
+    {
         Users UserParameters = new Users(firstName, lastName, phoneNumber, email, username, password, bdate);
-        RestAPI restAPI = RestClient.getClient().create(RestAPI.class);
-        Call<Users> call = restAPI.postUser(UserParameters);
+        RestAPI restAPI = RestClient.getStringClient().create(RestAPI.class);
+        Call<String> call = restAPI.postUser(UserParameters);
+        try {
+            Response<String> resp = call.execute();
+            token = resp.body();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-
-        call.enqueue(new Callback<Users>() {
-            @Override
-            public void onResponse(Call<Users> call, Response<Users> response) {
-                if(response.isSuccessful())
-                {
-                    success=true;
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Users> call, Throwable t)
-            {
-                success=false;
-            }
-        });
-        return success;
+        return token;
     }
 
     public boolean checkUsername (String Username)
@@ -233,7 +229,7 @@ public class RegisterActivity extends AppCompatActivity {
         boolean userIsNew = false;
 
         RetrofitCalls retrofitCalls = new RetrofitCalls();
-        ArrayList<Users> checkForUser = retrofitCalls.getUserbyUsername(Username);
+        ArrayList<Users> checkForUser = retrofitCalls.getUserbyUsername(token, Username);
         if(checkForUser.size() == 0) userIsNew = true;
         return userIsNew;
 
@@ -242,7 +238,7 @@ public class RegisterActivity extends AppCompatActivity {
     public boolean checkEmail (String Email){
         boolean emailIsNew=false;
         RetrofitCalls retrofitCalls = new RetrofitCalls();
-        ArrayList<Users> checkForUser = retrofitCalls.getUserbyEmail(Email);
+        ArrayList<Users> checkForUser = retrofitCalls.getUserbyEmail(token, Email);
 
         if(checkForUser.size() == 0) emailIsNew = true;
         return  emailIsNew;

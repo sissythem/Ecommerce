@@ -20,13 +20,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 
 import fromRESTful.Residences;
 import fromRESTful.Users;
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 import util.RestAPI;
 import util.RestCalls;
@@ -37,7 +37,7 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
 
     private static final int RESULT_LOAD_IMAGE =1;
 
-    String username;
+    String username, token;
 
     Boolean user;
     private static final String USER_LOGIN_PREFERENCES = "login_preferences";
@@ -52,7 +52,7 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
     EditText etUpload, etAbout, etAddress, etCity, etCountry, etAmenities, etFloor, etRooms, etBaths, etView, etTitle, etSpaceArea, etGuests, etMinPrice, etAdditionalCost, etCancellationPolicy, etRules;
     TextView tvStartDate, tvEndDate;
     CheckBox cbKitchen, cbLivingRoom;
-    boolean bkitchen, blivingRoom, success;
+    boolean bkitchen, blivingRoom;
 
     private int mStartYear, mStartMonth, mStartDay, mEndYear, mEndMonth, mEndDay;
 
@@ -81,6 +81,8 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
         setContentView(R.layout.layout_residence_editfields);
 
         user=false;
+        Bundle buser = getIntent().getExtras();
+        token = buser.getString("token");
 
         c = this;
         userInputLayout();
@@ -92,7 +94,7 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
         saveResidence();
 
         /** BACK BUTTON **/
-        Utils.manageBackButton(this, HostActivity.class, user);
+        Utils.manageBackButton(this, HostActivity.class, user, token);
     }
 
     public void userInputLayout () {
@@ -238,14 +240,15 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
                     return;
                 } else
                 {
-                    boolean success = PostResult(host, title, type, about, cancellationPolicy, country, city, address, rules, amenities, Integer.parseInt(floor),
+                    token = PostResult(host, title, type, about, cancellationPolicy, country, city, address, rules, amenities, Integer.parseInt(floor),
                             Integer.parseInt(rooms), Integer.parseInt(baths), Double.parseDouble(spaceArea), photo, Integer.parseInt(guests), startDate, endDate,
                             Double.parseDouble(minPrice), Double.parseDouble(additionalCostPerPerson));
 
-                    if (success) {
+                    if (!token.isEmpty()) {
                         Intent hostIntent = new Intent(AddResidenceActivity.this, HostActivity.class);
                         Bundle bhost = new Bundle();
                         bhost.putBoolean("type", user);
+                        bhost.putString("token", token);
                         hostIntent.putExtras(bhost);
                         try {
                             startActivity(hostIntent);
@@ -262,45 +265,24 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
         });
     }
 
-    public boolean PostResult(Users hostId, String title, String type, String about, String cancellationPolicy, String country, String city, String address, String rules, String amenities,
+    public String PostResult(Users hostId, String title, String type, String about, String cancellationPolicy, String country, String city, String address, String rules, String amenities,
                               int floor, int rooms, int baths, double spaceArea, String photos, int guests, Date availableDateStart, Date availableDateEnd, double minPrice,
                               double additionalCostPerPerson)
     {
         Residences ResidenceParameters = new Residences(hostId, title, type, about, cancellationPolicy, country, city, address, rules, amenities, floor, rooms,
                 baths, spaceArea, photos, guests, availableDateStart, availableDateEnd, minPrice, additionalCostPerPerson);
 
-        RestAPI restAPI = RestClient.getClient().create(RestAPI.class);
-        Call<Residences> call = restAPI.postResidence(ResidenceParameters);
-        call.enqueue(new Callback<Residences>() {
-            @Override
-            public void onResponse(Call<Residences> call, Response<Residences> response) {
-                if(response.isSuccessful())
-                {
-                    success=true;
-                }
-            }
+        RestAPI restAPI = RestClient.getStringClient().create(RestAPI.class);
+        Call<String> call = restAPI.postResidence(ResidenceParameters);
+        try {
+            Response<String> resp = call.execute();
+            token = resp.body();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-            @Override
-            public void onFailure(Call<Residences> call, Throwable t)
-            {
-                success=false;
-            }
-        });
 
-//        RestCallManager residencePostManager = new RestCallManager();
-//        RestCallParameters residencePostParameters = new RestCallParameters(RestPaths.AllResidences, "POST", "", ResidenceParameters.getAddResidenceParameters());
-//
-////        ArrayList<String> PostResponse ;
-//        String response;
-//
-//        residencePostManager.execute(residencePostParameters);
-////            PostResponse = userpost.get(1000, TimeUnit.SECONDS);
-//        response = (String)residencePostManager.getRawResponse().get(0);
-////            String result = PostResponse.get(0);
-//        if (response.equals("OK")) ;
-//        else success = false;
-//
-        return success;
+        return token;
     }
 
     @Override

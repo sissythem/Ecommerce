@@ -27,7 +27,7 @@ public interface RestAPI
 {
     /** Users Facade Methods **/
     @GET("users/{userId}")
-    Call<Users> getUserById(@Path("userId") int userId);
+    Call<Users> getUserById(@Path("userId") String userId);
 
     @GET("users/username")
     Call<List<Users>> getUserByUsername(@Query("username") String username);
@@ -35,23 +35,25 @@ public interface RestAPI
     @GET("users/email")
     Call<List<Users>> getUserByEmail(@Query("email") String email);
 
-    @GET("users/login")
-    Call<List<Users>> getLoginUser(@Query("username") String username, @Query("password") String password);
-
-    @POST("users")
+    @POST("users/login")
     @FormUrlEncoded
-    Call<Users> postUser(@Body Users user);
+    Call<String> getLoginUser(@Query("username") String username, @Query("password") String password);
+
+    @POST("users/register")
+    @FormUrlEncoded
+    Call<String> postUser(@Body Users user);
 
     @PUT("users/put/{id}")
-    Call<Users> editUserById(@Path("userId") int userId, @Body Users user);
+    @FormUrlEncoded
+    Call<String> editUserById(@Path("userId") String userId, @Body Users user);
 
     @DELETE("users/delete/{id}")
-    Call<Void> deleteUserById(@Path("userId") int userId);
+    Call<Void> deleteUserById(@Path("userId") String userId);
 
 
     /** Searches Facade Methods **/
     @GET("searches/city")
-    Call<List<Searches>> getCitiesByUserId(@Query("userId") int userId);
+    Call<List<Searches>> getCitiesByUserId(@Query("userId") String userId);
 
 
     /** Residences Facade Methods **/
@@ -63,20 +65,21 @@ public interface RestAPI
                                          @Query("endDate") String endDate, @Query("guests") String guests);
 
     @GET("residences/host")
-    Call<List<Residences>> getResidencesByHostId(@Query("hostId") int hostId);
+    Call<List<Residences>> getResidencesByHostId(@Query("hostId") String hostId);
 
     @GET("residences/{residenceId}")
-    Call<Residences> getResidencesById (@Path("residenceId") int residenceId);
+    Call<Residences> getResidencesById (@Path("residenceId") String residenceId);
 
     @DELETE("residences/delete/{id}")
-    Call<Void> deleteResidenceById(@Path("id") int id);
+    Call<Void> deleteResidenceById(@Path("id") String id);
 
-    @PUT("residences/edit/{id}")
-    Call<Residences> editResidenceById(@Path("id") int id, @Body Residences residence);
-
-    @POST("residences")
+    @PUT("residences/put/{id}")
     @FormUrlEncoded
-    Call<Residences> postResidence(@Body Residences residence);
+    Call<String> editResidenceById(@Path("id") String id, @Body Residences residence);
+
+    @POST("residences/add")
+    @FormUrlEncoded
+    Call<String> postResidence(@Body Residences residence);
 
     @GET("residences")
     Call<List<Residences>> getAllResidences();
@@ -85,26 +88,26 @@ public interface RestAPI
     /** Messages Facade Methods **/
 
     @GET("messages/conversation")
-    Call<List<Messages>> getMessagesByConversation(@Query("conversationId") int conversationId);
+    Call<List<Messages>> getMessagesByConversation(@Query("conversationId") String conversationId);
 
     @POST("messages/addmessage")
     @FormUrlEncoded
-    Call<Messages> postMessage(@Body Messages message);
+    Call<String> postMessage(@Body Messages message);
 
 
     /** Conversations Facade Methods **/
 
     @GET("conversations/user")
-    Call<List<Conversations>> getConversations(@Query("userId") int userId);
+    Call<List<Conversations>> getConversations(@Query("userId") String userId);
 
     @GET("conversations/{conversationId}")
-    Call<Conversations> getConversationById(@Path("conversationId") int conversationId);
+    Call<Conversations> getConversationById(@Path("conversationId") String conversationId);
 
     @GET("conversations/last")
-    Call<List<Conversations>> lastConversationEntry(@Query("senderId") int senderId, @Query("receiverId") int receiverId);
+    Call<List<Conversations>> lastConversationEntry(@Query("senderId") String senderId, @Query("receiverId") String receiverId);
 
     @GET("conversations/residence")
-    Call<List<Conversations>> getConversationByResidenceId(@Query("residenceId") int residenceId);
+    Call<List<Conversations>> getConversationByResidenceId(@Query("residenceId") String residenceId);
 
     @GET("conversations/update_conversation")
     Call<List<Conversations>> updateConversation(@Query("read") String isRead, @Query("type") String userType, @Query("id") String id);
@@ -113,20 +116,20 @@ public interface RestAPI
     /** Reservations Facade Methods **/
 
     @GET("reservations/tenant")
-    Call<List<Reservations>> getReservationsByTenantId(@Query("tenantId") int tenantId);
+    Call<List<Reservations>> getReservationsByTenantId(@Query("tenantId") String tenantId);
 
     @GET("reservations/residence")
-    Call<List<Reservations>> getReservationsByResidenceId(@Query("residenceId") int residenceId);
+    Call<List<Reservations>> getReservationsByResidenceId(@Query("residenceId") String residenceId);
 
     @DELETE("reservations/delete/{residenceId}")
-    Call<Void> deleteReservationsByResidence(@Path("residenceId") int residenceId);
+    Call<Void> deleteReservationsByResidence(@Path("residenceId") String residenceId);
 
     @GET("reservations/comment")
-    Call<List<Reservations>> getReservationsByTenantIdAndResidenceId(@Query("tenantId") int tenantId, @Query("residenceId") int residenceId);
+    Call<List<Reservations>> getReservationsByTenantIdAndResidenceId(@Query("tenantId") String tenantId, @Query("residenceId") String residenceId);
 
-    @POST("reservations")
+    @POST("reservations/makereservation")
     @FormUrlEncoded
-    Call<Reservations> postReservation(@Body Reservations reservation);
+    Call<String> postReservation(@Body Reservations reservation);
 
 
     /** Reviews Facade Methods **/
@@ -135,15 +138,15 @@ public interface RestAPI
     Call<List<Reviews>> getReviews();
 
     @GET("reviews/residence")
-    Call<List<Reviews>> getReviewsByResidence(@Query("residenceId") int residenceId);
+    Call<List<Reviews>> getReviewsByResidence(@Query("residenceId") String residenceId);
 
     @GET("reviews/tenant")
-    Call<List<Reviews>> getReviewsByTenant(@Query("tenantId") int tenantId);
+    Call<List<Reviews>> getReviewsByTenant(@Query("tenantId") String tenantId);
 
     @DELETE("reviews/delete/{residenceId}")
-    Call<Void> deleteReviewsByResidence(@Path("residenceId") int residenceId);
+    Call<Void> deleteReviewsByResidence(@Path("residenceId") String residenceId);
 
-    @POST("reviews")
+    @POST("reviews/postreview")
     @FormUrlEncoded
-    Call<Reviews> postReview(@Body Reviews review);
+    Call<String> postReview(@Body Reviews review);
 }

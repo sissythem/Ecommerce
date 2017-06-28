@@ -15,6 +15,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -22,7 +23,6 @@ import java.util.Date;
 
 import fromRESTful.Users;
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 import util.RestAPI;
 import util.RestClient;
@@ -40,7 +40,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
     Context c;
 
-    Boolean user, success;
+    Boolean user;
     RetrofitCalls retrofitCalls;
     Users loggedinUser;
 
@@ -49,7 +49,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
     EditText etName, etLastName, etPhoneNumber, etEmail, etPassword, etCountry, etCity, etAbout;
     TextView etUsername, tvBirthDate;
-    String username, email;
+    String username, email, token;
     int userId;
     private int mYear, mMonth, mDay;
 
@@ -74,11 +74,12 @@ public class EditProfileActivity extends AppCompatActivity {
 
         Bundle buser = getIntent().getExtras();
         user = buser.getBoolean("type");
+        token = buser.getString("token");
 
         bsave = (Button)findViewById(R.id.post);
 
         retrofitCalls = new RetrofitCalls();
-        ArrayList<Users> getUsersByUsername = retrofitCalls.getUserbyUsername(username);
+        ArrayList<Users> getUsersByUsername = retrofitCalls.getUserbyUsername(token, username);
         loggedinUser  = getUsersByUsername.get(0);
 
         userId              = loggedinUser.getId();
@@ -143,43 +144,32 @@ public class EditProfileActivity extends AppCompatActivity {
         });
 
         /** BACK BUTTON **/
-        Utils.manageBackButton(EditProfileActivity.this, ProfileActivity.class, user);
+        Utils.manageBackButton(EditProfileActivity.this, ProfileActivity.class, user, token);
     }
 
     public boolean checkEmail (String Email){
         boolean emailIsNew=false;
         //same process for email
-        ArrayList<Users> users = retrofitCalls.getUserbyEmail(Email);
+        ArrayList<Users> users = retrofitCalls.getUserbyEmail(token, Email);
         if(users.size() == 0) emailIsNew = true;
         return  emailIsNew;
     }
 
-    public boolean PutResult(String firstName, String lastName, String username, String password, String email, String phoneNumber, String country, String city,
-                             String photo, String about, Date birthDate) {
-        success = true;
+    public String PutResult(String firstName, String lastName, String username, String password, String email, String phoneNumber, String country, String city,
+                             String photo, String about, Date birthDate)
+    {
         Users UserParameters = new Users(firstName, lastName, username, password, email, phoneNumber, country, city, photo, about, birthDate);
 
-        RestAPI restAPI = RestClient.getClient().create(RestAPI.class);
-        Call<Users> call = restAPI.editUserById(loggedinUser.getId(), UserParameters);
+        RestAPI restAPI = RestClient.getStringClient().create(RestAPI.class);
+        Call<String> call = restAPI.editUserById(loggedinUser.getId().toString(), UserParameters);
+        try {
+            Response<String> resp = call.execute();
+            token = resp.body();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        call.enqueue(new Callback<Users>()
-        {
-            @Override
-            public void onResponse(Call<Users> call, Response<Users> response) {
-                if(response.isSuccessful())
-                {
-                    success=true;
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Users> call, Throwable t)
-            {
-                success=false;
-            }
-        });
-
-        return success;
+        return token;
     }
 
     public void saveUserProfile ()
@@ -217,8 +207,8 @@ public class EditProfileActivity extends AppCompatActivity {
 
         if(emailIsNew)
         {
-            success = PutResult(name, lastName, Username, password, Email, phoneNumber, country, city, photo, about, bdate);
-            if (success) {
+            token = PutResult(name, lastName, Username, password, Email, phoneNumber, country, city, photo, about, bdate);
+            if (!token.isEmpty()) {
                 //if data are stored successfully in the data base, the user is now logged in and the home activity starts
                 isUserLoggedIn = sharedPrefs.getBoolean("userLoggedInState", false);
                 editor = sharedPrefs.edit();

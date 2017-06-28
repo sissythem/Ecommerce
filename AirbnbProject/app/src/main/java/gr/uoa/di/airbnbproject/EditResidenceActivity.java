@@ -20,6 +20,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -28,7 +29,6 @@ import java.util.Date;
 import fromRESTful.Residences;
 import fromRESTful.Users;
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 import util.RestAPI;
 import util.RestClient;
@@ -38,7 +38,7 @@ import util.Utils;
 public class EditResidenceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     private static final int RESULT_LOAD_IMAGE =1;
 
-    String username;
+    String username, resType, token;
     Integer residenceId;
     Residences selectedResidence;
 
@@ -53,7 +53,6 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
     EditText etUpload, etTitle, etAbout, etAddress, etCity, etCountry, etAmenities, etFloor, etRooms, etBaths, etView, etSpaceArea, etGuests, etMinPrice, etAdditionalCost, etCancellationPolicy, etRules;
     TextView tvStartDate, tvEndDate;
     Spinner etType;
-    String resType;
 
     private int mStartYear, mStartMonth, mStartDay, mEndYear, mEndMonth, mEndDay;
 
@@ -86,15 +85,16 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         setContentView(R.layout.layout_residence_editfields);
         Bundle buser = getIntent().getExtras();
         user = buser.getBoolean("type");
+        token = buser.getString("token");
         user=false;
 
         c = this;
         retrofitCalls = new RetrofitCalls();
         residenceId = buser.getInt("residenceId");
-        selectedResidence = retrofitCalls.getResidenceById(residenceId);
+        selectedResidence = retrofitCalls.getResidenceById(token, Integer.toString(residenceId));
         userInputLayout();
 
-        ArrayList<Users> getUsersByUsername = retrofitCalls.getUserbyUsername(username);
+        ArrayList<Users> getUsersByUsername = retrofitCalls.getUserbyUsername(token, username);
         host = getUsersByUsername.get(0);
 
         TextView residencetxt = (TextView) findViewById(R.id.residencetxt);
@@ -103,7 +103,7 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         saveResidence();
 
         /** BACK BUTTON **/
-        Utils.manageBackButton(this, HostActivity.class, user);
+        Utils.manageBackButton(this, HostActivity.class, user, token);
     }
 
     public void userInputLayout () {
@@ -284,7 +284,7 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
                     Toast.makeText(c, "Please fill in all fields!", Toast.LENGTH_SHORT).show();
                     return;
                 } else {
-                    boolean success = PutResult(host, title, type, about, address, city, country, amenities, Integer.parseInt(floor), Integer.parseInt(rooms),
+                    token = PutResult(host, title, type, about, address, city, country, amenities, Integer.parseInt(floor), Integer.parseInt(rooms),
                             Integer.parseInt(baths), view, Double.parseDouble(spaceArea), Integer.parseInt(guests), Double.parseDouble(minPrice),
                             Double.parseDouble(additionalCostPerPerson), cancellationPolicy, rules, Boolean.parseBoolean(kitchen),
                             Boolean.parseBoolean(livingRoom), startDate, endDate, photo);
@@ -310,35 +310,24 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         });
 
     }
-    public boolean PutResult(Users host, String title, String type, String about, String address, String city, String country, String amenities, int floor, int rooms,
+    public String PutResult(Users host, String title, String type, String about, String address, String city, String country, String amenities, int floor, int rooms,
                              int baths, String view, double spaceArea, int guests, double minPrice, double additionalCostPerPerson, String cancellationPolicy,
                              String rules, boolean kitchen, boolean livingRoom, Date startDate, Date endDate, String photo)
     {
-        success = true;
         Residences ResidenceParameters = new Residences(host, title, type, about, address, city, country, amenities, floor, rooms, baths, view, spaceArea, guests, minPrice,
                 additionalCostPerPerson, cancellationPolicy, rules, kitchen, kitchen, livingRoom, startDate, endDate, photo);
 
-        RestAPI restAPI = RestClient.getClient().create(RestAPI.class);
-        Call<Residences> call = restAPI.editResidenceById(residenceId, ResidenceParameters);
+        RestAPI restAPI = RestClient.getStringClient().create(RestAPI.class);
+        Call<String> call = restAPI.editResidenceById(Integer.toString(residenceId), ResidenceParameters);
 
-        call.enqueue(new Callback<Residences>()
-        {
-            @Override
-            public void onResponse(Call<Residences> call, Response<Residences> response) {
-                if(response.isSuccessful())
-                {
-                    success=true;
-                }
-            }
+        try {
+            Response<String> resp = call.execute();
+            token = resp.body();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-            @Override
-            public void onFailure(Call<Residences> call, Throwable t)
-            {
-                success=false;
-            }
-        });
-
-        return success;
+        return token;
     }
 
     @Override

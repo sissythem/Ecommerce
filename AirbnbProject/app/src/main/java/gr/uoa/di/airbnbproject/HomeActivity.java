@@ -46,7 +46,7 @@ public class HomeActivity extends AppCompatActivity
 
     int[]residenceId;
     private int mStartYear, mStartMonth, mStartDay, mEndYear, mEndMonth, mEndDay;
-    String username, date_start, date_end;
+    String username, date_start, date_end, token;
 
     Boolean user;
     Users loggedInUser;
@@ -72,6 +72,9 @@ public class HomeActivity extends AppCompatActivity
             return;
         }
         setContentView(R.layout.activity_home);
+
+        Bundle buser = getIntent().getExtras();
+        token = buser.getString("token");
 
         user=true;
 
@@ -105,6 +108,7 @@ public class HomeActivity extends AppCompatActivity
                 Intent showResidenceIntent = new Intent(HomeActivity.this, ResidenceActivity.class);
                 Bundle btype = new Bundle();
                 btype.putBoolean("type", user);
+                btype.putString("token", token);
                 btype.putInt("residenceId", residenceId[position]);
                 showResidenceIntent.putExtras(btype);
                 try {
@@ -117,7 +121,7 @@ public class HomeActivity extends AppCompatActivity
         });
 
         /** FOOTER TOOLBAR **/
-        Utils.manageFooter(HomeActivity.this, true);
+        Utils.manageFooter(HomeActivity.this, true, token);
     }
 
 
@@ -216,6 +220,7 @@ public class HomeActivity extends AppCompatActivity
                 bsearch.putString("startDate", date_start);
                 bsearch.putString("endDate", date_end);
                 bsearch.putBoolean("type", user);
+                bsearch.putString("token", token);
                 searchintent.putExtras(bsearch);
 
                 startActivity(searchintent);
@@ -227,7 +232,7 @@ public class HomeActivity extends AppCompatActivity
     {
         ArrayList<Users> Users;
         RetrofitCalls retrofitCalls = new RetrofitCalls();
-        Users = retrofitCalls.getUserbyUsername(username);
+        Users = retrofitCalls.getUserbyUsername(token, username);
         loggedInUser = Users.get(0);
 
         ArrayList<Residences> reviewedResidences = new ArrayList<>();
@@ -235,7 +240,7 @@ public class HomeActivity extends AppCompatActivity
         int residenceId;
 
         ArrayList<Searches> searchedCities;
-        searchedCities = retrofitCalls.getSearchedCities(loggedInUser.getId());
+        searchedCities = retrofitCalls.getSearchedCities(token, loggedInUser.getId().toString());
         Set<String> relevantCities = new HashSet<>();
         for(int i = 0;i<searchedCities.size();i++){
             relevantCities.add(searchedCities.get(i).getCity());
@@ -243,7 +248,7 @@ public class HomeActivity extends AppCompatActivity
 
 		/* if user has not searched anything yet, most popular residences will appear */
         if (relevantCities.size() == 0) {
-            ArrayList<Reviews> reviews = retrofitCalls.getAllReviews();
+            ArrayList<Reviews> reviews = retrofitCalls.getAllReviews(token);
             for (int i=0;i<reviews.size();i++) {
                 reviewedResidences.add(reviews.get(i).getResidenceId());
             }
@@ -251,7 +256,7 @@ public class HomeActivity extends AppCompatActivity
         /* if user has already searched, we will show the most popular residences in the relevant cities */
         else {
             for (String city : relevantCities) {
-                reviewedResidences = retrofitCalls.getResidencesByCity(city);
+                reviewedResidences = retrofitCalls.getResidencesByCity(token, city);
             }
         }
 
@@ -260,12 +265,12 @@ public class HomeActivity extends AppCompatActivity
         hs.addAll(reviewedResidences);
         reviewedResidences.clear();
         reviewedResidences.addAll(hs);
-        if(reviewedResidences.size() ==0) reviewedResidences = retrofitCalls.getAllResidences();
+        if(reviewedResidences.size() ==0) reviewedResidences = retrofitCalls.getAllResidences(token);
 
         /** get all relevant rooms and reviews **/
         for(int i=0; i < reviewedResidences.size(); i++){
             residenceId = reviewedResidences.get(i).getId();
-            reviewsByResidence = retrofitCalls.getReviewsByResidenceId(residenceId);
+            reviewsByResidence = retrofitCalls.getReviewsByResidenceId(token, Integer.toString(residenceId));
             reviewedResidences.get(i).setReviewsCollection(reviewsByResidence);
         }
         //sort the results

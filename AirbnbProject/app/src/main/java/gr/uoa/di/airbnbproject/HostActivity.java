@@ -19,7 +19,7 @@ import util.RetrofitCalls;
 import util.Utils;
 
 public class HostActivity extends AppCompatActivity {
-    String username;
+    String username, token;
     Users host;
 
     ImageButton baddResidence;
@@ -56,7 +56,8 @@ public class HostActivity extends AppCompatActivity {
         setContentView(R.layout.activity_host);
 
         user=false;
-
+        Bundle buser = getIntent().getExtras();
+        token = buser.getString("token");
         baddResidence = (ImageButton)findViewById(R.id.addResidence);
 
         baddResidence.setOnClickListener(new View.OnClickListener()
@@ -76,9 +77,9 @@ public class HostActivity extends AppCompatActivity {
             }
         });
         RetrofitCalls retrofitCalls = new RetrofitCalls();
-        ArrayList<Users> hostUsers = retrofitCalls.getUserbyUsername(username);
+        ArrayList<Users> hostUsers = retrofitCalls.getUserbyUsername(token, username);
         host = hostUsers.get(0);
-        ArrayList<Residences> storedResidences = retrofitCalls.getResidencesByHost(host.getId());
+        ArrayList<Residences> storedResidences = retrofitCalls.getResidencesByHost(token, host.getId().toString());
 
         String[] representativePhoto    = new String [storedResidences.size()];
         String[] title                  = new String[storedResidences.size()];
@@ -106,6 +107,7 @@ public class HostActivity extends AppCompatActivity {
                 Intent showResidenceIntent = new Intent(HostActivity.this, ResidenceActivity.class);
                 Bundle btype = new Bundle();
                 btype.putBoolean("type",user);
+                btype.putString("token", token);
                 btype.putInt("residenceId", residenceId[position]);
                 showResidenceIntent.putExtras(btype);
                 try {
@@ -118,7 +120,7 @@ public class HostActivity extends AppCompatActivity {
         });
 
         /** FOOTER TOOLBAR **/
-        Utils.manageFooter(HostActivity.this, user);
+        Utils.manageFooter(HostActivity.this, user, token);
     }
 
     @Override
