@@ -11,6 +11,8 @@ import domain.Users;
 import java.security.Key;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -26,6 +28,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import utils.AuthenticationFilter;
 
 /**
  *
@@ -59,21 +62,47 @@ public class UsersFacadeREST extends AbstractFacade<Users> {
 
     @DELETE
     @Path("delete")
-    public void remove(Integer id) {
-        super.remove(super.find(id));
+    public void remove(@HeaderParam("Authorization") String token, Integer id) {
+        try
+        {
+            AuthenticationFilter.filter(token); 
+            super.remove(super.find(id));
+        }
+        catch(Exception ex) 
+         {
+            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
+         }
     }
 
     @GET
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
     public Users find(@HeaderParam("Authorization") String token, @PathParam("id") Integer id) {
-        return super.find(id);
+         try
+        {
+            AuthenticationFilter.filter(token);
+            return super.find(id);
+        }
+         catch(Exception ex) 
+         {
+            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
     }
 
     @GET
     @Produces({MediaType.APPLICATION_JSON})
-    public List<Users> findAll(@HeaderParam("Authorization") String token) {
-        return super.findAll();
+    public List<Users> findAll(@HeaderParam("Authorization") String token) 
+    {
+        try
+        {
+            AuthenticationFilter.filter(token);
+            return super.findAll();
+        }
+        catch(Exception ex) {
+            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
     }
 
     @GET
@@ -108,7 +137,8 @@ public class UsersFacadeREST extends AbstractFacade<Users> {
     @POST
     @Path("register")
     @Consumes({MediaType.APPLICATION_JSON})
-    public String createUser(Users entity) {
+    public String createUser(Users entity) 
+    {
         super.create(entity);
         String token = issueToken(entity.getUsername());
         return token;
@@ -117,13 +147,21 @@ public class UsersFacadeREST extends AbstractFacade<Users> {
     @PUT
     @Path("put")
     @Consumes({MediaType.APPLICATION_JSON})
-    public String editUser(@PathParam("id") Integer id, Users entity) {
-        super.edit(entity);
-        String token = issueToken(entity.getUsername());
-        return token;
+    public String editUser(@HeaderParam("Authorization") String token, @PathParam("id") Integer id, Users entity) {
+        
+        try
+        {
+            AuthenticationFilter.filter(token);
+            super.edit(entity);
+            return token;
+        }
+        catch (Exception ex) {
+            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
     }
     
-    @GET
+    @POST
     @Path("login")
     @Produces(MediaType.APPLICATION_JSON)
     public String login(@QueryParam("username")String username, @QueryParam("password")String password) {
@@ -145,18 +183,37 @@ public class UsersFacadeREST extends AbstractFacade<Users> {
     @Path("username")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Users> findbyUsername(@HeaderParam("Authorization") String token, @QueryParam("username")String username) {
-        Query query = em.createNamedQuery("Users.findByUsername");
-        query.setParameter("username", username);
-        return query.getResultList();
+        try 
+        {
+            AuthenticationFilter.filter(token);
+            Query query = em.createNamedQuery("Users.findByUsername");
+            query.setParameter("username", username);
+            return query.getResultList();
+        } catch (Exception ex) {
+            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+        
     }
     
     @GET
     @Path("email")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Users> findbyEmail(@HeaderParam("Authorization") String token, @QueryParam("email")String email) {
-        Query query = em.createNamedQuery("Users.findByEmail");
-        query.setParameter("email", email);
-        return query.getResultList();
+    public List<Users> findbyEmail(@HeaderParam("Authorization") String token, @QueryParam("email")String email) 
+    {
+        try
+        {
+            AuthenticationFilter.filter(token);
+            Query query = em.createNamedQuery("Users.findByEmail");
+            query.setParameter("email", email);
+            return query.getResultList();
+        }
+        catch(Exception ex)
+        {
+            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+        
     }
 
     private String issueToken(String username) 

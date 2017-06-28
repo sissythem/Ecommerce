@@ -11,6 +11,8 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import java.security.Key;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -26,6 +28,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import utils.AuthenticationFilter;
 
 /**
  *
@@ -58,21 +61,47 @@ public class ReservationsFacadeREST extends AbstractFacade<Reservations> {
 
     @DELETE
     @Path("{id}")
-    public void remove(@PathParam("id") Integer id) {
-        super.remove(super.find(id));
+    public void remove(@HeaderParam("Authorization") String token, @PathParam("id") Integer id) {
+        try
+        {
+            AuthenticationFilter.filter(token); 
+            super.remove(super.find(id));
+        }
+        catch(Exception ex) 
+         {
+            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
+         }
     }
 
     @GET
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
     public Reservations find(@HeaderParam("Authorization") String token, @PathParam("id") Integer id) {
-        return super.find(id);
+        try
+        {
+            AuthenticationFilter.filter(token);
+            return super.find(id);
+        }
+        catch(Exception ex) 
+         {
+            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+         }
     }
 
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     public List<Reservations> findAll(@HeaderParam("Authorization") String token) {
-        return super.findAll();
+        try
+        {
+            AuthenticationFilter.filter(token);
+            return super.findAll();
+        }
+        catch(Exception ex) 
+         {
+            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+         }
     }
 
     @GET
@@ -99,37 +128,72 @@ public class ReservationsFacadeREST extends AbstractFacade<Reservations> {
     @Path("tenant")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Reservations> findbyTenants(@HeaderParam("Authorization") String token, @QueryParam("tenantId")Integer tenantId) {
-        Query query = em.createNamedQuery("Reservations.findbyTenants");
-        query.setParameter("tenantId", tenantId);
-        return query.getResultList();
+        try
+        {
+            AuthenticationFilter.filter(token);
+            Query query = em.createNamedQuery("Reservations.findbyTenants");
+            query.setParameter("tenantId", tenantId);
+            return query.getResultList();
+        }
+        catch(Exception ex) 
+         {
+            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+         }
     }
     
     @GET
     @Path("residence")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Reservations> findbyResidence(@HeaderParam("Authorization") String token, @QueryParam("residenceId")Integer residenceId) {
-        Query query = em.createNamedQuery("Reservations.findbyResidence");
-        query.setParameter("residenceId", residenceId);
-        return query.getResultList();
+        try
+        {
+            AuthenticationFilter.filter(token);
+            Query query = em.createNamedQuery("Reservations.findbyResidence");
+            query.setParameter("residenceId", residenceId);
+            return query.getResultList();
+        }
+        catch(Exception ex) 
+         {
+            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+         }
     }
     
     @GET
     @Path("comment")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Reservations> review(@HeaderParam("Authorization") String token, @QueryParam("tenantId")Integer tenantId, @QueryParam("residenceId")Integer residenceId) {
-        Query query = em.createNamedQuery("Reservations.comment");
-        query.setParameter("tenantId", tenantId);
-        query.setParameter("residenceId", residenceId);
-        return query.getResultList();
+         try
+        {
+            AuthenticationFilter.filter(token);
+            Query query = em.createNamedQuery("Reservations.comment");
+            query.setParameter("tenantId", tenantId);
+            query.setParameter("residenceId", residenceId);
+            return query.getResultList();
+        }
+         catch(Exception ex) 
+         {
+            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+         }
     }
     
     @POST
     @Path("makereservation")
     @Consumes({MediaType.APPLICATION_JSON})
-    public String createReservation(Reservations entity) {
-        super.create(entity);
-        String token = issueToken(entity.getTenantId().getUsername());
-        return token;
+    public String createReservation(@HeaderParam("Authorization") String token, Reservations entity) {
+        try
+        {
+            AuthenticationFilter.filter(token);
+            super.create(entity);
+            return token;
+        }
+        catch(Exception ex) 
+         {
+            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+         }
     }
     
     private String issueToken(String username) {

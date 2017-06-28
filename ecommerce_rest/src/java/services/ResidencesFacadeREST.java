@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import static javax.faces.component.UIInput.isEmpty;
 import javax.persistence.EntityManager;
@@ -30,6 +32,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import utils.AuthenticationFilter;
 import utils.General;
 
 /**
@@ -63,21 +66,47 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
 
     @DELETE
     @Path("delete/{id}")
-    public void remove(@PathParam("id") Integer id) {
-        super.remove(super.find(id));
+    public void remove(@HeaderParam("Authorization") String token, @PathParam("id") Integer id) {
+         try
+        {
+            AuthenticationFilter.filter(token);
+            super.remove(super.find(id));
+        }
+         catch(Exception ex) 
+         {
+            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
+         }
     }
 
     @GET
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
     public Residences find(@HeaderParam("Authorization") String token, @PathParam("id") Integer id) {
-        return super.find(id);
+        try
+        {
+            AuthenticationFilter.filter(token);
+            return super.find(id);
+        }
+        catch(Exception ex) 
+         {
+            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+         }
     }
 
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     public List<Residences> findAll(@HeaderParam("Authorization") String token) {
-        return super.findAll();
+        try
+        {
+            AuthenticationFilter.filter(token);
+            return super.findAll();
+        }
+        catch(Exception ex) 
+         {
+            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+         }
     }
 
     @GET
@@ -103,18 +132,36 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
     @Path("city")
     @Produces({MediaType.APPLICATION_JSON})
     public List<Residences> findbyCity(@HeaderParam("Authorization") String token, @QueryParam("city")String city) {
-        Query query = em.createNamedQuery("Residences.findByCity");
-        query.setParameter("city", city);
-        return query.getResultList();
+        try
+        {
+            AuthenticationFilter.filter(token);
+            Query query = em.createNamedQuery("Residences.findByCity");
+            query.setParameter("city", city);
+            return query.getResultList();
+        }
+        catch(Exception ex) 
+         {
+            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+         }
     }
     
     @GET
     @Path("host")
     @Produces({MediaType.APPLICATION_JSON})
     public List<Residences> findByHost(@HeaderParam("Authorization") String token, @QueryParam("hostId")Integer hostId) {
-        Query query = em.createNamedQuery("findByHost");
-        query.setParameter("hostId", hostId);
-        return query.getResultList();
+        try
+        {
+            AuthenticationFilter.filter(token);
+            Query query = em.createNamedQuery("findByHost");
+            query.setParameter("hostId", hostId);
+            return query.getResultList();
+        }
+        catch(Exception ex) 
+         {
+            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+         }
     }
     
     public void addUserSearch(Integer userId, String city) {
@@ -136,47 +183,56 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
         @QueryParam("endDate")String endDate,
         @QueryParam("guests") Integer guests
     ) {
-        Query query;
-        List<Residences> results = new ArrayList<>();
+        try
+        {
+            AuthenticationFilter.filter(token);
+            Query query;
+            List<Residences> results = new ArrayList<>();
         
-        /* Date validator from utils.General */
-        General dateValidator = new General();
+            /* Date validator from utils.General */
+            General dateValidator = new General();
 
-        if (isEmpty(startDate) || !dateValidator.isThisDateValid(startDate, "yyyy-MM-dd")) {
-            String currentdate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-            startDate = currentdate;
-        }
-        if (isEmpty(endDate) || !dateValidator.isThisDateValid(endDate, "yyyy-MM-dd")) {
-            Calendar cal = Calendar.getInstance();
-            cal.add(Calendar.DATE, +7);
-            endDate = new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime());
-        }
+            if (isEmpty(startDate) || !dateValidator.isThisDateValid(startDate, "yyyy-MM-dd")) {
+                String currentdate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+                startDate = currentdate;
+            }
+            if (isEmpty(endDate) || !dateValidator.isThisDateValid(endDate, "yyyy-MM-dd")) {
+                Calendar cal = Calendar.getInstance();
+                cal.add(Calendar.DATE, +7);
+                endDate = new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime());
+            }
         
-        String querystring = "SELECT * FROM residences as res"
+            String querystring = "SELECT * FROM residences as res"
             + " WHERE '"+startDate+"' >= res.available_date_start AND '"+endDate+"' <= res.available_date_end AND res.rooms > 0"
             + " AND res.guests > 0";
 
-        if (isEmpty(guests)) guests = 1;
-        querystring += " AND (res.guests - (SELECT count(guests) FROM reservations as r "
+         if (isEmpty(guests)) guests = 1;
+         querystring += " AND (res.guests - (SELECT count(guests) FROM reservations as r "
                 + "WHERE r.residence_id = res.id AND r.start_date < '"+endDate+"' AND r.end_date > '"+startDate+"'"
                 + ")) >= " + guests;
         
-        if (!isEmpty(userId)) {            
+            if (!isEmpty(userId)) {            
             querystring += " AND res.host_id != " + userId;
             
-            if (!isEmpty(city)) {
-                city = city.toLowerCase();
-                addUserSearch(Integer.parseInt(userId), city);
-                querystring += " AND res.city = '" + city + "'";
+                if (!isEmpty(city)) {
+                    city = city.toLowerCase();
+                    addUserSearch(Integer.parseInt(userId), city);
+                    querystring += " AND res.city = '" + city + "'";
+                }
             }
-        }
         
-        querystring += " order by res.min_price ASC";
+            querystring += " order by res.min_price ASC";
         
-        System.out.println(querystring);
-        query = em.createNativeQuery(querystring, Residences.class);
+            System.out.println(querystring);
+            query = em.createNativeQuery(querystring, Residences.class);
 
-        return query.getResultList();
+            return query.getResultList();
+        }
+        catch(Exception ex) 
+         {
+            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+         }
     }
     
     @POST
@@ -192,10 +248,18 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
     @PUT
     @Path("put")
     @Consumes({MediaType.APPLICATION_JSON})
-    public String editResidence(@PathParam("id") Integer id, Residences entity) {
-        super.edit(entity);
-        String token = issueToken(entity.getHostId().getUsername());
-        return token;
+    public String editResidence(@HeaderParam("Authorization") String token, @PathParam("id") Integer id, Residences entity) {
+        try
+        {
+            AuthenticationFilter.filter(token);
+            super.edit(entity);
+            return token;
+        }
+        catch(Exception ex) 
+         {
+            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+         }
         
     }
     

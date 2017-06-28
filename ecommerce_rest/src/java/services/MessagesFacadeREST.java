@@ -11,6 +11,8 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import java.security.Key;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -26,6 +28,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import utils.AuthenticationFilter;
 
 
 @Stateless
@@ -55,21 +58,47 @@ public class MessagesFacadeREST extends AbstractFacade<Messages> {
 
     @DELETE
     @Path("{id}")
-    public void remove(@PathParam("id") Integer id) {
-        super.remove(super.find(id));
+    public void remove(@HeaderParam("Authorization")String token, @PathParam("id") Integer id) {
+        try
+        {
+            AuthenticationFilter.filter(token);
+            super.remove(super.find(id));
+        }
+        catch(Exception ex) 
+         {
+            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
+         }
     }
 
     @GET
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
-    public Messages find(@PathParam("id") Integer id) {
-        return super.find(id);
+    public Messages find(@HeaderParam("Authorization")String token, @PathParam("id") Integer id) {
+        try
+        {
+            AuthenticationFilter.filter(token);
+            return super.find(id);
+        }
+        catch(Exception ex) 
+         {
+            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+         }
     }
 
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     public List<Messages> findAll(@HeaderParam("Authorization") String token) {
-        return super.findAll();
+        try
+        {
+            AuthenticationFilter.filter(token);
+            return super.findAll();
+        }
+        catch(Exception ex) 
+         {
+            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+         }
     }
 
     @GET
@@ -96,9 +125,18 @@ public class MessagesFacadeREST extends AbstractFacade<Messages> {
     @Path("conversation")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Messages> findByConversation(@HeaderParam("Authorization") String token, @QueryParam("convId")Integer convId) {
-        Query query = em.createNamedQuery("findByConversation");
-        query.setParameter("convId", convId);
-        return query.getResultList();
+        try
+        {
+            AuthenticationFilter.filter(token);
+            Query query = em.createNamedQuery("findByConversation");
+            query.setParameter("convId", convId);
+            return query.getResultList();
+        }
+        catch(Exception ex) 
+         {
+            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+         }
     }
     
     public boolean addNewMessage(Integer senderId, Integer conversationId, String msgBody) {
@@ -115,14 +153,22 @@ public class MessagesFacadeREST extends AbstractFacade<Messages> {
     @POST
     @Path("addmessage")
     @Consumes(MediaType.APPLICATION_JSON)
-    public String updateConversation(Messages entity) {
-        int senderId        = entity.getUserId().getId();
-        int conversationId  = entity.getConversationId().getId();
-        String msgBody      = entity.getBody();
+    public String updateConversation(@HeaderParam("Authorization") String token, Messages entity) {
+        try
+        {
+            AuthenticationFilter.filter(token);
+            int senderId        = entity.getUserId().getId();
+            int conversationId  = entity.getConversationId().getId();
+            String msgBody      = entity.getBody();
         
-        addNewMessage(senderId, conversationId, msgBody);
-        String token = issueToken(entity.getUserId().getUsername());
-        return token;
+            addNewMessage(senderId, conversationId, msgBody);
+            return token;
+        }
+        catch(Exception ex) 
+         {
+            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+         }
     }
     
     private String issueToken(String username) {
