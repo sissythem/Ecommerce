@@ -6,6 +6,9 @@
 package services;
 
 import domain.Residences;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import java.security.Key;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -19,6 +22,7 @@ import javax.persistence.Query;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -51,7 +55,7 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
     }
 
     @PUT
-    @Path("put")
+    @Path("{id}")
     @Consumes({MediaType.APPLICATION_JSON})
     public void edit(@PathParam("id") Integer id, Residences entity) {
         super.edit(entity);
@@ -66,14 +70,13 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
     @GET
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
-    public Residences find(@PathParam("id") Integer id) {
+    public Residences find(@HeaderParam("Authorization") String token, @PathParam("id") Integer id) {
         return super.find(id);
     }
 
     @GET
-    @Override
     @Produces({MediaType.APPLICATION_JSON})
-    public List<Residences> findAll() {
+    public List<Residences> findAll(@HeaderParam("Authorization") String token) {
         return super.findAll();
     }
 
@@ -99,7 +102,7 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
     @GET
     @Path("city")
     @Produces({MediaType.APPLICATION_JSON})
-    public List<Residences> findbyCity(@QueryParam("city")String city) {
+    public List<Residences> findbyCity(@HeaderParam("Authorization") String token, @QueryParam("city")String city) {
         Query query = em.createNamedQuery("Residences.findByCity");
         query.setParameter("city", city);
         return query.getResultList();
@@ -108,7 +111,7 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
     @GET
     @Path("host")
     @Produces({MediaType.APPLICATION_JSON})
-    public List<Residences> findByHost(@QueryParam("hostId")Integer hostId) {
+    public List<Residences> findByHost(@HeaderParam("Authorization") String token, @QueryParam("hostId")Integer hostId) {
         Query query = em.createNamedQuery("findByHost");
         query.setParameter("hostId", hostId);
         return query.getResultList();
@@ -126,6 +129,7 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
     @Path("search")
     @Produces({MediaType.APPLICATION_JSON})
     public List<Residences> findRecommendations(
+        @HeaderParam("Authorization") String token,
         @QueryParam("userId")String userId, 
         @QueryParam("city")String city,
         @QueryParam("startDate")String startDate,
@@ -173,6 +177,41 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
         query = em.createNativeQuery(querystring, Residences.class);
 
         return query.getResultList();
+    }
+    
+    @POST
+    @Path("add")
+    @Consumes({MediaType.APPLICATION_JSON})
+    public String createResidence(Residences entity) 
+    {
+        super.create(entity);
+        String token = issueToken(entity.getHostId().getUsername());
+        return token;
+    }
+    
+    @PUT
+    @Path("put")
+    @Consumes({MediaType.APPLICATION_JSON})
+    public String editResidence(@PathParam("id") Integer id, Residences entity) {
+        super.edit(entity);
+        String token = issueToken(entity.getHostId().getUsername());
+        return token;
+        
+    }
+    
+    private String issueToken(String username) {
+            Key key = utils.KeyHolder.key;
+            long nowMillis = System.currentTimeMillis();
+            Date now = new Date(nowMillis);
+            long expMillis = nowMillis + 300000L;
+            Date exp = new Date(expMillis);
+            String jws = Jwts.builder()
+                        .setSubject(username)
+                        .setIssuedAt(now)
+                        .signWith(SignatureAlgorithm.HS512, key)
+                        .setExpiration(exp)
+                        .compact();
+            return jws;
     }
 
 }

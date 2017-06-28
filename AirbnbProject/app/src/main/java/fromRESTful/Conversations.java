@@ -106,8 +106,8 @@ public class Conversations implements Serializable {
     }
 
     @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
+    public boolean equals(Object object)
+    {
         if (!(object instanceof Conversations)) {
             return false;
         }

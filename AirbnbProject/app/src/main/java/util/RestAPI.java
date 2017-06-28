@@ -112,6 +112,11 @@ public interface RestAPI
     @GET("conversations/update_conversation")
     Call<List<Conversations>> updateConversation(@Query("read") String isRead, @Query("type") String userType, @Query("id") String id);
 
+    @POST("conversations/add")
+    @FormUrlEncoded
+    Call<String> postConversation(@Body Conversations conversation);
+
+
 
     /** Reservations Facade Methods **/
 

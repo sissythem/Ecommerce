@@ -14,6 +14,7 @@ import javax.persistence.Query;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -57,14 +58,13 @@ public class SearchesFacadeREST extends AbstractFacade<Searches> {
     @GET
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
-    public Searches find(@PathParam("id") Integer id) {
+    public Searches find(@HeaderParam("Authorization") String token, @PathParam("id") Integer id) {
         return super.find(id);
     }
 
     @GET
-    @Override
     @Produces({MediaType.APPLICATION_JSON})
-    public List<Searches> findAll() {
+    public List<Searches> findAll(@HeaderParam("Authorization") String token) {
         return super.findAll();
     }
 
@@ -91,7 +91,7 @@ public class SearchesFacadeREST extends AbstractFacade<Searches> {
     @GET
     @Path("city")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Searches> findbyUserId(@QueryParam("userId")Integer userId) {
+    public List<Searches> findbyUserId(@HeaderParam("Authorization") String token, @QueryParam("userId")Integer userId) {
         Query query = em.createNamedQuery("Searches.findByUserId");
         query.setParameter("userId", userId);
         return query.getResultList();

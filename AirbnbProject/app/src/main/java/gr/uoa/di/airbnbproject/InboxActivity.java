@@ -75,7 +75,7 @@ public class InboxActivity extends AppCompatActivity {
                     setAdapter();
                 }
 
-
+                //TODO check why boolean user does not pass correctly to MessageActivity
                 Intent showMessageIntent = new Intent(InboxActivity.this, MessageActivity.class);
                 Bundle btype = new Bundle();
                 btype.putBoolean("user", user);

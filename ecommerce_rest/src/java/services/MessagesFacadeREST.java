@@ -6,6 +6,10 @@
 package services;
 
 import domain.Messages;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import java.security.Key;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -14,6 +18,7 @@ import javax.persistence.Query;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -62,9 +67,8 @@ public class MessagesFacadeREST extends AbstractFacade<Messages> {
     }
 
     @GET
-    @Override
     @Produces({MediaType.APPLICATION_JSON})
-    public List<Messages> findAll() {
+    public List<Messages> findAll(@HeaderParam("Authorization") String token) {
         return super.findAll();
     }
 
@@ -91,7 +95,7 @@ public class MessagesFacadeREST extends AbstractFacade<Messages> {
     @GET
     @Path("conversation")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Messages> findByConversation(@QueryParam("convId")Integer convId) {
+    public List<Messages> findByConversation(@HeaderParam("Authorization") String token, @QueryParam("convId")Integer convId) {
         Query query = em.createNamedQuery("findByConversation");
         query.setParameter("convId", convId);
         return query.getResultList();
@@ -111,11 +115,28 @@ public class MessagesFacadeREST extends AbstractFacade<Messages> {
     @POST
     @Path("addmessage")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void updateConversation(Messages entity) {
+    public String updateConversation(Messages entity) {
         int senderId        = entity.getUserId().getId();
         int conversationId  = entity.getConversationId().getId();
         String msgBody      = entity.getBody();
         
         addNewMessage(senderId, conversationId, msgBody);
+        String token = issueToken(entity.getUserId().getUsername());
+        return token;
+    }
+    
+    private String issueToken(String username) {
+            Key key = utils.KeyHolder.key;
+            long nowMillis = System.currentTimeMillis();
+            Date now = new Date(nowMillis);
+            long expMillis = nowMillis + 300000L;
+            Date exp = new Date(expMillis);
+            String jws = Jwts.builder()
+                        .setSubject(username)
+                        .setIssuedAt(now)
+                        .signWith(SignatureAlgorithm.HS512, key)
+                        .setExpiration(exp)
+                        .compact();
+            return jws;
     }
 }

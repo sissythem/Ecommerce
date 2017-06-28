@@ -6,6 +6,10 @@
 package services;
 
 import domain.Reviews;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import java.security.Key;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -14,6 +18,7 @@ import javax.persistence.Query;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -57,14 +62,13 @@ public class ReviewsFacadeREST extends AbstractFacade<Reviews> {
     @GET
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
-    public Reviews find(@PathParam("id") Integer id) {
+    public Reviews find(@HeaderParam("Authorization") String token, @PathParam("id") Integer id) {
         return super.find(id);
     }
 
     @GET
-    @Override
     @Produces({MediaType.APPLICATION_JSON})
-    public List<Reviews> findAll() {
+    public List<Reviews> findAll(@HeaderParam("Authorization") String token) {
         return super.findAll();
     }
 
@@ -88,10 +92,19 @@ public class ReviewsFacadeREST extends AbstractFacade<Reviews> {
     }
     
     /* Custom */
+    @POST
+    @Path("postreview")
+    @Consumes({MediaType.APPLICATION_JSON})
+    public String createReview(@HeaderParam("Authorization") String token, Reviews entity) {
+        super.create(entity);
+        String newToken=issueToken(entity.getTenantId().getUsername());
+        return token;
+    }
+    
     @GET
     @Path("residence")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Reviews> findbyResidence(@QueryParam("residenceId")Integer residenceId) {
+    public List<Reviews> findbyResidence(@HeaderParam("Authorization") String token, @QueryParam("residenceId")Integer residenceId) {
         Query query = em.createNamedQuery("Reviews.findbyResidence");
         query.setParameter("residenceId", residenceId);
         return query.getResultList();
@@ -100,9 +113,24 @@ public class ReviewsFacadeREST extends AbstractFacade<Reviews> {
     @GET
     @Path("tenant")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Reviews> findbyTenant(@QueryParam("tenantId")Integer tenantId) {
+    public List<Reviews> findbyTenant(@HeaderParam("Authorization") String token, @QueryParam("tenantId")Integer tenantId) {
         Query query = em.createNamedQuery("Reviews.findbyTenant");
         query.setParameter("tenantId", tenantId);
         return query.getResultList();
+    }
+    
+    private String issueToken(String username) {
+            Key key = utils.KeyHolder.key;
+            long nowMillis = System.currentTimeMillis();
+            Date now = new Date(nowMillis);
+            long expMillis = nowMillis + 300000L;
+            Date exp = new Date(expMillis);
+            String jws = Jwts.builder()
+                        .setSubject(username)
+                        .setIssuedAt(now)
+                        .signWith(SignatureAlgorithm.HS512, key)
+                        .setExpiration(exp)
+                        .compact();
+            return jws;
     }
 }

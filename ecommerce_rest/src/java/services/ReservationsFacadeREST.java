@@ -6,6 +6,10 @@
 package services;
 
 import domain.Reservations;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import java.security.Key;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -14,6 +18,7 @@ import javax.persistence.Query;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -60,14 +65,13 @@ public class ReservationsFacadeREST extends AbstractFacade<Reservations> {
     @GET
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
-    public Reservations find(@PathParam("id") Integer id) {
+    public Reservations find(@HeaderParam("Authorization") String token, @PathParam("id") Integer id) {
         return super.find(id);
     }
 
     @GET
-    @Override
     @Produces({MediaType.APPLICATION_JSON})
-    public List<Reservations> findAll() {
+    public List<Reservations> findAll(@HeaderParam("Authorization") String token) {
         return super.findAll();
     }
 
@@ -94,7 +98,7 @@ public class ReservationsFacadeREST extends AbstractFacade<Reservations> {
     @GET
     @Path("tenant")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Reservations> findbyTenants(@QueryParam("tenantId")Integer tenantId) {
+    public List<Reservations> findbyTenants(@HeaderParam("Authorization") String token, @QueryParam("tenantId")Integer tenantId) {
         Query query = em.createNamedQuery("Reservations.findbyTenants");
         query.setParameter("tenantId", tenantId);
         return query.getResultList();
@@ -103,7 +107,7 @@ public class ReservationsFacadeREST extends AbstractFacade<Reservations> {
     @GET
     @Path("residence")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Reservations> findbyResidence(@QueryParam("residenceId")Integer residenceId) {
+    public List<Reservations> findbyResidence(@HeaderParam("Authorization") String token, @QueryParam("residenceId")Integer residenceId) {
         Query query = em.createNamedQuery("Reservations.findbyResidence");
         query.setParameter("residenceId", residenceId);
         return query.getResultList();
@@ -112,10 +116,34 @@ public class ReservationsFacadeREST extends AbstractFacade<Reservations> {
     @GET
     @Path("comment")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Reservations> review(@QueryParam("tenantId")String tenantId, @QueryParam("residenceId")String residenceId) {
-        Query query = em.createNamedQuery("comment");
+    public List<Reservations> review(@HeaderParam("Authorization") String token, @QueryParam("tenantId")Integer tenantId, @QueryParam("residenceId")Integer residenceId) {
+        Query query = em.createNamedQuery("Reservations.comment");
         query.setParameter("tenantId", tenantId);
         query.setParameter("residenceId", residenceId);
         return query.getResultList();
+    }
+    
+    @POST
+    @Path("makereservation")
+    @Consumes({MediaType.APPLICATION_JSON})
+    public String createReservation(Reservations entity) {
+        super.create(entity);
+        String token = issueToken(entity.getTenantId().getUsername());
+        return token;
+    }
+    
+    private String issueToken(String username) {
+            Key key = utils.KeyHolder.key;
+            long nowMillis = System.currentTimeMillis();
+            Date now = new Date(nowMillis);
+            long expMillis = nowMillis + 300000L;
+            Date exp = new Date(expMillis);
+            String jws = Jwts.builder()
+                        .setSubject(username)
+                        .setIssuedAt(now)
+                        .signWith(SignatureAlgorithm.HS512, key)
+                        .setExpiration(exp)
+                        .compact();
+            return jws;
     }
 }

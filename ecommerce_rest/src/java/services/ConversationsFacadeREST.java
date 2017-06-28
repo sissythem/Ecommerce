@@ -6,6 +6,10 @@
 package services;
 
 import domain.Conversations;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import java.security.Key;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -14,6 +18,7 @@ import javax.persistence.Query;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -57,14 +62,13 @@ public class ConversationsFacadeREST extends AbstractFacade<Conversations> {
     @GET
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
-    public Conversations find(@PathParam("id") Integer id) {
+    public Conversations find(@HeaderParam("Authorization") String token, @PathParam("id") Integer id) {
         return super.find(id);
     }
 
     @GET
-    @Override
     @Produces({MediaType.APPLICATION_JSON})
-    public List<Conversations> findAll() {
+    public List<Conversations> findAll(@HeaderParam("Authorization") String token) {
         List<Conversations> data = super.findAll();
         System.out.println(data);
         return data;
@@ -90,10 +94,21 @@ public class ConversationsFacadeREST extends AbstractFacade<Conversations> {
     }
     
     /*** CUSTOM METHODS ***/
+    
+    @POST
+    @Path("add")
+    @Consumes({MediaType.APPLICATION_JSON})
+    public String createConversation(Conversations entity) 
+    {
+        super.create(entity);
+        String token = issueToken(entity.getSenderId().getUsername());
+        return token;
+    }
+    
     @GET
     @Path("user")
     @Produces({MediaType.APPLICATION_JSON})
-    public List<Conversations> conversationByUserId(@QueryParam("userId")String userId) {
+    public List<Conversations> conversationByUserId(@HeaderParam("Authorization") String token, @QueryParam("userId")String userId) {
         Query query = em.createNativeQuery("SELECT * FROM conversations WHERE sender_id=?userId OR receiver_id=?userId", Conversations.class);
         query.setParameter("userId", userId);
         return query.getResultList();
@@ -102,7 +117,7 @@ public class ConversationsFacadeREST extends AbstractFacade<Conversations> {
     @GET
     @Path("last")
     @Produces({MediaType.APPLICATION_JSON})
-    public List<Conversations> lastConversationEntry(@QueryParam("senderId")String senderId, @QueryParam("receiverId")String receiverId) {
+    public List<Conversations> lastConversationEntry(@HeaderParam("Authorization") String token, @QueryParam("senderId")String senderId, @QueryParam("receiverId")String receiverId) {
         Query query = em.createNativeQuery("SELECT * FROM conversations WHERE sender_id=?senderId AND receiver_id=?receiverId ORDER BY id DESC LIMIT 1", Conversations.class);
         query.setParameter("senderId", senderId);
         query.setParameter("receiverId", receiverId);
@@ -112,7 +127,7 @@ public class ConversationsFacadeREST extends AbstractFacade<Conversations> {
     @GET
     @Path("residence/{id}")
     @Produces({MediaType.APPLICATION_JSON})
-    public List<Conversations> conversationByResidence(@PathParam("id") String residenceId) {
+    public List<Conversations> conversationByResidence(@HeaderParam("Authorization") String token, @PathParam("id") String residenceId) {
         Query query = em.createNativeQuery("SELECT * FROM conversations WHERE residence_id =?residenceId LIMIT 1", Conversations.class);
         query.setParameter("residenceId", residenceId);
         List<Conversations> result = query.getResultList();
@@ -122,7 +137,7 @@ public class ConversationsFacadeREST extends AbstractFacade<Conversations> {
     @GET
     @Path("update_conversation")
     @Produces({MediaType.APPLICATION_JSON})
-    public Conversations updateReadConversation(@QueryParam("read") String isRead, @QueryParam("type") String type, @QueryParam("id") String id) {
+    public Conversations updateReadConversation(@HeaderParam("Authorization") String token, @QueryParam("read") String isRead, @QueryParam("type") String type, @QueryParam("id") String id) {
         if (isRead != null && type != null && id != null) {
             String userType = "";
             if (type.equals("sender")) {
@@ -143,5 +158,20 @@ public class ConversationsFacadeREST extends AbstractFacade<Conversations> {
         Conversations conv = super.find(Integer.parseInt(id));
         System.out.println(conv);
         return conv;
+    }
+    
+    private String issueToken(String username) {
+            Key key = utils.KeyHolder.key;
+            long nowMillis = System.currentTimeMillis();
+            Date now = new Date(nowMillis);
+            long expMillis = nowMillis + 300000L;
+            Date exp = new Date(expMillis);
+            String jws = Jwts.builder()
+                        .setSubject(username)
+                        .setIssuedAt(now)
+                        .signWith(SignatureAlgorithm.HS512, key)
+                        .setExpiration(exp)
+                        .compact();
+            return jws;
     }
 }
