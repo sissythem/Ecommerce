@@ -1,10 +1,7 @@
 package util;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -60,9 +57,7 @@ public class RestClient
             // Create a trust manager that does not validate certificate chains
             final TrustManager[] trustAllCerts = new TrustManager[] {
                     new X509TrustManager() {
-                        CertificateFactory cf = CertificateFactory.getInstance("X.509");
-                        FileInputStream finStream = new FileInputStream("CACertificate.pem");
-                        X509Certificate caCertificate = (X509Certificate)cf.generateCertificate(finStream);
+
                         @Override
                         public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException
                         {
@@ -72,31 +67,7 @@ public class RestClient
                         @Override
                         public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException
                         {
-                            if (chain == null || chain.length == 0) {
-                                throw new IllegalArgumentException("null or zero-length certificate chain");
-                            }
 
-                            if (authType == null || authType.length() == 0) {
-                                throw new IllegalArgumentException("null or zero-length authentication type");
-                            }
-
-                            //Check if certificate send is your CA's
-                            if(!chain[0].equals(caCertificate)){
-                                try
-                                {   //Not your CA's. Check if it has been signed by your CA
-                                    chain[0].verify(caCertificate.getPublicKey());
-                                }
-                                catch(Exception e){
-                                    throw new CertificateException("Certificate not trusted",e);
-                                }
-                            }
-                            //If we end here certificate is trusted. Check if it has expired.
-                            try{
-                                chain[0].checkValidity();
-                            }
-                            catch(Exception e){
-                                throw new CertificateException("Certificate not trusted. It has expired",e);
-                            }
                         }
 
                         @Override

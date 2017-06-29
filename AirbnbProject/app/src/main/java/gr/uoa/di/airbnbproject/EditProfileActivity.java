@@ -160,7 +160,7 @@ public class EditProfileActivity extends AppCompatActivity {
     {
         Users UserParameters = new Users(firstName, lastName, username, password, email, phoneNumber, country, city, photo, about, birthDate);
 
-        RestAPI restAPI = RestClient.getStringClient().create(RestAPI.class);
+        RestAPI restAPI = RestClient.getClient(token).create(RestAPI.class);
         Call<String> call = restAPI.editUserById(loggedinUser.getId().toString(), UserParameters);
         try {
             Response<String> resp = call.execute();
@@ -230,8 +230,9 @@ public class EditProfileActivity extends AppCompatActivity {
                 }
 
             } else {
-                Toast.makeText(c, "Registration failed, please try again!", Toast.LENGTH_SHORT).show();
-                return;
+                Toast.makeText(c, "Your session has finished, please log in again!", Toast.LENGTH_SHORT).show();
+                Utils.logout(this);
+                finish();
             }
         }
         else

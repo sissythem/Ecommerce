@@ -28,7 +28,8 @@ public class GreetingActivity extends AppCompatActivity {
 
         //Initialize button for log in
         final Button login = (Button) findViewById(R.id.login);
-        login.setOnClickListener(new View.OnClickListener() {
+        login.setOnClickListener(new View.OnClickListener()
+        {
             public void onClick(View arg0) {
                 //if log in button is clicked log in activity is launched
                 Intent loginintent = new Intent(GreetingActivity.this, LoginActivity.class);

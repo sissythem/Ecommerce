@@ -15,6 +15,9 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
 import fromRESTful.Reservations;
 import fromRESTful.Residences;
@@ -122,7 +125,24 @@ public class ReviewsActivity extends AppCompatActivity
         ArrayList<Reservations> reservationsByTenantIdandResidenceId= retrofitCalls.getReservationsByTenantIdandResidenceId(token,
                 loggedinUser.getId().toString(), selectedResidence.getId().toString());
 
-        if (reservationsByTenantIdandResidenceId.isEmpty())
+        boolean isDatePassed = false;
+        Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
+        Date currentDate = calendar.getTime();
+
+        for(int i=0;i<reservationsByTenantIdandResidenceId.size();i++)
+        {
+            if(reservationsByTenantIdandResidenceId.get(i).getEndDate().before(currentDate))
+            {
+                //at least one reservation in the past
+                isDatePassed=true;
+            }
+            else
+            {
+                isDatePassed=false;
+            }
+        }
+
+        if (reservationsByTenantIdandResidenceId.isEmpty() || isDatePassed==false)
         {
             etcomment.setVisibility(View.GONE);
             btnreview.setVisibility(View.GONE);
@@ -150,9 +170,10 @@ public class ReviewsActivity extends AppCompatActivity
                             return;
                         }
                         else
-                            {
-                            Toast.makeText(c, "Your comment has not been successfully submitted. Please try again!", Toast.LENGTH_SHORT).show();
-                            return;
+                        {
+                            Toast.makeText(c, "Your session has finished, please log in again!", Toast.LENGTH_SHORT).show();
+                            Utils.logout(ReviewsActivity.this);
+                            finish();
                         }
                     }
                 }
@@ -174,7 +195,7 @@ public class ReviewsActivity extends AppCompatActivity
     public String postResult(Residences residence, Users host, Users tenant, String comment, double rating)
     {
         Reviews reviews = new Reviews(residence, host, tenant, comment, rating);
-        RestAPI restAPI = RestClient.getStringClient().create(RestAPI.class);
+        RestAPI restAPI = RestClient.getClient(token).create(RestAPI.class);
         Call<String> call = restAPI.postReview(reviews);
         try {
             Response<String> resp = call.execute();

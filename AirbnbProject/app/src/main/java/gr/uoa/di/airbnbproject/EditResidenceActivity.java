@@ -289,7 +289,7 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
                             Double.parseDouble(additionalCostPerPerson), cancellationPolicy, rules, Boolean.parseBoolean(kitchen),
                             Boolean.parseBoolean(livingRoom), startDate, endDate, photo);
 
-                    if (success) {
+                    if (!token.isEmpty()) {
                         Intent hostIntent = new Intent(EditResidenceActivity.this, HostActivity.class);
                         Bundle bhost = new Bundle();
                         user=false;
@@ -302,8 +302,9 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
                             Log.e("",e.getMessage());
                         }
                     } else {
-                        Toast.makeText(c, "Residence upload failed, please try again!", Toast.LENGTH_SHORT).show();
-                        return;
+                        Toast.makeText(c, "Your session has finished, please log in again!", Toast.LENGTH_SHORT).show();
+                        Utils.logout(EditResidenceActivity.this);
+                        finish();
                     }
                 }
             }
@@ -317,7 +318,7 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         Residences ResidenceParameters = new Residences(host, title, type, about, address, city, country, amenities, floor, rooms, baths, view, spaceArea, guests, minPrice,
                 additionalCostPerPerson, cancellationPolicy, rules, kitchen, kitchen, livingRoom, startDate, endDate, photo);
 
-        RestAPI restAPI = RestClient.getStringClient().create(RestAPI.class);
+        RestAPI restAPI = RestClient.getClient(token).create(RestAPI.class);
         Call<String> call = restAPI.editResidenceById(Integer.toString(residenceId), ResidenceParameters);
 
         try {

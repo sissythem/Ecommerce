@@ -130,7 +130,7 @@ public class RetrofitCalls
 
     public String getLoginUser(String username, String password)
     {
-        String token="";
+        String token = "";
         getLoginUserHttpRequestTask loginUser = new getLoginUserHttpRequestTask();
         loginUser.execute(username, password);
         try{

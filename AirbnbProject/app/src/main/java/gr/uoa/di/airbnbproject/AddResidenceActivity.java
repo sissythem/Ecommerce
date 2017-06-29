@@ -272,7 +272,7 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
         Residences ResidenceParameters = new Residences(hostId, title, type, about, cancellationPolicy, country, city, address, rules, amenities, floor, rooms,
                 baths, spaceArea, photos, guests, availableDateStart, availableDateEnd, minPrice, additionalCostPerPerson);
 
-        RestAPI restAPI = RestClient.getStringClient().create(RestAPI.class);
+        RestAPI restAPI = RestClient.getClient(token).create(RestAPI.class);
         Call<String> call = restAPI.postResidence(ResidenceParameters);
         try {
             Response<String> resp = call.execute();

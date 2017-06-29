@@ -277,8 +277,9 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
                         startActivity(homeIntent);
                         finish();
                     } else {
-                        Toast.makeText(c, "Booking failed, please try again!", Toast.LENGTH_SHORT).show();
-                        return;
+                        Toast.makeText(c, "Booking failed, your session is terminated, please log in again!", Toast.LENGTH_SHORT).show();
+                        Utils.logout(ResidenceActivity.this);
+                        finish();
                     }
                 }
             }
@@ -289,7 +290,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
     {
         Reservations reservationParameters = new Reservations(loggedinUser, selectedResidence, selectedStartDate, selectedEndDate, guestsInt);
 
-        RestAPI restAPI = RestClient.getStringClient().create(RestAPI.class);
+        RestAPI restAPI = RestClient.getClient(token).create(RestAPI.class);
         Call<String> call = restAPI.postReservation(reservationParameters);
 
         try {

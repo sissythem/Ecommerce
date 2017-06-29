@@ -68,7 +68,7 @@ public class LoginActivity extends AppCompatActivity {
                 RetrofitCalls retrofitCalls = new RetrofitCalls();
                 token = retrofitCalls.getLoginUser(Username, password);
 
-                if(token.isEmpty()) userExists = false;
+                if(token.equals("not")) userExists = false;
 
 
                 if(!userExists)
