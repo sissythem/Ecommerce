@@ -1,6 +1,7 @@
 package util;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -50,7 +51,7 @@ public class RestCalls {
                         }
                     }
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    Log.i("",e.getMessage());
                 }
             }
         }

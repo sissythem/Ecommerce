@@ -138,5 +138,6 @@ public interface RestAPI
     Call<Void> deleteReviewsByResidence(@Path("residenceId") String residenceId);
 
     @POST("reviews/postreview")
+
     Call<String> postReview(@Body Reviews review);
 }

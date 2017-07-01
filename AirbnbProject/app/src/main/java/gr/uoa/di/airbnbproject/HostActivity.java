@@ -3,6 +3,7 @@ package gr.uoa.di.airbnbproject;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
@@ -62,7 +63,7 @@ public class HostActivity extends AppCompatActivity {
                     startActivity(addResidenceIntent);
                 } catch (Exception ex) {
                     System.out.println(ex.getMessage());
-                    ex.printStackTrace();
+                    Log.i("",ex.getMessage());
                 }
             }
         });
@@ -105,7 +106,7 @@ public class HostActivity extends AppCompatActivity {
                     startActivity(showResidenceIntent);
                 } catch (Exception ex) {
                     System.out.println(ex.getMessage());
-                    ex.printStackTrace();
+                    Log.i("",ex.getMessage());
                 }
             }
         });

@@ -44,7 +44,7 @@ public class RetrofitCalls {
             {
                 Response<String> resp = call.execute();
             } catch(IOException e){
-                e.printStackTrace();
+                Log.i("",e.getMessage());
             }
             return token;
         }
@@ -57,9 +57,9 @@ public class RetrofitCalls {
         try{
             checktoken.get();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         }
         return token;
     }
@@ -76,7 +76,7 @@ public class RetrofitCalls {
                 Response<List<Users>> resp = call.execute();
                 usersList.addAll(resp.body());
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.i("",e.getMessage());
             }
             return usersList;
         }
@@ -90,14 +90,14 @@ public class RetrofitCalls {
         try {
             getUserByUsername.get();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         }
         return usersList;
     }
 
-    private class postUserHttpRequestTesk extends AsyncTask<Users, Users, String>
+    private class postUserHttpRequestTask extends AsyncTask<Users, Users, String>
     {
         @Override
         protected String doInBackground(Users... params){
@@ -107,21 +107,21 @@ public class RetrofitCalls {
                 Response<String> resp = call.execute();
                 token = resp.body();
             } catch (IOException e){
-                e.printStackTrace();
+                Log.i("",e.getMessage());
             }
             return token;
         }
     }
 
     public String postUser(Users user){
-        postUserHttpRequestTesk postUserTask = new postUserHttpRequestTesk();
+        postUserHttpRequestTask postUserTask = new postUserHttpRequestTask();
         postUserTask.execute(user);
         try{
             postUserTask.get();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         }
         return token;
     }
@@ -136,7 +136,7 @@ public class RetrofitCalls {
                 Response<String> resp = call.execute();
                 token = resp.body();
             } catch (IOException e){
-                e.printStackTrace();
+                Log.i("",e.getMessage());
             }
             return token;
         }
@@ -148,9 +148,9 @@ public class RetrofitCalls {
         try{
             editUserTask.get();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         }
         return this.token;
     }
@@ -165,7 +165,7 @@ public class RetrofitCalls {
                 Response<List<Users>> resp = call.execute();
                 usersList.addAll(resp.body());
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.i("",e.getMessage());
             }
             return usersList;
         }
@@ -179,9 +179,9 @@ public class RetrofitCalls {
         try {
             getUserByEmail.get();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         }
         return usersList;
     }
@@ -198,7 +198,7 @@ public class RetrofitCalls {
                 token = resp.body();
             }
             catch(IOException e){
-                e.printStackTrace();
+                Log.i("",e.getMessage());
             }
             return token;
         }
@@ -211,9 +211,9 @@ public class RetrofitCalls {
         try {
             token = loginUser.get();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         }
         return token;
     }
@@ -230,7 +230,7 @@ public class RetrofitCalls {
                 token = resp.body();
             }
             catch(IOException e){
-                e.printStackTrace();
+                Log.i("",e.getMessage());
             }
             return token;
         }
@@ -242,9 +242,9 @@ public class RetrofitCalls {
         try {
             token = deleteUser.get();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         }
         return token;
     }
@@ -259,7 +259,7 @@ public class RetrofitCalls {
                 Response<Users> resp = call.execute();
                 user = resp.body();
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.i("",e.getMessage());
             }
             return user;
         }
@@ -274,9 +274,9 @@ public class RetrofitCalls {
         try {
             userById.get();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         }
         return user;
     }
@@ -295,7 +295,7 @@ public class RetrofitCalls {
             }
             catch (IOException e)
             {
-                e.printStackTrace();
+                Log.i("",e.getMessage());
             }
             return searchesList;
         }
@@ -310,9 +310,9 @@ public class RetrofitCalls {
         try {
             getCities.get();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         }
         return searchesList;
     }
@@ -331,7 +331,7 @@ public class RetrofitCalls {
                 Response<List<Reviews>> resp = call.execute();
                 reviewsList.addAll(resp.body());
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.i("",e.getMessage());
             }
             return reviewsList;
 
@@ -346,9 +346,9 @@ public class RetrofitCalls {
         try {
             allReviews.get();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         }
         return reviewsList;
     }
@@ -366,7 +366,7 @@ public class RetrofitCalls {
                 Response<List<Reviews>> resp = call.execute();
                 reviewsList.addAll(resp.body());
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.i("",e.getMessage());
             }
             return reviewsList;
         }
@@ -383,9 +383,9 @@ public class RetrofitCalls {
         try {
             reviewsByResidenceId.get();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         }
         return reviewsList;
     }
@@ -404,7 +404,7 @@ public class RetrofitCalls {
                 reviewsList.addAll(resp.body());
             }
             catch (IOException e){
-                e.printStackTrace();
+                Log.i("",e.getMessage());
             }
             return reviewsList;
         }
@@ -417,9 +417,9 @@ public class RetrofitCalls {
         try {
             reviewsByTenant.get();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         }
         return reviewsList;
     }
@@ -436,7 +436,7 @@ public class RetrofitCalls {
                 Response<String> resp = call.execute();
                 token = resp.body();
             } catch (IOException e){
-                e.printStackTrace();
+                Log.i("",e.getMessage());
             }
             return token;
         }
@@ -449,9 +449,9 @@ public class RetrofitCalls {
         try {
             postReviewTask.get();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         }
         return this.token;
     }
@@ -469,7 +469,7 @@ public class RetrofitCalls {
                 residencesList.addAll(resp.body());
             }
             catch (IOException e){
-                e.printStackTrace();
+                Log.i("",e.getMessage());
             }
             return residencesList;
         }
@@ -481,9 +481,9 @@ public class RetrofitCalls {
         try {
             residencesByHost.get();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         }
         return residencesList;
     }
@@ -500,7 +500,7 @@ public class RetrofitCalls {
                 residencesList.addAll(resp.body());
             }
             catch (IOException e){
-                e.printStackTrace();
+                Log.i("",e.getMessage());
             }
             return residencesList;
         }
@@ -512,9 +512,9 @@ public class RetrofitCalls {
         try {
             residencesByCity.get();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         }
         return residencesList;
     }
@@ -532,7 +532,7 @@ public class RetrofitCalls {
                  residence = resp.body();
              }
              catch (IOException e) {
-                 e.printStackTrace();
+                 Log.i("",e.getMessage());
              }
              return residence;
          }
@@ -544,9 +544,9 @@ public class RetrofitCalls {
          try {
              residenceById.get();
          } catch (InterruptedException e) {
-             e.printStackTrace();
+             Log.i("",e.getMessage());
          } catch (ExecutionException e) {
-             e.printStackTrace();
+             Log.i("",e.getMessage());
          }
          return residence;
      }
@@ -565,7 +565,6 @@ public class RetrofitCalls {
              }
              catch(IOException e){
                  Log.i("",e.getMessage());
-                 e.printStackTrace();
              }
              return token;
          }

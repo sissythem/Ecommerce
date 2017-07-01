@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -16,7 +17,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -106,16 +106,25 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //gets user input in string format
-                final String firstName          = firstname.getText().toString();
-                final String lastName           = lastname.getText().toString();
-                final String BirthDate          = birthdate.getText().toString();
-                final String phoneNumber        = phonenumber.getText().toString();
-                final String Email              = email.getText().toString();
-                final String Username           = username.getText().toString();
-                final String Password           = password.getText().toString();
-                final String ConfirmPassword    = confirmpassword.getText().toString();
-                boolean userIsNew;
-                boolean emailIsNew;
+                Log.w("","Hardcoding a registration user");
+                final String firstName          = "test_firstname";
+                final String lastName           = "test_lastname";
+                final String BirthDate          = "3-7-2017";
+                final String phoneNumber        = "123123123";
+                final String Email              = "email@domain.com";
+                final String Username           = "usernametest";
+                final String Password           = "password";
+                final String ConfirmPassword    = "password";
+
+//                final String firstName          = firstname.getText().toString();
+//                final String lastName           = lastname.getText().toString();
+//                final String BirthDate          = birthdate.getText().toString();
+//                final String phoneNumber        = phonenumber.getText().toString();
+//                final String Email              = email.getText().toString();
+//                final String Username           = username.getText().toString();
+//                final String Password           = password.getText().toString();
+//                final String ConfirmPassword    = confirmpassword.getText().toString();
+
 
                 //check if user has filled all fields of the registration form
                 if(Username.length() == 0 || firstName.length() == 0 || lastName.length() == 0 || phoneNumber.length() == 0 || Email.length() == 0 || Password.length() == 0
@@ -132,42 +141,44 @@ public class RegisterActivity extends AppCompatActivity {
                     return;
                 }
 
-                Date bdate = Utils.ConvertStringToDate(BirthDate,Utils.DATABASE_DATE_FORMAT);
+                Date bdate = Utils.ConvertStringToDate(BirthDate,Utils.APP_DATE_FORMAT);
 
-                userIsNew = checkUsername(Username);
-                emailIsNew = checkEmail(Email);
-                //if username and email are new the application sends the data with sendPOST method to be stored in the database
-                if(userIsNew && emailIsNew) {
-                    token = PostResult(firstName, lastName, Username, Password, Email, phoneNumber, bdate);
-                    if (!token.isEmpty() || token!=null || token!="not") {
-                        //if data are stored successfully in the data base, the user is now logged in and the home activity starts
-                        sessionData = new Session(token, Username, true);
-                        updateSessionData(RegisterActivity.this, sessionData);
-                        //user can continue to the Home Screen
-                        Intent homeintent = new Intent(RegisterActivity.this, HomeActivity.class);
-                        try {
-                            Bundle btoken = new Bundle();
-                            homeintent.putExtras(btoken);
-                            RegisterActivity.this.startActivity(homeintent);
-                            finish();
-                        } catch (Exception ex) {
-                            System.out.println(ex.getMessage());
-                            ex.printStackTrace();
-                        }
-                    } else {
-                        Toast.makeText(c, "Registration failed, please try again!", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                } else if (!userIsNew) {
+
+
+                token = PostResult(firstName, lastName, Username, Password, Email, phoneNumber, bdate);
+                if(token.equals("username exists")){
                     Toast.makeText(c, "Username already exists, please try again!", Toast.LENGTH_SHORT).show();
                     return;
-                } else if (!emailIsNew) {
+                }
+                if(token.equals("email exists")){
                     Toast.makeText(c, "Email already exists, please try again!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if ( token!=null && !token.isEmpty() &&  (!token.equals("error"))) {
+                    //if data are stored successfully in the data base, the user is now logged in and the home activity starts
+                    sessionData = new Session(token, Username, true);
+                    updateSessionData(RegisterActivity.this, sessionData);
+                    //user can continue to the Home Screen
+                    Intent homeintent = new Intent(RegisterActivity.this, HomeActivity.class);
+                    try {
+                        Bundle btoken = new Bundle();
+                        homeintent.putExtras(btoken);
+                        RegisterActivity.this.startActivity(homeintent);
+                        finish();
+                    } catch (Exception ex) {
+                        System.out.println(ex.getMessage());
+                        ex.printStackTrace();
+                }
+                } else
+                {
+                    Toast.makeText(c, "Registration failed, please try again!", Toast.LENGTH_SHORT).show();
                     return;
                 }
             }
         });
     }
+
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -183,24 +194,6 @@ public class RegisterActivity extends AppCompatActivity {
         RetrofitCalls retrofitCalls = new RetrofitCalls();
         token = retrofitCalls.postUser(UserParameters);
         return token;
-    }
-
-    public boolean checkUsername (String Username) {
-        boolean userIsNew = false;
-
-        RetrofitCalls retrofitCalls = new RetrofitCalls();
-        ArrayList<Users> checkForUser = retrofitCalls.getUserbyUsername(token, Username);
-        if(checkForUser.size() == 0) userIsNew = true;
-        return userIsNew;
-    }
-
-    public boolean checkEmail (String Email){
-        boolean emailIsNew=false;
-        RetrofitCalls retrofitCalls = new RetrofitCalls();
-        ArrayList<Users> checkForUser = retrofitCalls.getUserbyEmail(token, Email);
-
-        if(checkForUser.size() == 0) emailIsNew = true;
-        return  emailIsNew;
     }
 
     @Override

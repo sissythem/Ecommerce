@@ -79,11 +79,11 @@ public class RestCallManager extends AsyncTask<RestCallParameters, Integer, Arra
         try {
             ResponsesToGet = this.get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Log.e("",e.getMessage());
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            Log.e("",e.getMessage());
         } catch (TimeoutException e) {
-            e.printStackTrace();
+            Log.e("",e.getMessage());
         }
 
         ArrayList<JSONObject> jsonResult = new ArrayList<>();
@@ -118,11 +118,11 @@ public class RestCallManager extends AsyncTask<RestCallParameters, Integer, Arra
         try {
             Response = this.get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Log.e("",e.getMessage());
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            Log.e("",e.getMessage());
         } catch (TimeoutException e) {
-            e.printStackTrace();
+            Log.e("",e.getMessage());
         }
         Log.i(TAG, String.format("Getting raw response of size %d", Response.size()));
 
@@ -135,11 +135,11 @@ public class RestCallManager extends AsyncTask<RestCallParameters, Integer, Arra
         try {
             Response = this.get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Log.e("",e.getMessage());
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            Log.e("",e.getMessage());
         } catch (TimeoutException e) {
-            e.printStackTrace();
+            Log.e("",e.getMessage());
         }
 
         Bitmap bm = BitmapFactory.decodeStream((InputStream) Response.get(0));
@@ -327,7 +327,7 @@ public class RestCallManager extends AsyncTask<RestCallParameters, Integer, Arra
             return "ERROR";
         }
         catch (Exception e) {
-            e.printStackTrace();
+            Log.e("",e.getMessage());
             return "ERROR";
         }
         finally {

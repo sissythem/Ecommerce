@@ -117,9 +117,27 @@ public class UsersFacadeREST extends AbstractFacade<Users> {
     @Consumes({MediaType.APPLICATION_JSON})
     public String createUser(Users entity) 
     {
-        super.create(entity);
-        String token = KeyHolder.issueToken(entity.getUsername());
-        return token;
+        List<Users> UsernameList = new ArrayList<>();
+        List<Users> EmailList = new ArrayList<>();
+        Query query = em.createNamedQuery("Users.findByUsername");
+        query.setParameter("username", entity.getUsername());
+        UsernameList = query.getResultList();
+        
+        Query query2 = em.createNamedQuery("Users.findByEmail");
+        query2.setParameter("email", entity.getEmail());
+        EmailList = query2.getResultList();
+        if(UsernameList.size()!=0)
+            return "username exists";
+        if(EmailList.size()!=0)
+            return "email exists";
+        if(UsernameList.size()==0 && EmailList.size()==0)
+        {
+            super.create(entity);
+            String token = KeyHolder.issueToken(entity.getUsername());
+            return token;
+        }
+        else 
+            return "error";
     }
     
     @GET

@@ -1,6 +1,7 @@
 package util;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +28,7 @@ public class ListAdapterProfile extends ArrayAdapter<String> {
             tvuserinput.setText(userdetails[position]);
         }
         catch (Exception e){
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         }
         return rowView;
     }

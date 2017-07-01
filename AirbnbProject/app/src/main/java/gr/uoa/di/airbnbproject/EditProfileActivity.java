@@ -184,7 +184,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
         if(emailIsNew) {
             token = PutResult(name, lastName, Username, password, Email, phoneNumber, country, city, photo, about, bdate);
-            if (!token.isEmpty() && token!=null && token!="not") {
+            if (!token.isEmpty() || token!=null || token!="not") {
                 sessionData.setToken(token);
                 sessionData.setUsername(username);
                 sessionData.setUserLoggedInState(true);

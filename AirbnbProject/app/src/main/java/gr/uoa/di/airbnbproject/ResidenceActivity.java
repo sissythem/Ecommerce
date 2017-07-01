@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -163,7 +164,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
                 }
                 catch (Exception e){
                     System.out.println(e.getMessage());
-                    e.printStackTrace();
+                    Log.e("",e.getMessage());
                 }
             }
         });
@@ -196,7 +197,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
                     startActivity(messageIntent);
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
-                    e.printStackTrace();
+                    Log.e("",e.getMessage());
                 }
             }
         });
@@ -214,7 +215,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
                     startActivity(reviewsIntent);
                 }
                 catch (Exception e) {
-                    e.printStackTrace();
+                    Log.e("",e.getMessage());
                 }
             }
         });
@@ -414,7 +415,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
             numberOfGuestsGiven = Integer.parseInt(guests);
         }
         catch (Exception e) {
-            e.printStackTrace();
+            Log.e("",e.getMessage());
             caldroidFragment.clearDisableDates();
             caldroidFragment.setDisableDates(reservedDates);
             return;

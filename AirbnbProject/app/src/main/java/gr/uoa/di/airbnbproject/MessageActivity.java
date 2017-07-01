@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -203,7 +204,7 @@ public class MessageActivity extends AppCompatActivity {
             Response<String> resp = call.execute();
             token = resp.body();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         }
 
         boolean success = false;
@@ -225,7 +226,7 @@ public class MessageActivity extends AppCompatActivity {
             Response<String> resp = call.execute();
             token = resp.body();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         }
 
         boolean success = false;

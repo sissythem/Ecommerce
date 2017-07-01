@@ -5,12 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
@@ -32,6 +30,7 @@ public class Utils
     public static String USER_LOGIN_PREFERENCES = "login_preferences";
 
     public static final String APP_DATE_FORMAT = "dd-MM-yyyy";
+    public static final String DATABASE_DATETIME_FORMAT = "dd-MM-yyyy'T'HH:mm:ss";
     public static final String DATABASE_DATE_FORMAT = "yyyy-MM-dd";
 
     public static final String DATE_YEAR_FIRST = "yyyy-MM-dd";
@@ -43,10 +42,10 @@ public class Utils
             DateFormat df = new SimpleDateFormat(format);
             convertedDate = df.parse(date);
         } catch (ParseException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         }
         catch (Exception e){
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         }
         return convertedDate;
     }
@@ -57,20 +56,22 @@ public class Utils
             DateFormat dateFormat = new SimpleDateFormat(format);
             stringDate = dateFormat.format(date);
         } catch (Exception e){
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         }
         return stringDate;
     }
-    public static boolean isFieldOK(JSONObject jsonObject, String name){
 
-        if(!jsonObject.has(name)) return false;
-        try {
-            if(null == jsonObject.get(name)) return false;
 
-        } catch (JSONException e) {
-            return false;
+    public static String ConvertDateFormats (String date, String formatsrc, String formatdest){
+        try{
+            DateFormat dateFormat = new SimpleDateFormat(formatsrc);
+            Date ddate  = dateFormat.parse(date);
+            DateFormat dateFormatdest =  new SimpleDateFormat(formatdest);
+            return dateFormatdest.format(ddate);
+        } catch (Exception e){
+            Log.i("",e.getMessage());
         }
-        return true;
+        return "DATE_ERROR";
     }
 
     public static boolean isThisDateValid(String dateToValidate, String dateFormat){
@@ -86,7 +87,7 @@ public class Utils
             Date date = sdf.parse(dateToValidate);
             System.out.println(date);
         } catch (ParseException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
             return false;
         }
         return true;
@@ -117,8 +118,7 @@ public class Utils
 
     public static void manageFooter(Activity context, Boolean user) {
         final Activity this_context = context;
-        //final Boolean this_user = user;
-        final Boolean this_user = true;
+        final Boolean this_user = user;
 
         SharedPreferences sharedPrefs = context.getApplicationContext().getSharedPreferences(USER_LOGIN_PREFERENCES, Context.MODE_PRIVATE);
 
@@ -272,8 +272,6 @@ public class Utils
         return sessionData;
     }
 
-    public static void manageSharedPreferences() {}
-
     public static String encodeParameterizedURL(ArrayList<String> paramNames, ArrayList<String> paramValues) {
         if(paramNames.size() != paramValues.size()) {
             System.err.printf("Unequal number of params + values : %d vs %d \n",paramNames.size(), paramValues.size());
@@ -289,7 +287,7 @@ public class Utils
                 result += java.net.URLEncoder.encode(paramValues.get(i), "UTF-8");
             } catch (UnsupportedEncodingException e) {
                 System.err.println("Failed to encode URL parameter [" + paramValues.get(i) + "]");
-                e.printStackTrace();
+                Log.i("",e.getMessage());
                 return "";
             }
         }
@@ -298,7 +296,7 @@ public class Utils
 
     public static void checkToken(String token, Activity context)
     {
-        if(token== "not" || token == null || token.isEmpty())
+        if(token == null || token.equals("not")  || token.isEmpty())
         {
             Toast.makeText(context, "Session is expired", Toast.LENGTH_SHORT).show();
             Utils.logout(context);
@@ -308,7 +306,7 @@ public class Utils
         {
             RetrofitCalls retrofitCalls = new RetrofitCalls();
             token = retrofitCalls.checkToken(token);
-            if(token =="not" || token == null || token.isEmpty())
+            if(token == null || token.equals("not") ||  token.isEmpty())
             {
                 Toast.makeText(context, "Session is expired", Toast.LENGTH_SHORT).show();
                 Utils.logout(context);

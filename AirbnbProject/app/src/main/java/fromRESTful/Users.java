@@ -52,6 +52,7 @@ public class Users implements Serializable {
         this.country="";
         this.city="";
         this.about="";
+        this.registrationDate= new Date();
     }
 
     public Users(Integer id) {
