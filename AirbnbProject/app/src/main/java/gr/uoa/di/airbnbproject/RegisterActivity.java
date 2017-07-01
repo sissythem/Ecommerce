@@ -28,31 +28,26 @@ import retrofit2.Response;
 import util.RestAPI;
 import util.RestClient;
 import util.RetrofitCalls;
+import util.Session;
 import util.Utils;
 
-/**
- * Created by sissy on 30/4/2017.
- */
+import static util.Utils.USER_LOGIN_PREFERENCES;
+import static util.Utils.updateSessionData;
 
 public class RegisterActivity extends AppCompatActivity {
 
     private static final int RESULT_LOAD_IMAGE =1;
     String token;
-    public String getToken() {
+    /*public String getToken() {
         return token;
-    }
+    }*/
 
-    private static final String USER_LOGIN_PREFERENCES = "login_preferences";
-    SharedPreferences sharedPrefs;
-    SharedPreferences.Editor editor;
-    private boolean isUserLoggedIn;
     Context c;
-
     boolean success;
 
     ImageView imageToUpload;
-    EditText uploadImageName;
     private int mYear, mMonth, mDay;
+    Session sessionData;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,20 +56,18 @@ public class RegisterActivity extends AppCompatActivity {
         // Set View to activity_register.xml
         setContentView(R.layout.activity_register);
 
-        sharedPrefs = getApplicationContext().getSharedPreferences(USER_LOGIN_PREFERENCES, Context.MODE_PRIVATE);
-
         //Create variables for storing user input
-        final EditText firstname = (EditText) findViewById(R.id.firstname);
-        final EditText lastname = (EditText) findViewById(R.id.lastname);
-        final TextView birthdate = (TextView)findViewById(R.id.tvBirthDate);
-        final ImageButton btnBirthDate = (ImageButton)findViewById(R.id.btnBirthDate);
-        final EditText phonenumber = (EditText) findViewById(R.id.phonenumber);
-        final EditText email = (EditText) findViewById(R.id.email);
-        final EditText username = (EditText) findViewById(R.id.username);
-        final EditText password = (EditText) findViewById(R.id.password);
-        final EditText confirmpassword = (EditText) findViewById(R.id.confirmpassword);
-        final Button bregister = (Button) findViewById(R.id.register);
-        final TextView loginlink = (TextView) findViewById(R.id.loginlink);
+        final EditText firstname        = (EditText) findViewById(R.id.firstname);
+        final EditText lastname         = (EditText) findViewById(R.id.lastname);
+        final TextView birthdate        = (TextView)findViewById(R.id.tvBirthDate);
+        final ImageButton btnBirthDate  = (ImageButton)findViewById(R.id.btnBirthDate);
+        final EditText phonenumber      = (EditText) findViewById(R.id.phonenumber);
+        final EditText email            = (EditText) findViewById(R.id.email);
+        final EditText username         = (EditText) findViewById(R.id.username);
+        final EditText password         = (EditText) findViewById(R.id.password);
+        final EditText confirmpassword  = (EditText) findViewById(R.id.confirmpassword);
+        final Button bregister          = (Button) findViewById(R.id.register);
+        final TextView loginlink        = (TextView) findViewById(R.id.loginlink);
 
         //link the text view loginlink to the LoginActivity in case user has already an account
         loginlink.setOnClickListener(new View.OnClickListener() {
@@ -86,7 +79,6 @@ public class RegisterActivity extends AppCompatActivity {
         });
 
         imageToUpload = (ImageView)findViewById(R.id.imageToUpload);
-
         imageToUpload.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -121,29 +113,27 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //gets user input in string format
-                final String firstName = firstname.getText().toString();
-                final String lastName = lastname.getText().toString();
-                final String BirthDate = birthdate.getText().toString();
-                final String phoneNumber = phonenumber.getText().toString();
-                final String Email = email.getText().toString();
-                final String Username = username.getText().toString();
-                final String Password = password.getText().toString();
-                final String ConfirmPassword = confirmpassword.getText().toString();
+                final String firstName          = firstname.getText().toString();
+                final String lastName           = lastname.getText().toString();
+                final String BirthDate          = birthdate.getText().toString();
+                final String phoneNumber        = phonenumber.getText().toString();
+                final String Email              = email.getText().toString();
+                final String Username           = username.getText().toString();
+                final String Password           = password.getText().toString();
+                final String ConfirmPassword    = confirmpassword.getText().toString();
                 boolean userIsNew;
                 boolean emailIsNew;
 
                 //check if user has filled all fields of the registration form
                 if(Username.length() == 0 || firstName.length() == 0 || lastName.length() == 0 || phoneNumber.length() == 0 || Email.length() == 0 || Password.length() == 0
-                        || ConfirmPassword.length() == 0 || BirthDate.length() == 0)
-                {
+                        || ConfirmPassword.length() == 0 || BirthDate.length() == 0) {
                     //if something is not filled in, user must fill again the form
                     Toast.makeText(c, "Please fill in all fields!", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 //check if password and confirmation of password are equal
-                if(!Password.equals(ConfirmPassword))
-                {
+                if(!Password.equals(ConfirmPassword)) {
                     //if there is a mismatch a message appears and user must fill in again the fields
                     Toast.makeText(c, "Passwords do not match, please try again!", Toast.LENGTH_SHORT).show();
                     return;
@@ -158,17 +148,12 @@ public class RegisterActivity extends AppCompatActivity {
                     token = PostResult(firstName, lastName, Username, Password, Email, phoneNumber, bdate);
                     if (success) {
                         //if data are stored successfully in the data base, the user is now logged in and the home activity starts
-                        isUserLoggedIn = sharedPrefs.getBoolean("userLoggedInState", false);
-                        editor = sharedPrefs.edit();
-                        editor.putBoolean("userLoggedInState", true);
-                        editor.putString("currentLoggedInUser", Username);
-                        editor.commit();
-
+                        sessionData = new Session(token, Username, true);
+                        updateSessionData(RegisterActivity.this, sessionData);
                         //user can continue to the Home Screen
                         Intent homeintent = new Intent(RegisterActivity.this, HomeActivity.class);
                         try {
                             Bundle btoken = new Bundle();
-                            btoken.putString("token", token);
                             homeintent.putExtras(btoken);
                             RegisterActivity.this.startActivity(homeintent);
                             finish();
@@ -176,41 +161,31 @@ public class RegisterActivity extends AppCompatActivity {
                             System.out.println(ex.getMessage());
                             ex.printStackTrace();
                         }
-
                     } else {
                         Toast.makeText(c, "Registration failed, please try again!", Toast.LENGTH_SHORT).show();
                         return;
                     }
-                }
-                else if (!userIsNew)
-                {
+                } else if (!userIsNew) {
                     Toast.makeText(c, "Username already exists, please try again!", Toast.LENGTH_SHORT).show();
                     return;
-                }
-                else if (!emailIsNew)
-                {
+                } else if (!emailIsNew) {
                     Toast.makeText(c, "Email already exists, please try again!", Toast.LENGTH_SHORT).show();
                     return;
                 }
             }
         });
-
-
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == RESULT_LOAD_IMAGE && requestCode == RESULT_OK && data != null)
-        {
+        if(requestCode == RESULT_LOAD_IMAGE && requestCode == RESULT_OK && data != null) {
             Uri selectedImage = data.getData();
             imageToUpload.setImageURI(selectedImage);
         }
     }
 
-    public String PostResult(String firstName, String lastName, String username, String password, String email, String phoneNumber, Date bdate)
-    {
+    public String PostResult(String firstName, String lastName, String username, String password, String email, String phoneNumber, Date bdate) {
         Users UserParameters = new Users(firstName, lastName, phoneNumber, email, username, password, bdate);
         RestAPI restAPI = RestClient.getStringClient().create(RestAPI.class);
         Call<String> call = restAPI.postUser(UserParameters);
@@ -220,19 +195,16 @@ public class RegisterActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return token;
     }
 
-    public boolean checkUsername (String Username)
-    {
+    public boolean checkUsername (String Username) {
         boolean userIsNew = false;
 
         RetrofitCalls retrofitCalls = new RetrofitCalls();
         ArrayList<Users> checkForUser = retrofitCalls.getUserbyUsername(token, Username);
         if(checkForUser.size() == 0) userIsNew = true;
         return userIsNew;
-
     }
 
     public boolean checkEmail (String Email){
@@ -245,17 +217,14 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed()
-    {
-        isUserLoggedIn = sharedPrefs.getBoolean("userLoggedInState", false);
-        if (isUserLoggedIn) {
+    public void onBackPressed() {
+        if (sessionData.getUserLoggedInState()) {
             Intent intent = new Intent(this, HomeActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
             super.onBackPressed();
             return;
-        }
-        else{
+        } else {
             Intent greetingIntent = new Intent(this, GreetingActivity.class);
             startActivity(greetingIntent);
             super.onBackPressed();

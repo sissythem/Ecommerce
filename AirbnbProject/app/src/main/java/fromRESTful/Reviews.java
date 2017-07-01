@@ -134,7 +134,7 @@ public class Reviews implements Serializable {
 
     @Override
     public String toString() {
-        return "dbpackage.Reviews[ id=" + id + " ]";
+        return "domain.Reviews[ id=" + id + " ]";
     }
 
 }

@@ -3,7 +3,6 @@ package gr.uoa.di.airbnbproject;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -27,17 +26,13 @@ import retrofit2.Response;
 import util.RestAPI;
 import util.RestClient;
 import util.RetrofitCalls;
+import util.Session;
 import util.Utils;
 
 import static util.Utils.DATABASE_DATE_FORMAT;
+import static util.Utils.updateSessionData;
 
 public class EditProfileActivity extends AppCompatActivity {
-
-    private static final String USER_LOGIN_PREFERENCES = "login_preferences";
-    SharedPreferences sharedPrefs;
-    SharedPreferences.Editor editor;
-    private boolean isUserLoggedIn;
-
     Context c;
 
     Boolean user;
@@ -53,20 +48,27 @@ public class EditProfileActivity extends AppCompatActivity {
     int userId;
     private int mYear, mMonth, mDay;
 
+    Session sessionData;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        sharedPrefs = getApplicationContext().getSharedPreferences(USER_LOGIN_PREFERENCES, Context.MODE_PRIVATE);
-        isUserLoggedIn = sharedPrefs.getBoolean("userLoggedInState", false);
-        username = sharedPrefs.getString("currentLoggedInUser", "");
 
-        if (!isUserLoggedIn) {
+        Session sessionData = Utils.getSessionData(EditProfileActivity.this);
+        if (!sessionData.getUserLoggedInState()) {
             Intent intent = new Intent(this, GreetingActivity.class);
             startActivity(intent);
+            finish();
             return;
         }
-        setContentView(R.layout.activity_edit_profile);
 
+        if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
+            finish();
+            return;
+        }
+        token = sessionData.getToken();
+        username = sessionData.getUsername();
+        setContentView(R.layout.activity_edit_profile);
         c = this;
 
         Toolbar footerToolbar = (Toolbar) findViewById(R.id.footerToolbar);
@@ -74,9 +76,6 @@ public class EditProfileActivity extends AppCompatActivity {
 
         Bundle buser = getIntent().getExtras();
         user = buser.getBoolean("type");
-        token = buser.getString("token");
-
-        bsave = (Button)findViewById(R.id.post);
 
         retrofitCalls = new RetrofitCalls();
         ArrayList<Users> getUsersByUsername = retrofitCalls.getUserbyUsername(token, username);
@@ -99,7 +98,6 @@ public class EditProfileActivity extends AppCompatActivity {
         etLastName.setText(loggedinUser.getLastName());
         etPhoneNumber.setText(loggedinUser.getPhoneNumber());
         etEmail.setText(loggedinUser.getEmail());
-        email= etEmail.getText().toString();
         etUsername.setText(loggedinUser.getUsername());
         etPassword.setText(loggedinUser.getPassword());
         etCountry.setText(loggedinUser.getCountry());
@@ -136,15 +134,14 @@ public class EditProfileActivity extends AppCompatActivity {
             }
         });
 
+        bsave = (Button)findViewById(R.id.post);
         bsave.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                saveUserProfile();
-            }
+            public void onClick(View v) { saveUserProfile(); }
         });
 
         /** BACK BUTTON **/
-        Utils.manageBackButton(EditProfileActivity.this, ProfileActivity.class, user, token);
+        Utils.manageBackButton(EditProfileActivity.this, ProfileActivity.class, user);
     }
 
     public boolean checkEmail (String Email){
@@ -156,8 +153,7 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     public String PutResult(String firstName, String lastName, String username, String password, String email, String phoneNumber, String country, String city,
-                             String photo, String about, Date birthDate)
-    {
+                             String photo, String about, Date birthDate) {
         Users UserParameters = new Users(firstName, lastName, username, password, email, phoneNumber, country, city, photo, about, birthDate);
 
         RestAPI restAPI = RestClient.getClient(token).create(RestAPI.class);
@@ -172,8 +168,7 @@ public class EditProfileActivity extends AppCompatActivity {
         return token;
     }
 
-    public void saveUserProfile ()
-    {
+    public void saveUserProfile () {
         final String name = etName.getText().toString();
         final String lastName = etLastName.getText().toString();
         final String phoneNumber = etPhoneNumber.getText().toString();
@@ -190,12 +185,12 @@ public class EditProfileActivity extends AppCompatActivity {
 
         boolean emailIsNew;
 
-        if(Username.length() == 0 || name.length() == 0 || lastName.length() == 0 || phoneNumber.length() == 0 || Email.length() == 0 || password.length() == 0)
-        {
+        if(Username.length() == 0 || name.length() == 0 || lastName.length() == 0 || phoneNumber.length() == 0 || Email.length() == 0 || password.length() == 0) {
             //if something is not filled in, user must fill again the form
             Toast.makeText(c, "Please fill in obligatory fields!", Toast.LENGTH_SHORT).show();
             return;
         }
+
         if(!username.equals(Username)){
             Toast.makeText(c, "You cannot change your username", Toast.LENGTH_SHORT).show();
             return;
@@ -205,16 +200,15 @@ public class EditProfileActivity extends AppCompatActivity {
             emailIsNew=true;
         }
 
-        if(emailIsNew)
-        {
+        if(emailIsNew) {
             token = PutResult(name, lastName, Username, password, Email, phoneNumber, country, city, photo, about, bdate);
             if (!token.isEmpty()) {
+                sessionData.setToken(token);
+                sessionData.setUsername(username);
+                sessionData.setUserLoggedInState(true);
+                System.out.println(sessionData);
                 //if data are stored successfully in the data base, the user is now logged in and the home activity starts
-                isUserLoggedIn = sharedPrefs.getBoolean("userLoggedInState", false);
-                editor = sharedPrefs.edit();
-                editor.putBoolean("userLoggedInState", true);
-                editor.putString("currentLoggedInUser", username);
-                editor.commit();
+                sessionData = updateSessionData(EditProfileActivity.this, sessionData);
 
                 //user can continue to the Home Screen
                 Intent profileintent = new Intent(EditProfileActivity.this, ProfileActivity.class);
@@ -228,15 +222,12 @@ public class EditProfileActivity extends AppCompatActivity {
                     System.out.println(ex.getMessage());
                     ex.printStackTrace();
                 }
-
             } else {
                 Toast.makeText(c, "Your session has finished, please log in again!", Toast.LENGTH_SHORT).show();
                 Utils.logout(this);
                 finish();
             }
-        }
-        else
-        {
+        } else {
             Toast.makeText(c, "Email already exists, please try again!", Toast.LENGTH_SHORT).show();
             return;
         }

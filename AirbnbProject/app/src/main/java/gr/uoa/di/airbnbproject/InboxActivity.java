@@ -1,6 +1,5 @@
 package gr.uoa.di.airbnbproject;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -12,17 +11,15 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 import fromRESTful.Conversations;
+import fromRESTful.Users;
 import util.ListAdapterInbox;
-import util.RestCalls;
+import util.RetrofitCalls;
+import util.Session;
 import util.Utils;
+import static util.Utils.getSessionData;
 
 public class InboxActivity extends AppCompatActivity {
-    String username, token;
-
-    private static final String USER_LOGIN_PREFERENCES = "login_preferences";
-    SharedPreferences sharedPrefs;
-    SharedPreferences.Editor editor;
-    private boolean isUserLoggedIn;
+    String token;
 
     ListView inboxlist;
     ListAdapterInbox inboxadapter;
@@ -41,20 +38,27 @@ public class InboxActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inbox);
 
-        sharedPrefs = getApplicationContext().getSharedPreferences(USER_LOGIN_PREFERENCES, Context.MODE_PRIVATE);
-        isUserLoggedIn = sharedPrefs.getBoolean("userLoggedInState", false);
-        username = sharedPrefs.getString("currentLoggedInUser", "");
-
-        if (!isUserLoggedIn) {
+        Session sessionData = getSessionData(InboxActivity.this);
+        if (!sessionData.getUserLoggedInState()) {
             Intent intent = new Intent(this, GreetingActivity.class);
             startActivity(intent);
+            finish();
             return;
         }
 
+        if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
+            finish();
+            return;
+        }
+        token = sessionData.getToken();
+
         Bundle buser = getIntent().getExtras();
         user = buser.getBoolean("type");
-        token = buser.getString("token", token);
-        currentUserId = RestCalls.getUserId(username);
+        //token = buser.getString("token", token);
+
+        RetrofitCalls retrofitCalls = new RetrofitCalls();
+        ArrayList<Users> getUsersByUsername = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
+        currentUserId = getUsersByUsername.get(0).getId();
 
         loadConversations();
         setAdapter();
@@ -64,7 +68,8 @@ public class InboxActivity extends AppCompatActivity {
 
                 /** TODO: ANDROID CANT UNDERSTAND UPDATES?? **/
                 if (isRead[position] != 1) {
-                    Conversations updatedConversation = RestCalls.updateConversation(1, userType, conversationId[position]);
+                    RetrofitCalls retrofitCalls = new RetrofitCalls();
+                    Conversations updatedConversation = retrofitCalls.updateConversation(token, "1", userType, Integer.toString(conversationId[position])).get(0);
 //                    if (userType == USER_SENDER) {
 //                        isRead[position] = updatedConversation.getReadFromSender();
 //                    } else if (userType == USER_RECEIVER){
@@ -79,7 +84,6 @@ public class InboxActivity extends AppCompatActivity {
                 Intent showMessageIntent = new Intent(InboxActivity.this, MessageActivity.class);
                 Bundle btype = new Bundle();
                 btype.putBoolean("user", user);
-                btype.putString("token", token);
                 btype.putInt("conversationId", conversationId[position]);
                 btype.putInt("toUserId", toUserId[position]);
                 btype.putInt("currentUserId", currentUserId);
@@ -95,10 +99,10 @@ public class InboxActivity extends AppCompatActivity {
         });
 
         /** BACK BUTTON **/
-        Utils.manageBackButton(this, (user)?HomeActivity.class:HostActivity.class, user, token);
+        Utils.manageBackButton(this, (user)?HomeActivity.class:HostActivity.class, user);
 
         /** FOOTER TOOLBAR **/
-        Utils.manageFooter(InboxActivity.this, user, token);
+        Utils.manageFooter(InboxActivity.this, user);
     }
 
     protected void setAdapter() {
@@ -108,7 +112,9 @@ public class InboxActivity extends AppCompatActivity {
     }
 
     protected void loadConversations() {
-        ArrayList<Conversations> Conversations = RestCalls.getConversations(currentUserId);
+        RetrofitCalls retrofitCalls = new RetrofitCalls();
+        ArrayList<Conversations> Conversations = retrofitCalls.getConversations(token, currentUserId.toString());
+
         msgname             = new String[Conversations.size()];
         msgsubject          = new String[Conversations.size()];
         conversationId      = new int[Conversations.size()];

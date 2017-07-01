@@ -18,6 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 
 import gr.uoa.di.airbnbproject.GreetingActivity;
 import gr.uoa.di.airbnbproject.HomeActivity;
@@ -28,6 +29,8 @@ import gr.uoa.di.airbnbproject.R;
 
 public class Utils {
     final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
+
+    public static String USER_LOGIN_PREFERENCES = "login_preferences";
 
     public static final String APP_DATE_FORMAT = "dd-MM-yyyy";
     public static final String DATABASE_DATE_FORMAT = "yyyy-MM-dd'T'hh:mm:ss";
@@ -49,6 +52,7 @@ public class Utils {
         }
         return convertedDate;
     }
+
     public static String ConvertDateToString (Date date, String format){
         String stringDate="";
         try{
@@ -110,15 +114,15 @@ public class Utils {
     }
 
     public static Boolean checkLoggedUser() {
-
-
-
         return true;
     }
 
-    public static void manageFooter(Activity context, Boolean user, final String token) {
+    public static void manageFooter(Activity context, Boolean user) {
         final Activity this_context = context;
-        final Boolean this_user = user;
+        //final Boolean this_user = user;
+        final Boolean this_user = true;
+
+        SharedPreferences sharedPrefs = context.getApplicationContext().getSharedPreferences(USER_LOGIN_PREFERENCES, Context.MODE_PRIVATE);
 
         ImageButton bhome = (ImageButton) this_context.findViewById(R.id.home);
         ImageButton binbox = (ImageButton) this_context.findViewById(R.id.inbox);
@@ -128,22 +132,16 @@ public class Utils {
 
         bhome.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 Bundle buser = new Bundle();
-                if(this_user == true)
-                {
+                if(this_user == true) {
                     Intent homeIntent = new Intent(this_context, HomeActivity.class);
                     buser.putBoolean("type", true);
-                    buser.putString("token", token);
                     homeIntent.putExtras(buser);
                     this_context.startActivity(homeIntent);
-                }
-                else
-                {
+                } else {
                     Intent hostIntent = new Intent(this_context, HostActivity.class);
                     buser.putBoolean("type", false);
-                    buser.putString("token", token);
                     hostIntent.putExtras(buser);
                     this_context.startActivity(hostIntent);
                 }
@@ -157,7 +155,6 @@ public class Utils {
                 Intent inboxintent = new Intent(this_context, InboxActivity.class);
                 Bundle buser = new Bundle();
                 buser.putBoolean("type", this_user);
-                buser.putString("token", token);
                 inboxintent.putExtras(buser);
                 try {
                     this_context.startActivity(inboxintent);
@@ -174,7 +171,7 @@ public class Utils {
                 Intent profileintent = new Intent(this_context, ProfileActivity.class);
                 Bundle buser = new Bundle();
                 buser.putBoolean("type", this_user);
-                buser.putString("token", token);
+//                buser.putString("token", token);
                 profileintent.putExtras(buser);
                 try {
                     this_context.startActivity(profileintent);
@@ -185,24 +182,18 @@ public class Utils {
             }
         });
 
-
         bswitch.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 Bundle buser = new Bundle();
-                if(this_user == false)
-                {
+                if(this_user == false) {
                     Intent homeIntent = new Intent(this_context, HomeActivity.class);
                     buser.putBoolean("type", true);
-                    buser.putString("token", token);
                     homeIntent.putExtras(buser);
                     this_context.startActivity(homeIntent);
-                }
-                else{
+                } else {
                     Intent hostIntent = new Intent(this_context, HostActivity.class);
                     buser.putBoolean("type", false);
-                    buser.putString("token", token);
                     hostIntent.putExtras(buser);
                     this_context.startActivity(hostIntent);
                 }
@@ -221,24 +212,24 @@ public class Utils {
 
     /** MANAGE LOGOUT ACTION **/
     public static void logout(Activity context) {
-        String USER_LOGIN_PREFERENCES = "login_preferences";
         SharedPreferences sharedPrefs = context.getApplicationContext().getSharedPreferences(USER_LOGIN_PREFERENCES, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPrefs.edit();
         editor.clear();
         editor.commit();
-
+        context.finish();
         Intent greetingintent = new Intent(context, GreetingActivity.class);
         context.startActivity(greetingintent);
     }
 
-    public static void manageBackButton(Activity context, Class newContext, boolean user, final String token) {
+    public static void manageBackButton(Activity context, Class newContext, boolean user) {
         final Activity this_context = context;
         final Class this_new_context = newContext;
         final boolean this_user = user;
 
+        SharedPreferences sharedPrefs = context.getApplicationContext().getSharedPreferences(USER_LOGIN_PREFERENCES, Context.MODE_PRIVATE);
+
         ImageButton bback = (ImageButton) this_context.findViewById(R.id.ibBack);
-        bback.setOnClickListener(new View.OnClickListener()
-        {
+        bback.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent backintent = new Intent(this_context, this_new_context);
@@ -246,10 +237,8 @@ public class Utils {
                 buser.putBoolean("type", this_user);
                 if (this_new_context.getClass().toString() == HomeActivity.class.toString()) {
                     buser.putBoolean("type", true);
-                    buser.putString("token", token);
                 } else if (this_new_context.toString() == HostActivity.class.toString()) {
                     buser.putBoolean("type", false);
-                    buser.putString("token", token);
                 }
                 backintent.putExtras(buser);
 
@@ -263,20 +252,37 @@ public class Utils {
         });
     }
 
-    public static void manageSharedPreferences() {
+    public static Session getSessionData(Activity context) {
+        SharedPreferences sharedPrefs = context.getApplicationContext().getSharedPreferences(USER_LOGIN_PREFERENCES, Context.MODE_PRIVATE);
+        Session sessionData = new Session();
 
+        sessionData.setToken(sharedPrefs.getString("token", ""));
+        sessionData.setUsername(sharedPrefs.getString("username", "")); //currentLoggedInUser
+        sessionData.setUserLoggedInState(sharedPrefs.getBoolean("userLoggedInState", false));
+        return sessionData;
     }
 
-    public static String encodeParameterizedURL(ArrayList<String> paramNames, ArrayList<String> paramValues)
-    {
-        if(paramNames.size() != paramValues.size())
-        {
+    public static Session updateSessionData(Activity context, Session sessionData) {
+        SharedPreferences sharedPrefs = context.getApplicationContext().getSharedPreferences(USER_LOGIN_PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPrefs.edit();
+
+        editor.putString("token", sessionData.getToken());
+        editor.putString("username", sessionData.getUsername());
+        editor.putBoolean("userLoggedInState", sessionData.getUserLoggedInState());
+        editor.commit();
+
+        return sessionData;
+    }
+
+    public static void manageSharedPreferences() {}
+
+    public static String encodeParameterizedURL(ArrayList<String> paramNames, ArrayList<String> paramValues) {
+        if(paramNames.size() != paramValues.size()) {
             System.err.printf("Unequal number of params + values : %d vs %d \n",paramNames.size(), paramValues.size());
             return "";
         }
         String result = "";
-        for(int i=0;i<paramNames.size(); ++i)
-        {
+        for(int i=0;i<paramNames.size(); ++i) {
             if(i==0) result += "?";
             else result += "&";
             result += paramNames.get(i) + "=";

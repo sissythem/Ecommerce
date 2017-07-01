@@ -2,7 +2,6 @@ package gr.uoa.di.airbnbproject;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
@@ -18,20 +17,14 @@ import java.util.Date;
 
 import fromRESTful.Users;
 import util.ListAdapterProfile;
-import util.RestCallManager;
-import util.RestCallParameters;
-import util.RestPaths;
 import util.RetrofitCalls;
+import util.Session;
 import util.Utils;
 
-public class ProfileActivity extends AppCompatActivity
-{
+import static util.Utils.getSessionData;
+import static util.Utils.updateSessionData;
 
-    private static final String USER_LOGIN_PREFERENCES = "login_preferences";
-    SharedPreferences sharedPrefs;
-    SharedPreferences.Editor editor;
-    private boolean isUserLoggedIn;
-
+public class ProfileActivity extends AppCompatActivity {
     Users loggedinUser;
     String username, token;
     ListView list;
@@ -47,15 +40,22 @@ public class ProfileActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        sharedPrefs = getApplicationContext().getSharedPreferences(USER_LOGIN_PREFERENCES, Context.MODE_PRIVATE);
-        isUserLoggedIn = sharedPrefs.getBoolean("userLoggedInState", false);
-        username = sharedPrefs.getString("currentLoggedInUser", "");
 
-        if (!isUserLoggedIn) {
+        Session sessionData = getSessionData(ProfileActivity.this);
+        if (!sessionData.getUserLoggedInState()) {
             Intent intent = new Intent(this, GreetingActivity.class);
             startActivity(intent);
+            finish();
             return;
         }
+
+        if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
+            finish();
+            return;
+        }
+        token = sessionData.getToken();
+        username = sessionData.getUsername();
+
         c = this;
 
         setContentView(R.layout.activity_profile);
@@ -70,8 +70,7 @@ public class ProfileActivity extends AppCompatActivity
 
         manageToolbarButtons();
         retrofitCalls = new RetrofitCalls();
-        ArrayList<Users> userLoggedIn = retrofitCalls.getUserbyUsername(token, username);
-        loggedinUser = userLoggedIn.get(0);
+        loggedinUser = retrofitCalls.getUserbyUsername(token, username).get(0);
         userdetails[0] = loggedinUser.getFirstName();
         userdetails[1] = loggedinUser.getLastName();
         userdetails[2] = loggedinUser.getUsername();
@@ -83,11 +82,10 @@ public class ProfileActivity extends AppCompatActivity
         Date bdate = loggedinUser.getBirthDate();
         String date="NO DATE";
         if(bdate != null){
-            try{
+            try {
                 SimpleDateFormat newDateFormat = new SimpleDateFormat(Utils.APP_DATE_FORMAT);
                 date = newDateFormat.format(bdate);
-            }
-            catch (Exception e){
+            } catch (Exception e){
                 e.printStackTrace();
             }
         }
@@ -97,87 +95,48 @@ public class ProfileActivity extends AppCompatActivity
         list.setAdapter(adapter);
 
         /** FOOTER TOOLBAR **/
-        Utils.manageFooter(ProfileActivity.this, user, token);
+        Utils.manageFooter(ProfileActivity.this, user);
 
         /** BACK BUTTON **/
-        Utils.manageBackButton(this, (user)?HomeActivity.class:HostActivity.class, user, token);
+        Utils.manageBackButton(this, (user)?HomeActivity.class:HostActivity.class, user);
     }
 
-    public void manageToolbarButtons()
-    {
-        btnMenu.setOnClickListener(new View.OnClickListener()
-        {
+    public void manageToolbarButtons() {
+        btnMenu.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 PopupMenu popup = new PopupMenu(ProfileActivity.this, btnMenu);
                 popup.getMenuInflater().inflate(R.menu.menu_popup, popup.getMenu());
 
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    public boolean onMenuItemClick(MenuItem item)
-                    {
+                    public boolean onMenuItemClick(MenuItem item) {
                         Bundle buser = new Bundle();
                         buser.putBoolean("type", user);
-                        if(item.getItemId() == R.id.reviews)
-                        {
+                        if (item.getItemId() == R.id.reviews) {
                             Intent historyReviewsIntent = new Intent(ProfileActivity.this, HistoryReviewsActivity.class);
                             historyReviewsIntent.putExtras(buser);
                             startActivity(historyReviewsIntent);
-                        }
-                        else if(item.getItemId() == R.id.reservations)
-                        {
+                        } else if (item.getItemId() == R.id.reservations) {
                             Intent historyReservationsIntent = new Intent(ProfileActivity.this, HistoryReservationsActivity.class);
                             historyReservationsIntent.putExtras(buser);
                             startActivity(historyReservationsIntent);
-                        }
-                        else if(item.getItemId() == R.id.editprofile)
-                        {
+                        } else if (item.getItemId() == R.id.editprofile) {
                             Intent editIntent = new Intent(ProfileActivity.this, EditProfileActivity.class);
                             editIntent.putExtras(buser);
                             startActivity(editIntent);
-                        }
-                        else if(item.getItemId() == R.id.deleteProfile)
-                        {
-                            ArrayList<Users> getUsersByUsername = retrofitCalls.getUserbyUsername(token, username);
-                            loggedinUser = getUsersByUsername.get(0);
-                            boolean deletionStatus = deleteUserAccount(loggedinUser.getId().toString());
-                            if(deletionStatus)
-                            {
+                        } else if (item.getItemId() == R.id.deleteProfile) {
+                            if (retrofitCalls.deleteUserById(token, loggedinUser.getId().toString()) == null) {
                                 Toast.makeText(c, "Account deleted!", Toast.LENGTH_SHORT).show();
                                 Utils.logout(ProfileActivity.this);
-                                Intent greetingIntent = new Intent (ProfileActivity.this, GreetingActivity.class);
-                                startActivity(greetingIntent);
-                                finish();
-                            }
-                            else {
+                            } else {
                                 Toast.makeText(c, "Something went wrong, account is not deleted. Please try again!", Toast.LENGTH_SHORT).show();
                             }
                         }
                         return true;
                     }
                 });
-
                 popup.show();
             }
         });
-    }
-    public Boolean deleteUserAccount (String id)
-    {
-        boolean success = true;
-
-        //TODO delete all data from all other tables
-        String deleteUserURL = RestPaths.deleteUserById(id);
-
-        RestCallManager deleteUserManager = new RestCallManager();
-        RestCallParameters deleteParameters = new RestCallParameters(deleteUserURL, "DELETE", "TEXT", "");
-
-        String response;
-        deleteUserManager.execute(deleteParameters);
-
-        response = (String)deleteUserManager.getRawResponse().get(0);
-        if (response.equals("OK")) ;
-        else success = false;
-
-        return  success;
     }
 }

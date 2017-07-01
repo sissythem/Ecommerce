@@ -137,7 +137,7 @@ public class Reservations implements Serializable {
 
     @Override
     public String toString() {
-        return "dbpackage.Reservations[ id=" + id + " ]";
+        return "domain.Reservations[ id=" + id + " ]";
     }
 
 }

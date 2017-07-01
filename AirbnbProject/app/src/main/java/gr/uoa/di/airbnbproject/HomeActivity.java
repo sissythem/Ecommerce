@@ -1,9 +1,7 @@
 package gr.uoa.di.airbnbproject;
 
 import android.app.DatePickerDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -29,22 +27,19 @@ import fromRESTful.Searches;
 import fromRESTful.Users;
 import util.ListAdapterResidences;
 import util.RetrofitCalls;
+import util.Session;
 import util.Utils;
+import static util.Utils.getSessionData;
 
-public class HomeActivity extends AppCompatActivity
-{
+public class HomeActivity extends AppCompatActivity {
     ListAdapterResidences adapter;
-    SharedPreferences sharedPrefs;
-    SharedPreferences.Editor editor;
-    private boolean isUserLoggedIn;
-    private static final String USER_LOGIN_PREFERENCES = "login_preferences";
 
     EditText field_city, field_guests;
     TextView startDate, endDate;
     ListView list;
     Button btnStartDatePicker, btnEndDatePicker, field_search;
 
-    int[]residenceId;
+    int[] residenceId;
     private int mStartYear, mStartMonth, mStartDay, mEndYear, mEndMonth, mEndDay;
     String username, date_start, date_end, token;
 
@@ -55,28 +50,23 @@ public class HomeActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        sharedPrefs = getApplicationContext().getSharedPreferences(USER_LOGIN_PREFERENCES, Context.MODE_PRIVATE);
-        isUserLoggedIn = sharedPrefs.getBoolean("userLoggedInState", false);
-
-//        currentUser = sharedPrefs.getString("loggedUser", "");
-        if (!isUserLoggedIn) {
+        Session sessionData = getSessionData(HomeActivity.this);
+        if (!sessionData.getUserLoggedInState()) {
             Intent intent = new Intent(this, GreetingActivity.class);
             startActivity(intent);
+            finish();
             return;
-        } else {
-            username = sharedPrefs.getString("currentLoggedInUser", "");
         }
 
         if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
             finish();
             return;
         }
+        token = sessionData.getToken();
+        username = sessionData.getUsername();
+
         setContentView(R.layout.activity_home);
-
-        Bundle buser = getIntent().getExtras();
-        token = buser.getString("token");
-
-        user=true;
+        user = true;
 
         /**SEARCH VIEW EXPANDABLE START **/
         setupSearchView();
@@ -108,7 +98,6 @@ public class HomeActivity extends AppCompatActivity
                 Intent showResidenceIntent = new Intent(HomeActivity.this, ResidenceActivity.class);
                 Bundle btype = new Bundle();
                 btype.putBoolean("type", user);
-                btype.putString("token", token);
                 btype.putInt("residenceId", residenceId[position]);
                 showResidenceIntent.putExtras(btype);
                 try {
@@ -121,9 +110,8 @@ public class HomeActivity extends AppCompatActivity
         });
 
         /** FOOTER TOOLBAR **/
-        Utils.manageFooter(HomeActivity.this, true, token);
+        Utils.manageFooter(HomeActivity.this, true);
     }
-
 
     public void setupSearchView() {
         final TextView searchlist = (TextView) findViewById(R.id.searchlist);
@@ -214,25 +202,25 @@ public class HomeActivity extends AppCompatActivity
                 Intent searchintent = new Intent(HomeActivity.this, SearchResultsActivity.class);
                 Bundle bsearch = new Bundle();
 
-                bsearch.putString("username", username);
                 bsearch.putString("city", field_city.getText().toString());
                 bsearch.putString("guests", field_guests.getText().toString());
                 bsearch.putString("startDate", date_start);
                 bsearch.putString("endDate", date_end);
                 bsearch.putBoolean("type", user);
-                bsearch.putString("token", token);
                 searchintent.putExtras(bsearch);
-
                 startActivity(searchintent);
             }
         });
     }
 
-    public ArrayList<Residences> popularRecommendations()
-    {
+    public ArrayList<Residences> popularRecommendations() {
         ArrayList<Users> Users;
         RetrofitCalls retrofitCalls = new RetrofitCalls();
         Users = retrofitCalls.getUserbyUsername(token, username);
+
+        /** If user is empty then session token has expired - redirect to greeting activity **/
+        if (Users.size() == 0) Utils.logout(HomeActivity.this);
+
         loggedInUser = Users.get(0);
 
         ArrayList<Residences> reviewedResidences = new ArrayList<>();
@@ -280,28 +268,14 @@ public class HomeActivity extends AppCompatActivity
 
     @Override
     protected void onResume() {
-        sharedPrefs = getApplicationContext().getSharedPreferences(USER_LOGIN_PREFERENCES, Context.MODE_PRIVATE);
-        isUserLoggedIn = sharedPrefs.getBoolean("userLoggedInState", false);
-        if (!isUserLoggedIn) {
-            Intent intent = new Intent(this, GreetingActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-            finish();
-        }
+        resetActivity();
         user = true;
         super.onResume();
     }
 
     @Override
     protected void onRestart() {
-        sharedPrefs = getApplicationContext().getSharedPreferences(USER_LOGIN_PREFERENCES, Context.MODE_PRIVATE);
-        isUserLoggedIn = sharedPrefs.getBoolean("userLoggedInState", false);
-        if (!isUserLoggedIn) {
-            Intent intent = new Intent(this, GreetingActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-            finish();
-        }
+        resetActivity();
         user = true;
         super.onRestart();
     }
@@ -316,12 +290,16 @@ public class HomeActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-//        Intent intent = new Intent(this, HomeActivity.class);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//        startActivity(intent);
-//        super.onBackPressed();
-//        return;
         moveTaskToBack(true);
     }
 
+    private void resetActivity() {
+        Session sessionData = getSessionData(HomeActivity.this);
+        if (!sessionData.getUserLoggedInState()) {
+            Intent intent = new Intent(this, GreetingActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            finish();
+        }
+    }
 }

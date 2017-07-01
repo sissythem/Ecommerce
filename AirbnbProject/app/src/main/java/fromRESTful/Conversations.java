@@ -21,6 +21,8 @@ public class Conversations implements Serializable {
     private Residences residenceId;
     private short readFromSender;
     private short readFromReceiver;
+    private short deletedFromSender;
+    private short deletedFromReceiver;
 
     public Conversations() {}
 
@@ -30,6 +32,17 @@ public class Conversations implements Serializable {
 
     public Conversations(Integer id, String subject) {
         this.id = id;
+        this.subject = subject;
+    }
+
+    public Conversations(Users senderId, Users receiverId, Residences residenceId, String subject, short readFromSender, short readFromReceiver, short deletedFromSender, short deletedFromReceiver) {
+        this.senderId = senderId;
+        this.receiverId = receiverId;
+        this.residenceId = residenceId;
+        this.readFromSender = readFromSender;
+        this.readFromReceiver = readFromReceiver;
+        this.deletedFromSender = deletedFromSender;
+        this.deletedFromReceiver = deletedFromReceiver;
         this.subject = subject;
     }
 
@@ -98,6 +111,22 @@ public class Conversations implements Serializable {
         this.readFromReceiver = readFromReceiver;
     }
 
+    public short getDeletedFromSender() {
+        return deletedFromSender;
+    }
+
+    public void setDeletedFromSender(short deletedFromSender) {
+        this.deletedFromSender = deletedFromSender;
+    }
+
+    public short getDeletedFromReceiver() {
+        return deletedFromReceiver;
+    }
+
+    public void setDeletedFromReceiver(short deletedFromReceiver) {
+        this.deletedFromReceiver = deletedFromReceiver;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -120,7 +149,7 @@ public class Conversations implements Serializable {
 
     @Override
     public String toString() {
-        return "dbpackage.Conversations[ id=" + id + " ]";
+        return "domain.Conversations[ id=" + id + " ]";
     }
 
     public static Conversations fromJSON(JSONObject obj){
@@ -137,6 +166,9 @@ public class Conversations implements Serializable {
 
             if(Utils.isFieldOK(obj, "readFromSender")) c.readFromSender = Short.parseShort(obj.get("readFromSender").toString());
             if(Utils.isFieldOK(obj, "readFromReceiver")) c.readFromReceiver = Short.parseShort(obj.get("readFromReceiver").toString());
+
+            if(Utils.isFieldOK(obj, "deletedFromSender")) c.deletedFromSender = Short.parseShort(obj.get("deletedFromSender").toString());
+            if(Utils.isFieldOK(obj, "deletedFromReceiver")) c.deletedFromReceiver = Short.parseShort(obj.get("deletedFromReceiver").toString());
 
             if (Utils.isFieldOK(obj, "Messages")) {
                 ArrayList<Messages> messagesList = new ArrayList<>();

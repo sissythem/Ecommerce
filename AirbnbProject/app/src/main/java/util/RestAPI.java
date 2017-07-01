@@ -1,5 +1,7 @@
 package util;
 
+import org.json.JSONObject;
+
 import java.util.List;
 
 import fromRESTful.Conversations;
@@ -19,13 +21,9 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
-/**
- * Created by sissy on 25/6/2017.
- */
+public interface RestAPI {
 
-public interface RestAPI
-{
-    /** Users Facade Methods **/
+    /***** Users Facade Methods *****/
     @GET("users/{userId}")
     Call<Users> getUserById(@Path("userId") String userId);
 
@@ -35,12 +33,10 @@ public interface RestAPI
     @GET("users/email")
     Call<List<Users>> getUserByEmail(@Query("email") String email);
 
-    @POST("users/login")
-    @FormUrlEncoded
+    @GET("users/login")
     Call<String> getLoginUser(@Query("username") String username, @Query("password") String password);
 
     @POST("users/register")
-    @FormUrlEncoded
     Call<String> postUser(@Body Users user);
 
     @PUT("users/put/{id}")
@@ -48,13 +44,11 @@ public interface RestAPI
     Call<String> editUserById(@Path("userId") String userId, @Body Users user);
 
     @DELETE("users/delete/{id}")
-    Call<Void> deleteUserById(@Path("userId") String userId);
-
+    Call<String> deleteUserById(@Path("id") String id);
 
     /** Searches Facade Methods **/
     @GET("searches/city")
     Call<List<Searches>> getCitiesByUserId(@Query("userId") String userId);
-
 
     /** Residences Facade Methods **/
     @GET("residences/city")
@@ -71,7 +65,7 @@ public interface RestAPI
     Call<Residences> getResidencesById (@Path("residenceId") String residenceId);
 
     @DELETE("residences/delete/{id}")
-    Call<Void> deleteResidenceById(@Path("id") String id);
+    Call<String> deleteResidenceById(@Path("id") String id);
 
     @PUT("residences/put/{id}")
     @FormUrlEncoded
@@ -84,8 +78,7 @@ public interface RestAPI
     @GET("residences")
     Call<List<Residences>> getAllResidences();
 
-
-    /** Messages Facade Methods **/
+    /***** Messages Facade Methods *****/
 
     @GET("messages/conversation")
     Call<List<Messages>> getMessagesByConversation(@Query("conversationId") String conversationId);
@@ -106,17 +99,14 @@ public interface RestAPI
     @GET("conversations/last")
     Call<List<Conversations>> lastConversationEntry(@Query("senderId") String senderId, @Query("receiverId") String receiverId);
 
-    @GET("conversations/residence")
-    Call<List<Conversations>> getConversationByResidenceId(@Query("residenceId") String residenceId);
+    @GET("conversations/residence/{id}/{user}")
+    Call<List<Conversations>> getConversationByResidenceId(@Path("id") String residenceId, @Path("user") String userId);
 
     @GET("conversations/update_conversation")
     Call<List<Conversations>> updateConversation(@Query("read") String isRead, @Query("type") String userType, @Query("id") String id);
 
     @POST("conversations/add")
-    @FormUrlEncoded
     Call<String> postConversation(@Body Conversations conversation);
-
-
 
     /** Reservations Facade Methods **/
 

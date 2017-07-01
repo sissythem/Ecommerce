@@ -16,7 +16,10 @@ import fromRESTful.Residences;
 import fromRESTful.Users;
 import util.ListAdapterHostResidences;
 import util.RetrofitCalls;
+import util.Session;
 import util.Utils;
+
+import static util.Utils.USER_LOGIN_PREFERENCES;
 
 public class HostActivity extends AppCompatActivity {
     String username, token;
@@ -29,37 +32,28 @@ public class HostActivity extends AppCompatActivity {
     int[] residenceId;
 
     Boolean user;
-    private static final String USER_LOGIN_PREFERENCES = "login_preferences";
-    SharedPreferences sharedPrefs;
-    SharedPreferences.Editor editor;
-    private boolean isUserLoggedIn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        sharedPrefs = getApplicationContext().getSharedPreferences(USER_LOGIN_PREFERENCES, Context.MODE_PRIVATE);
-        isUserLoggedIn = sharedPrefs.getBoolean("userLoggedInState", false);
-        username = sharedPrefs.getString("currentLoggedInUser", "");
+        Session sessionData = Utils.getSessionData(HostActivity.this);
+        token = sessionData.getToken();
 
-        if (!isUserLoggedIn) {
+        if (!sessionData.getUserLoggedInState()) {
             Intent intent = new Intent(this, GreetingActivity.class);
             startActivity(intent);
             return;
         }
-
         if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
             finish();
             return;
         }
 
         setContentView(R.layout.activity_host);
-
         user=false;
-        Bundle buser = getIntent().getExtras();
-        token = buser.getString("token");
-        baddResidence = (ImageButton)findViewById(R.id.addResidence);
 
+        baddResidence = (ImageButton)findViewById(R.id.addResidence);
         baddResidence.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -77,7 +71,7 @@ public class HostActivity extends AppCompatActivity {
             }
         });
         RetrofitCalls retrofitCalls = new RetrofitCalls();
-        ArrayList<Users> hostUsers = retrofitCalls.getUserbyUsername(token, username);
+        ArrayList<Users> hostUsers = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
         host = hostUsers.get(0);
         ArrayList<Residences> storedResidences = retrofitCalls.getResidencesByHost(token, host.getId().toString());
 
@@ -107,7 +101,6 @@ public class HostActivity extends AppCompatActivity {
                 Intent showResidenceIntent = new Intent(HostActivity.this, ResidenceActivity.class);
                 Bundle btype = new Bundle();
                 btype.putBoolean("type",user);
-                btype.putString("token", token);
                 btype.putInt("residenceId", residenceId[position]);
                 showResidenceIntent.putExtras(btype);
                 try {
@@ -120,7 +113,7 @@ public class HostActivity extends AppCompatActivity {
         });
 
         /** FOOTER TOOLBAR **/
-        Utils.manageFooter(HostActivity.this, user, token);
+        Utils.manageFooter(HostActivity.this, user);
     }
 
     @Override

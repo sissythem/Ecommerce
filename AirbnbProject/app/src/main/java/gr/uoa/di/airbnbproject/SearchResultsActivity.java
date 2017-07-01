@@ -14,11 +14,13 @@ import java.util.List;
 import fromRESTful.Residences;
 import util.ListAdapterResidences;
 import util.RetrofitCalls;
+import util.Session;
 import util.Utils;
 
 import static android.text.TextUtils.isEmpty;
 import static util.Utils.DATE_TEXT_MONTH;
 import static util.Utils.DATE_YEAR_FIRST;
+import static util.Utils.getSessionData;
 
 public class SearchResultsActivity extends AppCompatActivity {
     Boolean user;
@@ -27,10 +29,6 @@ public class SearchResultsActivity extends AppCompatActivity {
     String token;
 
     ListAdapterResidences adapter;
-
-    SharedPreferences sharedPrefs;
-    private static final String USER_LOGIN_PREFERENCES = "login_preferences";
-
     List<Residences> Recommendations;
 
     String guests, startDate, endDate;
@@ -38,19 +36,31 @@ public class SearchResultsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Session sessionData = getSessionData(SearchResultsActivity.this);
+        if (!sessionData.getUserLoggedInState()) {
+            Intent intent = new Intent(this, GreetingActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
+
+        if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
+            finish();
+            return;
+        }
+        token = sessionData.getToken();
+
         setContentView(R.layout.activity_search_results);
 
         Bundle buser    = getIntent().getExtras();
-        String username = buser.getString("username");
         String city     = buser.getString("city");
         guests          = buser.getString("guests");
         startDate       = buser.getString("startDate");
         endDate         = buser.getString("endDate");
         user            = buser.getBoolean("type");
-        token           = buser.getString("token");
         user=true;
 
-        if (isEmpty(username)) finish();
         if (isEmpty(guests)) guests = "1";
 
         if (isEmpty(startDate) || Utils.isThisDateValid(startDate, DATE_YEAR_FIRST)) startDate = Utils.getCurrentDate(DATE_YEAR_FIRST);
@@ -65,7 +75,7 @@ public class SearchResultsActivity extends AppCompatActivity {
         searchlist.setText(str_city + ", " + str_startdate + "-" + str_enddate + ", " + str_guests);
 
         RetrofitCalls retrofitCalls = new RetrofitCalls();
-        Recommendations = retrofitCalls.getRecommendations(token, username, city, startDate, endDate, guests);
+        Recommendations = retrofitCalls.getRecommendations(token, sessionData.getUsername(), city, startDate, endDate, guests);
 
         String[] title                  = new String [Recommendations.size()];
         String[] representativePhoto    = new String [Recommendations.size()];
@@ -93,12 +103,11 @@ public class SearchResultsActivity extends AppCompatActivity {
                 bsearch.putString("guests", guests);
                 bsearch.putString("startDate", startDate);
                 bsearch.putString("endDate", endDate);
-                bsearch.putString("token", token);
                 startActivity(showResidenceIntent);
             }
         });
 
         /** FOOTER TOOLBAR **/
-        Utils.manageFooter(SearchResultsActivity.this, user, token);
+        Utils.manageFooter(SearchResultsActivity.this, user);
     }
 }

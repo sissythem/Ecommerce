@@ -3,7 +3,6 @@ package gr.uoa.di.airbnbproject;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -33,20 +32,16 @@ import retrofit2.Response;
 import util.RestAPI;
 import util.RestClient;
 import util.RetrofitCalls;
+import util.Session;
 import util.Utils;
-
 public class EditResidenceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     private static final int RESULT_LOAD_IMAGE =1;
 
-    String username, resType, token;
+    String resType, token;
     Integer residenceId;
     Residences selectedResidence;
 
-    Boolean user, success;
-    private static final String USER_LOGIN_PREFERENCES = "login_preferences";
-    SharedPreferences sharedPrefs;
-    SharedPreferences.Editor editor;
-    private boolean isUserLoggedIn;
+    Boolean user;
 
     ImageButton bcontinue, btnStartDate, btnEndDate;
     ImageView imageToUpload;
@@ -67,13 +62,12 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        sharedPrefs = getApplicationContext().getSharedPreferences(USER_LOGIN_PREFERENCES, Context.MODE_PRIVATE);
-        isUserLoggedIn = sharedPrefs.getBoolean("userLoggedInState", false);
-        username = sharedPrefs.getString("currentLoggedInUser", "");
-
-        if (!isUserLoggedIn) {
+        Session sessionData = Utils.getSessionData(EditResidenceActivity.this);
+        token = sessionData.getToken();
+        if (!sessionData.getUserLoggedInState()) {
             Intent intent = new Intent(this, GreetingActivity.class);
             startActivity(intent);
+            finish();
             return;
         }
 
@@ -81,20 +75,19 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
             finish();
             return;
         }
-
         setContentView(R.layout.layout_residence_editfields);
+        c = this;
+
         Bundle buser = getIntent().getExtras();
         user = buser.getBoolean("type");
-        token = buser.getString("token");
-        user=false;
+        user = false;
 
-        c = this;
         retrofitCalls = new RetrofitCalls();
         residenceId = buser.getInt("residenceId");
         selectedResidence = retrofitCalls.getResidenceById(token, Integer.toString(residenceId));
         userInputLayout();
 
-        ArrayList<Users> getUsersByUsername = retrofitCalls.getUserbyUsername(token, username);
+        ArrayList<Users> getUsersByUsername = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
         host = getUsersByUsername.get(0);
 
         TextView residencetxt = (TextView) findViewById(R.id.residencetxt);
@@ -103,7 +96,7 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         saveResidence();
 
         /** BACK BUTTON **/
-        Utils.manageBackButton(this, HostActivity.class, user, token);
+        Utils.manageBackButton(this, HostActivity.class, user);
     }
 
     public void userInputLayout () {
@@ -279,8 +272,7 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
                 if (type.length() == 0 || title.length() == 0 || about.length() == 0 || address.length() == 0 || city.length() == 0 || country.length() == 0 || amenities.length() == 0 || floor.length() == 0
                         || rooms.length() == 0 || baths.length() == 0 || view.length() == 0 || spaceArea.length() == 0 || guests.length() == 0 || minPrice.length() == 0
                         || additionalCostPerPerson.length() == 0 || cancellationPolicy.length() == 0 || rules.length() == 0 || kitchen.length() == 0 || livingRoom.length() == 0
-                        || convertedStartDate.length() == 0 || convertedEndDate.length() == 0 || photo.length() == 0)
-                {
+                        || convertedStartDate.length() == 0 || convertedEndDate.length() == 0 || photo.length() == 0) {
                     Toast.makeText(c, "Please fill in all fields!", Toast.LENGTH_SHORT).show();
                     return;
                 } else {
@@ -320,14 +312,12 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
 
         RestAPI restAPI = RestClient.getClient(token).create(RestAPI.class);
         Call<String> call = restAPI.editResidenceById(Integer.toString(residenceId), ResidenceParameters);
-
         try {
             Response<String> resp = call.execute();
             token = resp.body();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return token;
     }
 

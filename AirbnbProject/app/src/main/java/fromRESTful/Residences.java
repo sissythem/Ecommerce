@@ -471,7 +471,7 @@ public class Residences implements Serializable, Comparable {
 
     @Override
     public String toString() {
-        return "dbpackage.Residences[ id=" + id + " ]";
+        return "domain.Residences[ id=" + id + " ]";
     }
 
     @Override

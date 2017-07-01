@@ -18,16 +18,10 @@ import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
-/**
- * Created by sissy on 25/6/2017.
- */
-
-public class RestClient
-{
-    public static final String BASE_URL = "http://192.168.1.16:8080/ecommerce_rest/webresources/";
+public class RestClient {
+    public static final String BASE_URL = "http://192.168.2.5:8080/ecommerce_rest/webresources/";
     private static Retrofit retrofit = null;
     private static Retrofit stringRetrofit = null;
-
 
     public static Retrofit getClient(String token) {
         if (retrofit==null) {

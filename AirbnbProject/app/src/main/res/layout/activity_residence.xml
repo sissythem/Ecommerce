@@ -32,6 +32,23 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textSize="18sp" />
 
+        <Button
+            android:id="@+id/btnReviews"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/scrollView"
+            android:text="Reviews"
+            android:layout_alignParentTop="true" />
+
+        <ImageButton
+            android:id="@+id/ibContact"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@android:drawable/ic_dialog_email"
+            android:layout_toRightOf="@id/btnReviews"
+            android:text="Reviews"
+            android:layout_alignParentTop="true" />
+
     </android.support.v7.widget.Toolbar>
     <ScrollView
         android:id="@+id/scrollView"
@@ -134,26 +151,6 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignRight="@+id/tvAvailabilityTitle"
                 android:layout_alignEnd="@+id/tvAvailabilityTitle" />
-
-            <ImageButton
-                android:id="@+id/ibContact"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@android:drawable/ic_dialog_email"
-                android:layout_below="@+id/tvCountry"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                android:layout_above="@+id/tvHostName" />
-
-            <TextView
-                android:id="@+id/tvContact"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Contact Host"
-                android:textSize="18sp"
-                android:layout_alignBottom="@+id/ibContact"
-                android:layout_toLeftOf="@+id/ibContact"
-                android:layout_toStartOf="@+id/ibContact" />
 
             <TextView
                 android:id="@+id/tvAboutTitle"
@@ -364,14 +361,4 @@
                 android:text="Book now" />
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
-
-    <Button
-        android:id="@+id/btnReviews"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/scrollView"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:text="Reviews"
-        android:layout_alignParentTop="true" />
 </RelativeLayout>

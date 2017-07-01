@@ -2,7 +2,6 @@ package gr.uoa.di.airbnbproject;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -44,17 +43,12 @@ import util.RestAPI;
 import util.RestCalls;
 import util.RestClient;
 import util.RetrofitCalls;
+import util.Session;
 import util.Utils;
 
-public class ResidenceActivity extends FragmentActivity implements OnMapReadyCallback
-{
+public class ResidenceActivity extends FragmentActivity implements OnMapReadyCallback {
     Boolean user;
     String username, date_start, date_end, guests, token;
-
-    private static final String USER_LOGIN_PREFERENCES = "login_preferences";
-    SharedPreferences sharedPrefs;
-    SharedPreferences.Editor editor;
-    private boolean isUserLoggedIn;
 
     int residenceId, maxGuests, guestsInt;
     Context c;
@@ -81,13 +75,12 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        sharedPrefs = getApplicationContext().getSharedPreferences(USER_LOGIN_PREFERENCES, Context.MODE_PRIVATE);
-        isUserLoggedIn = sharedPrefs.getBoolean("userLoggedInState", false);
-        username = sharedPrefs.getString("currentLoggedInUser", "");
-
-        if (!isUserLoggedIn) {
+        Session sessionData = Utils.getSessionData(ResidenceActivity.this);
+        token = sessionData.getToken();
+        if (!sessionData.getUserLoggedInState()) {
             Intent intent = new Intent(this, GreetingActivity.class);
             startActivity(intent);
+            finish();
             return;
         }
 
@@ -95,9 +88,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
             finish();
             return;
         }
-
         setContentView(R.layout.activity_residence);
-
         c = this;
 
         Bundle buser        = getIntent().getExtras();
@@ -106,23 +97,20 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         date_end            = buser.getString("endDate");
         guests              = buser.getString("guests");
         residenceId         = buser.getInt("residenceId");
-        token               = buser.getString("token");
 
         retrofitCalls = new RetrofitCalls();
-        ArrayList<Users> userLoggedIn = retrofitCalls.getUserbyUsername(token, username);
+        ArrayList<Users> userLoggedIn = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
         loggedinUser = userLoggedIn.get(0);
         selectedResidence   = retrofitCalls.getResidenceById(token, Integer.toString(residenceId));
 
         setUpResidenceView();
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.mapResidence);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapResidence);
         mapFragment.getMapAsync(this);
 
         /** BACK BUTTON **/
-        Utils.manageBackButton(this, (user)?HomeActivity.class:HostActivity.class, user, token);
-        if(!user)
-        {
+        Utils.manageBackButton(this, (user)?HomeActivity.class:HostActivity.class, user);
+        if(!user) {
             //if user is logged in as host, this button does not appear
             bBook.setVisibility(View.INVISIBLE);
             RatingBar ratingBar = (RatingBar) findViewById(R.id.rating);
@@ -130,7 +118,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
             TextView tvPrice = (TextView)findViewById(R.id.price);
             tvPrice.setVisibility(View.INVISIBLE);
             /** FOOTER TOOLBAR **/
-            Utils.manageFooter(ResidenceActivity.this, user, token);
+            Utils.manageFooter(ResidenceActivity.this, user);
         }
     }
 
@@ -157,7 +145,6 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         etGuests                = (EditText)findViewById(R.id.etGuests);
         etGuests.setSelected(false);
 
-        ibContact = (ImageButton) findViewById(R.id.ibContact);
         tvTitle.setText(selectedResidence.getTitle());
         tvType.setText(selectedResidence.getType());
         tvAddress.setText(selectedResidence.getAddress());
@@ -195,6 +182,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         tvPrice.setText(Double.toString(selectedResidence.getMinPrice()));
         rating.setRating((float)selectedResidence.getAverageRating());
 
+        ibContact = (ImageButton) findViewById(R.id.ibContact);
         ibContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -202,16 +190,14 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
 
                 Bundle bmessage = new Bundle();
                 bmessage.putBoolean("type", user);
-                bmessage.putString("token", token);
                 bmessage.putInt("currentUserId", loggedinUser.getId());
                 bmessage.putInt("toUserId", host.getId());
                 bmessage.putString("msgSubject", tvTitle.getText().toString());
                 bmessage.putInt("residenceId", residenceId);
                 messageIntent.putExtras(bmessage);
-                try{
+                try {
                     startActivity(messageIntent);
-                }
-                catch (Exception e){
+                } catch (Exception e) {
                     System.out.println(e.getMessage());
                     e.printStackTrace();
                 }
@@ -236,43 +222,33 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
             }
         });
 
-        bBook.setOnClickListener(new View.OnClickListener()
-        {
+        bBook.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 guests = etGuests.getText().toString();
                 guestsInt = Integer.parseInt(guests);
                 //gets selected dates from user input
-                if(selectedDates[0] != null && selectedDates[1] != null)
-                {
+                if(selectedDates[0] != null && selectedDates[1] != null) {
                     if (selectedDates[0].before(selectedDates[1])) {
                         selectedStartDate = selectedDates[0];
                         selectedEndDate = selectedDates[1];
-                    }
-                    else
-                    {
+                    } else {
                         selectedStartDate = selectedDates[1];
                         selectedEndDate = selectedDates[0];
                     }
                 }
                 //in case user has not specified the period for booking or the number of guests, reservation cannot be performed
-                if(selectedStartDate == null || selectedEndDate == null || guests == null)
-                {
+                if(selectedStartDate == null || selectedEndDate == null || guests == null) {
                     Toast.makeText(c, "Please fill in the dates and the number of guests", Toast.LENGTH_SHORT).show();
                     return;
-                }
-                else
-                {
+                } else {
                     //user makes a reservation and goes back to home activity
                     token = PostResult();
-                    if (!token.isEmpty())
-                    {
+                    if (!token.isEmpty()) {
                         Intent homeIntent = new Intent(ResidenceActivity.this, HomeActivity.class);
                         user = true;
                         Bundle buser = new Bundle();
                         buser.putBoolean("type", user);
-                        buser.putString("token", token);
                         homeIntent.putExtras(buser);
                         startActivity(homeIntent);
                         finish();
@@ -286,10 +262,8 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         });
     }
 
-    public String PostResult()
-    {
+    public String PostResult() {
         Reservations reservationParameters = new Reservations(loggedinUser, selectedResidence, selectedStartDate, selectedEndDate, guestsInt);
-
         RestAPI restAPI = RestClient.getClient(token).create(RestAPI.class);
         Call<String> call = restAPI.postReservation(reservationParameters);
 
@@ -302,8 +276,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         return token;
     }
 
-    public void setCalendar ()
-    {
+    public void setCalendar () {
         caldroidFragment = new CaldroidFragment();
 
         FragmentTransaction t = getSupportFragmentManager().beginTransaction();
@@ -324,8 +297,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         NumGuestsPerDay = new HashMap<>();
         Date current = new Date();
         // initialize guest sum
-        while (!current.after(endDate))
-        {
+        while (!current.after(endDate)) {
             NumGuestsPerDay.put(current, 0);
             calendar.add(Calendar.DAY_OF_MONTH,1);
             current = calendar.getTime();
@@ -340,8 +312,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         Date dateStart;
         Date dateEnd;
         int guestsFromDatabase;
-        for(int i=0;i<allReservationsByResidence.size();i++)
-        {
+        for(int i=0;i<allReservationsByResidence.size();i++) {
             //get for each reservation the start and the end date, and the number of guests
             dateStart = allReservationsByResidence.get(i).getStartDate();
             dateEnd = allReservationsByResidence.get(i).getEndDate();
@@ -351,8 +322,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
             Calendar cal = Calendar.getInstance();
             cal.setTime(dateStart);
 
-            while (!currentDate.after(dateEnd))
-            {
+            while (!currentDate.after(dateEnd)) {
                 int sum = NumGuestsPerDay.get(currentDate)+guestsFromDatabase;
                 NumGuestsPerDay.put(currentDate, sum);
                 cal.add(Calendar.DAY_OF_MONTH,1);
@@ -360,8 +330,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
             }
         }
         //disable all dates that are already fully booked
-        for(Date date : NumGuestsPerDay.keySet())
-        {
+        for(Date date : NumGuestsPerDay.keySet()) {
             if(NumGuestsPerDay.get(date)>= maxGuests)
             {
                 reservedDates.add(date);
@@ -371,58 +340,45 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         datesDisabled_byGuestCount = new ArrayList<>();
 
         //this field is visible only if user has not already provided number of guests
-        if(guests != null)
-        {
+        if(guests != null) {
             etGuests.setText(guests);
             filterDates();
         }
         etGuests.addTextChangedListener(
-                new TextWatcher() {
+            new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                    }
-
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count)
-                    {
-
-                    }
-
-                    public void afterTextChanged(Editable s)
-                    {
-                        filterDates();
-                    }
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count){}
+                public void afterTextChanged(Editable s)
+                {
+                    filterDates();
                 }
+            }
         );
 
         selectedDates = new Date[2];
         selectedDates[0] = null;
         selectedDates[1] = null;
 
-        if(date_start != null)
-        {
+        if(date_start != null) {
             selectedDates[0] = Utils.ConvertStringToDate(date_start, Utils.DATABASE_DATE_FORMAT);
             caldroidFragment.setBackgroundDrawableForDate(blue, selectedDates[0]);
         }
-        if(date_end !=null)
-        {
+        if(date_end !=null) {
             selectedDates[1] = Utils.ConvertStringToDate(date_end, Utils.DATABASE_DATE_FORMAT);
             caldroidFragment.setBackgroundDrawableForDate(blue, selectedDates[1]);
         }
-        final CaldroidListener listener = new CaldroidListener()
-        {
+        final CaldroidListener listener = new CaldroidListener() {
             View view;
-            void reset(int idx)
-            {
+            void reset(int idx) {
                 selectedDates[idx] = null;
                 view.setBackgroundColor(Color.WHITE);
             }
             @Override
-            public void onSelectDate(Date date, View view)
-            {
-                if(guests == null)
-                {
+            public void onSelectDate(Date date, View view) {
+                if(guests == null) {
                     Toast.makeText(c, "Please select number of guests first", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -438,8 +394,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
                     else freeIdx = i;
                 }
 
-                if(freeIdx < 0)
-                {
+                if(freeIdx < 0) {
                     // no space left
                     Toast.makeText(c, "You have already selected two days", Toast.LENGTH_SHORT).show();
                     return;
@@ -452,37 +407,31 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         caldroidFragment.setCaldroidListener(listener);
     }
     @Override
-    protected void onSaveInstanceState(Bundle outState)
-    {
+    protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-
         if (caldroidFragment != null) {
             caldroidFragment.saveStatesToKey(outState, "CALDROID_SAVED_STATE");
         }
     }
 
-    public void filterDates()
-    {
+    public void filterDates() {
         caldroidFragment.clearDisableDates();
         caldroidFragment.setDisableDates(reservedDates);
         guests = etGuests.getText().toString();
         int numberOfGuestsGiven = 0;
-        try
-        {
+        try {
             numberOfGuestsGiven = Integer.parseInt(guests);
         }
-        catch (Exception e){
+        catch (Exception e) {
             e.printStackTrace();
             caldroidFragment.clearDisableDates();
             caldroidFragment.setDisableDates(reservedDates);
             return;
         }
 
-        for(Date date : NumGuestsPerDay.keySet())
-        {
+        for(Date date : NumGuestsPerDay.keySet()) {
             int sum = NumGuestsPerDay.get(date)+ numberOfGuestsGiven;
-            if(sum > maxGuests)
-            {
+            if(sum > maxGuests) {
                 datesDisabled_byGuestCount.add(date);
             }
         }
@@ -491,10 +440,9 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap)
-    {
+    public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        LatLng address = RestCalls.findCoodrinates(selectedResidence.getAddress(), selectedResidence.getCity(), selectedResidence.getCountry());
+        LatLng address = RestCalls.findCoordinates(selectedResidence.getAddress(), selectedResidence.getCity(), selectedResidence.getCountry());
         mMap.addMarker(new MarkerOptions().position(address).title("Residence Address"));
         CameraUpdate center = CameraUpdateFactory.newLatLng(address);
         CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);

@@ -4,7 +4,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
-import java.sql.Date;
+import java.util.Date;
 
 import util.Utils;
 
@@ -16,6 +16,8 @@ public class Messages implements Serializable {
     private String body;
     private Date timestamp;
     private Conversations conversationId;
+    private short deletedFromSender;
+    private short deletedFromReceiver;
 
     public Messages() {}
 
@@ -27,6 +29,15 @@ public class Messages implements Serializable {
         this.id = id;
         this.body = body;
         this.timestamp = timestamp;
+    }
+
+    public Messages(Users userId, Conversations conversationId, String body, Date timestamp, short deletedFromSender, short deletedFromReceiver) {
+        this.userId = userId;
+        this.conversationId = conversationId;
+        this.body = body;
+        this.timestamp = timestamp;
+        this.deletedFromSender = deletedFromSender;
+        this.deletedFromReceiver = deletedFromReceiver;
     }
 
     public Integer getId() {
@@ -67,6 +78,22 @@ public class Messages implements Serializable {
         this.userId = userId;
     }
 
+    public short getDeletedFromSender() {
+        return deletedFromSender;
+    }
+
+    public void setDeletedFromSender(short deletedFromSender) {
+        this.deletedFromSender = deletedFromSender;
+    }
+
+    public short getDeletedFromReceiver() {
+        return deletedFromReceiver;
+    }
+
+    public void setDeletedFromReceiver(short deletedFromReceiver) {
+        this.deletedFromReceiver = deletedFromReceiver;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -89,9 +116,8 @@ public class Messages implements Serializable {
 
     @Override
     public String toString() {
-        return "dbpackage.Messages[ id=" + id + " ]";
+        return "domain.Messages[ id=" + id + " ]";
     }
-
 
 
     public static Messages fromJSON (JSONObject obj){
@@ -106,6 +132,9 @@ public class Messages implements Serializable {
 
             m.body="";
             if(Utils.isFieldOK(obj, "body")) m.body = (String) obj.get("body");
+
+            if(Utils.isFieldOK(obj, "deletedFromSender")) m.deletedFromSender = Short.parseShort(obj.get("deletedFromSender").toString());
+            if(Utils.isFieldOK(obj, "deletedFromReceiver")) m.deletedFromReceiver = Short.parseShort(obj.get("deletedFromReceiver").toString());
 
             String dateString;
             java.util.Date date;

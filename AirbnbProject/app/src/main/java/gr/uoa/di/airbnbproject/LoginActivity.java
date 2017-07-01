@@ -11,16 +11,22 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import okhttp3.internal.Util;
 import util.RetrofitCalls;
+import util.Session;
+import util.Utils;
+
+import static util.Utils.USER_LOGIN_PREFERENCES;
+import static util.Utils.updateSessionData;
 
 public class LoginActivity extends AppCompatActivity {
     Context c;
     String token;
 
-    private static final String USER_LOGIN_PREFERENCES = "login_preferences";
     SharedPreferences sharedPrefs;
     SharedPreferences.Editor editor;
     private boolean isUserLoggedIn;
+    Session sessionData;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,16 +55,13 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         blogin.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
                 final String Username = etUsername.getText().toString();
                 final String password = etPassword.getText().toString();
 
                 boolean userExists = true;
-
-                if(Username.length() == 0 || password.length() == 0)
-                {
+                if(Username.length() == 0 || password.length() == 0) {
                     //if something is not filled in, user must fill again the form
                     Toast.makeText(c, "Please fill in all fields!", Toast.LENGTH_SHORT).show();
                     return;
@@ -67,28 +70,14 @@ public class LoginActivity extends AppCompatActivity {
                 //check if the user is correct
                 RetrofitCalls retrofitCalls = new RetrofitCalls();
                 token = retrofitCalls.getLoginUser(Username, password);
-
-                if(token.equals("not")) userExists = false;
-
-
-                if(!userExists)
-                {
+                if(token.equals("not")) {
                     Toast.makeText(c, "User does not exist, please click on Register to create a new account", Toast.LENGTH_SHORT).show();
                     return;
-                }
-                else
-                {
-                    isUserLoggedIn = sharedPrefs.getBoolean("userLoggedInState", false);
-                    editor = sharedPrefs.edit();
-                    editor.putBoolean("userLoggedInState", true);
-                    editor.putString("currentLoggedInUser", Username);
-                    editor.commit();
-
-                    Intent homeintent = new Intent(LoginActivity.this, HomeActivity.class);
-                    Bundle btoken = new Bundle();
-                    btoken.putString("token", token);
+                } else {
                     try {
-                        LoginActivity.this.startActivity(homeintent);
+                        sessionData = new Session(token, Username, true);
+                        updateSessionData(LoginActivity.this, sessionData);
+                        LoginActivity.this.startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                     } catch (Exception ex) {
                         System.out.println(ex.getMessage());
                         ex.printStackTrace();
@@ -100,8 +89,8 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        isUserLoggedIn = sharedPrefs.getBoolean("userLoggedInState", false);
-        if (isUserLoggedIn) {
+        //isUserLoggedIn = sharedPrefs.getBoolean("userLoggedInState", false);
+        if (sessionData.getUserLoggedInState()) {
             Intent intent = new Intent(this, HomeActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);

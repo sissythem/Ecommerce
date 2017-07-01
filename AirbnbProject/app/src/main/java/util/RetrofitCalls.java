@@ -17,12 +17,7 @@ import fromRESTful.Users;
 import retrofit2.Call;
 import retrofit2.Response;
 
-/**
- * Created by sissy on 25/6/2017.
- */
-
-public class RetrofitCalls
-{
+public class RetrofitCalls {
     ArrayList<Residences> residencesList;
     ArrayList<Reviews> reviewsList;
     ArrayList<Reservations> reservationsList;
@@ -35,13 +30,11 @@ public class RetrofitCalls
     Conversations conversation;
     Users user;
 
-
     /** Calls for User **/
     private class getUserByUsernameHttpRequestTask extends AsyncTask<String, String, ArrayList<Users>> {
 
         @Override
-        protected ArrayList<Users> doInBackground(String... params)
-        {
+        protected ArrayList<Users> doInBackground(String... params) {
             usersList = new ArrayList<>();
             RestAPI restAPI = RestClient.getClient(params[0]).create(RestAPI.class);
             Call<List<Users>> call = restAPI.getUserByUsername(params[1]);
@@ -54,13 +47,10 @@ public class RetrofitCalls
             return usersList;
         }
         @Override
-        protected void onPostExecute(ArrayList<Users> users) {
-        }
+        protected void onPostExecute(ArrayList<Users> users) {}
     }
 
-
-    public ArrayList<Users> getUserbyUsername(String token, String username)
-    {
+    public ArrayList<Users> getUserbyUsername(String token, String username) {
         getUserByUsernameHttpRequestTask getUserByUsername = new getUserByUsernameHttpRequestTask();
         getUserByUsername.execute(token, username);
         try {
@@ -74,10 +64,8 @@ public class RetrofitCalls
     }
 
     private class getUserByEmailHttpRequestTask extends AsyncTask<String, String, ArrayList<Users>> {
-
         @Override
-        protected ArrayList<Users> doInBackground(String... params)
-        {
+        protected ArrayList<Users> doInBackground(String... params) {
             usersList = new ArrayList<>();
             RestAPI restAPI = RestClient.getClient(params[0]).create(RestAPI.class);
             Call<List<Users>> call = restAPI.getUserByEmail(params[1]);
@@ -90,13 +78,10 @@ public class RetrofitCalls
             return usersList;
         }
         @Override
-        protected void onPostExecute(ArrayList<Users> users) {
-        }
+        protected void onPostExecute(ArrayList<Users> users) {}
     }
 
-
-    public ArrayList<Users> getUserbyEmail(String token, String email)
-    {
+    public ArrayList<Users> getUserbyEmail(String token, String email){
         getUserByEmailHttpRequestTask getUserByEmail = new getUserByEmailHttpRequestTask();
         getUserByEmail.execute(token, email);
         try {
@@ -109,15 +94,14 @@ public class RetrofitCalls
         return usersList;
     }
 
-    private class getLoginUserHttpRequestTask extends AsyncTask<String, String, String>
-    {
+    private class getLoginUserHttpRequestTask extends AsyncTask<String, String, String> {
         @Override
-        protected String doInBackground(String... params)
-        {
+        protected String doInBackground(String... params) {
             String token="";
             RestAPI restAPI = RestClient.getStringClient().create(RestAPI.class);
+
             Call<String> call = restAPI.getLoginUser(params[0], params[1]);
-            try{
+            try {
                 Response<String> resp = call.execute();
                 token = resp.body();
             }
@@ -128,12 +112,11 @@ public class RetrofitCalls
         }
     }
 
-    public String getLoginUser(String username, String password)
-    {
+    public String getLoginUser(String username, String password) {
         String token = "";
         getLoginUserHttpRequestTask loginUser = new getLoginUserHttpRequestTask();
         loginUser.execute(username, password);
-        try{
+        try {
             token = loginUser.get();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -143,12 +126,40 @@ public class RetrofitCalls
         return token;
     }
 
-    private class getUserByIdHttpRequestTask extends AsyncTask<String, String, Users>
-    {
-
+    private class deleteUserByIdHttpRequestTask extends AsyncTask<String, String, String> {
         @Override
-        protected Users doInBackground(String... params)
-        {
+        protected String doInBackground(String... params) {
+            String token="";
+            RestAPI restAPI = RestClient.getClient(params[0]).create(RestAPI.class);
+            Call<String> call = restAPI.deleteUserById(params[1]);
+            try {
+                Response<String> resp = call.execute();
+                System.out.println(resp);
+                token = resp.body();
+            }
+            catch(IOException e){
+                e.printStackTrace();
+            }
+            return token;
+        }
+    }
+
+    public String deleteUserById(String token, String id) {
+        deleteUserByIdHttpRequestTask deleteUser = new deleteUserByIdHttpRequestTask();
+        deleteUser.execute(token, id);
+        try {
+            token = deleteUser.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return token;
+    }
+
+    private class getUserByIdHttpRequestTask extends AsyncTask<String, String, Users> {
+        @Override
+        protected Users doInBackground(String... params) {
             user = new Users();
             RestAPI restAPI = RestClient.getClient(params[0]).create(RestAPI.class);
             Call<Users> call = restAPI.getUserById(params[1]);
@@ -165,8 +176,7 @@ public class RetrofitCalls
         }
     }
 
-    public Users getUserbyId(String token, String id)
-    {
+    public Users getUserbyId(String token, String id) {
         getUserByIdHttpRequestTask userById = new getUserByIdHttpRequestTask();
         userById.execute(token, id);
         try {
@@ -179,14 +189,10 @@ public class RetrofitCalls
         return user;
     }
 
-
     /** Calls for Searches**/
-    private class getSearchedCitiesHttpRequestTask extends AsyncTask<String, String, ArrayList<Searches>>
-    {
-
+    private class getSearchedCitiesHttpRequestTask extends AsyncTask<String, String, ArrayList<Searches>> {
         @Override
-        protected ArrayList<Searches> doInBackground(String... params)
-        {
+        protected ArrayList<Searches> doInBackground(String... params) {
             searchesList = new ArrayList<>();
             RestAPI restAPI = RestClient.getClient(params[0]).create(RestAPI.class);
             Call<List<Searches>> call = restAPI.getCitiesByUserId(params[1]);
@@ -206,8 +212,7 @@ public class RetrofitCalls
         }
     }
 
-    public ArrayList<Searches> getSearchedCities(String token, String userId)
-    {
+    public ArrayList<Searches> getSearchedCities(String token, String userId) {
         getSearchedCitiesHttpRequestTask getCities = new getSearchedCitiesHttpRequestTask();
         getCities.execute(token, userId);
         try {
@@ -226,7 +231,6 @@ public class RetrofitCalls
 
         @Override
         protected ArrayList<Reviews> doInBackground(String... params) {
-
             reviewsList = new ArrayList<>();
 
             RestAPI restAPI = RestClient.getClient(params[0]).create(RestAPI.class);
@@ -240,10 +244,8 @@ public class RetrofitCalls
             return reviewsList;
 
         }
-
         @Override
-        protected void onPostExecute(ArrayList<Reviews> reviews) {
-        }
+        protected void onPostExecute(ArrayList<Reviews> reviews) {}
     }
 
     public ArrayList<Reviews> getAllReviews(String token){
@@ -275,7 +277,6 @@ public class RetrofitCalls
                 e.printStackTrace();
             }
             return reviewsList;
-
         }
 
         @Override
@@ -332,16 +333,14 @@ public class RetrofitCalls
     }
 
 
-    /** Calls for Residences**/
-    private class getResidencesByHostIdHttpRequestTask extends AsyncTask<String, String, ArrayList<Residences>>
-    {
+    /***** Calls for Residences *****/
+    private class getResidencesByHostIdHttpRequestTask extends AsyncTask<String, String, ArrayList<Residences>> {
         @Override
         protected ArrayList<Residences> doInBackground(String... params){
             residencesList = new ArrayList<>();
             RestAPI restAPI = RestClient.getClient(params[0]).create(RestAPI.class);
             Call<List<Residences>> call = restAPI.getResidencesByHostId(params[1]);
-            try
-            {
+            try {
                 Response <List<Residences>> resp = call.execute();
                 residencesList.addAll(resp.body());
             }
@@ -365,8 +364,7 @@ public class RetrofitCalls
         return residencesList;
     }
 
-    private class getResidenceByCityHttpRequestTask extends AsyncTask<String, String, ArrayList<Residences>>
-    {
+    private class getResidenceByCityHttpRequestTask extends AsyncTask<String, String, ArrayList<Residences>> {
         @Override
         protected ArrayList<Residences> doInBackground(String... params){
             residencesList = new ArrayList<>();
@@ -397,8 +395,7 @@ public class RetrofitCalls
         return residencesList;
     }
 
-     private class getResidenceByIdHttpRequestTask extends AsyncTask<String, String, Residences>
-     {
+     private class getResidenceByIdHttpRequestTask extends AsyncTask<String, String, Residences> {
          @Override
          protected Residences doInBackground(String... params)
          {
@@ -430,11 +427,9 @@ public class RetrofitCalls
          return residence;
      }
 
-     private class getAllResidencesHttpRequestTask extends AsyncTask<String, String, ArrayList<Residences>>
-     {
+     private class getAllResidencesHttpRequestTask extends AsyncTask<String, String, ArrayList<Residences>> {
          @Override
-         protected ArrayList<Residences> doInBackground(String... params)
-         {
+         protected ArrayList<Residences> doInBackground(String... params) {
              residencesList = new ArrayList<>();
              RestAPI restAPI = RestClient.getClient(params[0]).create(RestAPI.class);
              Call<List<Residences>> call = restAPI.getAllResidences();
@@ -450,8 +445,7 @@ public class RetrofitCalls
          }
      }
 
-     public ArrayList<Residences> getAllResidences(String token)
-     {
+     public ArrayList<Residences> getAllResidences(String token) {
          getAllResidencesHttpRequestTask residences = new getAllResidencesHttpRequestTask();
          residences.execute(token);
          try {
@@ -464,8 +458,7 @@ public class RetrofitCalls
          return residencesList;
      }
 
-     private class getRecommendationsHttPRequestTask extends AsyncTask<String, String, ArrayList<Residences>>
-     {
+     private class getRecommendationsHttPRequestTask extends AsyncTask<String, String, ArrayList<Residences>> {
          @Override
          protected ArrayList<Residences> doInBackground(String... params)
          {
@@ -483,8 +476,8 @@ public class RetrofitCalls
              return residencesList;
          }
      }
-     public ArrayList<Residences> getRecommendations(String token, String userId, String city, String startDate, String endDate, String guests)
-     {
+
+     public ArrayList<Residences> getRecommendations(String token, String userId, String city, String startDate, String endDate, String guests) {
          getRecommendationsHttPRequestTask recommendations = new getRecommendationsHttPRequestTask();
          recommendations.execute(token, userId, city, startDate, endDate, guests);
          try {
@@ -497,31 +490,56 @@ public class RetrofitCalls
          return residencesList;
      }
 
+    private class deleteResidenceByIdHttpRequestTask extends AsyncTask<String, String, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            String token="";
+            RestAPI restAPI = RestClient.getClient(params[0]).create(RestAPI.class);
+            Call<String> call = restAPI.deleteResidenceById(params[1]);
+            try {
+                Response<String> resp = call.execute();
+                System.out.println(resp);
+                token = resp.body();
+            }
+            catch(IOException e){
+                e.printStackTrace();
+            }
+            return token;
+        }
+    }
+    public String deleteResidenceById(String token, String id) {
+        deleteResidenceByIdHttpRequestTask deleteResidence = new deleteResidenceByIdHttpRequestTask();
+        deleteResidence.execute(token, id);
+        try {
+            token = deleteResidence.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return token;
+    }
+
 
     /** Calls for Conversations**/
 
-    private class getConversationsHttPRequestTask extends AsyncTask<String, String, ArrayList<Conversations>>
-     {
+    private class getConversationsHttPRequestTask extends AsyncTask<String, String, ArrayList<Conversations>> {
          @Override
-         protected ArrayList<Conversations> doInBackground(String... params)
-         {
+         protected ArrayList<Conversations> doInBackground(String... params) {
              conversationsList = new ArrayList<>();
              RestAPI restAPI = RestClient.getClient(params[0]).create(RestAPI.class);
              Call<List<Conversations>> call = restAPI.getConversations(params[1]);
-             try
-             {
+             try {
                  Response<List<Conversations>> resp = call.execute();
                  conversationsList.addAll(resp.body());
-             }
-             catch (IOException e){
+             } catch (IOException e){
                  e.printStackTrace();
              }
              return conversationsList;
          }
      }
 
-     public ArrayList<Conversations> getConversations(String token, String userId)
-     {
+     public ArrayList<Conversations> getConversations(String token, String userId) {
          getConversationsHttPRequestTask getConversationsByUserId = new getConversationsHttPRequestTask();
          getConversationsByUserId.execute(token, userId);
          try {
@@ -534,29 +552,24 @@ public class RetrofitCalls
          return conversationsList;
      }
 
-     private class getConversationsByIdHttPRequestTask extends AsyncTask<String, String, Conversations>
-     {
+     private class getConversationByIdHttPRequestTask extends AsyncTask<String, String, Conversations> {
          @Override
-         protected Conversations doInBackground(String... params)
-         {
+         protected Conversations doInBackground(String... params) {
              conversation = new Conversations();
              RestAPI restAPI = RestClient.getClient(params[0]).create(RestAPI.class);
              Call<Conversations> call = restAPI.getConversationById(params[1]);
-             try
-             {
+             try {
                  Response<Conversations> resp = call.execute();
                  conversation = resp.body();
-             }
-             catch (IOException e){
+             } catch (IOException e) {
                  e.printStackTrace();
              }
              return conversation;
          }
      }
 
-     public Conversations getConversationsById(String token, String id)
-     {
-         getConversationsByIdHttPRequestTask conversationsById = new getConversationsByIdHttPRequestTask();
+     public Conversations getConversationById(String token, String id) {
+         getConversationByIdHttPRequestTask conversationsById = new getConversationByIdHttPRequestTask();
          conversationsById.execute(token, id);
          try {
              conversationsById.get();
@@ -568,16 +581,13 @@ public class RetrofitCalls
          return conversation;
      }
 
-     private class getConversationByResidenceIdHttPRequestTask extends AsyncTask<String, String, ArrayList<Conversations>>
-     {
+     private class getConversationByResidenceIdHttPRequestTask extends AsyncTask<String, String, ArrayList<Conversations>> {
          @Override
-         protected ArrayList<Conversations> doInBackground(String... params)
-         {
+         protected ArrayList<Conversations> doInBackground(String... params) {
              conversationsList = new ArrayList<>();
              RestAPI restAPI = RestClient.getClient(params[0]).create(RestAPI.class);
-             Call<List<Conversations>> call = restAPI.getConversationByResidenceId(params[1]);
-             try
-             {
+             Call<List<Conversations>> call = restAPI.getConversationByResidenceId(params[1], params[2]);
+             try {
                  Response<List<Conversations>> resp = call.execute();
                  conversationsList.addAll(resp.body());
              }
@@ -588,10 +598,9 @@ public class RetrofitCalls
          }
      }
 
-    public ArrayList<Conversations> getConversationsByResidenceId(String token, String residenceId)
-    {
+    public ArrayList<Conversations> getConversationsByResidenceId(String token, String residenceId, String userId) {
         getConversationByResidenceIdHttPRequestTask conversationsByResidenceId = new getConversationByResidenceIdHttPRequestTask();
-        conversationsByResidenceId.execute(token, residenceId);
+        conversationsByResidenceId.execute(token, residenceId, userId);
         try {
             conversationsByResidenceId.get();
         } catch (InterruptedException e) {
@@ -599,14 +608,13 @@ public class RetrofitCalls
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
+        System.out.println(conversationsList);
         return conversationsList;
     }
 
-    private class getLastConversationHttPRequestTask extends AsyncTask<String, String, ArrayList<Conversations>>
-    {
+    private class getLastConversationHttPRequestTask extends AsyncTask<String, String, ArrayList<Conversations>> {
         @Override
-        protected ArrayList<Conversations> doInBackground(String... params)
-        {
+        protected ArrayList<Conversations> doInBackground(String... params) {
             conversationsList = new ArrayList<>();
             RestAPI restAPI = RestClient.getClient(params[0]).create(RestAPI.class);
             Call<List<Conversations>> call = restAPI.lastConversationEntry(params[1], params[2]);
@@ -622,8 +630,7 @@ public class RetrofitCalls
         }
     }
 
-    public ArrayList<Conversations> getLastConversation(String token, String senderId, String receiverId)
-    {
+    public ArrayList<Conversations> getLastConversation(String token, String senderId, String receiverId) {
         getLastConversationHttPRequestTask lastConversation = new getLastConversationHttPRequestTask();
         lastConversation.execute(token, senderId, receiverId);
         try {
@@ -636,32 +643,27 @@ public class RetrofitCalls
         return conversationsList;
     }
 
-    private class  updateConversationHttPRequestTask extends AsyncTask<String, String, ArrayList<Conversations>>
-    {
+    private class updateConversationHttpRequestTask extends AsyncTask<String, String, ArrayList<Conversations>> {
         @Override
-        protected ArrayList<Conversations> doInBackground(String... params)
-        {
-            conversationsList = new ArrayList<>();
+        protected ArrayList<Conversations> doInBackground(String... params) {
+            conversationsList = new ArrayList<Conversations>();
             RestAPI restAPI = RestClient.getClient(params[0]).create(RestAPI.class);
             Call<List<Conversations>> call = restAPI.updateConversation(params[1], params[2], params[3]);
-            try
-            {
+            try {
                 Response<List<Conversations>> resp = call.execute();
                 conversationsList.addAll(resp.body());
-            }
-            catch (IOException e){
+            } catch (IOException e) {
                 e.printStackTrace();
             }
             return conversationsList;
         }
     }
 
-    public ArrayList<Conversations> updateConversation (String token, String isRead, String userType, String conversationId)
-    {
-        updateConversationHttPRequestTask conversation = new updateConversationHttPRequestTask();
-        conversation.execute(token, isRead, userType, conversationId);
+    public ArrayList<Conversations> updateConversation(String token, String isRead, String userType, String conversationId) {
+        updateConversationHttpRequestTask updatedConversation = new updateConversationHttpRequestTask();
+        updatedConversation.execute(token, isRead, userType, conversationId);
         try {
-            conversation.get();
+            updatedConversation.get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -670,32 +672,24 @@ public class RetrofitCalls
         return conversationsList;
     }
 
-
-
     /** Calls for Messages**/
-
-    private class getMessagesByConversationHttpRequestTask extends AsyncTask<String, String, ArrayList<Messages>>
-    {
+    private class getMessagesByConversationHttpRequestTask extends AsyncTask<String, String, ArrayList<Messages>> {
         @Override
-        protected ArrayList<Messages> doInBackground(String... params)
-        {
+        protected ArrayList<Messages> doInBackground(String... params) {
             messagesList = new ArrayList<>();
             RestAPI restAPI = RestClient.getClient(params[0]).create(RestAPI.class);
             Call<List<Messages>> call = restAPI.getMessagesByConversation(params[1]);
-            try
-            {
+            try {
                 Response<List<Messages>> resp = call.execute();
                 messagesList.addAll(resp.body());
-            }
-            catch (IOException e){
+            } catch (IOException e){
                 e.printStackTrace();
             }
             return messagesList;
         }
     }
 
-    public ArrayList<Messages> getMessagesByConversation (String token, String conversationId)
-    {
+    public ArrayList<Messages> getMessagesByConversation(String token, String conversationId) {
         getMessagesByConversationHttpRequestTask messagesByConversation = new getMessagesByConversationHttpRequestTask();
         messagesByConversation.execute(token, conversationId);
         try {
@@ -705,33 +699,27 @@ public class RetrofitCalls
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
+        System.out.println(messagesList);
         return messagesList;
     }
 
-
     /** Calls for Reservations**/
-
-    private class getReservationsByTenantIdHttpRequestTask extends AsyncTask<String, String, ArrayList<Reservations>>
-    {
+    private class getReservationsByTenantIdHttpRequestTask extends AsyncTask<String, String, ArrayList<Reservations>> {
         @Override
-        protected ArrayList<Reservations> doInBackground(String... params)
-        {
+        protected ArrayList<Reservations> doInBackground(String... params) {
             reservationsList = new ArrayList<>();
             RestAPI restAPI = RestClient.getClient(params[0]).create(RestAPI.class);
             Call<List<Reservations>> call = restAPI.getReservationsByTenantId(params[1]);
-            try
-            {
+            try {
                 Response<List<Reservations>> resp = call.execute();
                 reservationsList.addAll(resp.body());
-            }
-            catch (IOException e){
+            } catch (IOException e){
                 e.printStackTrace();
             }
             return reservationsList;
         }
     }
-    public ArrayList<Reservations> getReservationsByTenantId (String token, String tenantId)
-    {
+    public ArrayList<Reservations> getReservationsByTenantId (String token, String tenantId) {
         getReservationsByTenantIdHttpRequestTask reservationsByTenantId = new getReservationsByTenantIdHttpRequestTask();
         reservationsByTenantId.execute(token, tenantId);
         try {
@@ -744,8 +732,7 @@ public class RetrofitCalls
         return reservationsList;
     }
 
-    private class getReservationsByResidenceIdHttpRequestTask extends AsyncTask<String, String, ArrayList<Reservations>>
-    {
+    private class getReservationsByResidenceIdHttpRequestTask extends AsyncTask<String, String, ArrayList<Reservations>> {
         @Override
         protected ArrayList<Reservations> doInBackground(String... params)
         {
@@ -764,8 +751,7 @@ public class RetrofitCalls
         }
     }
 
-    public ArrayList<Reservations> getReservationsByResidenceId (String token, String residenceId)
-    {
+    public ArrayList<Reservations> getReservationsByResidenceId (String token, String residenceId) {
         getReservationsByResidenceIdHttpRequestTask reservationsByResidenceId = new getReservationsByResidenceIdHttpRequestTask();
         reservationsByResidenceId.execute(token, residenceId);
         try {
@@ -798,8 +784,7 @@ public class RetrofitCalls
         }
     }
 
-    public ArrayList<Reservations> getReservationsByTenantIdandResidenceId (String token, String tenantId, String residenceId)
-    {
+    public ArrayList<Reservations> getReservationsByTenantIdandResidenceId (String token, String tenantId, String residenceId) {
         getReservationsByTenantIdAndResidenceIdHttpRequestTask reservations = new getReservationsByTenantIdAndResidenceIdHttpRequestTask();
         reservations.execute(token, tenantId, residenceId);
         try {

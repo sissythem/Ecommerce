@@ -2,7 +2,6 @@ package gr.uoa.di.airbnbproject;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -29,17 +28,13 @@ import util.ListAdapterReviews;
 import util.RestAPI;
 import util.RestClient;
 import util.RetrofitCalls;
+import util.Session;
 import util.Utils;
+import static util.Utils.getSessionData;
 
-public class ReviewsActivity extends AppCompatActivity
-{
+public class ReviewsActivity extends AppCompatActivity {
     Boolean user;
-    String loggedInUsername, token, success;
-
-    private static final String USER_LOGIN_PREFERENCES = "login_preferences";
-    SharedPreferences sharedPrefs;
-    SharedPreferences.Editor editor;
-    private boolean isUserLoggedIn;
+    String token;
 
     Context c;
     ListAdapterReviews adapter;
@@ -56,17 +51,14 @@ public class ReviewsActivity extends AppCompatActivity
     TextView txtrating;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        sharedPrefs = getApplicationContext().getSharedPreferences(USER_LOGIN_PREFERENCES, Context.MODE_PRIVATE);
-        isUserLoggedIn = sharedPrefs.getBoolean("userLoggedInState", false);
-        loggedInUsername = sharedPrefs.getString("currentLoggedInUser", "");
-
-        if (!isUserLoggedIn) {
+        Session sessionData = getSessionData(ReviewsActivity.this);
+        if (!sessionData.getUserLoggedInState()) {
             Intent intent = new Intent(this, GreetingActivity.class);
             startActivity(intent);
+            finish();
             return;
         }
 
@@ -74,17 +66,17 @@ public class ReviewsActivity extends AppCompatActivity
             finish();
             return;
         }
+        token = sessionData.getToken();
 
         setContentView(R.layout.activity_reviews);
 
         c = this;
         Bundle buser = getIntent().getExtras();
         user = buser.getBoolean("type");
-        token = buser.getString("token");
 
         residenceId         = buser.getInt("residenceId");
         RetrofitCalls retrofitCalls = new RetrofitCalls();
-        ArrayList<Users> getUserByUsername = retrofitCalls.getUserbyUsername(token, loggedInUsername);
+        ArrayList<Users> getUserByUsername = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
         loggedinUser        = getUserByUsername.get(0);
         selectedResidence   = retrofitCalls.getResidenceById(token, Integer.toString(residenceId));
         host                = selectedResidence.getHostId();
@@ -105,9 +97,9 @@ public class ReviewsActivity extends AppCompatActivity
         reviewsList.setAdapter(adapter);
 
         /** FOOTER TOOLBAR **/
-        Utils.manageFooter(ReviewsActivity.this, user, token);
+        Utils.manageFooter(ReviewsActivity.this, user);
         /** BACK BUTTON **/
-        Utils.manageBackButton(this, ResidenceActivity.class, user, token);
+        Utils.manageBackButton(this, ResidenceActivity.class, user);
 
         etcomment = (EditText)findViewById(R.id.writeComment);
         btnreview = (Button)findViewById(R.id.btnreview);
@@ -160,17 +152,12 @@ public class ReviewsActivity extends AppCompatActivity
                     if(comment.length() == 0 || ratingfromuser == 0){
                         Toast.makeText(c, "Please write your comment and rate the residence", Toast.LENGTH_SHORT).show();
                         return;
-                    }
-                    else
-                    {
+                    } else {
                         token = postResult(selectedResidence, host, loggedinUser, comment, ratingfromuser);
-                        if (!token.isEmpty())
-                        {
+                        if (!token.isEmpty()) {
                             Toast.makeText(c, "Your comment has been successfully submitted. Thank you!", Toast.LENGTH_SHORT).show();
                             return;
-                        }
-                        else
-                        {
+                        } else {
                             Toast.makeText(c, "Your session has finished, please log in again!", Toast.LENGTH_SHORT).show();
                             Utils.logout(ReviewsActivity.this);
                             finish();

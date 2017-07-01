@@ -1,12 +1,7 @@
 package util;
 
-/**
- * Created by sissy on 1/5/2017.
- */
-
 public class RestCallParameters {
-    public enum DATA_TYPE
-    {
+    public enum DATA_TYPE {
         JSON("JSON"),TEXT("TEXT");
         String str;
         DATA_TYPE(String str)
@@ -17,8 +12,7 @@ public class RestCallParameters {
         public String toString(){ return str;}
     }
 
-    public enum CALL_RESOURCE
-    {
+    public enum CALL_RESOURCE {
         STRING("STRING"),STREAM("STREAM");
         String str;
         CALL_RESOURCE(String str)
@@ -39,7 +33,6 @@ public class RestCallParameters {
     }
 
     String CallResource;
-
 
     public RestCallParameters(String url, String requestType, String returnType, String parameters) {
         this.Url = url;

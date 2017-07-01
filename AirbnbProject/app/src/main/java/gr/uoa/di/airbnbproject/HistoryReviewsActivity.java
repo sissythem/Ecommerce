@@ -2,7 +2,6 @@ package gr.uoa.di.airbnbproject;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ListView;
@@ -13,18 +12,13 @@ import fromRESTful.Reviews;
 import fromRESTful.Users;
 import util.ListAdapterReviews;
 import util.RetrofitCalls;
+import util.Session;
 import util.Utils;
 
-public class HistoryReviewsActivity extends AppCompatActivity
-{
+public class HistoryReviewsActivity extends AppCompatActivity {
     Boolean user;
-    String loggedInUsername, token;
+    String token;
     Users loggedinUser;
-
-    private static final String USER_LOGIN_PREFERENCES = "login_preferences";
-    SharedPreferences sharedPrefs;
-    SharedPreferences.Editor editor;
-    private boolean isUserLoggedIn;
 
     Context c;
     ListAdapterReviews adapter;
@@ -34,13 +28,11 @@ public class HistoryReviewsActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        sharedPrefs = getApplicationContext().getSharedPreferences(USER_LOGIN_PREFERENCES, Context.MODE_PRIVATE);
-        isUserLoggedIn = sharedPrefs.getBoolean("userLoggedInState", false);
-        loggedInUsername = sharedPrefs.getString("currentLoggedInUser", "");
-
-        if (!isUserLoggedIn) {
+        Session sessionData = Utils.getSessionData(HistoryReviewsActivity.this);
+        if (!sessionData.getUserLoggedInState()) {
             Intent intent = new Intent(this, GreetingActivity.class);
             startActivity(intent);
+            finish();
             return;
         }
 
@@ -48,16 +40,15 @@ public class HistoryReviewsActivity extends AppCompatActivity
             finish();
             return;
         }
-
+        token = sessionData.getToken();
         setContentView(R.layout.activity_history_reviews);
-
         c = this;
+
         Bundle buser = getIntent().getExtras();
         user = buser.getBoolean("type");
-        token = buser.getString("token");
 
         RetrofitCalls retrofitCalls = new RetrofitCalls();
-        ArrayList<Users> getUserByUsername = retrofitCalls.getUserbyUsername(token, loggedInUsername);
+        ArrayList<Users> getUserByUsername = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
         loggedinUser = getUserByUsername.get(0);
 
         ArrayList<Reviews> userReviews = retrofitCalls.getReviewsByTenantId(token, loggedinUser.getId().toString());
@@ -76,21 +67,14 @@ public class HistoryReviewsActivity extends AppCompatActivity
         reviewsList = (ListView)findViewById(R.id.reviewslist);
         reviewsList.setAdapter(adapter);
 
-
         /** FOOTER TOOLBAR **/
-        Utils.manageFooter(HistoryReviewsActivity.this, user, token);
+        Utils.manageFooter(HistoryReviewsActivity.this, user);
         /** BACK BUTTON **/
-        Utils.manageBackButton(this, ProfileActivity.class, user, token);
+        Utils.manageBackButton(this, ProfileActivity.class, user);
     }
 
     @Override
-    public void onBackPressed()
-    {
-//        Intent intent = new Intent(this, HomeActivity.class);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//        startActivity(intent);
-//        super.onBackPressed();
-//        return;
+    public void onBackPressed() {
         moveTaskToBack(true);
     }
 }

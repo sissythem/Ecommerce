@@ -260,7 +260,7 @@ public class Users implements Serializable {
 
     @Override
     public String toString() {
-        return "dbpackage.Users[ id=" + id + " ]";
+        return "domain.Users[ id=" + id + " ]";
     }
 
 }

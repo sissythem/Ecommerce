@@ -13,31 +13,33 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import fromRESTful.Conversations;
 import fromRESTful.Messages;
 import fromRESTful.Residences;
 import fromRESTful.Users;
-import util.AddConversationParameters;
-import util.AddMessageParameters;
+import retrofit2.Call;
+import retrofit2.Response;
 import util.ListAdapterMessages;
-import util.RestCallManager;
-import util.RestCallParameters;
-import util.RestCalls;
-import util.RestPaths;
+import util.RestAPI;
+import util.RestClient;
+import util.RetrofitCalls;
+import util.Session;
 import util.Utils;
 
+import static util.Utils.ConvertStringToDate;
+import static util.Utils.DATABASE_DATE_FORMAT;
+import static util.Utils.getCurrentDate;
+import static util.Utils.logout;
+
 public class MessageActivity extends AppCompatActivity {
-    private static final String USER_LOGIN_PREFERENCES = "login_preferences";
-    SharedPreferences sharedPrefs;
-    SharedPreferences.Editor editor;
-    private boolean isUserLoggedIn;
     Context c;
     Integer currentUserId, toUserId;
 
     Button send;
-    String username, msgSubject, msgBody;
+    String msgSubject, msgBody;
     TextView subject;
     EditText body;
     int conversationId, messagesSize, residenceId;
@@ -56,47 +58,51 @@ public class MessageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        c = this;
 
-        sharedPrefs = getApplicationContext().getSharedPreferences(USER_LOGIN_PREFERENCES, Context.MODE_PRIVATE);
-        isUserLoggedIn = sharedPrefs.getBoolean("userLoggedInState", false);
-        username = sharedPrefs.getString("currentLoggedInUser", "");
-
-        if (!isUserLoggedIn) {
+        Session sessionData = Utils.getSessionData(MessageActivity.this);
+        if (!sessionData.getUserLoggedInState()) {
             Intent intent = new Intent(this, GreetingActivity.class);
             startActivity(intent);
+            finish();
             return;
         }
 
+        if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
+            finish();
+            return;
+        }
+        token = sessionData.getToken();
         setContentView(R.layout.activity_message);
 
-        c = this;
-
         Bundle bextras  = getIntent().getExtras();
-        user            = bextras.getBoolean("type");
+        user            = bextras.getBoolean("user");
         currentUserId   = bextras.getInt("currentUserId");
         toUserId        = bextras.getInt("toUserId");
         msgSubject      = bextras.getString("msgSubject");
-        token           =bextras.getString("token");
 
         subject = (TextView) findViewById(R.id.subject);
         subject.setText(msgSubject);
-
         body = (EditText) findViewById(R.id.body);
+
+        RetrofitCalls retrofitCalls = new RetrofitCalls();
 
         if (bextras.containsKey("conversationId")) {
             isNewMessage = false;
-
             conversationId = bextras.getInt("conversationId");
-            Messages = RestCalls.getMessages(conversationId);
+
+            Messages = retrofitCalls.getMessagesByConversation(token, Integer.toString(conversationId));
             messagesSize = Messages.size();
-            conversation = RestCalls.getConversation(conversationId);
+            conversation = retrofitCalls.getConversationById(token, Integer.toString(conversationId));
         } else if (bextras.containsKey("residenceId")) {
             residenceId = bextras.getInt("residenceId");
-            conversation = RestCalls.getConversationByResidence(residenceId);
-            if (conversation != null) {
+
+            ArrayList<Conversations> conversationData = retrofitCalls.getConversationsByResidenceId(token, Integer.toString(residenceId), currentUserId.toString());
+            if (conversationData.size() > 0) {
+                conversation = conversationData.get(0);
                 isNewMessage = false;
                 conversationId = conversation.getId();
-                Messages = RestCalls.getMessages(conversationId);
+                Messages = retrofitCalls.getMessagesByConversation(token, Integer.toString(conversationId));
                 messagesSize = Messages.size();
             } else {
                 isNewMessage = true;
@@ -126,7 +132,7 @@ public class MessageActivity extends AppCompatActivity {
         sendMessage();
 
         /** BACK BUTTON **/
-        Utils.manageBackButton(this, InboxActivity.class, user, token);
+        Utils.manageBackButton(this, InboxActivity.class, user);
     }
 
     public void sendMessage() {
@@ -140,14 +146,16 @@ public class MessageActivity extends AppCompatActivity {
                     Toast.makeText(c, "Please write a message!", Toast.LENGTH_SHORT).show();
                     return;
                 } else {
-                    Users senderUser = RestCalls.getUserById(currentUserId);
+                    RetrofitCalls retrofitCalls = new RetrofitCalls();
+                    Users senderUser = retrofitCalls.getUserbyId(token, currentUserId.toString());
+                    Users receiverUser = retrofitCalls.getUserbyId(token, toUserId.toString());
 
                     if (!isNewMessage) {
                         success = PostMessageResult(senderUser, conversation, msgBody);
                     } else {
-                        if (PostConversationResult(senderUser, RestCalls.getUserById(toUserId), RestCalls.getResidenceById(residenceId), msgSubject)) {
+                        if (PostConversationResult(senderUser, receiverUser, retrofitCalls.getResidenceById(token, Integer.toString(residenceId)), msgSubject)) {
                             /** Last Conversation entry in dbtable **/
-                            conversation = RestCalls.getLastConversation(currentUserId, toUserId);
+                            conversation = retrofitCalls.getLastConversation(token, currentUserId.toString(), toUserId.toString()).get(0);
                             conversationId = conversation.getId();
                             success = PostMessageResult(senderUser, conversation, msgBody);
                         }
@@ -159,16 +167,15 @@ public class MessageActivity extends AppCompatActivity {
                         } else if (currentUserId == conversation.getReceiverId().getId()) {
                             userType = USER_SENDER;
                         }
-                        RestCalls.updateConversation(0, userType, conversation.getId());
+                        retrofitCalls.updateConversation(token, "0", userType, Integer.toString(conversation.getId())).get(0);
 
                         //finish();
                         Bundle bupdated = new Bundle();
-                        bupdated.putBoolean("type", user);
+                        bupdated.putBoolean("user", user);
                         bupdated.putInt("currentUserId", currentUserId);
                         bupdated.putInt("toUserId", toUserId);
                         bupdated.putString("msgSubject", msgSubject);
                         bupdated.putInt("conversationId", conversationId);
-                        bupdated.putString("token", token);
 
                         Intent currentIntent = getIntent();
                         currentIntent.putExtras(bupdated);
@@ -183,31 +190,48 @@ public class MessageActivity extends AppCompatActivity {
         });
     }
 
-    public boolean PostConversationResult(Users senderUser, Users receiverUser, Residences residence, String body) {
-        boolean success = true;
-        AddConversationParameters ConversationParameters = new AddConversationParameters(senderUser, receiverUser, residence, body);
+    public boolean PostConversationResult(Users senderUser, Users receiverUser, Residences residence, String subject) {
+        short val_zero = 0;
+        short val_one = 1;
+        Conversations ConversationParams = new Conversations(senderUser, receiverUser, residence, subject, val_one, val_zero, val_zero, val_zero);
+        RestAPI restAPI = RestClient.getClient(token).create(RestAPI.class);
+        System.out.println(ConversationParams);
+        Call<String> call = restAPI.postConversation(ConversationParams);
+        try {
+            Response<String> resp = call.execute();
+            token = resp.body();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        RestCallManager conversationPostManager = new RestCallManager();
-        RestCallParameters conversationPostParameters = new RestCallParameters(RestPaths.AllConversations, "POST", "", ConversationParameters.getAddConversationParameters());
-
-        conversationPostManager.execute(conversationPostParameters);
-        String response = (String) conversationPostManager.getRawResponse().get(0);
-        if (!response.equals("OK")) success = false;
-
+        boolean success = false;
+        if (!token.equals("not")) {
+            success = true;
+        } else {
+            logout(MessageActivity.this);
+        }
         return success;
     }
 
     public boolean PostMessageResult(Users usermodel, Conversations conversationmodel, String body) {
-        boolean success = true;
-        AddMessageParameters MessageParameters = new AddMessageParameters(usermodel, conversationmodel, body);
+        short val_zero = 0;
+        String currDate = getCurrentDate(DATABASE_DATE_FORMAT);
+        Messages MessagesParams = new Messages(usermodel, conversationmodel, body, ConvertStringToDate(currDate, DATABASE_DATE_FORMAT), val_zero, val_zero);
+        RestAPI restAPI = RestClient.getStringClient().create(RestAPI.class);
+        Call<String> call = restAPI.postMessage(MessagesParams);
+        try {
+            Response<String> resp = call.execute();
+            token = resp.body();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        RestCallManager messagePostManager = new RestCallManager();
-        RestCallParameters messagePostParameters = new RestCallParameters(RestPaths.addNewMessage(), "POST", "", MessageParameters.getAddMessageParameters());
-
-        messagePostManager.execute(messagePostParameters);
-        String response = (String) messagePostManager.getRawResponse().get(0);
-        if (!response.equals("OK")) success = false;
-
+        boolean success = false;
+        if (!token.equals("not")) {
+            success = true;
+        } else {
+            logout(MessageActivity.this);
+        }
         return success;
     }
 

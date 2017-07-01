@@ -84,7 +84,7 @@ public class Searches implements Serializable {
 
     @Override
     public String toString() {
-        return "dbpackage.Searches[ id=" + id + " ]";
+        return "domain.Searches[ id=" + id + " ]";
     }
 
 }

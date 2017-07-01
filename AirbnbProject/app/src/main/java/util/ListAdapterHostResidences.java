@@ -11,8 +11,11 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import gr.uoa.di.airbnbproject.EditResidenceActivity;
+import gr.uoa.di.airbnbproject.HostActivity;
+import gr.uoa.di.airbnbproject.ProfileActivity;
 import gr.uoa.di.airbnbproject.R;
 import gr.uoa.di.airbnbproject.ResidenceActivity;
 
@@ -24,6 +27,8 @@ public class ListAdapterHostResidences extends ArrayAdapter<String> {
     private final Double[] price;
     private final float[] rating;
     private final int[] residenceId;
+
+    RetrofitCalls retrofitCalls = new RetrofitCalls();
 
     public ListAdapterHostResidences(Activity context, String[] representativePhoto, String[] title, String[] city, Double[] price, float[] rating, int[] residenceId) {
         super(context, R.layout.list_host_residences, city);
@@ -85,6 +90,30 @@ public class ListAdapterHostResidences extends ArrayAdapter<String> {
         });
 
         bdelete.setTag(position);
+        bdelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Session sessionData = Utils.getSessionData(context);
+                System.out.println(sessionData);
+                if (retrofitCalls.deleteResidenceById(sessionData.getToken(), Integer.toString(residenceId[position])) == null) {
+                    Toast.makeText(context, "Residence was successfully deleted!", Toast.LENGTH_SHORT).show();
+                    Intent hostIntent = new Intent(context, HostActivity.class);
+                    Bundle btype = new Bundle();
+                    hostIntent.putExtras(btype);
+                    try {
+                        context.startActivity(hostIntent);
+                    } catch (Exception ex) {
+                        System.out.println(ex.getMessage());
+                        ex.printStackTrace();
+                    }
+                } else {
+                    Toast.makeText(context, "Something went wrong, residence is not deleted. Please try again!", Toast.LENGTH_SHORT).show();
+                }
+
+
+
+            }
+        });
 
         imageView.setTag(position);
         imageView.setOnClickListener(new View.OnClickListener() {

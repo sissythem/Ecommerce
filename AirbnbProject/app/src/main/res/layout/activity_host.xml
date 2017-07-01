@@ -15,7 +15,6 @@
         android:fitsSystemWindows="true"
         android:minHeight="?attr/actionBarSize"
         app:titleTextColor="@android:color/white">
-        <!--android:weightSum="1"-->
 
         <TextView
             android:id="@+id/hostHomeText"
@@ -45,8 +44,10 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/backToolbar"
         android:divider="#b5b5b5"
-        android:dividerHeight="1dp"
-        android:listSelector="@drawable/list_selector">
+        android:dividerHeight="2dp"
+        android:listSelector="@drawable/list_selector"
+        android:layout_marginBottom="?attr/actionBarSize"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
     </ListView>
     <include layout="@layout/footer"/>
 </RelativeLayout>
