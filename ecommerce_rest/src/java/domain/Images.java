@@ -4,6 +4,8 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -15,35 +17,39 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
-@Table(name = "searches")
+@Table(name = "images")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Searches.findAll", query = "SELECT s FROM Searches s"),
-    @NamedQuery(name = "Searches.findById", query = "SELECT s FROM Searches s WHERE s.id = :id"),
-    @NamedQuery(name = "Searches.findByCity", query = "SELECT s FROM Searches s WHERE s.city = :city"),
-    
-    /* Custom */
-    @NamedQuery(name = "Searches.findByUserId", query = "SELECT s FROM Searches s WHERE s.userId.id = :userId")
-})
-public class Searches implements Serializable {
+    @NamedQuery(name = "Images.findAll", query = "SELECT i FROM Images i"),
+    @NamedQuery(name = "Images.findById", query = "SELECT i FROM Images i WHERE i.id = :id"),
+    @NamedQuery(name = "Images.findByName", query = "SELECT i FROM Images i WHERE i.name = :name")})
+public class Images implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @NotNull
     @Column(name = "id")
     private Integer id;
-    @Size(max = 45)
-    @Column(name = "city")
-    private String city;
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    @ManyToOne
-    private Users userId;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 100)
+    @Column(name = "name")
+    private String name;
+    @JoinColumn(name = "residence_id", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Residences residenceId;
 
-    public Searches() {}
+    public Images() {
+    }
 
-    public Searches(Integer id) {
+    public Images(Integer id) {
         this.id = id;
+    }
+
+    public Images(Integer id, String name) {
+        this.id = id;
+        this.name = name;
     }
 
     public Integer getId() {
@@ -54,20 +60,20 @@ public class Searches implements Serializable {
         this.id = id;
     }
 
-    public String getCity() {
-        return city;
+    public String getName() {
+        return name;
     }
 
-    public void setCity(String city) {
-        this.city = city;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public Users getUserId() {
-        return userId;
+    public Residences getResidenceId() {
+        return residenceId;
     }
 
-    public void setUserId(Users userId) {
-        this.userId = userId;
+    public void setResidenceId(Residences residenceId) {
+        this.residenceId = residenceId;
     }
 
     @Override
@@ -80,10 +86,10 @@ public class Searches implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Searches)) {
+        if (!(object instanceof Images)) {
             return false;
         }
-        Searches other = (Searches) object;
+        Images other = (Images) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -92,6 +98,7 @@ public class Searches implements Serializable {
 
     @Override
     public String toString() {
-        return "domain.Searches[ id=" + id + " ]";
+        return "domain.Images[ id=" + id + " ]";
     }
+    
 }

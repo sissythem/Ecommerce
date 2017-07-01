@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package domain;
 
 import java.io.Serializable;
@@ -25,6 +20,7 @@ import javax.persistence.NamedNativeQuery;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SqlResultSetMapping;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -33,7 +29,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-
 
 @Entity
 @Table(name = "residences")
@@ -69,6 +64,8 @@ import javax.xml.bind.annotation.XmlTransient;
 })
 public class Residences implements Serializable {
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "residenceId")
+    private Collection<Images> imagesCollection;
     @Basic(optional = false)
     @NotNull
     @Column(name = "active")
@@ -412,4 +409,12 @@ public class Residences implements Serializable {
         this.reservationsCollection = reservationsCollection;
     }
     
+    @XmlTransient
+    public Collection<Images> getImagesCollection() {
+        return imagesCollection;
+    }
+
+    public void setImagesCollection(Collection<Images> imagesCollection) {
+        this.imagesCollection = imagesCollection;
+    }
 }

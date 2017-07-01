@@ -1,14 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package services;
 
 import domain.Reviews;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import java.security.Key;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -29,7 +25,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import utils.AuthenticationFilter;
-
+import utils.KeyHolder;
 
 @Stateless
 @Path("reviews")
@@ -55,54 +51,7 @@ public class ReviewsFacadeREST extends AbstractFacade<Reviews> {
     public void edit(@PathParam("id") Integer id, Reviews entity) {
         super.edit(entity);
     }
-
-    @DELETE
-    @Path("{id}")
-    public void remove(@HeaderParam("Authorization") String token, @PathParam("id") Integer id) {
-        try
-        {
-            AuthenticationFilter.filter(token); 
-            super.remove(super.find(id));
-        }
-        catch(Exception ex) 
-         {
-            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
-         }
-    }
-
-    @GET
-    @Path("{id}")
-    @Produces({MediaType.APPLICATION_JSON})
-    public Reviews find(@HeaderParam("Authorization") String token, @PathParam("id") Integer id) 
-    {
-        try
-        {
-            AuthenticationFilter.filter(token);
-            return super.find(id);
-        }
-        catch(Exception ex) 
-         {
-            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-         }
-        
-    }
-
-    @GET
-    @Produces({MediaType.APPLICATION_JSON})
-    public List<Reviews> findAll(@HeaderParam("Authorization") String token) {
-        try
-        {
-            AuthenticationFilter.filter(token);        
-            return super.findAll();
-        }
-        catch(Exception ex) 
-         {
-            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-        }
-    }
-
+    
     @GET
     @Path("{from}/{to}")
     @Produces({MediaType.APPLICATION_JSON})
@@ -122,69 +71,76 @@ public class ReviewsFacadeREST extends AbstractFacade<Reviews> {
         return em;
     }
     
-    /* Custom */
+    /*** CUSTOM METHODS ***/
+    private static String className = ReviewsFacadeREST.class.getName();
+    
+    @DELETE
+    @Path("delete/{id}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public String remove(@HeaderParam("Authorization") String token, @PathParam("id")String id) {
+        if (KeyHolder.checkToken(token, className)) {
+            super.remove(super.find(Integer.parseInt(id)));
+            return "not";
+        }
+        return token;
+    }
+
+    @GET
+    @Path("{id}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Reviews find(@HeaderParam("Authorization") String token, @PathParam("id") Integer id) {
+        if (KeyHolder.checkToken(token, className)) {
+            return super.find(id);
+        }
+        return null;
+    }
+
+    @GET
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<Reviews> findAll(@HeaderParam("Authorization") String token) {
+        List<Reviews> data = new ArrayList<Reviews>();
+        if (KeyHolder.checkToken(token, className)) {
+            data = super.findAll();
+        }
+        return data;
+    }
+    
     @POST
     @Path("postreview")
     @Consumes({MediaType.APPLICATION_JSON})
     public String createReview(@HeaderParam("Authorization") String token, Reviews entity) {
-        try{
-            AuthenticationFilter.filter(token);    
+        if (KeyHolder.checkToken(token, className)) {
             super.create(entity);
             return token;
         }
-        catch(Exception ex) 
-         {
-            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-        }
+        return "";
     }
     
     @GET
     @Path("residence")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Reviews> findbyResidence(@HeaderParam("Authorization") String token, @QueryParam("residenceId")Integer residenceId) {
-        try{
-            AuthenticationFilter.filter(token);   
+        List<Reviews> data = new ArrayList<Reviews>();
+        if (KeyHolder.checkToken(token, className)) {
             Query query = em.createNamedQuery("Reviews.findbyResidence");
             query.setParameter("residenceId", residenceId);
-            return query.getResultList();
+            data = query.getResultList();
         }
-        catch(Exception ex) 
-         {
-            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-        }
+        return data;
     }
     
     @GET
     @Path("tenant")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Reviews> findbyTenant(@HeaderParam("Authorization") String token, @QueryParam("tenantId")Integer tenantId) {
-        try{
-            AuthenticationFilter.filter(token);
+        List<Reviews> data = new ArrayList<Reviews>();
+        if (KeyHolder.checkToken(token, className)) {
             Query query = em.createNamedQuery("Reviews.findbyTenant");
             query.setParameter("tenantId", tenantId);
-            return query.getResultList();
+            data = query.getResultList();
         }
-        catch(Exception ex) 
-         {
-            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-        }
+        return data;
     }
     
-    private String issueToken(String username) {
-            Key key = utils.KeyHolder.key;
-            long nowMillis = System.currentTimeMillis();
-            Date now = new Date(nowMillis);
-            long expMillis = nowMillis + 300000L;
-            Date exp = new Date(expMillis);
-            String jws = Jwts.builder()
-                        .setSubject(username)
-                        .setIssuedAt(now)
-                        .signWith(SignatureAlgorithm.HS512, key)
-                        .setExpiration(exp)
-                        .compact();
-            return jws;
-    }
+    
 }

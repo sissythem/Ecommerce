@@ -1,14 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package services;
 
 import domain.Messages;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import java.security.Key;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -29,7 +25,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import utils.AuthenticationFilter;
-
+import utils.KeyHolder;
 
 @Stateless
 @Path("messages")
@@ -56,51 +52,6 @@ public class MessagesFacadeREST extends AbstractFacade<Messages> {
         super.edit(entity);
     }
 
-    @DELETE
-    @Path("{id}")
-    public void remove(@HeaderParam("Authorization")String token, @PathParam("id") Integer id) {
-        try
-        {
-            AuthenticationFilter.filter(token);
-            super.remove(super.find(id));
-        }
-        catch(Exception ex) 
-         {
-            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
-         }
-    }
-
-    @GET
-    @Path("{id}")
-    @Produces({MediaType.APPLICATION_JSON})
-    public Messages find(@HeaderParam("Authorization")String token, @PathParam("id") Integer id) {
-        try
-        {
-            AuthenticationFilter.filter(token);
-            return super.find(id);
-        }
-        catch(Exception ex) 
-         {
-            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-         }
-    }
-
-    @GET
-    @Produces({MediaType.APPLICATION_JSON})
-    public List<Messages> findAll(@HeaderParam("Authorization") String token) {
-        try
-        {
-            AuthenticationFilter.filter(token);
-            return super.findAll();
-        }
-        catch(Exception ex) 
-         {
-            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-         }
-    }
-
     @GET
     @Path("{from}/{to}")
     @Produces({MediaType.APPLICATION_JSON})
@@ -121,25 +72,54 @@ public class MessagesFacadeREST extends AbstractFacade<Messages> {
     }
     
     /*** CUSTOM METHODS ***/
+    
+    private static String className = MessagesFacadeREST.class.getName();
+    
+    @DELETE
+    @Path("delete/{id}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public String remove(@HeaderParam("Authorization") String token, @PathParam("id")String id) {
+        if (KeyHolder.checkToken(token, className)) {
+            super.remove(super.find(Integer.parseInt(id)));
+            return "not";
+        }
+        return token;
+    }
+
+    @GET
+    @Path("{id}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Messages find(@HeaderParam("Authorization")String token, @PathParam("id") Integer id) {
+        if (KeyHolder.checkToken(token, className)) {
+            return super.find(id);
+        }
+        return null;
+    }
+
+    @GET
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<Messages> findAll(@HeaderParam("Authorization") String token) {
+        List<Messages> data = new ArrayList<Messages>();
+        if (KeyHolder.checkToken(token, className)) {
+            data = super.findAll();
+        }
+        return data;
+    }
+    
     @GET
     @Path("conversation")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Messages> findByConversation(@HeaderParam("Authorization") String token, @QueryParam("convId")Integer convId) {
-        try
-        {
-            AuthenticationFilter.filter(token);
+        List<Messages> data = new ArrayList<Messages>();
+        if (KeyHolder.checkToken(token, className)) {
             Query query = em.createNamedQuery("findByConversation");
             query.setParameter("convId", convId);
-            return query.getResultList();
+            data = query.getResultList();
         }
-        catch(Exception ex) 
-         {
-            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-         }
+        return data;
     }
     
-    public boolean addNewMessage(Integer senderId, Integer conversationId, String msgBody) {
+    private boolean addNewMessage(Integer senderId, Integer conversationId, String msgBody) {
         Query query = em.createNativeQuery("INSERT IGNORE INTO messages (user_id, conversation_id, body) VALUES (?, ?, ?)");
         query.setParameter(1, senderId);
         query.setParameter(2, conversationId);
@@ -154,9 +134,7 @@ public class MessagesFacadeREST extends AbstractFacade<Messages> {
     @Path("addmessage")
     @Consumes(MediaType.APPLICATION_JSON)
     public String updateConversation(@HeaderParam("Authorization") String token, Messages entity) {
-        try
-        {
-            AuthenticationFilter.filter(token);
+        if (KeyHolder.checkToken(token, className)) {
             int senderId        = entity.getUserId().getId();
             int conversationId  = entity.getConversationId().getId();
             String msgBody      = entity.getBody();
@@ -164,25 +142,6 @@ public class MessagesFacadeREST extends AbstractFacade<Messages> {
             addNewMessage(senderId, conversationId, msgBody);
             return token;
         }
-        catch(Exception ex) 
-         {
-            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-         }
-    }
-    
-    private String issueToken(String username) {
-            Key key = utils.KeyHolder.key;
-            long nowMillis = System.currentTimeMillis();
-            Date now = new Date(nowMillis);
-            long expMillis = nowMillis + 300000L;
-            Date exp = new Date(expMillis);
-            String jws = Jwts.builder()
-                        .setSubject(username)
-                        .setIssuedAt(now)
-                        .signWith(SignatureAlgorithm.HS512, key)
-                        .setExpiration(exp)
-                        .compact();
-            return jws;
+        return "";
     }
 }

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package domain;
 
 import java.io.Serializable;
@@ -24,7 +19,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
-
 @Entity
 @Table(name = "messages")
 @XmlRootElement
@@ -39,6 +33,15 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "findByConversation", query = "SELECT m FROM Messages m WHERE m.conversationId.id = :convId order by m.timestamp ASC")
 })
 public class Messages implements Serializable {
+
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "deleted_from_sender")
+    private short deletedFromSender;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "deleted_from_receiver")
+    private short deletedFromReceiver;
 
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
@@ -141,5 +144,20 @@ public class Messages implements Serializable {
     public void setUserId(Users userId) {
         this.userId = userId;
     }
-    
+
+    public short getDeletedFromSender() {
+        return deletedFromSender;
+    }
+
+    public void setDeletedFromSender(short deletedFromSender) {
+        this.deletedFromSender = deletedFromSender;
+    }
+
+    public short getDeletedFromReceiver() {
+        return deletedFromReceiver;
+    }
+
+    public void setDeletedFromReceiver(short deletedFromReceiver) {
+        this.deletedFromReceiver = deletedFromReceiver;
+    }
 }

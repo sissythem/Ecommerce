@@ -1,11 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package services;
 
 import domain.Searches;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,7 +21,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import utils.AuthenticationFilter;
-
+import utils.KeyHolder;
 
 @Stateless
 @Path("searches")
@@ -51,26 +47,7 @@ public class SearchesFacadeREST extends AbstractFacade<Searches> {
     public void edit(@PathParam("id") Integer id, Searches entity) {
         super.edit(entity);
     }
-
-    @DELETE
-    @Path("{id}")
-    public void remove(@PathParam("id") Integer id) {
-        super.remove(super.find(id));
-    }
-
-    @GET
-    @Path("{id}")
-    @Produces({MediaType.APPLICATION_JSON})
-    public Searches find(@HeaderParam("Authorization") String token, @PathParam("id") Integer id) {
-        return super.find(id);
-    }
-
-    @GET
-    @Produces({MediaType.APPLICATION_JSON})
-    public List<Searches> findAll(@HeaderParam("Authorization") String token) {
-        return super.findAll();
-    }
-
+    
     @GET
     @Path("{from}/{to}")
     @Produces({MediaType.APPLICATION_JSON})
@@ -90,22 +67,51 @@ public class SearchesFacadeREST extends AbstractFacade<Searches> {
         return em;
     }
     
-    /* Custom */
+    /*** CUSTOM METHODS ***/
+    private static String className = SearchesFacadeREST.class.getName();
+    
+    @DELETE
+    @Path("delete/{id}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public String remove(@HeaderParam("Authorization") String token, @PathParam("id")String id) {
+        if (KeyHolder.checkToken(token, className)) {
+            super.remove(super.find(Integer.parseInt(id)));
+            return "not";
+        }
+        return token;
+    }
+    
+    @GET
+    @Path("{id}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Searches find(@HeaderParam("Authorization") String token, @PathParam("id") Integer id) {
+        if (KeyHolder.checkToken(token, className)) {
+            return super.find(id);
+        }
+        return null;
+    }
+
+    @GET
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<Searches> findAll(@HeaderParam("Authorization") String token) {
+        List<Searches> data = new ArrayList<Searches>();
+        if (KeyHolder.checkToken(token, className)) {
+            data = super.findAll();
+        }
+        return data;
+    }
+    
     @GET
     @Path("city")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Searches> findbyUserId(@HeaderParam("Authorization") String token, @QueryParam("userId")Integer userId) {
-        try
-        {
-            AuthenticationFilter.filter(token);
+        
+        List<Searches> data = new ArrayList<Searches>();
+        if (KeyHolder.checkToken(token, className)) {
             Query query = em.createNamedQuery("Searches.findByUserId");
             query.setParameter("userId", userId);
-            return query.getResultList();
+            data = query.getResultList();
         }
-        catch(Exception ex) 
-         {
-            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-         }
+        return data;
     }
 }

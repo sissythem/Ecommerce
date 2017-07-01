@@ -1,19 +1,15 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package services;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import domain.Conversations;
 import domain.Users;
-import java.security.Key;
-import java.util.Date;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
+import javax.json.JsonObject;
+import javax.json.stream.JsonGenerationException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -29,15 +25,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import utils.AuthenticationFilter;
+import utils.KeyHolder;
 
-/**
- *
- * @author sissy
- */
 @Stateless
 @Path("users")
 public class UsersFacadeREST extends AbstractFacade<Users> {
-
     @PersistenceContext(unitName = "ecommerce_restPU")
     private EntityManager em;
 
@@ -50,7 +42,6 @@ public class UsersFacadeREST extends AbstractFacade<Users> {
     @Consumes({MediaType.APPLICATION_JSON})
     public void create(Users entity) {
         super.create(entity);
-        
     }
 
     @PUT
@@ -58,58 +49,6 @@ public class UsersFacadeREST extends AbstractFacade<Users> {
     @Consumes({MediaType.APPLICATION_JSON})
     public void edit(@PathParam("id") Integer id, Users entity) {
         super.edit(entity);
-    }
-
-    @DELETE
-    @Path("delete")
-    public void remove(@HeaderParam("Authorization") String token, Integer id) {
-        try
-        {
-            AuthenticationFilter.filter(token); 
-            super.remove(super.find(id));
-        }
-        catch(Exception ex) 
-         {
-            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
-         }
-    }
-
-    @GET
-    @Path("{id}")
-    @Produces({MediaType.APPLICATION_JSON})
-    public Users find(@HeaderParam("Authorization") String token, @PathParam("id") Integer id) {
-         try
-        {
-            AuthenticationFilter.filter(token);
-            return super.find(id);
-        }
-         catch(Exception ex) 
-         {
-            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-        }
-    }
-
-    @GET
-    @Produces({MediaType.APPLICATION_JSON})
-    public List<Users> findAll(@HeaderParam("Authorization") String token) 
-    {
-        try
-        {
-            AuthenticationFilter.filter(token);
-            return super.findAll();
-        }
-        catch(Exception ex) {
-            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-        }
-    }
-
-    @GET
-    @Path("{from}/{to}")
-    @Produces({MediaType.APPLICATION_JSON})
-    public List<Users> findRange(@HeaderParam("Authorization") String token, @PathParam("from") Integer from, @PathParam("to") Integer to) {
-        return super.findRange(new int[]{from, to});
     }
 
     @GET
@@ -125,110 +64,109 @@ public class UsersFacadeREST extends AbstractFacade<Users> {
     }
     
     /*** CUSTOM METHODS ***/
-   
+    private static String className = UsersFacadeREST.class.getName();
     
-    /**
-     *
-     * @param username
-     * @param password
-     * @return
-     */
+    @PUT
+    @Path("put/{id}")
+    @Consumes({MediaType.APPLICATION_JSON})
+    public String editUser(@HeaderParam("Authorization") String token, @PathParam("id") Integer id, Users entity) {
+        if (KeyHolder.checkToken(token, className)) {
+            super.edit(entity);
+            return token;
+        }
+        return "";
+    }
+    
+    @DELETE
+    @Path("delete/{id}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public String remove(@HeaderParam("Authorization") String token, @PathParam("id")String id) {
+        if (KeyHolder.checkToken(token, className)) {
+            super.remove(super.find(Integer.parseInt(id)));
+            return "not";
+        }
+        return token;
+    }
+
+    @GET
+    @Path("{id}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Users find(@HeaderParam("Authorization") String token, @PathParam("id") Integer id) {
+        if (KeyHolder.checkToken(token, className)) {
+            return super.find(id);
+        }
+        return null;
+    }
+
+    @GET
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<Users> findAll(@HeaderParam("Authorization") String token) {
+        List<Users> data = new ArrayList<Users>();
+        if (KeyHolder.checkToken(token, className)) {
+            data = super.findAll();
+        }
+        return data;
+    }
+
+    @GET
+    @Path("{from}/{to}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<Users> findRange(@HeaderParam("Authorization") String token, @PathParam("from") Integer from, @PathParam("to") Integer to) {
+        List<Users> data = new ArrayList<Users>();
+        if (KeyHolder.checkToken(token, className)) {
+            data = super.findRange(new int[]{from, to});
+        }
+        return data;
+    }
     
     @POST
     @Path("register")
     @Consumes({MediaType.APPLICATION_JSON})
-    public String createUser(Users entity) 
-    {
+    public String createUser(Users entity) {
         super.create(entity);
-        String token = issueToken(entity.getUsername());
+        String token = KeyHolder.issueToken(entity.getUsername());
         return token;
     }
     
-    @PUT
-    @Path("put")
-    @Consumes({MediaType.APPLICATION_JSON})
-    public String editUser(@HeaderParam("Authorization") String token, @PathParam("id") Integer id, Users entity) {
-        
-        try
-        {
-            AuthenticationFilter.filter(token);
-            super.edit(entity);
-            return token;
-        }
-        catch (Exception ex) {
-            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-        }
-    }
-    
-    @POST
+    @GET
     @Path("login")
     @Produces(MediaType.APPLICATION_JSON)
     public String login(@QueryParam("username")String username, @QueryParam("password")String password) {
-        Query query = em.createNamedQuery("loginUser");
-        query.setParameter("username", username);
-        query.setParameter("password", password);
+        String str_query = "SELECT * FROM users WHERE username = '"+username+"' and password = '"+password+"' LIMIT 1";
+        Query query = em.createNativeQuery(str_query, Users.class);
         List<Users> isUser = query.getResultList();
-        if(isUser.isEmpty()){
-            return "not";
-        }
-        else{
-            String token = issueToken(isUser.get(0).getUsername());
+        if(!isUser.isEmpty()){
+            String token = KeyHolder.issueToken(isUser.get(0).getUsername());
+            System.out.println(token);
             return token;
         }
-        
+        return "not";
     }
     
     @GET
     @Path("username")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Users> findbyUsername(@HeaderParam("Authorization") String token, @QueryParam("username")String username) {
-        try 
-        {
-            AuthenticationFilter.filter(token);
+        List<Users> data = new ArrayList<Users>();
+        if (KeyHolder.checkToken(token, className)) {
             Query query = em.createNamedQuery("Users.findByUsername");
             query.setParameter("username", username);
-            return query.getResultList();
-        } catch (Exception ex) {
-            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
+            data = query.getResultList();
         }
-        
+        return data;
     }
     
     @GET
     @Path("email")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Users> findbyEmail(@HeaderParam("Authorization") String token, @QueryParam("email")String email) 
-    {
-        try
-        {
-            AuthenticationFilter.filter(token);
+    public List<Users> findbyEmail(@HeaderParam("Authorization") String token, @QueryParam("email")String email) {
+        List<Users> data = new ArrayList<Users>();
+        if (KeyHolder.checkToken(token, className)) {
             Query query = em.createNamedQuery("Users.findByEmail");
             query.setParameter("email", email);
-            return query.getResultList();
+            data = query.getResultList();
         }
-        catch(Exception ex)
-        {
-            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-        }
-        
+        return data;
     }
-
-    private String issueToken(String username) 
-    {
-            Key key = utils.KeyHolder.key;
-            long nowMillis = System.currentTimeMillis();
-            Date now = new Date(nowMillis);
-            long expMillis = nowMillis + 300000L;
-            Date exp = new Date(expMillis);
-            String jws = Jwts.builder()
-                        .setSubject(username)
-                        .setIssuedAt(now)
-                        .signWith(SignatureAlgorithm.HS512, key)
-                        .setExpiration(exp)
-                        .compact();
-            return jws;
-    }
+    
 }

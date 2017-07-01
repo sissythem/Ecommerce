@@ -1,21 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package services;
 
 import domain.Residences;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import java.security.Key;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import static javax.faces.component.UIInput.isEmpty;
 import javax.persistence.EntityManager;
@@ -32,13 +22,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import utils.AuthenticationFilter;
 import utils.General;
+import utils.KeyHolder;
 
-/**
- *
- * @author sissy
- */
 @Stateless
 @Path("residences")
 public class ResidencesFacadeREST extends AbstractFacade<Residences> {
@@ -64,51 +50,6 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
         super.edit(entity);
     }
 
-    @DELETE
-    @Path("delete/{id}")
-    public void remove(@HeaderParam("Authorization") String token, @PathParam("id") Integer id) {
-         try
-        {
-            AuthenticationFilter.filter(token);
-            super.remove(super.find(id));
-        }
-         catch(Exception ex) 
-         {
-            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
-         }
-    }
-
-    @GET
-    @Path("{id}")
-    @Produces({MediaType.APPLICATION_JSON})
-    public Residences find(@HeaderParam("Authorization") String token, @PathParam("id") Integer id) {
-        try
-        {
-            AuthenticationFilter.filter(token);
-            return super.find(id);
-        }
-        catch(Exception ex) 
-         {
-            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-         }
-    }
-
-    @GET
-    @Produces({MediaType.APPLICATION_JSON})
-    public List<Residences> findAll(@HeaderParam("Authorization") String token) {
-        try
-        {
-            AuthenticationFilter.filter(token);
-            return super.findAll();
-        }
-        catch(Exception ex) 
-         {
-            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-         }
-    }
-
     @GET
     @Path("{from}/{to}")
     @Produces({MediaType.APPLICATION_JSON})
@@ -128,47 +69,70 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
         return em;
     }
     
+    /*** CUSTOM METHODS ***/
+    private static String className = ResidencesFacadeREST.class.getName();
+    
+    @DELETE
+    @Path("delete/{id}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public String remove(@HeaderParam("Authorization") String token, @PathParam("id")String id) {
+        if (KeyHolder.checkToken(token, className)) {
+            super.remove(super.find(Integer.parseInt(id)));
+            return "not";
+        }
+        return token;
+    }
+    
+    @GET
+    @Path("{id}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Residences find(@HeaderParam("Authorization") String token, @PathParam("id") Integer id) {
+        if (KeyHolder.checkToken(token, className)) {
+            return super.find(id);
+        }
+        return null;
+    }
+    
+    @GET
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<Residences> findAll(@HeaderParam("Authorization") String token) {
+        List<Residences> data = new ArrayList<Residences>();
+        if (KeyHolder.checkToken(token, className)) {
+            data = super.findAll();
+        }
+        return data;
+    }
+    
     @GET
     @Path("city")
     @Produces({MediaType.APPLICATION_JSON})
     public List<Residences> findbyCity(@HeaderParam("Authorization") String token, @QueryParam("city")String city) {
-        try
-        {
-            AuthenticationFilter.filter(token);
+        List<Residences> data = new ArrayList<Residences>();
+        if (KeyHolder.checkToken(token, className)) {
             Query query = em.createNamedQuery("Residences.findByCity");
             query.setParameter("city", city);
-            return query.getResultList();
+            data = query.getResultList();
         }
-        catch(Exception ex) 
-         {
-            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-         }
+        return data;
     }
     
     @GET
     @Path("host")
     @Produces({MediaType.APPLICATION_JSON})
     public List<Residences> findByHost(@HeaderParam("Authorization") String token, @QueryParam("hostId")Integer hostId) {
-        try
-        {
-            AuthenticationFilter.filter(token);
+        List<Residences> data = new ArrayList<Residences>();
+        if (KeyHolder.checkToken(token, className)) {
             Query query = em.createNamedQuery("findByHost");
             query.setParameter("hostId", hostId);
-            return query.getResultList();
+            data = query.getResultList();
         }
-        catch(Exception ex) 
-         {
-            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-         }
+        return data;
     }
     
-    public void addUserSearch(Integer userId, String city) {
+    private void addUserSearch(Integer userId, String city) {
         Query query = em.createNativeQuery("INSERT IGNORE INTO searches (user_id, city) VALUES (?, ?)");
         query.setParameter(1, userId);
         query.setParameter(2, city);
-
         query.executeUpdate();
     }
     
@@ -183,9 +147,9 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
         @QueryParam("endDate")String endDate,
         @QueryParam("guests") Integer guests
     ) {
-        try
-        {
-            AuthenticationFilter.filter(token);
+        List<Residences> data = new ArrayList<Residences>();
+        if (KeyHolder.checkToken(token, className)) {
+            
             Query query;
             List<Residences> results = new ArrayList<>();
         
@@ -206,8 +170,8 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
             + " WHERE '"+startDate+"' >= res.available_date_start AND '"+endDate+"' <= res.available_date_end AND res.rooms > 0"
             + " AND res.guests > 0";
 
-         if (isEmpty(guests)) guests = 1;
-         querystring += " AND (res.guests - (SELECT count(guests) FROM reservations as r "
+            if (isEmpty(guests)) guests = 1;
+            querystring += " AND (res.guests - (SELECT count(guests) FROM reservations as r "
                 + "WHERE r.residence_id = res.id AND r.start_date < '"+endDate+"' AND r.end_date > '"+startDate+"'"
                 + ")) >= " + guests;
         
@@ -226,22 +190,17 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
             System.out.println(querystring);
             query = em.createNativeQuery(querystring, Residences.class);
 
-            return query.getResultList();
+            data = query.getResultList();
         }
-        catch(Exception ex) 
-         {
-            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-         }
+        return data;
     }
     
     @POST
     @Path("add")
     @Consumes({MediaType.APPLICATION_JSON})
-    public String createResidence(Residences entity) 
-    {
+    public String createResidence(Residences entity) {
         super.create(entity);
-        String token = issueToken(entity.getHostId().getUsername());
+        String token = KeyHolder.issueToken(entity.getHostId().getUsername());
         return token;
     }
     
@@ -249,33 +208,11 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
     @Path("put")
     @Consumes({MediaType.APPLICATION_JSON})
     public String editResidence(@HeaderParam("Authorization") String token, @PathParam("id") Integer id, Residences entity) {
-        try
-        {
-            AuthenticationFilter.filter(token);
+        if (KeyHolder.checkToken(token, className)) {
             super.edit(entity);
             return token;
         }
-        catch(Exception ex) 
-         {
-            Logger.getLogger(UsersFacadeREST.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-         }
-        
+        return "";
     }
     
-    private String issueToken(String username) {
-            Key key = utils.KeyHolder.key;
-            long nowMillis = System.currentTimeMillis();
-            Date now = new Date(nowMillis);
-            long expMillis = nowMillis + 300000L;
-            Date exp = new Date(expMillis);
-            String jws = Jwts.builder()
-                        .setSubject(username)
-                        .setIssuedAt(now)
-                        .signWith(SignatureAlgorithm.HS512, key)
-                        .setExpiration(exp)
-                        .compact();
-            return jws;
-    }
-
 }

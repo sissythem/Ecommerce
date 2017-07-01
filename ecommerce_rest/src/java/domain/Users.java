@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package domain;
 
 import java.io.Serializable;
@@ -24,7 +19,6 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-
 
 @Entity
 @Table(name = "users")
@@ -106,14 +100,10 @@ public class Users implements Serializable {
     private Collection<Reservations> reservationsCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "hostId")
     private Collection<Reviews> reviewsCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tenantId")
-    private Collection<Reviews> reviewsCollection1;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "hostId")
     private Collection<Residences> residencesCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "senderId")
     private Collection<Conversations> conversationsCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "receiverId")
-    private Collection<Conversations> conversationsCollection1;
 
     public Users() {
     }
@@ -262,15 +252,6 @@ public class Users implements Serializable {
     }
 
     @XmlTransient
-    public Collection<Reviews> getReviewsCollection1() {
-        return reviewsCollection1;
-    }
-
-    public void setReviewsCollection1(Collection<Reviews> reviewsCollection1) {
-        this.reviewsCollection1 = reviewsCollection1;
-    }
-
-    @XmlTransient
     public Collection<Residences> getResidencesCollection() {
         return residencesCollection;
     }
@@ -286,15 +267,6 @@ public class Users implements Serializable {
 
     public void setConversationsCollection(Collection<Conversations> conversationsCollection) {
         this.conversationsCollection = conversationsCollection;
-    }
-
-    @XmlTransient
-    public Collection<Conversations> getConversationsCollection1() {
-        return conversationsCollection1;
-    }
-
-    public void setConversationsCollection1(Collection<Conversations> conversationsCollection1) {
-        this.conversationsCollection1 = conversationsCollection1;
     }
 
     @Override

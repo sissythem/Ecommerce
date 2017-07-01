@@ -1,14 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package utils;
-
-/**
- *
- * @author sissy
- */
 
 import java.security.Key;
 import java.util.Date;
@@ -19,10 +9,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureException;
 
 public class AuthenticationFilter  {
-	
-    
     public static void filter(String token) throws Exception {
-
         // Check if the HTTP Authorization header is present and formatted correctly 
         if (token == null) {
             throw new NotAuthorizedException("Authorization header must be provided");
@@ -31,18 +18,14 @@ public class AuthenticationFilter  {
     }
 
     private static void validateToken(String token) throws Exception {
-        
     	Key key = utils.KeyHolder.key;
     	try {
-
-    		Claims claims = Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody();
-    		long nowMillis = System.currentTimeMillis();
-    		Date now = new Date(nowMillis);
-    		if (now.after(claims.getExpiration()))
-    			throw new Exception();
-    	} 
-    	catch (SignatureException e) {
-    		throw e;
+            Claims claims = Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody();
+            long nowMillis = System.currentTimeMillis();
+            Date now = new Date(nowMillis);
+            if (now.after(claims.getExpiration())) throw new Exception();
+    	} catch (SignatureException e) {
+            throw e;
     	}
     }
 }
