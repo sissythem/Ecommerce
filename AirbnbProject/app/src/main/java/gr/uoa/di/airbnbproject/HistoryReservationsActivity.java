@@ -57,7 +57,7 @@ public class HistoryReservationsActivity extends AppCompatActivity {
         loggedinUser = getUserByUsername.get(0);
 
         Utils.checkToken(token, HistoryReservationsActivity.this);
-        ArrayList<Reservations> userReservations = retrofitCalls.getReservationsByResidenceId(token, loggedinUser.getId().toString());
+        ArrayList<Reservations> userReservations = retrofitCalls.getReservationsByTenantId(token, loggedinUser.getId().toString());
 
         residenceId             = new int [userReservations.size()];
         String[] residenceTitle = new String[userReservations.size()];

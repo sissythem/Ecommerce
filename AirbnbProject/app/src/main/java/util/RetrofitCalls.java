@@ -126,7 +126,7 @@ public class RetrofitCalls {
         return token;
     }
 
-    private class editUserHttpRequestTesk extends AsyncTask<Object, Object, String>
+    private class editUserHttpRequestTask extends AsyncTask<Object, Object, String>
     {
         @Override
         protected String doInBackground(Object... params){
@@ -143,7 +143,7 @@ public class RetrofitCalls {
     }
 
     public String editUser(String token, String userId, Users user){
-        editUserHttpRequestTesk editUserTask = new editUserHttpRequestTesk();
+        editUserHttpRequestTask editUserTask = new editUserHttpRequestTask();
         editUserTask.execute(token, userId, user);
         try{
             editUserTask.get();
