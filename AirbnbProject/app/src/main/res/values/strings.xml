@@ -3,7 +3,7 @@
 
     <!-- TYPES OF RESIDENCES -->
     <string-array name="residence_types_array">
-        <item>Apartrment</item>
+        <item>Apartment</item>
         <item>House</item>
         <item>Bed and Breakfast</item>
         <item>Loft</item>

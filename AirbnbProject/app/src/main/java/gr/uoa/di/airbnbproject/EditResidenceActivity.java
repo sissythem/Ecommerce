@@ -278,7 +278,7 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
                             Double.parseDouble(additionalCostPerPerson), cancellationPolicy, rules, Boolean.parseBoolean(kitchen),
                             Boolean.parseBoolean(livingRoom), startDate, endDate, photo);
 
-                    if (!token.isEmpty()) {
+                    if (!token.isEmpty() && token!=null && token!="not") {
                         Intent hostIntent = new Intent(EditResidenceActivity.this, HostActivity.class);
                         Bundle bhost = new Bundle();
                         user=false;
@@ -305,7 +305,7 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
                              String rules, boolean kitchen, boolean livingRoom, Date startDate, Date endDate, String photo)
     {
         Residences ResidenceParameters = new Residences(host, title, type, about, address, city, country, amenities, floor, rooms, baths, view, spaceArea, guests, minPrice,
-                additionalCostPerPerson, cancellationPolicy, rules, kitchen, kitchen, livingRoom, startDate, endDate, photo);
+                additionalCostPerPerson, cancellationPolicy, rules, kitchen, livingRoom, startDate, endDate, photo);
 
         RetrofitCalls retrofitCalls = new RetrofitCalls();
         token = retrofitCalls.editResidence(token, Integer.toString(residenceId), ResidenceParameters);

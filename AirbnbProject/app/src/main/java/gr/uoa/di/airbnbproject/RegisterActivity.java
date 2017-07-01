@@ -179,7 +179,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     public String PostResult(String firstName, String lastName, String username, String password, String email, String phoneNumber, Date bdate) {
-        Users UserParameters = new Users(firstName, lastName, phoneNumber, email, username, password, bdate);
+        Users UserParameters = new Users(firstName, lastName, username, password, email, phoneNumber, bdate);
         RetrofitCalls retrofitCalls = new RetrofitCalls();
         token = retrofitCalls.postUser(UserParameters);
         return token;

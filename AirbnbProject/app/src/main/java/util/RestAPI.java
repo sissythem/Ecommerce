@@ -12,7 +12,6 @@ import fromRESTful.Users;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
-import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
@@ -69,11 +68,9 @@ public interface RestAPI
     Call<String> deleteResidenceById(@Path("id") String id);
 
     @PUT("residences/put/{id}")
-    @FormUrlEncoded
     Call<String> editResidenceById(@Path("id") String id, @Body Residences residence);
 
     @POST("residences/add")
-    @FormUrlEncoded
     Call<String> postResidence(@Body Residences residence);
 
     @GET("residences")
@@ -85,7 +82,6 @@ public interface RestAPI
     Call<List<Messages>> getMessagesByConversation(@Query("conversationId") String conversationId);
 
     @POST("messages/addmessage")
-    @FormUrlEncoded
     Call<String> postMessage(@Body Messages message);
 
 
@@ -124,7 +120,6 @@ public interface RestAPI
     Call<List<Reservations>> getReservationsByTenantIdAndResidenceId(@Query("tenantId") String tenantId, @Query("residenceId") String residenceId);
 
     @POST("reservations/makereservation")
-    @FormUrlEncoded
     Call<String> postReservation(@Body Reservations reservation);
 
 
@@ -143,6 +138,5 @@ public interface RestAPI
     Call<Void> deleteReviewsByResidence(@Path("residenceId") String residenceId);
 
     @POST("reviews/postreview")
-    @FormUrlEncoded
     Call<String> postReview(@Body Reviews review);
 }

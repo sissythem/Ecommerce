@@ -197,7 +197,7 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
     
     @POST
     @Path("add")
-    @Consumes({MediaType.TEXT_PLAIN})
+    @Consumes({MediaType.APPLICATION_JSON})
     public String createResidence(@HeaderParam("Authorization") String token, Residences entity) {
         if (KeyHolder.checkToken(token, className)) {
             super.create(entity);

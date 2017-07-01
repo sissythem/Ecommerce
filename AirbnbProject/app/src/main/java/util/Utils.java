@@ -32,8 +32,7 @@ public class Utils
     public static String USER_LOGIN_PREFERENCES = "login_preferences";
 
     public static final String APP_DATE_FORMAT = "dd-MM-yyyy";
-    public static final String DATABASE_DATE_FORMAT = "yyyy-MM-dd'T'hh:mm:ss";
-    public static final String DATABASE_DATETIME = "yyyy-MM-dd'T'hh:mm:ssz";
+    public static final String DATABASE_DATE_FORMAT = "yyyy-MM-dd";
 
     public static final String DATE_YEAR_FIRST = "yyyy-MM-dd";
     public static final String DATE_TEXT_MONTH = "dd MMMM";

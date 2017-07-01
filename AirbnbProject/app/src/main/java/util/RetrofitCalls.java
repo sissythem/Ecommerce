@@ -1,6 +1,7 @@
 package util;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -563,6 +564,7 @@ public class RetrofitCalls {
                  token = resp.body();
              }
              catch(IOException e){
+                 Log.i("",e.getMessage());
                  e.printStackTrace();
              }
              return token;
@@ -576,9 +578,9 @@ public class RetrofitCalls {
          try{
              postResidenceTask.get();
          } catch (InterruptedException e) {
-             e.printStackTrace();
+             Log.i("",e.getMessage());
          } catch (ExecutionException e) {
-             e.printStackTrace();
+             Log.i("",e.getMessage());
          }
          return this.token;
      }
@@ -593,7 +595,7 @@ public class RetrofitCalls {
                 Response<String> resp = call.execute();
                 token = resp.body();
             } catch (IOException e){
-                e.printStackTrace();
+                Log.i("",e.getMessage());
             }
             return token;
         }
@@ -605,9 +607,9 @@ public class RetrofitCalls {
         try{
             editResidenceTask.get();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         }
         return this.token;
     }
@@ -624,7 +626,7 @@ public class RetrofitCalls {
                  residencesList.addAll(resp.body());
              }
              catch (IOException e) {
-                 e.printStackTrace();
+                 Log.i("",e.getMessage());
              }
              return residencesList;
          }
@@ -636,9 +638,9 @@ public class RetrofitCalls {
          try {
              residences.get();
          } catch (InterruptedException e) {
-             e.printStackTrace();
+             Log.i("",e.getMessage());
          } catch (ExecutionException e) {
-             e.printStackTrace();
+             Log.i("",e.getMessage());
          }
          return residencesList;
      }
@@ -656,7 +658,7 @@ public class RetrofitCalls {
                  residencesList.addAll(resp.body());
              }
              catch (IOException e) {
-                 e.printStackTrace();
+                 Log.i("",e.getMessage());
              }
              return residencesList;
          }
@@ -668,9 +670,9 @@ public class RetrofitCalls {
          try {
              recommendations.get();
          } catch (InterruptedException e) {
-             e.printStackTrace();
+             Log.i("",e.getMessage());
          } catch (ExecutionException e) {
-             e.printStackTrace();
+             Log.i("",e.getMessage());
          }
          return residencesList;
      }
@@ -687,7 +689,7 @@ public class RetrofitCalls {
                 token = resp.body();
             }
             catch(IOException e){
-                e.printStackTrace();
+                Log.i("",e.getMessage());
             }
             return token;
         }
@@ -698,9 +700,9 @@ public class RetrofitCalls {
         try {
             token = deleteResidence.get();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         }
         return token;
     }
@@ -718,7 +720,7 @@ public class RetrofitCalls {
                  Response<List<Conversations>> resp = call.execute();
                  conversationsList.addAll(resp.body());
              } catch (IOException e){
-                 e.printStackTrace();
+                 Log.i("",e.getMessage());
              }
              return conversationsList;
          }
@@ -730,9 +732,9 @@ public class RetrofitCalls {
          try {
              getConversationsByUserId.get();
          } catch (InterruptedException e) {
-             e.printStackTrace();
+             Log.i("",e.getMessage());
          } catch (ExecutionException e) {
-             e.printStackTrace();
+             Log.i("",e.getMessage());
          }
          return conversationsList;
      }
@@ -747,7 +749,7 @@ public class RetrofitCalls {
                  Response<Conversations> resp = call.execute();
                  conversation = resp.body();
              } catch (IOException e) {
-                 e.printStackTrace();
+                 Log.i("",e.getMessage());
              }
              return conversation;
          }
@@ -759,9 +761,9 @@ public class RetrofitCalls {
          try {
              conversationsById.get();
          } catch (InterruptedException e) {
-             e.printStackTrace();
+             Log.i("",e.getMessage());
          } catch (ExecutionException e) {
-             e.printStackTrace();
+             Log.i("",e.getMessage());
          }
          return conversation;
      }
@@ -777,7 +779,7 @@ public class RetrofitCalls {
                  conversationsList.addAll(resp.body());
              }
              catch (IOException e){
-                 e.printStackTrace();
+                 Log.i("",e.getMessage());
              }
              return conversationsList;
          }
@@ -789,9 +791,9 @@ public class RetrofitCalls {
         try {
             conversationsByResidenceId.get();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         }
         System.out.println(conversationsList);
         return conversationsList;
@@ -809,7 +811,7 @@ public class RetrofitCalls {
                 conversationsList.addAll(resp.body());
             }
             catch (IOException e){
-                e.printStackTrace();
+                Log.i("",e.getMessage());
             }
             return conversationsList;
         }
@@ -821,9 +823,9 @@ public class RetrofitCalls {
         try {
             lastConversation.get();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         }
         return conversationsList;
     }
@@ -838,7 +840,7 @@ public class RetrofitCalls {
                 Response<List<Conversations>> resp = call.execute();
                 conversationsList.addAll(resp.body());
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.i("",e.getMessage());
             }
             return conversationsList;
         }
@@ -850,9 +852,9 @@ public class RetrofitCalls {
         try {
             updatedConversation.get();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         }
         return conversationsList;
     }
@@ -868,7 +870,7 @@ public class RetrofitCalls {
                 Response<List<Messages>> resp = call.execute();
                 messagesList.addAll(resp.body());
             } catch (IOException e){
-                e.printStackTrace();
+                Log.i("",e.getMessage());
             }
             return messagesList;
         }
@@ -880,9 +882,9 @@ public class RetrofitCalls {
         try {
             messagesByConversation.get();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         }
         System.out.println(messagesList);
         return messagesList;
@@ -899,7 +901,7 @@ public class RetrofitCalls {
                 Response<List<Reservations>> resp = call.execute();
                 reservationsList.addAll(resp.body());
             } catch (IOException e){
-                e.printStackTrace();
+                Log.i("",e.getMessage());
             }
             return reservationsList;
         }
@@ -911,9 +913,9 @@ public class RetrofitCalls {
         try {
             reservationsByTenantId.get();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         }
         return reservationsList;
     }
@@ -931,7 +933,7 @@ public class RetrofitCalls {
                 reservationsList.addAll(resp.body());
             }
             catch (IOException e){
-                e.printStackTrace();
+                Log.i("",e.getMessage());
             }
             return reservationsList;
         }
@@ -943,9 +945,9 @@ public class RetrofitCalls {
         try {
             reservationsByResidenceId.get();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         }
         return reservationsList;
     }
@@ -964,7 +966,7 @@ public class RetrofitCalls {
                 reservationsList.addAll(resp.body());
             }
             catch (IOException e){
-                e.printStackTrace();
+                Log.i("",e.getMessage());
             }
             return reservationsList;
         }
@@ -976,9 +978,9 @@ public class RetrofitCalls {
         try {
             reservations.get();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         }
         return reservationsList;
     }
@@ -996,7 +998,7 @@ public class RetrofitCalls {
                 token = resp.body();
             }
             catch (IOException e){
-                e.printStackTrace();
+                Log.i("",e.getMessage());
             }
             return token;
         }
@@ -1009,9 +1011,9 @@ public class RetrofitCalls {
         try {
             postReservationTask.get();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            Log.i("",e.getMessage());
         }
         return this.token;
     }

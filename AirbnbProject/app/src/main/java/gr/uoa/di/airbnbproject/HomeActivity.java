@@ -80,6 +80,7 @@ public class HomeActivity extends AppCompatActivity
 
         //getPermissions();
         token = sessionData.getToken();
+        Utils.checkToken(token, HomeActivity.this);
         username = sessionData.getUsername();
 
         setContentView(R.layout.activity_home);
@@ -243,7 +244,7 @@ public class HomeActivity extends AppCompatActivity
         ArrayList<Reviews> reviewsByResidence;
         int residenceId;
 
-        ArrayList<Searches> searchedCities = new ArrayList<>();
+        ArrayList<Searches> searchedCities;
         Utils.checkToken(token, HomeActivity.this);
         searchedCities = retrofitCalls.getSearchedCities(token, loggedInUser.getId().toString());
         Set<String> relevantCities = new HashSet<>();

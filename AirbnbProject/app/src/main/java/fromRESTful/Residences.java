@@ -42,7 +42,7 @@ public class Residences implements Serializable, Comparable {
 
     public Residences(Users host, String title, String type, String about, String address, String city, String country, String amenities, int floor, int rooms,
                       int baths, String view, double spaceArea, int guests, double minPrice, double additionalCostPerPerson, String cancellationPolicy,
-                      String rules, boolean kitchen, boolean b, boolean livingRoom, Date startDate, Date endDate, String photo)
+                      String rules, boolean kitchen, boolean livingRoom, Date startDate, Date endDate, String photo)
     {
         this.hostId=host;
         this.title = title;
@@ -71,7 +71,7 @@ public class Residences implements Serializable, Comparable {
 
     public Residences(Users hostId, String title, String type, String about, String cancellationPolicy, String country, String city, String address, String rules, String amenities,
         int floor, int rooms, int baths, double spaceArea, String photos, int guests, Date availableDateStart, Date availableDateEnd, double minPrice,
-        double additionalCostPerPerson) {
+        double additionalCostPerPerson, boolean kitchen, boolean livingRoom, String view) {
 
         this.hostId = hostId;
         this.title = title;
@@ -93,6 +93,9 @@ public class Residences implements Serializable, Comparable {
         this.availableDateEnd = availableDateEnd;
         this.minPrice = minPrice;
         this.additionalCostPerPerson = additionalCostPerPerson;
+        this.kitchen=kitchen;
+        this.livingRoom=livingRoom;
+        this.view=view;
     }
 
     public Integer getId() {
