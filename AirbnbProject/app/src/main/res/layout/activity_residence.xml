@@ -32,23 +32,6 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textSize="18sp" />
 
-        <Button
-            android:id="@+id/btnReviews"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/scrollView"
-            android:text="Reviews"
-            android:layout_alignParentTop="true" />
-
-        <ImageButton
-            android:id="@+id/ibContact"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@android:drawable/ic_dialog_email"
-            android:layout_toRightOf="@id/btnReviews"
-            android:text="Reviews"
-            android:layout_alignParentTop="true" />
-
     </android.support.v7.widget.Toolbar>
     <ScrollView
         android:id="@+id/scrollView"
@@ -361,4 +344,23 @@
                 android:text="Book now" />
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
+
+    <ImageButton
+        android:id="@+id/ibContact"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/scrollView"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:text="Reviews"
+        app:srcCompat="@android:drawable/ic_dialog_email" />
+
+    <Button
+        android:id="@+id/btnReviews"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/scrollView"
+        android:layout_toLeftOf="@+id/ibContact"
+        android:layout_toStartOf="@+id/ibContact"
+        android:text="Reviews" />
 </RelativeLayout>

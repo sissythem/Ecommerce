@@ -1,7 +1,6 @@
 package gr.uoa.di.airbnbproject;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -75,6 +74,7 @@ public class SearchResultsActivity extends AppCompatActivity {
         searchlist.setText(str_city + ", " + str_startdate + "-" + str_enddate + ", " + str_guests);
 
         RetrofitCalls retrofitCalls = new RetrofitCalls();
+        Utils.checkToken(token, SearchResultsActivity.this);
         Recommendations = retrofitCalls.getRecommendations(token, sessionData.getUsername(), city, startDate, endDate, guests);
 
         String[] title                  = new String [Recommendations.size()];

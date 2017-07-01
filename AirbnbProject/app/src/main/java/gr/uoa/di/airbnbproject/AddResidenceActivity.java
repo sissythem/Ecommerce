@@ -19,22 +19,15 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import fromRESTful.Residences;
 import fromRESTful.Users;
-import retrofit2.Call;
-import retrofit2.Response;
-import util.RestAPI;
-import util.RestClient;
 import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
-
-import static util.Utils.logout;
 
 public class AddResidenceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
@@ -81,8 +74,8 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
         userInputLayout();
 
         RetrofitCalls retrofitCalls = new RetrofitCalls();
+        Utils.checkToken(token, AddResidenceActivity.this);
         List<Users> userData = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
-        if(userData.size() == 0) logout(AddResidenceActivity.this);
 
         host = userData.get(0);
         TextView residencetxt = (TextView) findViewById(R.id.residencetxt);
@@ -250,8 +243,9 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
                             Log.e("",e.getMessage());
                         }
                     } else {
-                        Toast.makeText(c, "Residence upload failed, please try again!", Toast.LENGTH_SHORT).show();
-                        return;
+                        Toast.makeText(c, "Your session is finished, please login again!", Toast.LENGTH_SHORT).show();
+                        Utils.logout(AddResidenceActivity.this);
+                        finish();
                     }
                 }
             }
@@ -264,14 +258,8 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
         Residences ResidenceParameters = new Residences(hostId, title, type, about, cancellationPolicy, country, city, address, rules, amenities, floor, rooms,
                 baths, spaceArea, photos, guests, availableDateStart, availableDateEnd, minPrice, additionalCostPerPerson);
 
-        RestAPI restAPI = RestClient.getClient(token).create(RestAPI.class);
-        Call<String> call = restAPI.postResidence(ResidenceParameters);
-        try {
-            Response<String> resp = call.execute();
-            token = resp.body();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        RetrofitCalls retrofitCalls = new RetrofitCalls();
+        token = retrofitCalls.postResidence(token, ResidenceParameters);
         return token;
     }
 

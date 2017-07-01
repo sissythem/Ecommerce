@@ -9,19 +9,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import fromRESTful.Reviews;
 
 public class RestCalls {
-
-    public static ArrayList<Reviews> getReviews(){
-        ArrayList<JSONObject> jsonArrayPopularResidences = callWebService(RestPaths.AllReviews, "GET", "JSON", "");
-
-        ArrayList<Reviews> reviews = new ArrayList<>();
-        for (int i=0;i<jsonArrayPopularResidences.size();i++) {
-            reviews.add(Reviews.fromJSON(jsonArrayPopularResidences.get(i)));
-        }
-        return reviews;
-    }
 
     public static Bitmap getPhoto (String url){
         ArrayList<Bitmap> Response  = new ArrayList<>();

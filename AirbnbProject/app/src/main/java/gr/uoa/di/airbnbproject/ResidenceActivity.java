@@ -27,7 +27,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.roomorama.caldroid.CaldroidFragment;
 import com.roomorama.caldroid.CaldroidListener;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -37,11 +36,7 @@ import java.util.Map;
 import fromRESTful.Reservations;
 import fromRESTful.Residences;
 import fromRESTful.Users;
-import retrofit2.Call;
-import retrofit2.Response;
-import util.RestAPI;
 import util.RestCalls;
-import util.RestClient;
 import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
@@ -99,8 +94,10 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         residenceId         = buser.getInt("residenceId");
 
         retrofitCalls = new RetrofitCalls();
+        Utils.checkToken(token, ResidenceActivity.this);
         ArrayList<Users> userLoggedIn = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
         loggedinUser = userLoggedIn.get(0);
+        Utils.checkToken(token, ResidenceActivity.this);
         selectedResidence   = retrofitCalls.getResidenceById(token, Integer.toString(residenceId));
 
         setUpResidenceView();
@@ -264,15 +261,8 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
 
     public String PostResult() {
         Reservations reservationParameters = new Reservations(loggedinUser, selectedResidence, selectedStartDate, selectedEndDate, guestsInt);
-        RestAPI restAPI = RestClient.getClient(token).create(RestAPI.class);
-        Call<String> call = restAPI.postReservation(reservationParameters);
-
-        try {
-            Response<String> resp = call.execute();
-            token = resp.body();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        RetrofitCalls retrofitCalls = new RetrofitCalls();
+        token = retrofitCalls.postReservation(token, reservationParameters);
         return token;
     }
 
@@ -303,6 +293,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
             current = calendar.getTime();
         }
         //get all reservations for the selected residence
+        Utils.checkToken(token, ResidenceActivity.this);
         ArrayList<Reservations> allReservationsByResidence = retrofitCalls.getReservationsByResidenceId(token, Integer.toString(residenceId));
 
         //get the max guests for this residence

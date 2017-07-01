@@ -14,17 +14,12 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
 import fromRESTful.Users;
-import retrofit2.Call;
-import retrofit2.Response;
-import util.RestAPI;
-import util.RestClient;
 import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
@@ -78,6 +73,7 @@ public class EditProfileActivity extends AppCompatActivity {
         user = buser.getBoolean("type");
 
         retrofitCalls = new RetrofitCalls();
+        Utils.checkToken(token, EditProfileActivity.this);
         ArrayList<Users> getUsersByUsername = retrofitCalls.getUserbyUsername(token, username);
         loggedinUser  = getUsersByUsername.get(0);
 
@@ -147,28 +143,14 @@ public class EditProfileActivity extends AppCompatActivity {
     public boolean checkEmail (String Email){
         boolean emailIsNew=false;
         //same process for email
+        Utils.checkToken(token, EditProfileActivity.this);
         ArrayList<Users> users = retrofitCalls.getUserbyEmail(token, Email);
         if(users.size() == 0) emailIsNew = true;
         return  emailIsNew;
     }
 
-    public String PutResult(String firstName, String lastName, String username, String password, String email, String phoneNumber, String country, String city,
-                             String photo, String about, Date birthDate) {
-        Users UserParameters = new Users(firstName, lastName, username, password, email, phoneNumber, country, city, photo, about, birthDate);
-
-        RestAPI restAPI = RestClient.getClient(token).create(RestAPI.class);
-        Call<String> call = restAPI.editUserById(loggedinUser.getId().toString(), UserParameters);
-        try {
-            Response<String> resp = call.execute();
-            token = resp.body();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return token;
-    }
-
-    public void saveUserProfile () {
+    public void saveUserProfile ()
+    {
         final String name = etName.getText().toString();
         final String lastName = etLastName.getText().toString();
         final String phoneNumber = etPhoneNumber.getText().toString();
@@ -202,7 +184,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
         if(emailIsNew) {
             token = PutResult(name, lastName, Username, password, Email, phoneNumber, country, city, photo, about, bdate);
-            if (!token.isEmpty()) {
+            if (!token.isEmpty() || token!=null || token!="not") {
                 sessionData.setToken(token);
                 sessionData.setUsername(username);
                 sessionData.setUserLoggedInState(true);
@@ -232,4 +214,13 @@ public class EditProfileActivity extends AppCompatActivity {
             return;
         }
     }
+
+    public String PutResult(String firstName, String lastName, String username, String password, String email, String phoneNumber, String country, String city,
+                            String photo, String about, Date birthDate) {
+        Users UserParameters = new Users(firstName, lastName, username, password, email, phoneNumber, country, city, photo, about, birthDate);
+        RetrofitCalls retrofitCalls = new RetrofitCalls();
+        token=retrofitCalls.editUser(token, Integer.toString(userId), UserParameters);
+        return token;
+    }
+
 }

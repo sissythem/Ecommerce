@@ -73,7 +73,7 @@ public class ConversationsFacadeREST extends AbstractFacade<Conversations> {
     public String remove(@HeaderParam("Authorization") String token, @PathParam("id")String id) {
         if (KeyHolder.checkToken(token, className)) {
             super.remove(super.find(Integer.parseInt(id)));
-            return "not";
+            token = KeyHolder.issueToken(null);
         }
         return token;
     }
@@ -141,12 +141,12 @@ public class ConversationsFacadeREST extends AbstractFacade<Conversations> {
     }
     
     @GET
-    @Path("residence/{id}")
+    @Path("residence/{id}/{user}")
     @Produces({MediaType.APPLICATION_JSON})
         public List<Conversations> conversationByResidence(@HeaderParam("Authorization") String token, @PathParam("id") String residenceId, @PathParam("user") String userId) {
         List<Conversations> data = new ArrayList<Conversations>();
         if (KeyHolder.checkToken(token, className)) {
-            Query query = em.createNativeQuery("SELECT * FROM conversations WHERE residence_id =?residenceId AND (sender_id =?senderId OR receiver_id =? receiverId) LIMIT 1", Conversations.class);
+            Query query = em.createNativeQuery("SELECT * FROM conversations WHERE residence_id =?residenceId AND (sender_id =?senderId OR receiver_id =?receiverId) LIMIT 1", Conversations.class);
             query.setParameter("residenceId", residenceId);
             query.setParameter("senderId", userId);
             query.setParameter("receiverId", userId);

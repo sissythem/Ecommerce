@@ -1,11 +1,6 @@
 package fromRESTful;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.Serializable;
-
-import util.Utils;
 
 public class Searches implements Serializable {
 
@@ -42,24 +37,6 @@ public class Searches implements Serializable {
 
     public void setUserId(Users userId) {
         this.userId = userId;
-    }
-
-    public static Searches fromJSON(JSONObject obj){
-        Searches s = new Searches();
-
-        try {
-            s.id = (Integer) obj.get("id");
-            s.city = "";
-            if(Utils.isFieldOK(obj, "city"))
-                s.city = (String) obj.get("city");
-            JSONObject userobject = (JSONObject)obj.get("userId");
-            Users user = Users.fromJSON(userobject);
-            s.userId = user;
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return s;
     }
 
     @Override

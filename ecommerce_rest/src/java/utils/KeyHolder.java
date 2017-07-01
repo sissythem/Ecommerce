@@ -7,10 +7,9 @@ import io.jsonwebtoken.impl.crypto.MacProvider;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.faces.component.UIInput;
-import services.ConversationsFacadeREST;
 
-public class KeyHolder {
+public class KeyHolder 
+{
     public static final Key key = MacProvider.generateKey();
     
     public static String issueToken(String keyname) {

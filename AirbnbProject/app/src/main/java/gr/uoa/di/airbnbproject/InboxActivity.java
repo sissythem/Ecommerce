@@ -1,7 +1,6 @@
 package gr.uoa.di.airbnbproject;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -16,6 +15,7 @@ import util.ListAdapterInbox;
 import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
+
 import static util.Utils.getSessionData;
 
 public class InboxActivity extends AppCompatActivity {
@@ -57,6 +57,7 @@ public class InboxActivity extends AppCompatActivity {
         //token = buser.getString("token", token);
 
         RetrofitCalls retrofitCalls = new RetrofitCalls();
+        Utils.checkToken(token, InboxActivity.this);
         ArrayList<Users> getUsersByUsername = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
         currentUserId = getUsersByUsername.get(0).getId();
 
@@ -69,6 +70,7 @@ public class InboxActivity extends AppCompatActivity {
                 /** TODO: ANDROID CANT UNDERSTAND UPDATES?? **/
                 if (isRead[position] != 1) {
                     RetrofitCalls retrofitCalls = new RetrofitCalls();
+                    Utils.checkToken(token, InboxActivity.this);
                     Conversations updatedConversation = retrofitCalls.updateConversation(token, "1", userType, Integer.toString(conversationId[position])).get(0);
 //                    if (userType == USER_SENDER) {
 //                        isRead[position] = updatedConversation.getReadFromSender();
@@ -80,10 +82,9 @@ public class InboxActivity extends AppCompatActivity {
                     setAdapter();
                 }
 
-                //TODO check why boolean user does not pass correctly to MessageActivity
                 Intent showMessageIntent = new Intent(InboxActivity.this, MessageActivity.class);
                 Bundle btype = new Bundle();
-                btype.putBoolean("user", user);
+                btype.putBoolean("type", user);
                 btype.putInt("conversationId", conversationId[position]);
                 btype.putInt("toUserId", toUserId[position]);
                 btype.putInt("currentUserId", currentUserId);
@@ -113,6 +114,7 @@ public class InboxActivity extends AppCompatActivity {
 
     protected void loadConversations() {
         RetrofitCalls retrofitCalls = new RetrofitCalls();
+        Utils.checkToken(token, InboxActivity.this);
         ArrayList<Conversations> Conversations = retrofitCalls.getConversations(token, currentUserId.toString());
 
         msgname             = new String[Conversations.size()];

@@ -1,10 +1,6 @@
 package fromRESTful;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import java.io.Serializable;
-
-import util.Utils;
 
 public class Images implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -71,24 +67,6 @@ public class Images implements Serializable {
     @Override
     public String toString() {
         return "domain.Images[ id=" + id + " ]";
-    }
-
-    public static Images fromJSON(JSONObject obj){
-        Images i = new Images();
-
-        try {
-            i.id = (Integer) obj.get("id");
-
-            JSONObject residenceObj = (JSONObject)obj.get("residenceId");
-            Residences residence = Residences.fromJSON(residenceObj);
-            i.residenceId= residence;
-
-            i.name="";
-            if(Utils.isFieldOK(obj, "name")) i.name = (String) obj.get("name");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return i;
     }
 
 }

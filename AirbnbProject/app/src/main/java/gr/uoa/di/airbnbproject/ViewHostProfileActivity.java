@@ -64,6 +64,7 @@ public class ViewHostProfileActivity extends AppCompatActivity {
         user = buser.getBoolean("type");
         hostId = buser.getInt("host");
         RetrofitCalls retrofitCalls = new RetrofitCalls();
+        Utils.checkToken(token, ViewHostProfileActivity.this);
         host = retrofitCalls.getUserbyId(token, Integer.toString(hostId));
 
         bback = (ImageButton)findViewById(R.id.back);

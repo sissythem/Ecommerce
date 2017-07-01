@@ -48,9 +48,11 @@ public class HistoryReviewsActivity extends AppCompatActivity {
         user = buser.getBoolean("type");
 
         RetrofitCalls retrofitCalls = new RetrofitCalls();
+        Utils.checkToken(token, HistoryReviewsActivity.this);
         ArrayList<Users> getUserByUsername = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
         loggedinUser = getUserByUsername.get(0);
 
+        Utils.checkToken(token, HistoryReviewsActivity.this);
         ArrayList<Reviews> userReviews = retrofitCalls.getReviewsByTenantId(token, loggedinUser.getId().toString());
 
         String[] representativePhoto    = new String [userReviews.size()];

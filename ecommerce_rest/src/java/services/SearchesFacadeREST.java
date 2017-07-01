@@ -76,7 +76,7 @@ public class SearchesFacadeREST extends AbstractFacade<Searches> {
     public String remove(@HeaderParam("Authorization") String token, @PathParam("id")String id) {
         if (KeyHolder.checkToken(token, className)) {
             super.remove(super.find(Integer.parseInt(id)));
-            return "not";
+            token = KeyHolder.issueToken(null);
         }
         return token;
     }

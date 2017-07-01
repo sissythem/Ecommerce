@@ -1,14 +1,9 @@
 package services;
 
 import domain.Reservations;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import java.security.Key;
+import domain.Residences;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -24,8 +19,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import utils.AuthenticationFilter;
 import utils.KeyHolder;
+
+
 
 @Stateless
 @Path("reservations")
@@ -81,7 +77,7 @@ public class ReservationsFacadeREST extends AbstractFacade<Reservations> {
     public String remove(@HeaderParam("Authorization") String token, @PathParam("id")String id) {
         if (KeyHolder.checkToken(token, className)) {
             super.remove(super.find(Integer.parseInt(id)));
-            return "not";
+            token = KeyHolder.issueToken(null);
         }
         return token;
     }
@@ -100,9 +96,11 @@ public class ReservationsFacadeREST extends AbstractFacade<Reservations> {
     @Produces({MediaType.APPLICATION_JSON})
     public List<Reservations> findAll(@HeaderParam("Authorization") String token) {
         List<Reservations> data = new ArrayList<Reservations>();
-        if (KeyHolder.checkToken(token, className)) {
-            data = super.findAll();
-        }
+        data = super.findAll();
+//        if (KeyHolder.checkToken(token, className)) {
+//            
+//        }
+        
         return data;
     }
     
@@ -148,7 +146,7 @@ public class ReservationsFacadeREST extends AbstractFacade<Reservations> {
     
     @POST
     @Path("makereservation")
-    @Consumes({MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.TEXT_PLAIN})
     public String createReservation(@HeaderParam("Authorization") String token, Reservations entity) {
         if (KeyHolder.checkToken(token, className)) {
             super.create(entity);

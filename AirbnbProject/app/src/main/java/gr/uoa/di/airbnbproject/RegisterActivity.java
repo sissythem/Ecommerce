@@ -3,7 +3,6 @@ package gr.uoa.di.airbnbproject;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -17,21 +16,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
 import fromRESTful.Users;
-import retrofit2.Call;
-import retrofit2.Response;
-import util.RestAPI;
-import util.RestClient;
 import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
 
-import static util.Utils.USER_LOGIN_PREFERENCES;
 import static util.Utils.updateSessionData;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -146,7 +139,7 @@ public class RegisterActivity extends AppCompatActivity {
                 //if username and email are new the application sends the data with sendPOST method to be stored in the database
                 if(userIsNew && emailIsNew) {
                     token = PostResult(firstName, lastName, Username, Password, Email, phoneNumber, bdate);
-                    if (success) {
+                    if (!token.isEmpty() || token!=null || token!="not") {
                         //if data are stored successfully in the data base, the user is now logged in and the home activity starts
                         sessionData = new Session(token, Username, true);
                         updateSessionData(RegisterActivity.this, sessionData);
@@ -187,14 +180,8 @@ public class RegisterActivity extends AppCompatActivity {
 
     public String PostResult(String firstName, String lastName, String username, String password, String email, String phoneNumber, Date bdate) {
         Users UserParameters = new Users(firstName, lastName, phoneNumber, email, username, password, bdate);
-        RestAPI restAPI = RestClient.getStringClient().create(RestAPI.class);
-        Call<String> call = restAPI.postUser(UserParameters);
-        try {
-            Response<String> resp = call.execute();
-            token = resp.body();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        RetrofitCalls retrofitCalls = new RetrofitCalls();
+        token = retrofitCalls.postUser(UserParameters);
         return token;
     }
 

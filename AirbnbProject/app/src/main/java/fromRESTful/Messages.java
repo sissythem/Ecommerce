@@ -1,12 +1,7 @@
 package fromRESTful;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.Serializable;
 import java.util.Date;
-
-import util.Utils;
 
 public class Messages implements Serializable {
 
@@ -117,40 +112,6 @@ public class Messages implements Serializable {
     @Override
     public String toString() {
         return "domain.Messages[ id=" + id + " ]";
-    }
-
-
-    public static Messages fromJSON (JSONObject obj){
-        Messages m = new Messages();
-
-        try {
-            m.id = (Integer) obj.get("id");
-
-            JSONObject userobject = (JSONObject)obj.get("userId");
-            Users senderUser = Users.fromJSON(userobject);
-            m.userId = senderUser;
-
-            m.body="";
-            if(Utils.isFieldOK(obj, "body")) m.body = (String) obj.get("body");
-
-            if(Utils.isFieldOK(obj, "deletedFromSender")) m.deletedFromSender = Short.parseShort(obj.get("deletedFromSender").toString());
-            if(Utils.isFieldOK(obj, "deletedFromReceiver")) m.deletedFromReceiver = Short.parseShort(obj.get("deletedFromReceiver").toString());
-
-            String dateString;
-            java.util.Date date;
-            if(Utils.isFieldOK(obj,"timestamp")) {
-                dateString = (String) obj.get("timestamp");
-                date = Utils.ConvertStringToDate(dateString, Utils.DATABASE_DATETIME);
-                m.timestamp = new java.sql.Date(date.getTime());
-            }
-            JSONObject conversationObj = (JSONObject)obj.get("conversationId");
-            Conversations conversation = Conversations.fromJSON(conversationObj);
-            m.conversationId = conversation;
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return m;
     }
 
 }

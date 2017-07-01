@@ -1,12 +1,7 @@
 package fromRESTful;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.Serializable;
 import java.util.Date;
-
-import util.Utils;
 
 public class Reservations implements Serializable {
 
@@ -93,33 +88,6 @@ public class Reservations implements Serializable {
         int hash = 0;
         hash += (id != null ? id.hashCode() : 0);
         return hash;
-    }
-
-    public static Reservations fromJSON (JSONObject obj){
-        Reservations r = new Reservations();
-
-        try {
-            r.id = (Integer) obj.get("id");
-            if(Utils.isFieldOK(obj, "startDate")) {
-                String startDateString = (String) obj.get("startDate");
-                r.startDate = Utils.ConvertStringToDate(startDateString, Utils.DATABASE_DATE_FORMAT);
-            }
-            if(Utils.isFieldOK(obj, "endDate")) {
-                String endDateString = (String) obj.get("endDate");
-                r.endDate = Utils.ConvertStringToDate(endDateString, Utils.DATABASE_DATE_FORMAT);
-            }
-            r.guests=0;
-            if(Utils.isFieldOK(obj, "guests"))
-                r.guests = (int) obj.get("guests");
-
-            JSONObject tenantObject = (JSONObject)obj.get("tenantId");
-            Users tenantUser = Users.fromJSON(tenantObject);
-            r.tenantId = tenantUser;
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return r;
     }
 
     @Override

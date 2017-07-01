@@ -49,7 +49,6 @@ CREATE TABLE `conversations` (
 
 LOCK TABLES `conversations` WRITE;
 /*!40000 ALTER TABLE `conversations` DISABLE KEYS */;
-INSERT INTO `conversations` VALUES (1,2,6,8,'Test Title Residence',1,0,0,0);
 /*!40000 ALTER TABLE `conversations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -76,7 +75,6 @@ CREATE TABLE `images` (
 
 LOCK TABLES `images` WRITE;
 /*!40000 ALTER TABLE `images` DISABLE KEYS */;
-INSERT INTO `images` VALUES (1,3,'ggg.png'),(2,7,'dsfsd.jpg');
 /*!40000 ALTER TABLE `images` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -109,7 +107,6 @@ CREATE TABLE `messages` (
 
 LOCK TABLES `messages` WRITE;
 /*!40000 ALTER TABLE `messages` DISABLE KEYS */;
-INSERT INTO `messages` VALUES (1,2,1,'thanks for everything!!!','2017-06-10 12:12:58',0,0),(7,6,1,'hi!!','2017-06-11 09:19:38',0,0),(11,6,1,'yes','2017-06-11 10:35:28',0,0);
 /*!40000 ALTER TABLE `messages` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -130,7 +127,7 @@ CREATE TABLE `reservations` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
   KEY `tenant_id` (`tenant_id`),
-  KEY `room_id` (`residence_id`),
+  KEY `residence_id` (`residence_id`),
   CONSTRAINT `residence_id` FOREIGN KEY (`residence_id`) REFERENCES `residences` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT `tenant_id` FOREIGN KEY (`tenant_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
@@ -192,7 +189,7 @@ CREATE TABLE `residences` (
 
 LOCK TABLES `residences` WRITE;
 /*!40000 ALTER TABLE `residences` DISABLE KEYS */;
-INSERT INTO `residences` VALUES (1,2,'Great Appartment in Greece!','no','about','no','Greece','fjjgrp','athens','no','no',1,2,2,1,1,'yes',20.5,'no',1,'2017-05-07','2018-05-07',200,50,1),(3,6,'Perfect place for honeymoon!','no','about','no','Netherlands','grifgjr','Amsterdam','no','no',3,1,1,1,1,'no',45.5,'no',1,'2017-05-07','2018-05-07',300,30,1),(4,6,'House next to the beach','no','about','no','Netherlands','grifgjr','Amsterdam','no','no',3,1,1,1,1,'no',45.5,'no',2,'2017-05-07','2018-05-07',300,30,1),(5,6,'Mary\'s perfect place','no','about','no','Netherlands','grifgjr','Amsterdam','no','no',3,1,1,1,1,'no',45.5,'no',1,'2017-05-07','2018-05-07',300,30,1),(6,6,'Unforgattable moments in this room','no','about','no','Netherlands','grifgjr','Amsterdam','no','no',3,1,1,1,1,'no',45.5,'no',1,'2017-05-07','2018-05-07',300,30,1),(7,6,'Perfect Lovers Place','no','about','no','Netherlands','grifgjr','Amsterdam','no','no',3,1,1,1,1,'no',45.5,'no',1,'2017-05-07','2018-05-07',300,30,1),(8,6,'Test Title Residence','no','about','no','Netherlands','grifgjr','Amsterdam','no','no',3,1,1,1,1,'no',45.5,'no',1,'2017-05-07','2018-05-07',300,30,1),(9,6,'Your Perfect Residence','no','about','no','Netherlands','grifgjr','Amsterdam','no','no',3,1,1,1,1,'no',45.5,'no',1,'2017-05-07','2018-05-07',300,30,1),(10,2,'Residence Type','housr','hk','hdsvnh','greec','rh','fy','fdwf','svj',7,4,2,0,0,'sea',200,'hgt',5,'2017-07-01','2017-07-29',100,50,1),(12,12,'Boy ang Girl Room','newrt','dgjj','thhjjb bh ','spain','shj','dgh','ghn','yjj',7,8,4,0,0,'shj',448,'dgh',4,'2017-06-06','2017-06-23',400,47,1),(13,12,'September Room','newrt','dgjj','thhjjb bh ','spain','shj','dgh','ghn','yjj',7,8,4,0,0,'shj',448,'dgh',4,'2017-06-06','2017-06-23',400,47,1),(14,12,'cgj','Earth','gj','ti','fj','top','gj','qwery','ji',2,4,4,0,0,'gj',5,'fhj',4,'2017-06-04','2017-06-30',55,14,1),(15,12,'RRS HOME','Apartrment','about','this is cancellation policy','Greece','zqsx1','aqes3','rules','asf',4,8,1,0,0,'sea',100,'qsd',4,'2017-06-10','2017-07-22',800,100,1),(17,1,'test','Cabin','asdf','uu','sf','cg8','kcfk','jygh','kio',54,2,4,0,0,'sea',258,'uyh',5,'2017-06-08','2017-06-30',480,25,1),(18,2,'Sea, Wine and love','Apartrment','rhj','gj','d h','ryj','fj','hk','gj',7,8,6,0,0,'t to',78,'vh',58,'2017-06-06','2017-06-30',58,55,1),(19,2,'Sea, Wine and love','Apartrment','rhj','gj','d h','ryj','fj','hk','gj',7,8,6,0,0,'t to',78,'vh',58,'2017-06-06','2017-06-30',58,55,1),(20,2,'Sea, Wine and love','Apartrment','rhj','gj','d h','ryj','fj','hk','gj',7,8,6,0,0,'t to',78,'vh',58,'2017-06-06','2017-06-30',58,55,1),(21,2,'Sea, Wine and love','Apartrment','rhj','gj','d h','ryj','fj','hk','gj',7,8,6,0,0,'t to',78,'vh',58,'2017-06-06','2017-06-30',58,55,1),(22,2,'Sea, Wine and love','Apartrment','rhj','gj','d h','ryj','fj','hk','gj',7,8,6,0,0,'t to',78,'vh',58,'2017-06-06','2017-06-30',58,55,1),(23,2,'Sea, Wine and love','Apartrment','rhj','gj','d h','ryj','fj','hk','gj',7,8,6,0,0,'t to',78,'vh',58,'2017-06-06','2017-06-30',58,55,1),(24,2,'Residence title','Apartrment','hk','hdsvnh','greec','rh','fy','fdwf','svj',7,4,2,1,1,'sea',200,'wr',5,NULL,NULL,100,50,0),(25,2,'Residence by vasso','Apartrment','hk','hdsvnh','greec','rh','fy','fdwf','svj',7,4,2,0,0,'sea',200,'y r',5,NULL,NULL,100,50,0),(26,2,'vassotest','Apartrment','hk','hdsvnh','greec','rh','fy','fdwf','svj',7,4,2,0,0,'sea',200,'y r',5,NULL,NULL,100,50,0);
+INSERT INTO `residences` VALUES (1,2,'Great Appartment in Greece!','no','about','no','Greece','fjjgrp','athens','no','no',1,2,2,1,1,'yes',20.5,'no',1,'2017-05-07','2018-05-07',200,50,1),(3,6,'Perfect place for honeymoon!','no','about','no','Netherlands','grifgjr','Amsterdam','no','no',3,1,1,1,1,'no',45.5,'no',1,'2017-05-07','2018-05-07',300,30,1),(4,6,'House next to the beach','no','about','no','Netherlands','grifgjr','Amsterdam','no','no',3,1,1,1,1,'no',45.5,'no',2,'2017-05-07','2018-05-07',300,30,1),(5,6,'Mary\'s perfect place','no','about','no','Netherlands','grifgjr','Amsterdam','no','no',3,1,1,1,1,'no',45.5,'no',1,'2017-05-07','2018-05-07',300,30,1),(6,6,'Unforgattable moments in this room','no','about','no','Netherlands','grifgjr','Amsterdam','no','no',3,1,1,1,1,'no',45.5,'no',1,'2017-05-07','2018-05-07',300,30,1),(8,6,'Test Title Residence','no','about','no','Netherlands','grifgjr','Amsterdam','no','no',3,1,1,1,1,'no',45.5,'no',1,'2017-05-07','2018-05-07',300,30,1),(9,6,'Your Perfect Residence','no','about','no','Netherlands','grifgjr','Amsterdam','no','no',3,1,1,1,1,'no',45.5,'no',1,'2017-05-07','2018-05-07',300,30,1),(10,2,'Residence Type','housr','hk','hdsvnh','greec','rh','fy','fdwf','svj',7,4,2,0,0,'sea',200,'hgt',5,'2017-07-01','2017-07-29',100,50,1),(18,2,'Sea, Wine and love','Apartrment','rhj','gj','d h','ryj','fj','hk','gj',7,8,6,0,0,'t to',78,'vh',58,'2017-06-06','2017-06-30',58,55,1),(20,2,'Sea, Wine and love','Apartrment','rhj','gj','d h','ryj','fj','hk','gj',7,8,6,0,0,'t to',78,'vh',58,'2017-06-06','2017-06-30',58,55,1),(21,2,'Sea, Wine and love','Apartrment','rhj','gj','d h','ryj','fj','hk','gj',7,8,6,0,0,'t to',78,'vh',58,'2017-06-06','2017-06-30',58,55,1),(23,2,'Sea, Wine and love','Apartrment','rhj','gj','d h','ryj','fj','hk','gj',7,8,6,0,0,'t to',78,'vh',58,'2017-06-06','2017-06-30',58,55,1),(24,2,'Residence title','Apartrment','hk','hdsvnh','greec','rh','fy','fdwf','svj',7,4,2,1,1,'sea',200,'wr',5,NULL,NULL,100,50,0),(26,18,'vassotest','Apartrment','hk','hdsvnh','greec','rh','fy','fdwf','svj',7,4,2,0,0,'sea',200,'y r',5,NULL,NULL,100,50,0);
 /*!40000 ALTER TABLE `residences` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -226,7 +223,7 @@ CREATE TABLE `reviews` (
 
 LOCK TABLES `reviews` WRITE;
 /*!40000 ALTER TABLE `reviews` DISABLE KEYS */;
-INSERT INTO `reviews` VALUES (1,1,2,1,'good',4),(3,3,6,4,'very good',6),(4,4,6,2,'good',4),(5,5,6,2,'good',4),(6,6,6,2,'good',4),(7,7,6,2,'good',4),(8,8,6,2,'good',4);
+INSERT INTO `reviews` VALUES (1,1,2,1,'good',4),(3,3,6,4,'very good',6),(4,4,6,2,'good',4),(5,5,6,2,'good',4),(6,6,6,2,'good',4),(8,8,6,2,'good',4);
 /*!40000 ALTER TABLE `reviews` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -284,7 +281,7 @@ CREATE TABLE `users` (
   PRIMARY KEY (`id`),
   KEY `host_id` (`id`),
   KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -293,7 +290,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'Sissy','Themeli','sissythem','sissythem','sissy@email.com','1236547892','Greece','Athens','photo','2017-05-12 23:27:31','about','1990-08-05','0'),(2,'Nikiforos','Pittaras','nikpit','nikpit','nik@email.com','1254883587','France','Paris','photooos','2017-06-06 22:36:47','this is demo','2017-06-11','1'),(3,'Eva','Themeli','evathem','evathem','eva@email.com','1258893345','Germany','Berlin',NULL,'2017-05-07 14:43:36',NULL,NULL,'0'),(4,'Minos','Themelis','minosthem','minosthem','minos@email.com','1234559668','Netherlands','Amsterdam',NULL,'2017-05-07 14:43:36',NULL,NULL,'0'),(5,'Kostas','Themelis','kostasthem','kostasthem','kostas@email.com','7559966358','Greece','Athens',NULL,'2017-05-07 14:43:36',NULL,NULL,'1'),(6,'Anna','Karavokiri','annakara','annakara','anna@email.com','4552587563','Greece','Athens',NULL,'2017-05-07 14:43:36',NULL,NULL,'1'),(7,NULL,NULL,'npit','npit','nikpit@gmail.com',NULL,'greece','athens','photo',NULL,'about',NULL,'0'),(8,'vasso',NULL,'vasso','123','vvv@ddd.com',NULL,'greece','athens','photo',NULL,'about',NULL,'0'),(10,'vvvvvv','mmmmmm','vasss','1q2w3e','ee@mail.com',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(12,'vasso','nnnnnn','fff','234','dg','7558','greece','athens','',NULL,'about','2017-06-18','0');
+INSERT INTO `users` VALUES (1,'Sissy','Themeli','sissythem','sissythem','sissy@email.com','1236547892','Greece','Athens','photo','2017-05-12 23:27:31','about','1990-08-05','0'),(2,'Nikiforos','Pittaras','nikpit','nikpit','nik@email.com','1254883587','France','Paris','photooos','2017-06-06 22:36:47','this is demo','2017-06-11','1'),(3,'Eva','Themeli','evathem','evathem','eva@email.com','1258893345','Germany','Berlin',NULL,'2017-05-07 14:43:36',NULL,NULL,'0'),(4,'Minos','Themelis','minosthem','minosthem','minos@email.com','1234559668','Netherlands','Amsterdam',NULL,'2017-05-07 14:43:36',NULL,NULL,'0'),(6,'Anna','Karavokiri','annakara','annakara','anna@email.com','4552587563','Greece','Athens',NULL,'2017-05-07 14:43:36',NULL,NULL,'1'),(18,'vasso',NULL,'vasso','1235','vvv@ddd.com',NULL,'greece','athens','photo','2017-07-01 11:05:26','about',NULL,'0');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -306,4 +303,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-07-01 12:40:23
+-- Dump completed on 2017-07-01 15:13:40

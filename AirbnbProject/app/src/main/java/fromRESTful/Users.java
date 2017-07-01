@@ -1,15 +1,7 @@
 package fromRESTful;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.Serializable;
 import java.util.Date;
-
-import util.Utils;
-
-import static util.Utils.DATABASE_DATETIME;
-import static util.Utils.DATABASE_DATE_FORMAT;
 
 public class Users implements Serializable {
 
@@ -57,6 +49,9 @@ public class Users implements Serializable {
         this.email=email;
         this.phoneNumber=phoneNumber;
         this.birthDate=bdate;
+        this.country="";
+        this.city="";
+        this.about="";
     }
 
     public Users(Integer id) {
@@ -173,70 +168,6 @@ public class Users implements Serializable {
 
     public void setHost(String host) {
         this.host = host;
-    }
-
-    public static Users fromJSON (JSONObject obj){
-        Users u = new Users();
-        try {
-            u.id = (Integer) obj.get("id");
-            u.firstName = (String) obj.get("firstName");
-            u.lastName = (String) obj.get("lastName");
-            u.username = (String) obj.get("username");
-            u.password = (String) obj.get("password");
-            u.email = (String) obj.get("email");
-            u.phoneNumber = (String) obj.get("phoneNumber");
-            u.country = "";
-            if(Utils.isFieldOK(obj, "country")) u.country = (String) obj.get("country");
-            u.city = "";
-            if(Utils.isFieldOK(obj, "city")) u.city = (String) obj.get("city");
-            u.photo = "";
-            if(Utils.isFieldOK(obj, "photo")) u.photo = (String) obj.get("photo");
-
-            String dateString;
-            if(Utils.isFieldOK(obj,"registrationDate")) {
-                dateString = (String) obj.get("registrationDate");
-                u.registrationDate = Utils.ConvertStringToDate(dateString, DATABASE_DATETIME);
-            }
-            u.about="";
-            if(Utils.isFieldOK(obj, "about")) u.about = (String) obj.get("about");
-            String birthDateString;
-
-            if(Utils.isFieldOK(obj,"birthDate")) {
-                birthDateString = (String)obj.get("birthDate");
-                u.birthDate = Utils.ConvertStringToDate(birthDateString, DATABASE_DATE_FORMAT);
-            }
-            u.host = (String) obj.get("host");
-        } catch (JSONException e) {
-            e.printStackTrace();
-
-        }
-
-        return u;
-    }
-
-    public JSONObject toJSON (){
-        JSONObject jsonUser = new JSONObject();
-        try {
-            jsonUser.put("id", id.toString());
-            jsonUser.put("firstName", firstName);
-            jsonUser.put("lastName", lastName);
-            jsonUser.put("username", username);
-            jsonUser.put("password", password);
-            jsonUser.put("email", email);
-            jsonUser.put("phoneNumber", phoneNumber);
-            jsonUser.put("country", country);
-            jsonUser.put("city", city);
-            jsonUser.put("photo", photo);
-            String rdate = Utils.ConvertDateToString(registrationDate, DATABASE_DATETIME);
-            jsonUser.put("registrationDate", rdate);
-            jsonUser.put("about", about);
-            String bdate = Utils.ConvertDateToString(birthDate, DATABASE_DATE_FORMAT);
-            jsonUser.put("birthDate", bdate);
-            jsonUser.put("host", host);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return jsonUser;
     }
 
     @Override

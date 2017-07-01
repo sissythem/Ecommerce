@@ -78,7 +78,7 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
     public String remove(@HeaderParam("Authorization") String token, @PathParam("id")String id) {
         if (KeyHolder.checkToken(token, className)) {
             super.remove(super.find(Integer.parseInt(id)));
-            return "not";
+            token = KeyHolder.issueToken(null);
         }
         return token;
     }
@@ -197,22 +197,24 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
     
     @POST
     @Path("add")
-    @Consumes({MediaType.APPLICATION_JSON})
-    public String createResidence(Residences entity) {
-        super.create(entity);
-        String token = KeyHolder.issueToken(entity.getHostId().getUsername());
-        return token;
+    @Consumes({MediaType.TEXT_PLAIN})
+    public String createResidence(@HeaderParam("Authorization") String token, Residences entity) {
+        if (KeyHolder.checkToken(token, className)) {
+            super.create(entity);
+            return token;
+        }
+        return "not";
     }
     
     @PUT
     @Path("put")
-    @Consumes({MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.TEXT_PLAIN})
     public String editResidence(@HeaderParam("Authorization") String token, @PathParam("id") Integer id, Residences entity) {
         if (KeyHolder.checkToken(token, className)) {
             super.edit(entity);
             return token;
         }
-        return "";
+        return "not";
     }
     
 }

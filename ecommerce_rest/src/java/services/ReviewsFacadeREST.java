@@ -80,7 +80,7 @@ public class ReviewsFacadeREST extends AbstractFacade<Reviews> {
     public String remove(@HeaderParam("Authorization") String token, @PathParam("id")String id) {
         if (KeyHolder.checkToken(token, className)) {
             super.remove(super.find(Integer.parseInt(id)));
-            return "not";
+            token = KeyHolder.issueToken(null);
         }
         return token;
     }
@@ -107,13 +107,13 @@ public class ReviewsFacadeREST extends AbstractFacade<Reviews> {
     
     @POST
     @Path("postreview")
-    @Consumes({MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.TEXT_PLAIN})
     public String createReview(@HeaderParam("Authorization") String token, Reviews entity) {
         if (KeyHolder.checkToken(token, className)) {
             super.create(entity);
             return token;
         }
-        return "";
+        return "not";
     }
     
     @GET

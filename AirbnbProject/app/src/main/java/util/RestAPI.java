@@ -1,7 +1,5 @@
 package util;
 
-import org.json.JSONObject;
-
 import java.util.List;
 
 import fromRESTful.Conversations;
@@ -21,7 +19,11 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
-public interface RestAPI {
+public interface RestAPI
+{
+    /***** Check Token *****/
+    @GET("users/checktoken")
+    Call<String> checkToken ();
 
     /***** Users Facade Methods *****/
     @GET("users/{userId}")
@@ -40,7 +42,6 @@ public interface RestAPI {
     Call<String> postUser(@Body Users user);
 
     @PUT("users/put/{id}")
-    @FormUrlEncoded
     Call<String> editUserById(@Path("userId") String userId, @Body Users user);
 
     @DELETE("users/delete/{id}")

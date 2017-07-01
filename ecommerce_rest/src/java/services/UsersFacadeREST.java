@@ -1,15 +1,9 @@
 package services;
 
-import domain.Conversations;
 import domain.Users;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.Stateless;
-import javax.json.JsonObject;
-import javax.json.stream.JsonGenerationException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -24,7 +18,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import utils.AuthenticationFilter;
 import utils.KeyHolder;
 
 @Stateless
@@ -68,13 +61,13 @@ public class UsersFacadeREST extends AbstractFacade<Users> {
     
     @PUT
     @Path("put/{id}")
-    @Consumes({MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.TEXT_PLAIN})
     public String editUser(@HeaderParam("Authorization") String token, @PathParam("id") Integer id, Users entity) {
         if (KeyHolder.checkToken(token, className)) {
             super.edit(entity);
             return token;
         }
-        return "";
+        return "not";
     }
     
     @DELETE
@@ -83,7 +76,7 @@ public class UsersFacadeREST extends AbstractFacade<Users> {
     public String remove(@HeaderParam("Authorization") String token, @PathParam("id")String id) {
         if (KeyHolder.checkToken(token, className)) {
             super.remove(super.find(Integer.parseInt(id)));
-            return "not";
+            token = KeyHolder.issueToken(null);
         }
         return token;
     }
@@ -122,7 +115,8 @@ public class UsersFacadeREST extends AbstractFacade<Users> {
     @POST
     @Path("register")
     @Consumes({MediaType.APPLICATION_JSON})
-    public String createUser(Users entity) {
+    public String createUser(Users entity) 
+    {
         super.create(entity);
         String token = KeyHolder.issueToken(entity.getUsername());
         return token;
@@ -130,10 +124,12 @@ public class UsersFacadeREST extends AbstractFacade<Users> {
     
     @GET
     @Path("login")
-    @Produces(MediaType.APPLICATION_JSON)
-    public String login(@QueryParam("username")String username, @QueryParam("password")String password) {
-        String str_query = "SELECT * FROM users WHERE username = '"+username+"' and password = '"+password+"' LIMIT 1";
-        Query query = em.createNativeQuery(str_query, Users.class);
+    @Produces(MediaType.TEXT_PLAIN)
+    public String login(@QueryParam("username")String username, @QueryParam("password")String password)
+    {
+        Query query = em.createNamedQuery("loginUser");
+        query.setParameter("username", username);
+        query.setParameter("password", password);
         List<Users> isUser = query.getResultList();
         if(!isUser.isEmpty()){
             String token = KeyHolder.issueToken(isUser.get(0).getUsername());
@@ -167,6 +163,18 @@ public class UsersFacadeREST extends AbstractFacade<Users> {
             data = query.getResultList();
         }
         return data;
+    }
+    
+    @GET
+    @Path("checktoken")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String checkToken(@HeaderParam("Authorization")String token)
+    {
+        if(!KeyHolder.checkToken(token, className))
+        {
+            token="not";
+        }
+        return token;
     }
     
 }

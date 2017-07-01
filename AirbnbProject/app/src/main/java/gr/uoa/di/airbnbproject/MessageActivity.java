@@ -2,11 +2,9 @@ package gr.uoa.di.airbnbproject;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -76,7 +74,7 @@ public class MessageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_message);
 
         Bundle bextras  = getIntent().getExtras();
-        user            = bextras.getBoolean("user");
+        user            = bextras.getBoolean("type");
         currentUserId   = bextras.getInt("currentUserId");
         toUserId        = bextras.getInt("toUserId");
         msgSubject      = bextras.getString("msgSubject");
@@ -97,6 +95,7 @@ public class MessageActivity extends AppCompatActivity {
         } else if (bextras.containsKey("residenceId")) {
             residenceId = bextras.getInt("residenceId");
 
+            Utils.checkToken(token, MessageActivity.this);
             ArrayList<Conversations> conversationData = retrofitCalls.getConversationsByResidenceId(token, Integer.toString(residenceId), currentUserId.toString());
             if (conversationData.size() > 0) {
                 conversation = conversationData.get(0);
@@ -147,6 +146,7 @@ public class MessageActivity extends AppCompatActivity {
                     return;
                 } else {
                     RetrofitCalls retrofitCalls = new RetrofitCalls();
+                    Utils.checkToken(token, MessageActivity.this);
                     Users senderUser = retrofitCalls.getUserbyId(token, currentUserId.toString());
                     Users receiverUser = retrofitCalls.getUserbyId(token, toUserId.toString());
 
@@ -155,6 +155,7 @@ public class MessageActivity extends AppCompatActivity {
                     } else {
                         if (PostConversationResult(senderUser, receiverUser, retrofitCalls.getResidenceById(token, Integer.toString(residenceId)), msgSubject)) {
                             /** Last Conversation entry in dbtable **/
+                            Utils.checkToken(token, MessageActivity.this);
                             conversation = retrofitCalls.getLastConversation(token, currentUserId.toString(), toUserId.toString()).get(0);
                             conversationId = conversation.getId();
                             success = PostMessageResult(senderUser, conversation, msgBody);
@@ -167,11 +168,12 @@ public class MessageActivity extends AppCompatActivity {
                         } else if (currentUserId == conversation.getReceiverId().getId()) {
                             userType = USER_SENDER;
                         }
+                        Utils.checkToken(token, MessageActivity.this);
                         retrofitCalls.updateConversation(token, "0", userType, Integer.toString(conversation.getId())).get(0);
 
                         //finish();
                         Bundle bupdated = new Bundle();
-                        bupdated.putBoolean("user", user);
+                        bupdated.putBoolean("type", user);
                         bupdated.putInt("currentUserId", currentUserId);
                         bupdated.putInt("toUserId", toUserId);
                         bupdated.putString("msgSubject", msgSubject);

@@ -1,11 +1,6 @@
 package fromRESTful;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.Serializable;
-
-import util.Utils;
 
 public class Reviews implements Serializable {
 
@@ -83,34 +78,6 @@ public class Reviews implements Serializable {
         this.tenantId = tenantId;
     }
 
-    public static Reviews fromJSON (JSONObject obj){
-        Reviews r = new Reviews();
-        try {
-            r.id = (Integer) obj.get("id");
-            r.comment="";
-            if(Utils.isFieldOK(obj, "comment"))
-                r.comment = (String) obj.get("comment");
-            r.rating=0.0;
-            if(Utils.isFieldOK(obj, "rating"))
-                r.rating = (double) obj.get("rating");
-
-            JSONObject residenceObject = (JSONObject)obj.get("residenceId");
-            Residences ratedResidence = Residences.fromJSON(residenceObject);
-            r.residenceId = ratedResidence;
-
-            JSONObject userobject = (JSONObject)obj.get("hostId");
-            Users hostUser = Users.fromJSON(userobject);
-            r.hostId = hostUser;
-
-            JSONObject tenantObject = (JSONObject)obj.get("tenantId");
-            Users tenantUser = Users.fromJSON(tenantObject);
-            r.tenantId = tenantUser;
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return r;
-    }
 
     @Override
     public int hashCode() {

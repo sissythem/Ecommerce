@@ -19,7 +19,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -27,10 +26,6 @@ import java.util.Date;
 
 import fromRESTful.Residences;
 import fromRESTful.Users;
-import retrofit2.Call;
-import retrofit2.Response;
-import util.RestAPI;
-import util.RestClient;
 import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
@@ -81,12 +76,14 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         Bundle buser = getIntent().getExtras();
         user = buser.getBoolean("type");
         user = false;
+        residenceId = buser.getInt("residenceId");
 
         retrofitCalls = new RetrofitCalls();
-        residenceId = buser.getInt("residenceId");
+        Utils.checkToken(token, EditResidenceActivity.this);
         selectedResidence = retrofitCalls.getResidenceById(token, Integer.toString(residenceId));
         userInputLayout();
 
+        Utils.checkToken(token, EditResidenceActivity.this);
         ArrayList<Users> getUsersByUsername = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
         host = getUsersByUsername.get(0);
 
@@ -310,14 +307,8 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         Residences ResidenceParameters = new Residences(host, title, type, about, address, city, country, amenities, floor, rooms, baths, view, spaceArea, guests, minPrice,
                 additionalCostPerPerson, cancellationPolicy, rules, kitchen, kitchen, livingRoom, startDate, endDate, photo);
 
-        RestAPI restAPI = RestClient.getClient(token).create(RestAPI.class);
-        Call<String> call = restAPI.editResidenceById(Integer.toString(residenceId), ResidenceParameters);
-        try {
-            Response<String> resp = call.execute();
-            token = resp.body();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        RetrofitCalls retrofitCalls = new RetrofitCalls();
+        token = retrofitCalls.editResidence(token, Integer.toString(residenceId), ResidenceParameters);
         return token;
     }
 

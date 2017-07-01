@@ -12,7 +12,6 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
 import fromRESTful.Users;
@@ -22,7 +21,6 @@ import util.Session;
 import util.Utils;
 
 import static util.Utils.getSessionData;
-import static util.Utils.updateSessionData;
 
 public class ProfileActivity extends AppCompatActivity {
     Users loggedinUser;
@@ -62,7 +60,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         Bundle buser = getIntent().getExtras();
         user = buser.getBoolean("type");
-        token = buser.getString("token");
+        //token = buser.getString("token");
 
         btnMenu = (ImageButton)findViewById(R.id.btnMenu);
 
@@ -70,6 +68,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         manageToolbarButtons();
         retrofitCalls = new RetrofitCalls();
+        Utils.checkToken(token, ProfileActivity.this);
         loggedinUser = retrofitCalls.getUserbyUsername(token, username).get(0);
         userdetails[0] = loggedinUser.getFirstName();
         userdetails[1] = loggedinUser.getLastName();

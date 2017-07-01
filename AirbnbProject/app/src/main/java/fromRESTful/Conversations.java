@@ -1,14 +1,7 @@
 package fromRESTful;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
-
-import util.Utils;
 
 public class Conversations implements Serializable {
 
@@ -152,51 +145,4 @@ public class Conversations implements Serializable {
         return "domain.Conversations[ id=" + id + " ]";
     }
 
-    public static Conversations fromJSON(JSONObject obj){
-        System.out.println(obj);
-        Conversations c = new Conversations();
-        System.out.println(c);
-        try {
-            c.id = (Integer) obj.get("id");
-            c.subject="";
-            if(Utils.isFieldOK(obj, "subject")) c.subject = (String) obj.get("subject");
-
-            c.senderId = Users.fromJSON((JSONObject)obj.get("senderId"));
-            c.receiverId = Users.fromJSON((JSONObject)obj.get("receiverId"));
-
-            if(Utils.isFieldOK(obj, "readFromSender")) c.readFromSender = Short.parseShort(obj.get("readFromSender").toString());
-            if(Utils.isFieldOK(obj, "readFromReceiver")) c.readFromReceiver = Short.parseShort(obj.get("readFromReceiver").toString());
-
-            if(Utils.isFieldOK(obj, "deletedFromSender")) c.deletedFromSender = Short.parseShort(obj.get("deletedFromSender").toString());
-            if(Utils.isFieldOK(obj, "deletedFromReceiver")) c.deletedFromReceiver = Short.parseShort(obj.get("deletedFromReceiver").toString());
-
-            if (Utils.isFieldOK(obj, "Messages")) {
-                ArrayList<Messages> messagesList = new ArrayList<>();
-                JSONArray jsonArrayMessages = (JSONArray)obj.get("Messages");
-
-                for(int i=0;i<jsonArrayMessages.length();i++){
-                    JSONObject object = (JSONObject)jsonArrayMessages.get(i);
-                    Messages message = Messages.fromJSON(object);
-                    messagesList.add(message);
-                }
-                c.messagesCollection = messagesList;
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return c;
-    }
-
-    public JSONObject toJSON () {
-        JSONObject jsonConversation = new JSONObject();
-        try {
-            jsonConversation.put("id", id.toString());
-            jsonConversation.put("senderId", senderId.toJSON());
-            jsonConversation.put("receiverId", receiverId.toJSON());
-            jsonConversation.put("subject", subject);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return jsonConversation;
-    }
 }

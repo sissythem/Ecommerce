@@ -12,7 +12,6 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -22,14 +21,11 @@ import fromRESTful.Reservations;
 import fromRESTful.Residences;
 import fromRESTful.Reviews;
 import fromRESTful.Users;
-import retrofit2.Call;
-import retrofit2.Response;
 import util.ListAdapterReviews;
-import util.RestAPI;
-import util.RestClient;
 import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
+
 import static util.Utils.getSessionData;
 
 public class ReviewsActivity extends AppCompatActivity {
@@ -76,11 +72,14 @@ public class ReviewsActivity extends AppCompatActivity {
 
         residenceId         = buser.getInt("residenceId");
         RetrofitCalls retrofitCalls = new RetrofitCalls();
+        Utils.checkToken(token, ReviewsActivity.this);
         ArrayList<Users> getUserByUsername = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
         loggedinUser        = getUserByUsername.get(0);
+        Utils.checkToken(token, ReviewsActivity.this);
         selectedResidence   = retrofitCalls.getResidenceById(token, Integer.toString(residenceId));
         host                = selectedResidence.getHostId();
 
+        Utils.checkToken(token, ReviewsActivity.this);
         ArrayList<Reviews> reviewsForSelectedResidence = retrofitCalls.getReviewsByResidenceId(token, Integer.toString(residenceId));
         String[] representativePhoto    = new String [reviewsForSelectedResidence.size()];
         String[] username               = new String[reviewsForSelectedResidence.size()];
@@ -114,6 +113,7 @@ public class ReviewsActivity extends AppCompatActivity {
             }
         });
 
+        Utils.checkToken(token, ReviewsActivity.this);
         ArrayList<Reservations> reservationsByTenantIdandResidenceId= retrofitCalls.getReservationsByTenantIdandResidenceId(token,
                 loggedinUser.getId().toString(), selectedResidence.getId().toString());
 
@@ -168,28 +168,11 @@ public class ReviewsActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onBackPressed()
-    {
-//        Intent intent = new Intent(this, HomeActivity.class);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//        startActivity(intent);
-//        super.onBackPressed();
-//        return;
-        moveTaskToBack(true);
-    }
-
     public String postResult(Residences residence, Users host, Users tenant, String comment, double rating)
     {
         Reviews reviews = new Reviews(residence, host, tenant, comment, rating);
-        RestAPI restAPI = RestClient.getClient(token).create(RestAPI.class);
-        Call<String> call = restAPI.postReview(reviews);
-        try {
-            Response<String> resp = call.execute();
-            token = resp.body();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        RetrofitCalls retrofitCalls = new RetrofitCalls();
+        token = retrofitCalls.postReview(token, reviews);
 
         return token;
     }
