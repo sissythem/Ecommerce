@@ -1,5 +1,6 @@
 package gr.uoa.di.airbnbproject;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -31,6 +32,7 @@ public class SearchResultsActivity extends AppCompatActivity {
     List<Residences> Recommendations;
 
     String guests, startDate, endDate;
+    Context c;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +61,13 @@ public class SearchResultsActivity extends AppCompatActivity {
         endDate         = buser.getString("endDate");
         user            = buser.getBoolean("type");
         user=true;
+        c=this;
 
+        if(Utils.isTokenExpired(token))
+        {
+            Utils.logout(this);
+            finish();
+        }
         if (isEmpty(guests)) guests = "1";
 
         if (isEmpty(startDate) || Utils.isThisDateValid(startDate, DATE_YEAR_FIRST)) startDate = Utils.getCurrentDate(DATE_YEAR_FIRST);
@@ -74,7 +82,7 @@ public class SearchResultsActivity extends AppCompatActivity {
         searchlist.setText(str_city + ", " + str_startdate + "-" + str_enddate + ", " + str_guests);
 
         RetrofitCalls retrofitCalls = new RetrofitCalls();
-        Utils.checkToken(token, SearchResultsActivity.this);
+
         Recommendations = retrofitCalls.getRecommendations(token, sessionData.getUsername(), city, startDate, endDate, guests);
 
         String[] title                  = new String [Recommendations.size()];

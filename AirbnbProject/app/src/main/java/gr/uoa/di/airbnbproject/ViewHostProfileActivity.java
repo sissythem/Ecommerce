@@ -17,6 +17,7 @@ import util.ListAdapterProfile;
 import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
+
 import static util.Utils.getSessionData;
 
 public class ViewHostProfileActivity extends AppCompatActivity {
@@ -53,7 +54,11 @@ public class ViewHostProfileActivity extends AppCompatActivity {
         token = sessionData.getToken();
 
         c = this;
-
+        if(Utils.isTokenExpired(token))
+        {
+            Utils.logout(this);
+            finish();
+        }
         setContentView(R.layout.activity_view_host_profile);
 
         Toolbar backToolbar = (Toolbar) findViewById(R.id.backToolbar);
@@ -64,7 +69,7 @@ public class ViewHostProfileActivity extends AppCompatActivity {
         user = buser.getBoolean("type");
         hostId = buser.getInt("host");
         RetrofitCalls retrofitCalls = new RetrofitCalls();
-        Utils.checkToken(token, ViewHostProfileActivity.this);
+
         host = retrofitCalls.getUserbyId(token, Integer.toString(hostId));
 
         bback = (ImageButton)findViewById(R.id.back);

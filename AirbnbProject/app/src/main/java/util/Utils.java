@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
@@ -36,7 +35,8 @@ public class Utils
     public static final String DATE_YEAR_FIRST = "yyyy-MM-dd";
     public static final String DATE_TEXT_MONTH = "dd MMMM";
 
-    public static Date ConvertStringToDate(String date, String format){
+    public static Date ConvertStringToDate(String date, String format)
+    {
         Date convertedDate= Calendar.getInstance().getTime();
         try {
             DateFormat df = new SimpleDateFormat(format);
@@ -112,10 +112,6 @@ public class Utils
         return formatteddate;
     }
 
-    public static Boolean checkLoggedUser() {
-        return true;
-    }
-
     public static void manageFooter(Activity context, Boolean user) {
         final Activity this_context = context;
         final Boolean this_user = user;
@@ -169,7 +165,6 @@ public class Utils
                 Intent profileintent = new Intent(this_context, ProfileActivity.class);
                 Bundle buser = new Bundle();
                 buser.putBoolean("type", this_user);
-//                buser.putString("token", token);
                 profileintent.putExtras(buser);
                 try {
                     this_context.startActivity(profileintent);
@@ -199,7 +194,8 @@ public class Utils
             }
         });
 
-        blogout.setOnClickListener(new View.OnClickListener() {
+        blogout.setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View v) {
                 logout(this_context);
@@ -209,13 +205,17 @@ public class Utils
     }
 
     /** MANAGE LOGOUT ACTION **/
-    public static void logout(Activity context) {
+    public static void logout(Activity context)
+    {
+    /* Reset Shared Preferences */
         SharedPreferences sharedPrefs = context.getApplicationContext().getSharedPreferences(USER_LOGIN_PREFERENCES, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPrefs.edit();
         editor.clear();
         editor.commit();
+
         context.finish();
         Intent greetingintent = new Intent(context, GreetingActivity.class);
+        greetingintent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         context.startActivity(greetingintent);
     }
 
@@ -233,9 +233,12 @@ public class Utils
                 Intent backintent = new Intent(this_context, this_new_context);
                 Bundle buser = new Bundle();
                 buser.putBoolean("type", this_user);
-                if (this_new_context.getClass().toString() == HomeActivity.class.toString()) {
+                if (this_new_context.getClass().toString().equals(HomeActivity.class.toString()))
+                {
                     buser.putBoolean("type", true);
-                } else if (this_new_context.toString() == HostActivity.class.toString()) {
+                }
+                else if (this_new_context.toString().equals(HostActivity.class.toString()))
+                {
                     buser.putBoolean("type", false);
                 }
                 backintent.putExtras(buser);
@@ -294,25 +297,14 @@ public class Utils
         return result;
     }
 
-    public static void checkToken(String token, Activity context)
+    public static boolean isTokenExpired(String token)
     {
-        if(token == null || token.equals("not")  || token.isEmpty())
-        {
-            Toast.makeText(context, "Session is expired", Toast.LENGTH_SHORT).show();
-            Utils.logout(context);
-            context.finish();
-        }
+        RetrofitCalls retrofitCalls = new RetrofitCalls();
+        boolean flag = retrofitCalls.isTokenOk(token);
+        if(flag)
+            return true;
         else
-        {
-            RetrofitCalls retrofitCalls = new RetrofitCalls();
-            token = retrofitCalls.checkToken(token);
-            if(token == null || token.equals("not") ||  token.isEmpty())
-            {
-                Toast.makeText(context, "Session is expired", Toast.LENGTH_SHORT).show();
-                Utils.logout(context);
-                context.finish();
-            }
-        }
+            return false;
     }
 
 }

@@ -146,7 +146,7 @@ public class ReservationsFacadeREST extends AbstractFacade<Reservations> {
     
     @POST
     @Path("makereservation")
-    @Consumes({MediaType.TEXT_PLAIN})
+    @Consumes({MediaType.APPLICATION_JSON})
     public String createReservation(@HeaderParam("Authorization") String token, Reservations entity) {
         if (KeyHolder.checkToken(token, className)) {
             super.create(entity);

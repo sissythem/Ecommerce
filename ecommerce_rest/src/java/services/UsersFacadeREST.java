@@ -63,9 +63,10 @@ public class UsersFacadeREST extends AbstractFacade<Users> {
     @Path("put/{id}")
     @Consumes({MediaType.APPLICATION_JSON})
     public String editUser(@HeaderParam("Authorization") String token, @PathParam("id") Integer id, Users entity) {
-        if (KeyHolder.checkToken(token, className)) {
+        if (KeyHolder.checkToken(token, className)) 
+        {
             super.edit(entity);
-            return "yes";
+            return token;
         }
         return "not";
     }
@@ -186,13 +187,15 @@ public class UsersFacadeREST extends AbstractFacade<Users> {
     @GET
     @Path("checktoken")
     @Produces(MediaType.TEXT_PLAIN)
-    public String checkToken(@HeaderParam("Authorization")String token)
+    public boolean isTokenExpired(@HeaderParam("Authorization")String token)
     {
         if(!KeyHolder.checkToken(token, className))
         {
-            token="not";
+            return true;
         }
-        return token;
+        else
+        {
+            return false;
+        }
     }
-    
 }

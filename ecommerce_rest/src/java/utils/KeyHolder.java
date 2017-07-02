@@ -27,13 +27,18 @@ public class KeyHolder
         return jws;
     }
     
-    public static Boolean checkToken(String token, String entityName) {
-        try {
+    public static Boolean checkToken(String token, String entityName) 
+    {
+        try 
+        {
             AuthenticationFilter.filter(token);
             return true;
-        } catch(Exception ex) {
+        } 
+        catch(Exception ex) 
+        {
             Logger.getLogger(entityName).log(Level.SEVERE, null, ex);
+            return false;
         }
-        return false;
+        
     }
 }

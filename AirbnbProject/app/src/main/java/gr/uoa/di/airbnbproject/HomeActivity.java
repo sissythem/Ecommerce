@@ -1,9 +1,11 @@
 package gr.uoa.di.airbnbproject;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -40,6 +42,7 @@ import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
 
+import static util.Utils.USER_LOGIN_PREFERENCES;
 import static util.Utils.getSessionData;
 
 public class HomeActivity extends AppCompatActivity
@@ -61,8 +64,13 @@ public class HomeActivity extends AppCompatActivity
     Users loggedInUser;
     Context c;
 
+    String[] title, representativePhoto, city;
+    Double[]price;
+    float[] rating;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
 
         Session sessionData = getSessionData(HomeActivity.this);
@@ -80,26 +88,32 @@ public class HomeActivity extends AppCompatActivity
 
         //getPermissions();
         token = sessionData.getToken();
-        Utils.checkToken(token, HomeActivity.this);
         username = sessionData.getUsername();
-
         setContentView(R.layout.activity_home);
         user = true;
         c=this;
+        if(Utils.isTokenExpired(token))
+        {
+            logout(this);
+        }
+
+        /** FOOTER TOOLBAR **/
+        Utils.manageFooter(HomeActivity.this, true);
 
         /**SEARCH VIEW EXPANDABLE START **/
         setupSearchView();
 
         /** RECOMMENDATIONS **/
         ArrayList<Residences> Recommendations = popularRecommendations();
-        String[] title                  = new String[Recommendations.size()];
-        String[] representativePhoto    = new String[Recommendations.size()];
-        String[] city                   = new String[Recommendations.size()];
-        Double[] price                  = new Double[Recommendations.size()];
-        float[] rating                  = new float[Recommendations.size()];
-        residenceId                     = new int[Recommendations.size()];
+        title                  = new String[Recommendations.size()];
+        representativePhoto    = new String[Recommendations.size()];
+        city                   = new String[Recommendations.size()];
+        price                  = new Double[Recommendations.size()];
+        rating                 = new float[Recommendations.size()];
+        residenceId            = new int[Recommendations.size()];
 
-        for(int i=0; i<Recommendations.size();i++){
+        for(int i=0; i<Recommendations.size();i++)
+        {
             title[i]                = Recommendations.get(i).getTitle();
             representativePhoto[i]  = Recommendations.get(i).getPhotos();
             city[i]                 = Recommendations.get(i).getCity();
@@ -127,9 +141,6 @@ public class HomeActivity extends AppCompatActivity
                 }
             }
         });
-
-        /** FOOTER TOOLBAR **/
-        Utils.manageFooter(HomeActivity.this, true);
     }
 
     public void setupSearchView() {
@@ -232,10 +243,10 @@ public class HomeActivity extends AppCompatActivity
         });
     }
 
-    public ArrayList<Residences> popularRecommendations() {
+    public ArrayList<Residences> popularRecommendations()
+    {
         ArrayList<Users> Users;
         RetrofitCalls retrofitCalls = new RetrofitCalls();
-        Utils.checkToken(token, HomeActivity.this);
         Users = retrofitCalls.getUserbyUsername(token, username);
 
         loggedInUser = Users.get(0);
@@ -245,7 +256,6 @@ public class HomeActivity extends AppCompatActivity
         int residenceId;
 
         ArrayList<Searches> searchedCities;
-        Utils.checkToken(token, HomeActivity.this);
         searchedCities = retrofitCalls.getSearchedCities(token, loggedInUser.getId().toString());
         Set<String> relevantCities = new HashSet<>();
         for(int i = 0;i<searchedCities.size();i++){
@@ -254,8 +264,7 @@ public class HomeActivity extends AppCompatActivity
 
 		/* if user has not searched anything yet, most popular residences will appear */
         if (relevantCities.size() == 0) {
-            ArrayList<Reviews> reviews = new ArrayList<>();
-            Utils.checkToken(token, HomeActivity.this);
+            ArrayList<Reviews> reviews;
             reviews = retrofitCalls.getAllReviews(token);
             for (int i=0;i<reviews.size();i++) {
                 reviewedResidences.add(reviews.get(i).getResidenceId());
@@ -264,7 +273,6 @@ public class HomeActivity extends AppCompatActivity
         /* if user has already searched, we will show the most popular residences in the relevant cities */
         else {
             for (String city : relevantCities) {
-                Utils.checkToken(token, HomeActivity.this);
                 reviewedResidences = retrofitCalls.getResidencesByCity(token, city);
             }
         }
@@ -275,14 +283,12 @@ public class HomeActivity extends AppCompatActivity
         reviewedResidences.clear();
         reviewedResidences.addAll(hs);
         if(reviewedResidences.size() ==0) {
-            Utils.checkToken(token, HomeActivity.this);
             reviewedResidences = retrofitCalls.getAllResidences(token);
         }
 
         /** get all relevant rooms and reviews **/
         for(int i=0; i < reviewedResidences.size(); i++){
             residenceId = reviewedResidences.get(i).getId();
-            Utils.checkToken(token, HomeActivity.this);
             reviewsByResidence = retrofitCalls.getReviewsByResidenceId(token, Integer.toString(residenceId));
             reviewedResidences.get(i).setReviewsCollection(reviewsByResidence);
         }
@@ -291,17 +297,36 @@ public class HomeActivity extends AppCompatActivity
         return reviewedResidences;
     }
 
+    public static void logout(Activity context)
+    {
+    /* Reset Shared Preferences */
+        SharedPreferences sharedPrefs = context.getApplicationContext().getSharedPreferences(USER_LOGIN_PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPrefs.edit();
+        editor.clear();
+        editor.commit();
+
+        Intent greetingintent = new Intent(context, GreetingActivity.class);
+        greetingintent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        context.startActivity(greetingintent);
+        context.finish();
+    }
+
     @Override
-    protected void onResume() {
+    protected void onResume()
+    {
+        //TODO check if data are updated with adapter, I have read that it is better to load comments in onResume rather than in onCreate
         resetActivity();
         user = true;
+        adapter.notifyDataSetChanged();
         super.onResume();
     }
+
 
     @Override
     protected void onRestart() {
         resetActivity();
         user = true;
+        adapter.notifyDataSetChanged();
         super.onRestart();
     }
 

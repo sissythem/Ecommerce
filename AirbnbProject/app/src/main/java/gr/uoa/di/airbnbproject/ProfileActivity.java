@@ -60,15 +60,17 @@ public class ProfileActivity extends AppCompatActivity {
 
         Bundle buser = getIntent().getExtras();
         user = buser.getBoolean("type");
-        //token = buser.getString("token");
-
         btnMenu = (ImageButton)findViewById(R.id.btnMenu);
 
         userdetails = new String[9];
 
         manageToolbarButtons();
         retrofitCalls = new RetrofitCalls();
-        Utils.checkToken(token, ProfileActivity.this);
+        if(Utils.isTokenExpired(token))
+        {
+            Utils.logout(this);
+            finish();
+        }
         loggedinUser = retrofitCalls.getUserbyUsername(token, username).get(0);
         userdetails[0] = loggedinUser.getFirstName();
         userdetails[1] = loggedinUser.getLastName();

@@ -26,6 +26,7 @@ public class ConversationsFacadeREST extends AbstractFacade<Conversations> {
 
     @PersistenceContext(unitName = "ecommerce_restPU")
     private EntityManager em;
+    
 
     public ConversationsFacadeREST() {
         super(Conversations.class);

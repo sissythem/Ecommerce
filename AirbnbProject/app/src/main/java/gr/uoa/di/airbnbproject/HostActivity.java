@@ -1,5 +1,6 @@
 package gr.uoa.di.airbnbproject;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -18,7 +19,8 @@ import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
 
-public class HostActivity extends AppCompatActivity {
+public class HostActivity extends AppCompatActivity
+{
     String username, token;
     Users host;
 
@@ -29,6 +31,7 @@ public class HostActivity extends AppCompatActivity {
     int[] residenceId;
 
     Boolean user;
+    Context c;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +52,7 @@ public class HostActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_host);
         user=false;
+        c=this;
 
         baddResidence = (ImageButton)findViewById(R.id.addResidence);
         baddResidence.setOnClickListener(new View.OnClickListener()
@@ -68,10 +72,15 @@ public class HostActivity extends AppCompatActivity {
             }
         });
         RetrofitCalls retrofitCalls = new RetrofitCalls();
-        Utils.checkToken(token, HostActivity.this);
+
+        if(Utils.isTokenExpired(token))
+        {
+            Utils.logout(this);
+            finish();
+        }
         ArrayList<Users> hostUsers = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
         host = hostUsers.get(0);
-        Utils.checkToken(token, HostActivity.this);
+
         ArrayList<Residences> storedResidences = retrofitCalls.getResidencesByHost(token, host.getId().toString());
 
         String[] representativePhoto    = new String [storedResidences.size()];

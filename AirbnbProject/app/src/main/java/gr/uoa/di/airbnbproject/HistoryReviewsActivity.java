@@ -48,11 +48,14 @@ public class HistoryReviewsActivity extends AppCompatActivity {
         user = buser.getBoolean("type");
 
         RetrofitCalls retrofitCalls = new RetrofitCalls();
-        Utils.checkToken(token, HistoryReviewsActivity.this);
+        if(Utils.isTokenExpired(token))
+        {
+            Utils.logout(this);
+            finish();
+        }
         ArrayList<Users> getUserByUsername = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
         loggedinUser = getUserByUsername.get(0);
 
-        Utils.checkToken(token, HistoryReviewsActivity.this);
         ArrayList<Reviews> userReviews = retrofitCalls.getReviewsByTenantId(token, loggedinUser.getId().toString());
 
         String[] representativePhoto    = new String [userReviews.size()];
@@ -73,10 +76,5 @@ public class HistoryReviewsActivity extends AppCompatActivity {
         Utils.manageFooter(HistoryReviewsActivity.this, user);
         /** BACK BUTTON **/
         Utils.manageBackButton(this, ProfileActivity.class, user);
-    }
-
-    @Override
-    public void onBackPressed() {
-        moveTaskToBack(true);
     }
 }

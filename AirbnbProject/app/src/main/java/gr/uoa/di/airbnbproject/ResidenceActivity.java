@@ -50,7 +50,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
     Context c;
 
     TextView tvTitle, tvType, tvAddress, tvCity, tvCountry, tvHostName, tvAbout, tvAmenities, tvCancellationPolicy, tvHostAbout, tvRules, tvPrice;
-    ImageButton ibContact;
+    ImageButton ibContact, bback;
     Button bReviews, bBook;
     RatingBar rating;
     EditText etGuests;
@@ -95,10 +95,13 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         residenceId         = buser.getInt("residenceId");
 
         retrofitCalls = new RetrofitCalls();
-        Utils.checkToken(token, ResidenceActivity.this);
+        if(Utils.isTokenExpired(token))
+        {
+            Utils.logout(this);
+            finish();
+        }
         ArrayList<Users> userLoggedIn = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
         loggedinUser = userLoggedIn.get(0);
-        Utils.checkToken(token, ResidenceActivity.this);
         selectedResidence   = retrofitCalls.getResidenceById(token, Integer.toString(residenceId));
 
         setUpResidenceView();
@@ -142,6 +145,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         bBook                   = (Button)findViewById(R.id.btnReservation);
         etGuests                = (EditText)findViewById(R.id.etGuests);
         etGuests.setSelected(false);
+        bback=(ImageButton)findViewById(R.id.ibBack);
 
         tvTitle.setText(selectedResidence.getTitle());
         tvType.setText(selectedResidence.getType());
@@ -192,6 +196,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
                 bmessage.putInt("toUserId", host.getId());
                 bmessage.putString("msgSubject", tvTitle.getText().toString());
                 bmessage.putInt("residenceId", residenceId);
+                bmessage.putString("back", "residence");
                 messageIntent.putExtras(bmessage);
                 try {
                     startActivity(messageIntent);
@@ -294,7 +299,6 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
             current = calendar.getTime();
         }
         //get all reservations for the selected residence
-        Utils.checkToken(token, ResidenceActivity.this);
         ArrayList<Reservations> allReservationsByResidence = retrofitCalls.getReservationsByResidenceId(token, Integer.toString(residenceId));
 
         //get the max guests for this residence

@@ -27,7 +27,8 @@ import util.Utils;
 import static util.Utils.DATABASE_DATE_FORMAT;
 import static util.Utils.updateSessionData;
 
-public class EditProfileActivity extends AppCompatActivity {
+public class EditProfileActivity extends AppCompatActivity
+{
     Context c;
 
     Boolean user;
@@ -39,7 +40,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
     EditText etName, etLastName, etPhoneNumber, etEmail, etPassword, etCountry, etCity, etAbout;
     TextView etUsername, tvBirthDate;
-    String username, email, token;
+    String username, token;
     int userId;
     private int mYear, mMonth, mDay;
 
@@ -73,7 +74,11 @@ public class EditProfileActivity extends AppCompatActivity {
         user = buser.getBoolean("type");
 
         retrofitCalls = new RetrofitCalls();
-        Utils.checkToken(token, EditProfileActivity.this);
+        if(Utils.isTokenExpired(token))
+        {
+            Utils.logout(this);
+            finish();
+        }
         ArrayList<Users> getUsersByUsername = retrofitCalls.getUserbyUsername(token, username);
         loggedinUser  = getUsersByUsername.get(0);
 
@@ -140,10 +145,10 @@ public class EditProfileActivity extends AppCompatActivity {
         Utils.manageBackButton(EditProfileActivity.this, ProfileActivity.class, user);
     }
 
-    public boolean checkEmail (String Email){
+    public boolean checkEmail (String Email)
+    {
         boolean emailIsNew=false;
         //same process for email
-        Utils.checkToken(token, EditProfileActivity.this);
         ArrayList<Users> users = retrofitCalls.getUserbyEmail(token, Email);
         if(users.size() == 0) emailIsNew = true;
         return  emailIsNew;
@@ -183,7 +188,7 @@ public class EditProfileActivity extends AppCompatActivity {
         }
 
         if(emailIsNew) {
-            token = PutResult(name, lastName, Username, password, Email, phoneNumber, country, city, photo, about, bdate);
+            token = PutResult(loggedinUser.getId(), name, lastName, Username, password, Email, phoneNumber, country, city, photo, about, bdate);
             if (!token.isEmpty() || token!=null || token!="not") {
                 sessionData.setToken(token);
                 sessionData.setUsername(username);
@@ -215,11 +220,11 @@ public class EditProfileActivity extends AppCompatActivity {
         }
     }
 
-    public String PutResult(String firstName, String lastName, String username, String password, String email, String phoneNumber, String country, String city,
+    public String PutResult(int userId, String firstName, String lastName, String username, String password, String email, String phoneNumber, String country, String city,
                             String photo, String about, Date birthDate) {
-        Users UserParameters = new Users(firstName, lastName, username, password, email, phoneNumber, country, city, photo, about, birthDate);
+        Users UserParameters = new Users(userId, firstName, lastName, username, password, email, phoneNumber, country, city, photo, about, birthDate);
         RetrofitCalls retrofitCalls = new RetrofitCalls();
-        token=retrofitCalls.editUser(token, Integer.toString(userId), UserParameters);
+        token=retrofitCalls.editUser(token, userId, UserParameters);
         return token;
     }
 

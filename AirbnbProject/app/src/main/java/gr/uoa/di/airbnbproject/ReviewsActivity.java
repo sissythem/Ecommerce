@@ -72,14 +72,17 @@ public class ReviewsActivity extends AppCompatActivity {
 
         residenceId         = buser.getInt("residenceId");
         RetrofitCalls retrofitCalls = new RetrofitCalls();
-        Utils.checkToken(token, ReviewsActivity.this);
+
+        if(Utils.isTokenExpired(token))
+        {
+            Utils.logout(this);
+            finish();
+        }
         ArrayList<Users> getUserByUsername = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
         loggedinUser        = getUserByUsername.get(0);
-        Utils.checkToken(token, ReviewsActivity.this);
         selectedResidence   = retrofitCalls.getResidenceById(token, Integer.toString(residenceId));
         host                = selectedResidence.getHostId();
 
-        Utils.checkToken(token, ReviewsActivity.this);
         ArrayList<Reviews> reviewsForSelectedResidence = retrofitCalls.getReviewsByResidenceId(token, Integer.toString(residenceId));
         String[] representativePhoto    = new String [reviewsForSelectedResidence.size()];
         String[] username               = new String[reviewsForSelectedResidence.size()];
@@ -113,7 +116,6 @@ public class ReviewsActivity extends AppCompatActivity {
             }
         });
 
-        Utils.checkToken(token, ReviewsActivity.this);
         ArrayList<Reservations> reservationsByTenantIdandResidenceId= retrofitCalls.getReservationsByTenantIdandResidenceId(token,
                 loggedinUser.getId().toString(), selectedResidence.getId().toString());
 

@@ -22,7 +22,7 @@ public interface RestAPI
 {
     /***** Check Token *****/
     @GET("users/checktoken")
-    Call<String> checkToken ();
+    Call<Boolean> checkTokenExpired();
 
     /***** Users Facade Methods *****/
     @GET("users/{userId}")
@@ -41,7 +41,7 @@ public interface RestAPI
     Call<String> postUser(@Body Users user);
 
     @PUT("users/put/{id}")
-    Call<String> editUserById(@Path("userId") String userId, @Body Users user);
+    Call<String> editUserById(@Path("id") int id, @Body Users user);
 
     @DELETE("users/delete/{id}")
     Call<String> deleteUserById(@Path("id") String id);

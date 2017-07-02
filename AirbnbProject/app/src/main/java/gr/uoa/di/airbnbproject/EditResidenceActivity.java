@@ -79,11 +79,13 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         residenceId = buser.getInt("residenceId");
 
         retrofitCalls = new RetrofitCalls();
-        Utils.checkToken(token, EditResidenceActivity.this);
+        if(Utils.isTokenExpired(token))
+        {
+            Utils.logout(this);
+            finish();
+        }
         selectedResidence = retrofitCalls.getResidenceById(token, Integer.toString(residenceId));
         userInputLayout();
-
-        Utils.checkToken(token, EditResidenceActivity.this);
         ArrayList<Users> getUsersByUsername = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
         host = getUsersByUsername.get(0);
 
@@ -96,7 +98,8 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         Utils.manageBackButton(this, HostActivity.class, user);
     }
 
-    public void userInputLayout () {
+    public void userInputLayout ()
+    {
         etUpload             = (EditText)findViewById(R.id.etUpload);
         etTitle              = (EditText)findViewById(R.id.etTitle);
         etAbout              = (EditText)findViewById(R.id.etAbout);
@@ -127,14 +130,6 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
 
         bcontinue = (ImageButton)findViewById(R.id.ibContinue);
 
-//        imageToUpload = (ImageView)findViewById(R.id.imageToUpload);
-//        imageToUpload.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View v) {
-//                Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//                startActivityForResult(galleryIntent, RESULT_LOAD_IMAGE);
-//            }
-//        });
 
         etType = (Spinner) findViewById(R.id.etType);
         // Create an ArrayAdapter using the string array and a default spinner layout

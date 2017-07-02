@@ -50,7 +50,7 @@ public class MessageActivity extends AppCompatActivity {
     ArrayList<Messages> Messages;
     Conversations conversation;
 
-    String userType, token;
+    String userType, token, backBundle;
     private static final String USER_SENDER = "sender";
     private static final String USER_RECEIVER = "receiver";
 
@@ -79,12 +79,19 @@ public class MessageActivity extends AppCompatActivity {
         currentUserId   = bextras.getInt("currentUserId");
         toUserId        = bextras.getInt("toUserId");
         msgSubject      = bextras.getString("msgSubject");
+        backBundle      = bextras.getString("back");
 
         subject = (TextView) findViewById(R.id.subject);
         subject.setText(msgSubject);
         body = (EditText) findViewById(R.id.body);
 
         RetrofitCalls retrofitCalls = new RetrofitCalls();
+
+        if(Utils.isTokenExpired(token))
+        {
+            Utils.logout(this);
+            finish();
+        }
 
         if (bextras.containsKey("conversationId")) {
             isNewMessage = false;
@@ -96,7 +103,6 @@ public class MessageActivity extends AppCompatActivity {
         } else if (bextras.containsKey("residenceId")) {
             residenceId = bextras.getInt("residenceId");
 
-            Utils.checkToken(token, MessageActivity.this);
             ArrayList<Conversations> conversationData = retrofitCalls.getConversationsByResidenceId(token, Integer.toString(residenceId), currentUserId.toString());
             if (conversationData.size() > 0) {
                 conversation = conversationData.get(0);
@@ -132,10 +138,18 @@ public class MessageActivity extends AppCompatActivity {
         sendMessage();
 
         /** BACK BUTTON **/
-        Utils.manageBackButton(this, InboxActivity.class, user);
+        if(backBundle.equals("inbox"))
+        {
+            Utils.manageBackButton(this, InboxActivity.class, user);
+        }
+        else if(backBundle.equals("residence"))
+        {
+            Utils.manageBackButton(this, ResidenceActivity.class, user);
+        }
     }
 
-    public void sendMessage() {
+    public void sendMessage()
+    {
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -147,7 +161,6 @@ public class MessageActivity extends AppCompatActivity {
                     return;
                 } else {
                     RetrofitCalls retrofitCalls = new RetrofitCalls();
-                    Utils.checkToken(token, MessageActivity.this);
                     Users senderUser = retrofitCalls.getUserbyId(token, currentUserId.toString());
                     Users receiverUser = retrofitCalls.getUserbyId(token, toUserId.toString());
 
@@ -156,7 +169,6 @@ public class MessageActivity extends AppCompatActivity {
                     } else {
                         if (PostConversationResult(senderUser, receiverUser, retrofitCalls.getResidenceById(token, Integer.toString(residenceId)), msgSubject)) {
                             /** Last Conversation entry in dbtable **/
-                            Utils.checkToken(token, MessageActivity.this);
                             conversation = retrofitCalls.getLastConversation(token, currentUserId.toString(), toUserId.toString()).get(0);
                             conversationId = conversation.getId();
                             success = PostMessageResult(senderUser, conversation, msgBody);
@@ -169,7 +181,6 @@ public class MessageActivity extends AppCompatActivity {
                         } else if (currentUserId == conversation.getReceiverId().getId()) {
                             userType = USER_SENDER;
                         }
-                        Utils.checkToken(token, MessageActivity.this);
                         retrofitCalls.updateConversation(token, "0", userType, Integer.toString(conversation.getId())).get(0);
 
                         //finish();
@@ -193,7 +204,8 @@ public class MessageActivity extends AppCompatActivity {
         });
     }
 
-    public boolean PostConversationResult(Users senderUser, Users receiverUser, Residences residence, String subject) {
+    public boolean PostConversationResult(Users senderUser, Users receiverUser, Residences residence, String subject)
+    {
         short val_zero = 0;
         short val_one = 1;
         Conversations ConversationParams = new Conversations(senderUser, receiverUser, residence, subject, val_one, val_zero, val_zero, val_zero);
@@ -237,5 +249,4 @@ public class MessageActivity extends AppCompatActivity {
         }
         return success;
     }
-
 }

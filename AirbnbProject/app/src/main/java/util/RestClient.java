@@ -1,7 +1,19 @@
 package util;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.security.cert.CertificateException;
+import java.util.Date;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -15,7 +27,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.jackson.JacksonConverterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class RestClient {
@@ -26,10 +38,14 @@ public class RestClient {
 
     public static Retrofit getClient(String token) {
         if (retrofit==null) {
+            Gson gson = new GsonBuilder()
+                    .setLenient()
+                    .create();
+
             retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
                     .client(getUnsafeOkHttpClient(token))
-                    .addConverterFactory(JacksonConverterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
         }
         return retrofit;
@@ -37,11 +53,30 @@ public class RestClient {
 
     public static Retrofit getStringClient() {
         if (stringRetrofit==null) {
+            Gson gson = new GsonBuilder()
+                    .setDateFormat(Utils.DATABASE_DATETIME_FORMAT)
+                    .registerTypeAdapter(Date.class, new JsonDeserializer<Date>() {
+                        @Override
+                        public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+                                throws JsonParseException {
+                            return new Date();
+                        }
+                    })
+                    .registerTypeAdapter(Date.class, new JsonSerializer<Date>() {
+                        @Override
+                        public JsonElement serialize(Date src, Type typeOfSrc, JsonSerializationContext context) {
+                            Gson ggson = new GsonBuilder().setDateFormat(Utils.DATABASE_DATETIME_FORMAT).create();
+                            return new JsonPrimitive(ggson.toJson(src));
+                        }
+                    })
+
+                    .create();
+
             stringRetrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
                     .client(getUnsafeOkHttpClient(null))
                     .addConverterFactory(ScalarsConverterFactory.create())
-                    .addConverterFactory(JacksonConverterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
         }
         return stringRetrofit;

@@ -74,7 +74,11 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
         userInputLayout();
 
         RetrofitCalls retrofitCalls = new RetrofitCalls();
-        Utils.checkToken(token, AddResidenceActivity.this);
+        if(Utils.isTokenExpired(token))
+        {
+            Utils.logout(this);
+            finish();
+        }
         List<Users> userData = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
 
         host = userData.get(0);
@@ -270,5 +274,10 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
             Uri selectedImage = data.getData();
             imageToUpload.setImageURI(selectedImage);
         }
+    }
+
+    @Override
+    public void onRestart() {
+        super.onRestart();
     }
 }

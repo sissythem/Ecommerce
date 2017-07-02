@@ -31,26 +31,27 @@ public class RetrofitCalls {
     Conversations conversation;
     Users user;
     String token;
+    Boolean flag;
 
-    private class checkTokenHttpRequestTask extends AsyncTask<String, String, String>
+    private class checkTokenHttpRequestTask extends AsyncTask<String, String, Boolean>
     {
         @Override
-        protected  String doInBackground(String... params)
+        protected Boolean doInBackground(String... params)
         {
-            token="";
             RestAPI restAPI = RestClient.getClient(params[0]).create(RestAPI.class);
-            Call<String> call = restAPI.checkToken();
+            Call<Boolean> call = restAPI.checkTokenExpired();
             try
             {
-                Response<String> resp = call.execute();
+                Response<Boolean> resp = call.execute();
+                flag = resp.body();
             } catch(IOException e){
                 Log.i("",e.getMessage());
             }
-            return token;
+            return flag;
         }
     }
 
-    public String checkToken(String token)
+    public Boolean isTokenOk(String token)
     {
         checkTokenHttpRequestTask checktoken = new checkTokenHttpRequestTask();
         checktoken.execute(token);
@@ -61,7 +62,7 @@ public class RetrofitCalls {
         } catch (ExecutionException e) {
             Log.i("",e.getMessage());
         }
-        return token;
+        return flag;
     }
 
     /** Calls for User **/
@@ -130,19 +131,23 @@ public class RetrofitCalls {
     {
         @Override
         protected String doInBackground(Object... params){
-            RestAPI restAPI = RestClient.getClient((String)params[0]).create(RestAPI.class);
-            Call<String> call = restAPI.editUserById((String)params[1],(Users)params[2]);
             try{
+                RestAPI restAPI = RestClient.getClient((String)params[0]).create(RestAPI.class);
+                Call<String> call = restAPI.editUserById((Integer)params[1],(Users)params[2]);
+
                 Response<String> resp = call.execute();
                 token = resp.body();
             } catch (IOException e){
+                Log.i("",e.getMessage());
+            }
+            catch (Exception e){
                 Log.i("",e.getMessage());
             }
             return token;
         }
     }
 
-    public String editUser(String token, String userId, Users user){
+    public String editUser(String token, int userId, Users user){
         editUserHttpRequestTask editUserTask = new editUserHttpRequestTask();
         editUserTask.execute(token, userId, user);
         try{
