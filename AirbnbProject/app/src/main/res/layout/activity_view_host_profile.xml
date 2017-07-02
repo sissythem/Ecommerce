@@ -54,5 +54,14 @@
         android:dividerHeight="1dp"
         android:listSelector="@drawable/list_selector">
     </ListView>
-    <include layout="@layout/footer" />
+    <include layout="@layout/footer"></include>
+
+    <ImageButton
+        android:id="@+id/ibContact"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/profilepic"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        app:srcCompat="@drawable/ic_contact" />
 </RelativeLayout>

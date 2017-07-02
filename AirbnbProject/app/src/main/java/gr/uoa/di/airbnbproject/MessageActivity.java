@@ -144,7 +144,7 @@ public class MessageActivity extends AppCompatActivity {
         }
         else if(backBundle.equals("residence"))
         {
-            Utils.manageBackButton(this, ResidenceActivity.class, user);
+            Utils.manageBackButton(this, ViewHostProfileActivity.class, user);
         }
     }
 

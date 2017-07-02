@@ -213,10 +213,10 @@ public class Utils
         editor.clear();
         editor.commit();
 
-        context.finish();
         Intent greetingintent = new Intent(context, GreetingActivity.class);
         greetingintent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         context.startActivity(greetingintent);
+        context.finish();
     }
 
     public static void manageBackButton(Activity context, Class newContext, boolean user) {
@@ -227,7 +227,8 @@ public class Utils
         SharedPreferences sharedPrefs = context.getApplicationContext().getSharedPreferences(USER_LOGIN_PREFERENCES, Context.MODE_PRIVATE);
 
         ImageButton bback = (ImageButton) this_context.findViewById(R.id.ibBack);
-        bback.setOnClickListener(new View.OnClickListener() {
+        bback.setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View v) {
                 Intent backintent = new Intent(this_context, this_new_context);

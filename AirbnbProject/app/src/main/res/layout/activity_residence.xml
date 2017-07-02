@@ -16,17 +16,19 @@
         android:minHeight="?attr/actionBarSize"
         android:weightSum="1"
         app:titleTextColor="@android:color/white">
+
         <ImageButton
             android:id="@+id/ibBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="11dp"
+            android:layout_marginStart="11dp"
             android:background="@color/colorPrimary"
             app:srcCompat="@drawable/ic_back"
             android:layout_alignBottom="@+id/tvResidenceView"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp" />
+            android:layout_alignParentStart="true" />
+
         <TextView
             android:id="@+id/tvResidenceView"
             android:layout_width="wrap_content"
@@ -34,10 +36,19 @@
             android:text="View Residence"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textSize="18sp"
-            android:layout_marginTop="13dp"
-            android:layout_alignTop="@+id/ibContact"
-            android:layout_centerHorizontal="true" />
+            android:layout_marginLeft="30dp"
+            android:layout_marginStart="30dp"
+            android:layout_toRightOf="@+id/ibBack"
+            android:layout_toEndOf="@+id/ibBack" />
 
+        <Button
+            android:id="@+id/btnReviews"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Reviews"
+            android:layout_above="@+id/scrollView"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
 
     </android.support.v7.widget.Toolbar>
     <ScrollView
@@ -68,9 +79,16 @@
                 android:layout_below="@+id/ivResidencePhotos"
                 android:layout_marginTop="12dp"
                 android:text="Title"
-                android:textSize="25sp"
-                android:layout_alignRight="@+id/tvHostName"
-                android:layout_alignEnd="@+id/tvHostName" />
+                android:textSize="20dp"
+                android:textAppearance="@style/sectionHeader"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="2dp"
+                android:background="#c0c0c0"
+                android:id="@+id/line"
+                android:layout_below="@+id/tvTitle"/>
 
             <TextView
                 android:id="@+id/tvType"
@@ -80,10 +98,10 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentStart="true"
-                android:layout_below="@+id/tvTitle"
+                android:layout_below="@+id/line"
                 android:layout_marginTop="12dp"
                 android:text="Type"
-                android:textSize="25sp" />
+                android:textSize="15dp" />
 
             <TextView
                 android:id="@+id/tvAddress"
@@ -95,7 +113,7 @@
                 android:layout_toLeftOf="@+id/tvCity"
                 android:layout_toStartOf="@+id/tvCity"
                 android:text="Address"
-                android:textSize="18sp" />
+                android:textSize="15dp" />
 
             <TextView
                 android:id="@+id/tvCity"
@@ -105,7 +123,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_below="@+id/tvType"
                 android:text="Residence City"
-                android:textSize="18sp"
+                android:textSize="15dp"
                 android:layout_toRightOf="@+id/tvMapTitle"
                 android:layout_toEndOf="@+id/tvMapTitle" />
 
@@ -113,20 +131,18 @@
                 android:id="@+id/tvCountry"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/tvCity"
                 android:text="Residence Country"
-                android:textSize="18sp" />
+                android:textSize="15dp" />
 
             <TextView
                 android:id="@+id/tvHostName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="HostName"
-                android:textSize="18sp"
+                android:textSize="15dp"
                 android:layout_below="@+id/ivHostPic"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true" />
@@ -147,12 +163,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="About this Residence"
-                android:textSize="20sp"
+                android:textSize="17dp"
+                android:textAppearance="@style/sectionHeader"
                 android:layout_below="@+id/tvHostName"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true" />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="2dp"
+                android:background="#c0c0c0"
+                android:id="@+id/line1"
+                android:layout_below="@+id/tvAboutTitle"/>
 
             <TextView
                 android:id="@+id/tvAboutText"
@@ -162,9 +186,9 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentStart="true"
-                android:layout_below="@+id/tvAboutTitle"
+                android:layout_below="@+id/line1"
                 android:text="About"
-                android:textSize="18sp" />
+                android:textSize="15dp" />
 
             <TextView
                 android:id="@+id/tvAmenitiesTitle"
@@ -173,8 +197,16 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/tvAboutText"
+                android:textAppearance="@style/sectionHeader"
                 android:text="What we will provide"
-                android:textSize="20sp" />
+                android:textSize="17dp" />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="2dp"
+                android:background="#c0c0c0"
+                android:id="@+id/line2"
+                android:layout_below="@+id/tvAmenitiesTitle"/>
 
             <TextView
                 android:id="@+id/tvAmenities"
@@ -184,9 +216,9 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentStart="true"
-                android:layout_below="@+id/tvAmenitiesTitle"
+                android:layout_below="@+id/line2"
                 android:text="Amenities"
-                android:textSize="18sp" />
+                android:textSize="15dp" />
 
             <TextView
                 android:id="@+id/tvCancellationPolicyTitle"
@@ -197,15 +229,24 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
                 android:layout_below="@+id/tvAmenities"
+                android:textAppearance="@style/sectionHeader"
                 android:text="Our Cancellation Policy"
-                android:textSize="20sp"/>
+                android:textSize="17dp"/>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="2dp"
+                android:background="#c0c0c0"
+                android:id="@+id/line3"
+                android:layout_below="@+id/tvCancellationPolicyTitle"/>
+
             <TextView
                 android:id="@+id/tvCancellationPolicy"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Cancellation Policy"
-                android:textSize="18sp"
-                android:layout_below="@+id/tvCancellationPolicyTitle"
+                android:textSize="15dp"
+                android:layout_below="@+id/line3"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentRight="true"
@@ -220,8 +261,16 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/tvCancellationPolicy"
+                android:textAppearance="@style/sectionHeader"
                 android:text="Guest requirements"
-                android:textSize="20sp" />
+                android:textSize="17dp" />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="2dp"
+                android:background="#c0c0c0"
+                android:id="@+id/line4"
+                android:layout_below="@+id/tvRulesTitle"/>
 
             <TextView
                 android:id="@+id/tvRules"
@@ -231,9 +280,9 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentStart="true"
-                android:layout_below="@+id/tvRulesTitle"
+                android:layout_below="@+id/line4"
                 android:text="Rules"
-                android:textSize="18sp" />
+                android:textSize="15dp" />
 
             <TextView
                 android:id="@+id/tvHostTitle"
@@ -242,16 +291,24 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/tvRules"
+                android:textAppearance="@style/sectionHeader"
                 android:text="About your host"
-                android:textSize="20sp" />
+                android:textSize="17dp" />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="2dp"
+                android:background="#c0c0c0"
+                android:id="@+id/line5"
+                android:layout_below="@+id/tvHostTitle"/>
 
             <TextView
                 android:id="@+id/tvHostAbout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="About host"
-                android:textSize="18sp"
-                android:layout_below="@+id/tvHostTitle"
+                android:textSize="15dp"
+                android:layout_below="@+id/line5"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true" />
 
@@ -262,14 +319,22 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/tvHostAbout"
+                android:textAppearance="@style/sectionHeader"
                 android:text="Where you will find us"
-                android:textSize="20sp" />
+                android:textSize="17dp" />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="2dp"
+                android:background="#c0c0c0"
+                android:id="@+id/line6"
+                android:layout_below="@+id/tvMapTitle"/>
 
             <fragment xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="wrap_content"
                 android:layout_height="500dp"
-                android:layout_below="@+id/tvMapTitle"
+                android:layout_below="@+id/line6"
                 android:id="@+id/mapResidence"
                 tools:context=".MapsActivity"
                 android:name="com.google.android.gms.maps.SupportMapFragment"
@@ -291,15 +356,23 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/etGuests"
+                android:textAppearance="@style/sectionHeader"
                 android:text="Availability"
-                android:textSize="20sp" />
+                android:textSize="17dp" />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="2dp"
+                android:background="#c0c0c0"
+                android:id="@+id/line7"
+                android:layout_below="@+id/tvAvailabilityTitle"/>
 
             <LinearLayout
                 android:id="@+id/calendar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_below="@+id/tvAvailabilityTitle">
+                android:layout_below="@+id/line7">
             </LinearLayout>
 
         </RelativeLayout>
@@ -351,23 +424,4 @@
                 android:text="Book now" />
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
-
-    <ImageButton
-        android:id="@+id/ibContact"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Reviews"
-        app:srcCompat="@android:drawable/sym_action_email"
-        android:layout_alignTop="@+id/btnReviews"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
-    <Button
-        android:id="@+id/btnReviews"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Reviews"
-        android:layout_above="@+id/scrollView"
-        android:layout_toLeftOf="@+id/ibContact"
-        android:layout_toStartOf="@+id/ibContact" />
 </RelativeLayout>

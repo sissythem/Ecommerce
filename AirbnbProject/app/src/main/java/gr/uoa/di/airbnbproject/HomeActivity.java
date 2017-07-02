@@ -1,11 +1,9 @@
 package gr.uoa.di.airbnbproject;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -42,7 +40,6 @@ import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
 
-import static util.Utils.USER_LOGIN_PREFERENCES;
 import static util.Utils.getSessionData;
 
 public class HomeActivity extends AppCompatActivity
@@ -94,7 +91,8 @@ public class HomeActivity extends AppCompatActivity
         c=this;
         if(Utils.isTokenExpired(token))
         {
-            logout(this);
+            Toast.makeText(c, "Session is expired", Toast.LENGTH_SHORT).show();
+            Utils.logout(this);
         }
 
         /** FOOTER TOOLBAR **/
@@ -295,20 +293,6 @@ public class HomeActivity extends AppCompatActivity
         //sort the results
         Collections.sort(reviewedResidences);
         return reviewedResidences;
-    }
-
-    public static void logout(Activity context)
-    {
-    /* Reset Shared Preferences */
-        SharedPreferences sharedPrefs = context.getApplicationContext().getSharedPreferences(USER_LOGIN_PREFERENCES, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPrefs.edit();
-        editor.clear();
-        editor.commit();
-
-        Intent greetingintent = new Intent(context, GreetingActivity.class);
-        greetingintent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        context.startActivity(greetingintent);
-        context.finish();
     }
 
     @Override

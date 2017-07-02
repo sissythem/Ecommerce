@@ -5,13 +5,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
+import fromRESTful.Residences;
 import fromRESTful.Users;
 import util.ListAdapterProfile;
 import util.RetrofitCalls;
@@ -22,18 +25,19 @@ import static util.Utils.getSessionData;
 
 public class ViewHostProfileActivity extends AppCompatActivity {
 
-    Users host;
-    int hostId;
+    Users host, loggedinUser;
+    int hostId, residenceId;
     String username;
     ListView list;
     Context c;
     String token;
 
-    ImageButton bback;
+    ImageButton bback, ibContact;
 
     ListAdapterProfile adapter;
     String[] userdetails;
     Boolean user;
+    Residences selectedResidence;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,9 +72,14 @@ public class ViewHostProfileActivity extends AppCompatActivity {
         Bundle buser = getIntent().getExtras();
         user = buser.getBoolean("type");
         hostId = buser.getInt("host");
-        RetrofitCalls retrofitCalls = new RetrofitCalls();
+        residenceId = buser.getInt("residenceId");
 
+        RetrofitCalls retrofitCalls = new RetrofitCalls();
+        ArrayList<Users> userByUsername = retrofitCalls.getUserbyUsername(token, username);
+        loggedinUser = userByUsername.get(0);
         host = retrofitCalls.getUserbyId(token, Integer.toString(hostId));
+
+        selectedResidence = retrofitCalls.getResidenceById(token, Integer.toString(residenceId));
 
         bback = (ImageButton)findViewById(R.id.back);
 
@@ -101,6 +110,31 @@ public class ViewHostProfileActivity extends AppCompatActivity {
             }
         }
         userdetails[8] = date;
+
+        ibContact = (ImageButton) findViewById(R.id.ibContact);
+        ibContact.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                Intent messageIntent = new Intent(ViewHostProfileActivity.this, MessageActivity.class);
+
+                Bundle bmessage = new Bundle();
+                bmessage.putBoolean("type", user);
+                bmessage.putInt("currentUserId", loggedinUser.getId());
+                bmessage.putInt("toUserId", host.getId());
+                bmessage.putString("msgSubject", selectedResidence.getTitle());
+                bmessage.putInt("residenceId", residenceId);
+                bmessage.putString("back", "residence");
+                messageIntent.putExtras(bmessage);
+                try {
+                    startActivity(messageIntent);
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                    Log.e("",e.getMessage());
+                }
+            }
+        });
+
         adapter = new ListAdapterProfile(this, userdetails);
         list = (ListView)findViewById(R.id.profilelist);
         list.setAdapter(adapter);

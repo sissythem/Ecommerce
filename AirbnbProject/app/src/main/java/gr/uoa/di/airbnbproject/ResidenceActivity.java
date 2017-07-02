@@ -50,7 +50,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
     Context c;
 
     TextView tvTitle, tvType, tvAddress, tvCity, tvCountry, tvHostName, tvAbout, tvAmenities, tvCancellationPolicy, tvHostAbout, tvRules, tvPrice;
-    ImageButton ibContact, bback;
+    ImageButton bback;
     Button bReviews, bBook;
     RatingBar rating;
     EditText etGuests;
@@ -162,6 +162,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
                 Bundle buser = new Bundle();
                 buser.putBoolean("type", user);
                 buser.putInt("host", host.getId());
+                buser.putInt("residenceId", residenceId);
                 profileIntent.putExtras(buser);
                 try{
                     startActivity(profileIntent);
@@ -183,29 +184,6 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
 
         tvPrice.setText(Double.toString(selectedResidence.getMinPrice()));
         rating.setRating((float)selectedResidence.getAverageRating());
-
-        ibContact = (ImageButton) findViewById(R.id.ibContact);
-        ibContact.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent messageIntent = new Intent(ResidenceActivity.this, MessageActivity.class);
-
-                Bundle bmessage = new Bundle();
-                bmessage.putBoolean("type", user);
-                bmessage.putInt("currentUserId", loggedinUser.getId());
-                bmessage.putInt("toUserId", host.getId());
-                bmessage.putString("msgSubject", tvTitle.getText().toString());
-                bmessage.putInt("residenceId", residenceId);
-                bmessage.putString("back", "residence");
-                messageIntent.putExtras(bmessage);
-                try {
-                    startActivity(messageIntent);
-                } catch (Exception e) {
-                    System.out.println(e.getMessage());
-                    Log.e("",e.getMessage());
-                }
-            }
-        });
 
         bReviews.setOnClickListener(new View.OnClickListener() {
             @Override

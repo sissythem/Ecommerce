@@ -29,8 +29,8 @@ import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
 
-public class AddResidenceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
-
+public class AddResidenceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener
+{
     private static final int RESULT_LOAD_IMAGE =1;
 
     String token;
@@ -233,7 +233,8 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
                 } else {
                     token = PostResult(host, title, type, about, cancellationPolicy, country, city, address, rules, amenities, Integer.parseInt(floor),
                             Integer.parseInt(rooms), Integer.parseInt(baths), Double.parseDouble(spaceArea), photo, Integer.parseInt(guests), startDate, endDate,
-                            Double.parseDouble(minPrice), Double.parseDouble(additionalCostPerPerson), Boolean.parseBoolean(kitchen), Boolean.parseBoolean(livingRoom), view);
+                            Double.parseDouble(minPrice), Double.parseDouble(additionalCostPerPerson), Boolean.parseBoolean(kitchen), Boolean.parseBoolean(livingRoom),
+                            view);
 
                     if (!token.isEmpty() && token!=null && token != "not") {
                         Intent hostIntent = new Intent(AddResidenceActivity.this, HostActivity.class);
@@ -256,9 +257,10 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
         });
     }
 
-    public String PostResult(Users hostId, String title, String type, String about, String cancellationPolicy, String country, String city, String address, String rules, String amenities,
-                              int floor, int rooms, int baths, double spaceArea, String photos, int guests, Date availableDateStart, Date availableDateEnd, double minPrice,
-                              double additionalCostPerPerson, boolean kitchen, boolean livingRoom, String view) {
+    public String PostResult(Users hostId, String title, String type, String about, String cancellationPolicy, String country, String city, String address, String rules,
+                             String amenities, int floor, int rooms, int baths, double spaceArea, String photos, int guests, Date availableDateStart,
+                             Date availableDateEnd, double minPrice, double additionalCostPerPerson, boolean kitchen, boolean livingRoom, String view)
+    {
         Residences ResidenceParameters = new Residences(hostId, title, type, about, cancellationPolicy, country, city, address, rules, amenities, floor, rooms,
                 baths, spaceArea, photos, guests, availableDateStart, availableDateEnd, minPrice, additionalCostPerPerson, kitchen, livingRoom, view);
 
