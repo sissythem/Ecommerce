@@ -1,3 +1,8 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package domain;
 
 import java.io.Serializable;
@@ -17,6 +22,10 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ *
+ * @author sissy
+ */
 @Entity
 @Table(name = "reservations")
 @XmlRootElement
@@ -98,7 +107,7 @@ public class Reservations implements Serializable {
         return residenceId;
     }
 
-    public void setresidenceId(Residences residenceId) {
+    public void setResidenceId(Residences residenceId) {
         this.residenceId = residenceId;
     }
 

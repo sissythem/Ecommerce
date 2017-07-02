@@ -1,3 +1,8 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package domain;
 
 import java.io.Serializable;
@@ -20,6 +25,10 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+/**
+ *
+ * @author sissy
+ */
 @Entity
 @Table(name = "users")
 @XmlRootElement
@@ -39,14 +48,11 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Users.findByAbout", query = "SELECT u FROM Users u WHERE u.about = :about"),
     @NamedQuery(name = "Users.findByBirthDate", query = "SELECT u FROM Users u WHERE u.birthDate = :birthDate"),
     @NamedQuery(name = "Users.findByHost", query = "SELECT u FROM Users u WHERE u.host = :host"),
-
+    
     /* Custom */
     @NamedQuery(name = "loginUser", query = "SELECT u FROM Users u WHERE u.username = :username AND u.password = :password")
 })
 public class Users implements Serializable {
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
-    private Collection<Messages> messagesCollection;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -100,10 +106,16 @@ public class Users implements Serializable {
     private Collection<Reservations> reservationsCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "hostId")
     private Collection<Reviews> reviewsCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tenantId")
+    private Collection<Reviews> reviewsCollection1;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
+    private Collection<Messages> messagesCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "hostId")
     private Collection<Residences> residencesCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "senderId")
     private Collection<Conversations> conversationsCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "receiverId")
+    private Collection<Conversations> conversationsCollection1;
 
     public Users() {
     }
@@ -252,6 +264,24 @@ public class Users implements Serializable {
     }
 
     @XmlTransient
+    public Collection<Reviews> getReviewsCollection1() {
+        return reviewsCollection1;
+    }
+
+    public void setReviewsCollection1(Collection<Reviews> reviewsCollection1) {
+        this.reviewsCollection1 = reviewsCollection1;
+    }
+
+    @XmlTransient
+    public Collection<Messages> getMessagesCollection() {
+        return messagesCollection;
+    }
+
+    public void setMessagesCollection(Collection<Messages> messagesCollection) {
+        this.messagesCollection = messagesCollection;
+    }
+
+    @XmlTransient
     public Collection<Residences> getResidencesCollection() {
         return residencesCollection;
     }
@@ -267,6 +297,15 @@ public class Users implements Serializable {
 
     public void setConversationsCollection(Collection<Conversations> conversationsCollection) {
         this.conversationsCollection = conversationsCollection;
+    }
+
+    @XmlTransient
+    public Collection<Conversations> getConversationsCollection1() {
+        return conversationsCollection1;
+    }
+
+    public void setConversationsCollection1(Collection<Conversations> conversationsCollection1) {
+        this.conversationsCollection1 = conversationsCollection1;
     }
 
     @Override
@@ -292,14 +331,6 @@ public class Users implements Serializable {
     @Override
     public String toString() {
         return "domain.Users[ id=" + id + " ]";
-    }   
-
-    @XmlTransient
-    public Collection<Messages> getMessagesCollection() {
-        return messagesCollection;
     }
-
-    public void setMessagesCollection(Collection<Messages> messagesCollection) {
-        this.messagesCollection = messagesCollection;
-    }
+    
 }
