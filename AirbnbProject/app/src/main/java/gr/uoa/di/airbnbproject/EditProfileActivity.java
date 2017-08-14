@@ -3,7 +3,6 @@ package gr.uoa.di.airbnbproject;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -25,8 +24,6 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.security.Timestamp;
-import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -44,7 +41,6 @@ import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
 
-import static util.RestClient.BASE_URL;
 import static util.Utils.DATABASE_DATE_FORMAT;
 import static util.Utils.updateSessionData;
 
@@ -233,23 +229,6 @@ public class EditProfileActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String nothing) {}
     }
-
-//    public String getPath(Uri uri) {
-//        String[] projection = { MediaStore.Images.Media.DATA };
-//
-//        Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
-//        cursor.moveToFirst();
-//
-//        //Log.d(TAG, DatabaseUtils.dumpCursorToString(cursor));
-//
-//        int columnIndex = cursor.getColumnIndex(projection[0]);
-//        String picturePath = cursor.getString(columnIndex); // returns null
-//        System.out.println(picturePath);
-//        cursor.close();
-//        System.out.println(picturePath);
-//
-//        return cursor.getString(columnIndex);
-//    }
 
     public boolean checkEmail (String Email) {
         boolean emailIsNew=false;

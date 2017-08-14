@@ -134,7 +134,7 @@ public class ImagesFacadeREST extends AbstractFacade<Images> {
         
         if (KeyHolder.checkToken(token, className)) {
             try {
-                File directory = new File("C:\\Users\\vasso\\Documents\\ecommerce\\images");
+                File directory = new File("/home/sissy/Documents/Professional/University/UOA/graduate/Semester2/Ecommerce/Project/ecommerce_rest/images/");
                 File newFile = File.createTempFile("img", ".jpg", directory);
                 saveToFile(uploadedInputStream, newFile);
                 Query query = em.createNativeQuery("UPDATE users SET photo ='"+newFile.getName()+"' WHERE id ="+id);
@@ -157,7 +157,7 @@ public class ImagesFacadeREST extends AbstractFacade<Images> {
         
         if (KeyHolder.checkToken(token, className)) {
             try {
-                File directory = new File("C:\\Users\\vasso\\Documents\\ecommerce\\images");
+                File directory = new File("/home/sissy/Documents/Professional/University/UOA/graduate/Semester2/Ecommerce/Project/ecommerce_rest/images/");
                 File newFile = File.createTempFile("img", ".jpg", directory);
                 saveToFile(uploadedInputStream, newFile);
                 Query query = em.createNativeQuery("UPDATE residences SET photos ='"+newFile.getName()+"' WHERE id ="+id);
@@ -186,7 +186,7 @@ public class ImagesFacadeREST extends AbstractFacade<Images> {
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces("image/*")
     public Response getUserImage(@HeaderParam("Authorization")String token, @PathParam("name")String name) {
-        File f = new File("C:\\Users\\vasso\\Documents\\ecommerce\\images\\" + name);
+        File f = new File("/home/sissy/Documents/Professional/University/UOA/graduate/Semester2/Ecommerce/Project/ecommerce_rest/images/" + name);
         if (!f.exists()) {
             throw new WebApplicationException(404);
         }
