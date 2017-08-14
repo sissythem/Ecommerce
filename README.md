@@ -148,4 +148,4 @@ access, the wide availability of goods and services for the consumer, easy acces
 
   On the top of the activity there is a toolbar with an add residence button. If this ImageButton is pressed, host is redirected to the AddResidenceActivity, where he completes all requested fields with relevant information for the residence. Based on the room number declared by host, he now enters the AddRoomActivity, where he provides data per room. Once the activity has run for all rooms, user is redirected to HostActivity, where now he can see his residence upload. If he chooses to click on one list item, he can see the residence in the same way that it is presented to users (described in 3.4). If host wishes to update a residence, he should click on the edit button (in HostActivity).
 
-# Conclusion
+## Conclusion
