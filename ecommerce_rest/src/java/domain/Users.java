@@ -1,3 +1,8 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package domain;
 
 import java.io.Serializable;
@@ -20,6 +25,10 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+/**
+ *
+ * @author sissy
+ */
 @Entity
 @Table(name = "users")
 @XmlRootElement
@@ -255,6 +264,18 @@ public class Users implements Serializable {
     }
 
     @XmlTransient
+<<<<<<< HEAD
+=======
+    public Collection<Reviews> getReviewsCollection1() {
+        return reviewsCollection1;
+    }
+
+    public void setReviewsCollection1(Collection<Reviews> reviewsCollection1) {
+        this.reviewsCollection1 = reviewsCollection1;
+    }
+
+    @XmlTransient
+>>>>>>> origin/master
     public Collection<Messages> getMessagesCollection() {
         return messagesCollection;
     }
@@ -281,6 +302,15 @@ public class Users implements Serializable {
         this.conversationsCollection = conversationsCollection;
     }
 
+    @XmlTransient
+    public Collection<Conversations> getConversationsCollection1() {
+        return conversationsCollection1;
+    }
+
+    public void setConversationsCollection1(Collection<Conversations> conversationsCollection1) {
+        this.conversationsCollection1 = conversationsCollection1;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -305,4 +335,5 @@ public class Users implements Serializable {
     public String toString() {
         return "domain.Users[ id=" + id + " ]";
     }
+    
 }
