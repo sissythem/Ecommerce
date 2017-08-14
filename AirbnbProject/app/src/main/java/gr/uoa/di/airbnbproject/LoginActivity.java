@@ -11,10 +11,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import okhttp3.internal.Util;
 import util.RetrofitCalls;
 import util.Session;
-import util.Utils;
 
 import static util.Utils.USER_LOGIN_PREFERENCES;
 import static util.Utils.updateSessionData;
@@ -24,9 +22,9 @@ public class LoginActivity extends AppCompatActivity {
     String token;
 
     SharedPreferences sharedPrefs;
-    SharedPreferences.Editor editor;
-    private boolean isUserLoggedIn;
     Session sessionData;
+
+    EditText etUsername, etPassword;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,10 +38,13 @@ public class LoginActivity extends AppCompatActivity {
         sharedPrefs = getApplicationContext().getSharedPreferences(USER_LOGIN_PREFERENCES, Context.MODE_PRIVATE);
 
         //get user input
-        final EditText etUsername = (EditText) findViewById(R.id.etUsername);
-        final EditText etPassword = (EditText) findViewById(R.id.etPassword);
-        final Button blogin = (Button) findViewById(R.id.login);
+        final EditText etUsername   = (EditText) findViewById(R.id.etUsername);
+        final EditText etPassword   = (EditText) findViewById(R.id.etPassword);
+        final Button blogin         = (Button) findViewById(R.id.login);
         final TextView registerlink = (TextView) findViewById(R.id.registerlink);
+
+        etUsername.setSelected(false);
+        etPassword.setSelected(false);
 
         //if user does not have an account, presses on the Register Here and the Register Screen appears
         registerlink.setOnClickListener(new View.OnClickListener() {
@@ -60,7 +61,6 @@ public class LoginActivity extends AppCompatActivity {
                 final String Username = etUsername.getText().toString();
                 final String password = etPassword.getText().toString();
 
-                boolean userExists = true;
                 if(Username.length() == 0 || password.length() == 0) {
                     //if something is not filled in, user must fill again the form
                     Toast.makeText(c, "Please fill in all fields!", Toast.LENGTH_SHORT).show();

@@ -6,22 +6,16 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.ColumnResult;
 import javax.persistence.Entity;
-import javax.persistence.EntityResult;
-import javax.persistence.FieldResult;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedNativeQuery;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.SqlResultSetMapping;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -57,6 +51,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Residences.findByAvailableDateEnd", query = "SELECT r FROM Residences r WHERE r.availableDateEnd = :availableDateEnd"),
     @NamedQuery(name = "Residences.findByMinPrice", query = "SELECT r FROM Residences r WHERE r.minPrice = :minPrice"),
     @NamedQuery(name = "Residences.findByAdditionalCostPerPerson", query = "SELECT r FROM Residences r WHERE r.additionalCostPerPerson = :additionalCostPerPerson"),
+    @NamedQuery(name = "Residences.findByActive", query = "SELECT r FROM Residences r WHERE r.active = :active"),
     
     /* Custom */
     @NamedQuery(name = "findByHost", query = "SELECT r FROM Residences r WHERE r.hostId.id = :hostId")
@@ -64,31 +59,18 @@ import javax.xml.bind.annotation.XmlTransient;
 })
 public class Residences implements Serializable {
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "residenceId")
-    private Collection<Images> imagesCollection;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "active")
-    private short active;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "residenceId")
-    private Collection<Reservations> reservationsCollection;
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "residenceId")
-    private Collection<Conversations> conversationsCollection;
-
-    @Basic(optional = false)
-    @NotNull
-    @Lob
-    @Size(min = 1, max = 65535)
-    @Column(name = "title")
-    private String title;
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
+    @Basic(optional = false)
+    @NotNull
+    @Lob
+    @Size(min = 1, max = 65535)
+    @Column(name = "title")
+    private String title;
     @Size(max = 45)
     @Column(name = "type")
     private String type;
@@ -144,17 +126,33 @@ public class Residences implements Serializable {
     private Double minPrice;
     @Column(name = "additional_cost_per_person")
     private Double additionalCostPerPerson;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "active")
+    private short active;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "residenceId")
+    private Collection<Reservations> reservationsCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "residenceId")
     private Collection<Reviews> reviewsCollection;
     @JoinColumn(name = "host_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Users hostId;
-
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "residenceId")
+    private Collection<Conversations> conversationsCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "residenceId")
+    private Collection<Images> imagesCollection;
+    
     public Residences() {
     }
 
     public Residences(Integer id) {
         this.id = id;
+    }
+
+    public Residences(Integer id, String title, short active) {
+        this.id = id;
+        this.title = title;
+        this.active = active;
     }
 
     public Integer getId() {
@@ -163,6 +161,14 @@ public class Residences implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getType() {
@@ -333,6 +339,23 @@ public class Residences implements Serializable {
         this.additionalCostPerPerson = additionalCostPerPerson;
     }
 
+    public short getActive() {
+        return active;
+    }
+
+    public void setActive(short active) {
+        this.active = active;
+    }
+
+    @XmlTransient
+    public Collection<Reservations> getReservationsCollection() {
+        return reservationsCollection;
+    }
+
+    public void setReservationsCollection(Collection<Reservations> reservationsCollection) {
+        this.reservationsCollection = reservationsCollection;
+    }
+
     @XmlTransient
     public Collection<Reviews> getReviewsCollection() {
         return reviewsCollection;
@@ -348,6 +371,24 @@ public class Residences implements Serializable {
 
     public void setHostId(Users hostId) {
         this.hostId = hostId;
+    }
+
+    @XmlTransient
+    public Collection<Conversations> getConversationsCollection() {
+        return conversationsCollection;
+    }
+
+    public void setConversationsCollection(Collection<Conversations> conversationsCollection) {
+        this.conversationsCollection = conversationsCollection;
+    }
+    
+    @XmlTransient
+    public Collection<Images> getImagesCollection() {
+        return imagesCollection;
+    }
+    
+    public void setImagesCollection(Collection<Images> imagesCollection) {
+        this.imagesCollection = imagesCollection;
     }
 
     @Override
@@ -373,48 +414,5 @@ public class Residences implements Serializable {
     @Override
     public String toString() {
         return "domain.Residences[ id=" + id + " ]";
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    @XmlTransient
-    public Collection<Conversations> getConversationsCollection() {
-        return conversationsCollection;
-    }
-
-    public void setConversationsCollection(Collection<Conversations> conversationsCollection) {
-        this.conversationsCollection = conversationsCollection;
-    }
-
-    public short getActive() {
-        return active;
-    }
-
-    public void setActive(short active) {
-        this.active = active;
-    }
-
-    @XmlTransient
-    public Collection<Reservations> getReservationsCollection() {
-        return reservationsCollection;
-    }
-
-    public void setReservationsCollection(Collection<Reservations> reservationsCollection) {
-        this.reservationsCollection = reservationsCollection;
-    }
-    
-    @XmlTransient
-    public Collection<Images> getImagesCollection() {
-        return imagesCollection;
-    }
-
-    public void setImagesCollection(Collection<Images> imagesCollection) {
-        this.imagesCollection = imagesCollection;
     }
 }

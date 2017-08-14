@@ -20,6 +20,7 @@ public class AuthenticationFilter  {
     private static void validateToken(String token) throws Exception {
     	Key key = utils.KeyHolder.key;
     	try {
+            if (!Jwts.parser().isSigned(token)) throw new Exception();
             Claims claims = Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody();
             long nowMillis = System.currentTimeMillis();
             Date now = new Date(nowMillis);

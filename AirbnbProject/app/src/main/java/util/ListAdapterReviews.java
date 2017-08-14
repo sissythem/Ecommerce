@@ -10,10 +10,6 @@ import android.widget.TextView;
 
 import gr.uoa.di.airbnbproject.R;
 
-/**
- * Created by sissy on 24/6/2017.
- */
-
 public class ListAdapterReviews extends ArrayAdapter<String>
 {
     private final Activity context;

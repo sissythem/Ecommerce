@@ -113,5 +113,4 @@ public class Messages implements Serializable {
     public String toString() {
         return "domain.Messages[ id=" + id + " ]";
     }
-
 }

@@ -7,7 +7,9 @@
     android:fillViewport="true">
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" android:background="#fff">
+        android:layout_height="wrap_content" android:background="#fff"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
 
         <EditText
             android:id="@+id/firstname"
@@ -120,43 +122,12 @@
             android:hint="Confirm Password"
             android:inputType="textPassword" />
 
-        <ImageView
-            android:id="@+id/imageToUpload"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            app:srcCompat="@android:drawable/ic_menu_gallery"
-            android:layout_below="@+id/confirmpassword"
-            android:layout_toStartOf="@+id/loginlink"
-            android:layout_alignBottom="@+id/etUploadName"
-            android:layout_toLeftOf="@+id/loginlink" />
-
-        <EditText
-            android:id="@+id/etUploadName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/confirmpassword"
-            android:ems="10"
-            android:hint="Upload a photo"
-            android:inputType="textPersonName"
-            android:text="Upload your photo"
-            android:layout_toRightOf="@+id/imageToUpload"
-            android:layout_toEndOf="@+id/imageToUpload" />
-
         <Button
             android:id="@+id/register"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Register"
-            android:layout_below="@+id/imageToUpload"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="31dp"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_below="@+id/confirmpassword" />
 
         <TextView
             android:id="@+id/loginlink"

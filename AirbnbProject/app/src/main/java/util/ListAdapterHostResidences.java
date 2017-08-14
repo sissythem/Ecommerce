@@ -19,6 +19,8 @@ import gr.uoa.di.airbnbproject.ProfileActivity;
 import gr.uoa.di.airbnbproject.R;
 import gr.uoa.di.airbnbproject.ResidenceActivity;
 
+import static util.RestClient.BASE_URL;
+
 public class ListAdapterHostResidences extends ArrayAdapter<String> {
     private final Activity context;
     private final String[] representativePhoto;
@@ -53,13 +55,6 @@ public class ListAdapterHostResidences extends ArrayAdapter<String> {
         RatingBar ratingBar = (RatingBar) rowView.findViewById(R.id.rating);
         ImageButton bedit   = (ImageButton) rowView.findViewById(R.id.editResidence);
         ImageButton bdelete = (ImageButton) rowView.findViewById(R.id.deleteResidence);
-
-        //String url = "https://downloadcentrum.com/wp-content/uploads/2017/02/chrome-cookies.png";
-        // InputStream responseStream;
-        // Bitmap bitmap = RestCalls.getPhoto(url);
-        //BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-        //bitmap = Bitmap.createScaledBitmap(bitmap,parent.getWidth(),parent.getHeight(),true);
-        // imageView.setImageBitmap(bitmap);
 
         tvTitle.setText(title[position]);
         tvCity.setText(city[position]);
@@ -109,11 +104,11 @@ public class ListAdapterHostResidences extends ArrayAdapter<String> {
                 } else {
                     Toast.makeText(context, "Something went wrong, residence is not deleted. Please try again!", Toast.LENGTH_SHORT).show();
                 }
-
-
-
             }
         });
+
+        String imgpath = BASE_URL + "images/img/" + representativePhoto[position];
+        com.squareup.picasso.Picasso.with(context).load(imgpath).placeholder(R.mipmap.ic_launcher).resize(300, 300).into(imageView);
 
         imageView.setTag(position);
         imageView.setOnClickListener(new View.OnClickListener() {

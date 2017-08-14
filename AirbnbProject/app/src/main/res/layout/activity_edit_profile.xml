@@ -15,7 +15,6 @@
         android:background="@color/colorPrimary"
         android:fitsSystemWindows="true"
         android:minHeight="?attr/actionBarSize"
-        android:weightSum="1"
         app:titleTextColor="@android:color/white">
 
         <ImageButton
@@ -27,46 +26,52 @@
 
         <TextView
             android:id="@+id/profiletxt"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Edit Profile"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textSize="18sp" />
 
+        <TextView
+            android:id="@+id/etUsername"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="#ffffff"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textAlignment="textEnd"
+            android:layout_gravity="end"
+            android:text="Welcome" />
+
     </android.support.v7.widget.Toolbar>
 
-    <ImageView
-        android:id="@+id/profilepic"
+    <LinearLayout
+        android:id="@+id/imageContent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
         android:layout_below="@+id/backToolbar"
-        android:layout_marginTop="60dp"
-        app:srcCompat="@drawable/ic_profile" />
+        android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/etUsername"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/profilepic"
-        android:textAlignment="center"
-        android:text="Username" />
+        <ImageView
+            android:id="@+id/userImage"
+            android:layout_width="100dp"
+            android:layout_height="fill_parent"
+            android:scaleType="fitXY"
+            android:layout_weight="1"
+            android:src="@drawable/ic_profile" />
+
+        <Button android:id="@+id/uploadImage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Upload Profile Photo"/>
+    </LinearLayout>
 
     <EditText
         android:id="@+id/etName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/profilepic"
+        android:layout_below="@+id/imageContent"
         android:ems="10"
         android:inputType="textPersonName"
         android:hint="First Name" />
@@ -75,12 +80,7 @@
         android:id="@+id/etLastName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentStart="true"
         android:layout_below="@+id/etName"
-        android:ems="10"
         android:inputType="textPersonName"
         android:hint="Last Name" />
 
@@ -88,10 +88,6 @@
         android:id="@+id/etPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentStart="true"
         android:layout_below="@+id/etLastName"
         android:ems="10"
         android:inputType="textPassword"
@@ -101,10 +97,6 @@
         android:id="@+id/etEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentStart="true"
         android:layout_below="@+id/etPassword"
         android:ems="10"
         android:inputType="textEmailAddress"
@@ -114,10 +106,6 @@
         android:id="@+id/etPhoneNumber"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentStart="true"
         android:layout_below="@+id/etEmail"
         android:ems="10"
         android:inputType="phone"
@@ -127,10 +115,6 @@
         android:id="@+id/etCountry"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentStart="true"
         android:layout_below="@+id/etPhoneNumber"
         android:ems="10"
         android:inputType="textPersonName"
@@ -140,10 +124,6 @@
         android:id="@+id/etCity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentStart="true"
         android:layout_below="@+id/etCountry"
         android:ems="10"
         android:inputType="textPersonName"
@@ -175,10 +155,6 @@
         android:ems="10"
         android:inputType="textMultiLine"
         android:layout_below="@+id/btnBirthDate"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
         android:hint="About"/>
 
     <Button

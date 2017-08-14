@@ -9,20 +9,36 @@ import fromRESTful.Residences;
 import fromRESTful.Reviews;
 import fromRESTful.Searches;
 import fromRESTful.Users;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
-public interface RestAPI
-{
+public interface RestAPI {
     /***** Check Token *****/
+
     @GET("users/checktoken")
-    Call<String> checkToken ();
+    Call<Boolean> checkTokenExpired();
+
+    /***** Images Facade Methods *****/
+    @Multipart
+    @POST("images/profilepic/{id}")
+    Call<String> uploadProfileImg(@Path("id")Integer id, @Part("description") RequestBody description, @Part MultipartBody.Part file);
+
+    @Multipart
+    @POST("images/residence/{id}")
+    Call<String> uploadResidenceImg(@Path("id")Integer id, @Part("description") RequestBody description, @Part MultipartBody.Part file);
 
     /***** Users Facade Methods *****/
     @GET("users/{userId}")
@@ -41,10 +57,13 @@ public interface RestAPI
     Call<String> postUser(@Body Users user);
 
     @PUT("users/put/{id}")
-    Call<String> editUserById(@Path("userId") String userId, @Body Users user);
+    Call<String> editUserById(@Path("id") int id, @Body Users user);
 
     @DELETE("users/delete/{id}")
     Call<String> deleteUserById(@Path("id") String id);
+
+    @GET("images/img/{name}")
+    Call<ResponseBody> getUserImage(@Path("name")String name);
 
     /** Searches Facade Methods **/
     @GET("searches/city")
@@ -56,7 +75,7 @@ public interface RestAPI
 
     @GET("residences/search")
     Call<List<Residences>> getSearchResidences(@Query("userId") String userId, @Query("city") String city, @Query("startDate") String startDate,
-                                         @Query("endDate") String endDate, @Query("guests") String guests);
+                                               @Query("endDate") String endDate, @Query("guests") String guests);
 
     @GET("residences/host")
     Call<List<Residences>> getResidencesByHostId(@Query("hostId") String hostId);
@@ -68,7 +87,7 @@ public interface RestAPI
     Call<String> deleteResidenceById(@Path("id") String id);
 
     @PUT("residences/put/{id}")
-    Call<String> editResidenceById(@Path("id") String id, @Body Residences residence);
+    Call<String> editResidenceById(@Path("id") Integer id, @Body Residences residence);
 
     @POST("residences/add")
     Call<String> postResidence(@Body Residences residence);
@@ -138,6 +157,5 @@ public interface RestAPI
     Call<Void> deleteReviewsByResidence(@Path("residenceId") String residenceId);
 
     @POST("reviews/postreview")
-
     Call<String> postReview(@Body Reviews review);
 }

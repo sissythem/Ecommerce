@@ -39,14 +39,11 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Users.findByAbout", query = "SELECT u FROM Users u WHERE u.about = :about"),
     @NamedQuery(name = "Users.findByBirthDate", query = "SELECT u FROM Users u WHERE u.birthDate = :birthDate"),
     @NamedQuery(name = "Users.findByHost", query = "SELECT u FROM Users u WHERE u.host = :host"),
-
+    
     /* Custom */
     @NamedQuery(name = "loginUser", query = "SELECT u FROM Users u WHERE u.username = :username AND u.password = :password")
 })
 public class Users implements Serializable {
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
-    private Collection<Messages> messagesCollection;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -100,10 +97,16 @@ public class Users implements Serializable {
     private Collection<Reservations> reservationsCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "hostId")
     private Collection<Reviews> reviewsCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tenantId")
+    private Collection<Reviews> reviewsCollection1;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
+    private Collection<Messages> messagesCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "hostId")
     private Collection<Residences> residencesCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "senderId")
     private Collection<Conversations> conversationsCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "receiverId")
+    private Collection<Conversations> conversationsCollection1;
 
     public Users() {
     }
@@ -252,6 +255,15 @@ public class Users implements Serializable {
     }
 
     @XmlTransient
+    public Collection<Messages> getMessagesCollection() {
+        return messagesCollection;
+    }
+
+    public void setMessagesCollection(Collection<Messages> messagesCollection) {
+        this.messagesCollection = messagesCollection;
+    }
+
+    @XmlTransient
     public Collection<Residences> getResidencesCollection() {
         return residencesCollection;
     }
@@ -292,14 +304,5 @@ public class Users implements Serializable {
     @Override
     public String toString() {
         return "domain.Users[ id=" + id + " ]";
-    }   
-
-    @XmlTransient
-    public Collection<Messages> getMessagesCollection() {
-        return messagesCollection;
-    }
-
-    public void setMessagesCollection(Collection<Messages> messagesCollection) {
-        this.messagesCollection = messagesCollection;
     }
 }

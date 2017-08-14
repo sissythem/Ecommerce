@@ -98,7 +98,7 @@ public class Reservations implements Serializable {
         return residenceId;
     }
 
-    public void setresidenceId(Residences residenceId) {
+    public void setResidenceId(Residences residenceId) {
         this.residenceId = residenceId;
     }
 

@@ -52,11 +52,14 @@ public class HistoryReservationsActivity extends AppCompatActivity {
         user = buser.getBoolean("type");
 
         RetrofitCalls retrofitCalls = new RetrofitCalls();
-        Utils.checkToken(token, HistoryReservationsActivity.this);
+        if(Utils.isTokenExpired(token))
+        {
+            Utils.logout(this);
+            finish();
+        }
         ArrayList<Users> getUserByUsername = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
         loggedinUser = getUserByUsername.get(0);
 
-        Utils.checkToken(token, HistoryReservationsActivity.this);
         ArrayList<Reservations> userReservations = retrofitCalls.getReservationsByTenantId(token, loggedinUser.getId().toString());
 
         residenceId             = new int [userReservations.size()];
@@ -97,5 +100,4 @@ public class HistoryReservationsActivity extends AppCompatActivity {
         /** BACK BUTTON **/
         Utils.manageBackButton(this, ProfileActivity.class, user);
     }
-
 }

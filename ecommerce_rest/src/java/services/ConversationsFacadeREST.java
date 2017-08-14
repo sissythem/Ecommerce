@@ -103,6 +103,8 @@ public class ConversationsFacadeREST extends AbstractFacade<Conversations> {
     @Path("add")
     @Consumes({MediaType.APPLICATION_JSON})
     public String createConversation(@HeaderParam("Authorization") String token, Conversations entity) {
+        System.out.println("here");
+        System.out.println(entity.getSubject());
         if (KeyHolder.checkToken(token, className)) {
             super.create(entity);
             return token;

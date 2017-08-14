@@ -15,5 +15,9 @@
             <description/>
             <url-pattern>/*</url-pattern>
         </web-resource-collection>
+        <!--        <user-data-constraint>
+            <description/>
+            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+        </user-data-constraint>-->
     </security-constraint>
 </web-app>

@@ -3,13 +3,18 @@ package gr.uoa.di.airbnbproject;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -19,6 +24,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -26,11 +34,19 @@ import java.util.Date;
 
 import fromRESTful.Residences;
 import fromRESTful.Users;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Response;
+import util.RestAPI;
+import util.RestClient;
 import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
 public class EditResidenceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     private static final int RESULT_LOAD_IMAGE =1;
+    public static final int GET_FROM_GALLERY = 3;
 
     String resType, token;
     Integer residenceId;
@@ -39,10 +55,11 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
     Boolean user;
 
     ImageButton bcontinue, btnStartDate, btnEndDate;
-    ImageView imageToUpload;
+    ImageView mImageView;
     EditText etUpload, etTitle, etAbout, etAddress, etCity, etCountry, etAmenities, etFloor, etRooms, etBaths, etView, etSpaceArea, etGuests, etMinPrice, etAdditionalCost, etCancellationPolicy, etRules;
     TextView tvStartDate, tvEndDate;
     Spinner etType;
+    String photo;
 
     private int mStartYear, mStartMonth, mStartDay, mEndYear, mEndMonth, mEndDay;
 
@@ -79,16 +96,25 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         residenceId = buser.getInt("residenceId");
 
         retrofitCalls = new RetrofitCalls();
-        Utils.checkToken(token, EditResidenceActivity.this);
+        if(Utils.isTokenExpired(token))
+        {
+            Utils.logout(this);
+            finish();
+        }
         selectedResidence = retrofitCalls.getResidenceById(token, Integer.toString(residenceId));
         userInputLayout();
-
-        Utils.checkToken(token, EditResidenceActivity.this);
         ArrayList<Users> getUsersByUsername = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
         host = getUsersByUsername.get(0);
 
         TextView residencetxt = (TextView) findViewById(R.id.residencetxt);
         residencetxt.setText("Edit Residence#" + residenceId);
+
+        Button uploadImage = (Button) findViewById(R.id.uploadImage);
+        uploadImage.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), GET_FROM_GALLERY);
+            }
+        });
 
         saveResidence();
 
@@ -96,8 +122,60 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         Utils.manageBackButton(this, HostActivity.class, user);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        //Detects request codes
+        if(requestCode == GET_FROM_GALLERY && resultCode == RESULT_OK) {
+            Uri selectedImage = data.getData();
+            mImageView = (ImageView) findViewById(R.id.photo);
+            photo = selectedImage.toString();
+            mImageView.setImageBitmap(BitmapFactory.decodeFile(selectedImage.toString()));
+
+            Bitmap bitmap = null;
+            try {
+                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+                mImageView.setImageBitmap(bitmap);
+                new EditResidenceActivity.SendImageTask().execute(Utils.getRealPathFromURI(EditResidenceActivity.this, selectedImage));
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private class SendImageTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            File file = new File(params[0]);
+
+            RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpg"), file);
+//            RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+            /** MultipartBody.Part is used to send also the actual file name **/
+            MultipartBody.Part body = MultipartBody.Part.createFormData("picture", file.getName(), requestFile);
+            /** add another part within the multipart request **/
+            RequestBody description = RequestBody.create(okhttp3.MultipartBody.FORM, "User Image");
+
+            RestAPI restAPI = RestClient.getClient(token).create(RestAPI.class);
+            Call<String> call = restAPI.uploadResidenceImg(residenceId, description, body);
+            try {
+                Response<String> resp = call.execute();
+                token = resp.body();
+            } catch(IOException e){
+                Log.i("",e.getMessage());
+            }
+            return token;
+        }
+
+        @Override
+        protected void onPostExecute(String nothing) {}
+    }
+
     public void userInputLayout () {
-        etUpload             = (EditText)findViewById(R.id.etUpload);
+        //etUpload             = (EditText)findViewById(R.id.etUpload);
         etTitle              = (EditText)findViewById(R.id.etTitle);
         etAbout              = (EditText)findViewById(R.id.etAbout);
         etAddress            = (EditText)findViewById(R.id.etAddress);
@@ -126,15 +204,6 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         cbLivingRoom.setChecked(selectedResidence.getLivingRoom());
 
         bcontinue = (ImageButton)findViewById(R.id.ibContinue);
-
-//        imageToUpload = (ImageView)findViewById(R.id.imageToUpload);
-//        imageToUpload.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View v) {
-//                Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//                startActivityForResult(galleryIntent, RESULT_LOAD_IMAGE);
-//            }
-//        });
 
         etType = (Spinner) findViewById(R.id.etType);
         // Create an ArrayAdapter using the string array and a default spinner layout
@@ -233,7 +302,6 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         bcontinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String photo                      = etUpload.getText().toString();
                 final String title                      = etTitle.getText().toString();
                 final String type                       = resType;
                 final String about                      = etAbout.getText().toString();
@@ -301,23 +369,23 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
 
     }
     public String PutResult(Users host, String title, String type, String about, String address, String city, String country, String amenities, int floor, int rooms,
-                             int baths, String view, double spaceArea, int guests, double minPrice, double additionalCostPerPerson, String cancellationPolicy,
-                             String rules, boolean kitchen, boolean livingRoom, Date startDate, Date endDate, String photo)
+                            int baths, String view, double spaceArea, int guests, double minPrice, double additionalCostPerPerson, String cancellationPolicy,
+                            String rules, boolean kitchen, boolean livingRoom, Date startDate, Date endDate, String photo)
     {
         Residences ResidenceParameters = new Residences(host, title, type, about, address, city, country, amenities, floor, rooms, baths, view, spaceArea, guests, minPrice,
                 additionalCostPerPerson, cancellationPolicy, rules, kitchen, livingRoom, startDate, endDate, photo);
 
         RetrofitCalls retrofitCalls = new RetrofitCalls();
-        token = retrofitCalls.editResidence(token, Integer.toString(residenceId), ResidenceParameters);
+        token = retrofitCalls.editResidence(token, residenceId, ResidenceParameters);
         return token;
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == RESULT_LOAD_IMAGE && requestCode == RESULT_OK && data != null) {
-            Uri selectedImage = data.getData();
-            imageToUpload.setImageURI(selectedImage);
-        }
-    }
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if(requestCode == RESULT_LOAD_IMAGE && requestCode == RESULT_OK && data != null) {
+//            Uri selectedImage = data.getData();
+//            imageToUpload.setImageURI(selectedImage);
+//        }
+//    }
 }

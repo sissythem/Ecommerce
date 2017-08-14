@@ -55,7 +55,7 @@ public class Conversations implements Serializable {
         this.subject = subject;
     }
 
-//    @XmlTransient
+    //    @XmlTransient
     public Collection<Messages> getMessagesCollection() {
         return messagesCollection;
     }
@@ -144,5 +144,4 @@ public class Conversations implements Serializable {
     public String toString() {
         return "domain.Conversations[ id=" + id + " ]";
     }
-
 }

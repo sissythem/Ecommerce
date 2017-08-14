@@ -13,27 +13,37 @@ public class KeyHolder
     public static final Key key = MacProvider.generateKey();
     
     public static String issueToken(String keyname) {
-        Key key = KeyHolder.key;
-        long nowMillis = System.currentTimeMillis();
-        Date now = new Date(nowMillis);
-        long expMillis = nowMillis + 300000L;
-        Date exp = new Date(expMillis);
-        String jws = Jwts.builder()
-                    .setSubject(keyname)
-                    .setIssuedAt(now)
-                    .signWith(SignatureAlgorithm.HS512, key)
-                    .setExpiration(exp)
-                    .compact();
+        String jws;
+        if (keyname != null && keyname != "") {
+            Key key = KeyHolder.key;
+            long nowMillis = System.currentTimeMillis();
+            Date now = new Date(nowMillis);
+            long expMillis = nowMillis + 300000L;
+            Date exp = new Date(expMillis);
+            jws = Jwts.builder()
+                        .setSubject(keyname)
+                        .setIssuedAt(now)
+                        .signWith(SignatureAlgorithm.HS512, key)
+                        .setExpiration(exp)
+                        .compact();
+        } else {
+            jws = null;
+        }
         return jws;
     }
     
-    public static Boolean checkToken(String token, String entityName) {
-        try {
+    public static Boolean checkToken(String token, String entityName) 
+    {
+        try 
+        {
             AuthenticationFilter.filter(token);
             return true;
-        } catch(Exception ex) {
+        } 
+        catch(Exception ex) 
+        {
             Logger.getLogger(entityName).log(Level.SEVERE, null, ex);
+            return false;
         }
-        return false;
+        
     }
 }

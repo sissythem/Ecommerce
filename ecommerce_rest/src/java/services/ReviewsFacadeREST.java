@@ -107,7 +107,7 @@ public class ReviewsFacadeREST extends AbstractFacade<Reviews> {
     
     @POST
     @Path("postreview")
-    @Consumes({MediaType.TEXT_PLAIN})
+    @Consumes({MediaType.APPLICATION_JSON})
     public String createReview(@HeaderParam("Authorization") String token, Reviews entity) {
         if (KeyHolder.checkToken(token, className)) {
             super.create(entity);
@@ -141,6 +141,4 @@ public class ReviewsFacadeREST extends AbstractFacade<Reviews> {
         }
         return data;
     }
-    
-    
 }

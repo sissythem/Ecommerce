@@ -30,7 +30,6 @@ import util.Session;
 import util.Utils;
 
 public class AddResidenceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
-
     private static final int RESULT_LOAD_IMAGE =1;
 
     String token;
@@ -74,7 +73,11 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
         userInputLayout();
 
         RetrofitCalls retrofitCalls = new RetrofitCalls();
-        Utils.checkToken(token, AddResidenceActivity.this);
+        if(Utils.isTokenExpired(token))
+        {
+            Utils.logout(this);
+            finish();
+        }
         List<Users> userData = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
 
         host = userData.get(0);
@@ -87,7 +90,7 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
     }
 
     public void userInputLayout () {
-        etUpload             = (EditText)findViewById(R.id.etUpload);
+        //etUpload             = (EditText)findViewById(R.id.etUpload);
         etTitle              = (EditText)findViewById(R.id.etTitle);
         etAbout              = (EditText)findViewById(R.id.etAbout);
         etAddress            = (EditText)findViewById(R.id.etAddress);
@@ -252,9 +255,10 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
         });
     }
 
-    public String PostResult(Users hostId, String title, String type, String about, String cancellationPolicy, String country, String city, String address, String rules, String amenities,
-                              int floor, int rooms, int baths, double spaceArea, String photos, int guests, Date availableDateStart, Date availableDateEnd, double minPrice,
-                              double additionalCostPerPerson, boolean kitchen, boolean livingRoom, String view) {
+    public String PostResult(Users hostId, String title, String type, String about, String cancellationPolicy, String country, String city, String address, String rules,
+                             String amenities, int floor, int rooms, int baths, double spaceArea, String photos, int guests, Date availableDateStart,
+                             Date availableDateEnd, double minPrice, double additionalCostPerPerson, boolean kitchen, boolean livingRoom, String view)
+    {
         Residences ResidenceParameters = new Residences(hostId, title, type, about, cancellationPolicy, country, city, address, rules, amenities, floor, rooms,
                 baths, spaceArea, photos, guests, availableDateStart, availableDateEnd, minPrice, additionalCostPerPerson, kitchen, livingRoom, view);
 
@@ -270,5 +274,10 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
             Uri selectedImage = data.getData();
             imageToUpload.setImageURI(selectedImage);
         }
+    }
+
+    @Override
+    public void onRestart() {
+        super.onRestart();
     }
 }

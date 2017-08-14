@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,6 +43,8 @@ import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
 
+import static util.RestClient.BASE_URL;
+
 public class ResidenceActivity extends FragmentActivity implements OnMapReadyCallback {
     Boolean user;
     String username, date_start, date_end, guests, token;
@@ -50,7 +53,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
     Context c;
 
     TextView tvTitle, tvType, tvAddress, tvCity, tvCountry, tvHostName, tvAbout, tvAmenities, tvCancellationPolicy, tvHostAbout, tvRules, tvPrice;
-    ImageButton ibContact;
+    ImageButton bback;
     Button bReviews, bBook;
     RatingBar rating;
     EditText etGuests;
@@ -95,10 +98,12 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         residenceId         = buser.getInt("residenceId");
 
         retrofitCalls = new RetrofitCalls();
-        Utils.checkToken(token, ResidenceActivity.this);
+        if(Utils.isTokenExpired(token)) {
+            Utils.logout(this);
+            finish();
+        }
         ArrayList<Users> userLoggedIn = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
         loggedinUser = userLoggedIn.get(0);
-        Utils.checkToken(token, ResidenceActivity.this);
         selectedResidence   = retrofitCalls.getResidenceById(token, Integer.toString(residenceId));
 
         setUpResidenceView();
@@ -109,20 +114,19 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         /** BACK BUTTON **/
         Utils.manageBackButton(this, (user)?HomeActivity.class:HostActivity.class, user);
         if(!user) {
-            //if user is logged in as host, this button does not appear
-            bBook.setVisibility(View.INVISIBLE);
             RatingBar ratingBar = (RatingBar) findViewById(R.id.rating);
             ratingBar.setVisibility(View.INVISIBLE);
-            TextView tvPrice = (TextView)findViewById(R.id.price);
-            tvPrice.setVisibility(View.INVISIBLE);
-            /** FOOTER TOOLBAR **/
-            Utils.manageFooter(ResidenceActivity.this, user);
         }
+        /** FOOTER TOOLBAR **/
+        Utils.manageFooter(ResidenceActivity.this, user);
     }
 
-    public void setUpResidenceView ()
-    {
+    public void setUpResidenceView () {
         host = selectedResidence.getHostId();
+
+        ImageView resPhoto = (ImageView) findViewById(R.id.ivResidencePhotos);
+        String imgpath = BASE_URL + "images/img/" + selectedResidence.getPhotos();
+        com.squareup.picasso.Picasso.with(this).load(imgpath).placeholder(R.mipmap.ic_launcher).resize(300, 300).into(resPhoto);
 
         tvTitle                 = (TextView)findViewById(R.id.tvTitle);
         tvType                  = (TextView)findViewById(R.id.tvType);
@@ -142,6 +146,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         bBook                   = (Button)findViewById(R.id.btnReservation);
         etGuests                = (EditText)findViewById(R.id.etGuests);
         etGuests.setSelected(false);
+        bback=(ImageButton)findViewById(R.id.ibBack);
 
         tvTitle.setText(selectedResidence.getTitle());
         tvType.setText(selectedResidence.getType());
@@ -158,6 +163,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
                 Bundle buser = new Bundle();
                 buser.putBoolean("type", user);
                 buser.putInt("host", host.getId());
+                buser.putInt("residenceId", residenceId);
                 profileIntent.putExtras(buser);
                 try{
                     startActivity(profileIntent);
@@ -175,12 +181,55 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         tvHostAbout.setText(host.getAbout());
         tvRules.setText(selectedResidence.getRules());
 
-        setCalendar();
+        if (user) {
+            setCalendar();
+            tvPrice.setText(Double.toString(selectedResidence.getMinPrice()));
+            rating.setRating((float)selectedResidence.getAverageRating());
 
-        tvPrice.setText(Double.toString(selectedResidence.getMinPrice()));
-        rating.setRating((float)selectedResidence.getAverageRating());
+            bBook.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    guests = etGuests.getText().toString();
+                    guestsInt = Integer.parseInt(guests);
+                    //gets selected dates from user input
+                    if(selectedDates[0] != null && selectedDates[1] != null) {
+                        if (selectedDates[0].before(selectedDates[1])) {
+                            selectedStartDate = selectedDates[0];
+                            selectedEndDate = selectedDates[1];
+                        } else {
+                            selectedStartDate = selectedDates[1];
+                            selectedEndDate = selectedDates[0];
+                        }
+                    }
+                    //in case user has not specified the period for booking or the number of guests, reservation cannot be performed
+                    if(selectedStartDate == null || selectedEndDate == null || guests == null) {
+                        Toast.makeText(c, "Please fill in the dates and the number of guests", Toast.LENGTH_SHORT).show();
+                        return;
+                    } else {
+                        //user makes a reservation and goes back to home activity
+                        token = PostResult();
+                        if (!token.isEmpty()) {
+                            Intent homeIntent = new Intent(ResidenceActivity.this, HomeActivity.class);
+                            user = true;
+                            Bundle buser = new Bundle();
+                            buser.putBoolean("type", user);
+                            homeIntent.putExtras(buser);
+                            startActivity(homeIntent);
+                            finish();
+                        } else {
+                            Toast.makeText(c, "Booking failed, your session is terminated, please log in again!", Toast.LENGTH_SHORT).show();
+                            Utils.logout(ResidenceActivity.this);
+                            finish();
+                        }
+                    }
+                }
+            });
+        } else {
+            tvPrice.setVisibility(View.INVISIBLE);
+            bBook.setVisibility(View.INVISIBLE);
+        }
 
-        ibContact = (ImageButton) findViewById(R.id.ibContact);
+        /*ibContact = (ImageButton) findViewById(R.id.ibContact);
         ibContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -200,12 +249,11 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
                     Log.e("",e.getMessage());
                 }
             }
-        });
+        });*/
 
         bReviews.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 Intent reviewsIntent = new Intent(ResidenceActivity.this, ReviewsActivity.class);
                 Bundle buser = new Bundle();
                 buser.putBoolean("type", user);
@@ -216,45 +264,6 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
                 }
                 catch (Exception e) {
                     Log.e("",e.getMessage());
-                }
-            }
-        });
-
-        bBook.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                guests = etGuests.getText().toString();
-                guestsInt = Integer.parseInt(guests);
-                //gets selected dates from user input
-                if(selectedDates[0] != null && selectedDates[1] != null) {
-                    if (selectedDates[0].before(selectedDates[1])) {
-                        selectedStartDate = selectedDates[0];
-                        selectedEndDate = selectedDates[1];
-                    } else {
-                        selectedStartDate = selectedDates[1];
-                        selectedEndDate = selectedDates[0];
-                    }
-                }
-                //in case user has not specified the period for booking or the number of guests, reservation cannot be performed
-                if(selectedStartDate == null || selectedEndDate == null || guests == null) {
-                    Toast.makeText(c, "Please fill in the dates and the number of guests", Toast.LENGTH_SHORT).show();
-                    return;
-                } else {
-                    //user makes a reservation and goes back to home activity
-                    token = PostResult();
-                    if (!token.isEmpty()) {
-                        Intent homeIntent = new Intent(ResidenceActivity.this, HomeActivity.class);
-                        user = true;
-                        Bundle buser = new Bundle();
-                        buser.putBoolean("type", user);
-                        homeIntent.putExtras(buser);
-                        startActivity(homeIntent);
-                        finish();
-                    } else {
-                        Toast.makeText(c, "Booking failed, your session is terminated, please log in again!", Toast.LENGTH_SHORT).show();
-                        Utils.logout(ResidenceActivity.this);
-                        finish();
-                    }
                 }
             }
         });
@@ -294,7 +303,6 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
             current = calendar.getTime();
         }
         //get all reservations for the selected residence
-        Utils.checkToken(token, ResidenceActivity.this);
         ArrayList<Reservations> allReservationsByResidence = retrofitCalls.getReservationsByResidenceId(token, Integer.toString(residenceId));
 
         //get the max guests for this residence
@@ -337,17 +345,16 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
             filterDates();
         }
         etGuests.addTextChangedListener(
-            new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count){}
-                public void afterTextChanged(Editable s)
-                {
-                    filterDates();
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count){}
+                    public void afterTextChanged(Editable s) {
+                        filterDates();
+                    }
                 }
-            }
         );
 
         selectedDates = new Date[2];

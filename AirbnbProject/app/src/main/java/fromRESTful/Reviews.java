@@ -103,5 +103,4 @@ public class Reviews implements Serializable {
     public String toString() {
         return "domain.Reviews[ id=" + id + " ]";
     }
-
 }

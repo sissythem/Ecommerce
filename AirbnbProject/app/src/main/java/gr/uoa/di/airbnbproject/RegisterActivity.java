@@ -3,9 +3,7 @@ package gr.uoa.di.airbnbproject;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -13,7 +11,6 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,19 +25,18 @@ import util.Utils;
 import static util.Utils.updateSessionData;
 
 public class RegisterActivity extends AppCompatActivity {
-
-    private static final int RESULT_LOAD_IMAGE =1;
     String token;
-    /*public String getToken() {
-        return token;
-    }*/
-
     Context c;
-    boolean success;
 
-    ImageView imageToUpload;
+    EditText firstname, lastname, phonenumber, email, username, password, confirmpassword;
+    TextView birthdate, loginlink;
+    ImageButton btnBirthDate;
+    Button bregister;
+    Calendar cal;
     private int mYear, mMonth, mDay;
     Session sessionData;
+
+    String dateOfBirth;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,17 +46,25 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         //Create variables for storing user input
-        final EditText firstname        = (EditText) findViewById(R.id.firstname);
-        final EditText lastname         = (EditText) findViewById(R.id.lastname);
-        final TextView birthdate        = (TextView)findViewById(R.id.tvBirthDate);
-        final ImageButton btnBirthDate  = (ImageButton)findViewById(R.id.btnBirthDate);
-        final EditText phonenumber      = (EditText) findViewById(R.id.phonenumber);
-        final EditText email            = (EditText) findViewById(R.id.email);
-        final EditText username         = (EditText) findViewById(R.id.username);
-        final EditText password         = (EditText) findViewById(R.id.password);
-        final EditText confirmpassword  = (EditText) findViewById(R.id.confirmpassword);
-        final Button bregister          = (Button) findViewById(R.id.register);
-        final TextView loginlink        = (TextView) findViewById(R.id.loginlink);
+        firstname        = (EditText) findViewById(R.id.firstname);
+        lastname         = (EditText) findViewById(R.id.lastname);
+        birthdate        = (TextView) findViewById(R.id.tvBirthDate);
+        btnBirthDate     = (ImageButton)findViewById(R.id.btnBirthDate);
+        phonenumber      = (EditText) findViewById(R.id.phonenumber);
+        email            = (EditText) findViewById(R.id.email);
+        username         = (EditText) findViewById(R.id.username);
+        password         = (EditText) findViewById(R.id.password);
+        confirmpassword  = (EditText) findViewById(R.id.confirmpassword);
+        bregister        = (Button) findViewById(R.id.register);
+        loginlink        = (TextView) findViewById(R.id.loginlink);
+
+        firstname.setSelected(false);
+        lastname.setSelected(false);
+        phonenumber.setSelected(false);
+        email.setSelected(false);
+        username.setSelected(false);
+        password.setSelected(false);
+        confirmpassword.setSelected(false);
 
         //link the text view loginlink to the LoginActivity in case user has already an account
         loginlink.setOnClickListener(new View.OnClickListener() {
@@ -71,24 +75,15 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
-        imageToUpload = (ImageView)findViewById(R.id.imageToUpload);
-        imageToUpload.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(galleryIntent, RESULT_LOAD_IMAGE);
-            }
-        });
-
         btnBirthDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (v == btnBirthDate) {
                     // Get Current Date
-                    final Calendar c = Calendar.getInstance();
-                    mYear = c.get(Calendar.YEAR);
-                    mMonth = c.get(Calendar.MONTH);
-                    mDay = c.get(Calendar.DAY_OF_MONTH);
+                    cal = Calendar.getInstance();
+                    mYear = cal.get(Calendar.YEAR);
+                    mMonth = cal.get(Calendar.MONTH);
+                    mDay = cal.get(Calendar.DAY_OF_MONTH);
 
                     DatePickerDialog datePickerDialog = new DatePickerDialog(RegisterActivity.this, new DatePickerDialog.OnDateSetListener() {
                         @Override
@@ -107,23 +102,23 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //gets user input in string format
                 Log.w("","Hardcoding a registration user");
-                final String firstName          = "test_firstname";
-                final String lastName           = "test_lastname";
-                final String BirthDate          = "3-7-2017";
-                final String phoneNumber        = "123123123";
-                final String Email              = "email@domain.com";
-                final String Username           = "usernametest";
-                final String Password           = "password";
-                final String ConfirmPassword    = "password";
+//                final String firstName          = "test_firstname";
+//                final String lastName           = "test_lastname";
+//                final String BirthDate          = "3-7-2017";
+//                final String phoneNumber        = "123123123";
+//                final String Email              = "email@domain.com";
+//                final String Username           = "usernametest";
+//                final String Password           = "password";
+//                final String ConfirmPassword    = "password";
 
-//                final String firstName          = firstname.getText().toString();
-//                final String lastName           = lastname.getText().toString();
-//                final String BirthDate          = birthdate.getText().toString();
-//                final String phoneNumber        = phonenumber.getText().toString();
-//                final String Email              = email.getText().toString();
-//                final String Username           = username.getText().toString();
-//                final String Password           = password.getText().toString();
-//                final String ConfirmPassword    = confirmpassword.getText().toString();
+                final String firstName          = firstname.getText().toString();
+                final String lastName           = lastname.getText().toString();
+                final String BirthDate          = birthdate.getText().toString();
+                final String phoneNumber        = phonenumber.getText().toString();
+                final String Email              = email.getText().toString();
+                final String Username           = username.getText().toString();
+                final String Password           = password.getText().toString();
+                final String ConfirmPassword    = confirmpassword.getText().toString();
 
 
                 //check if user has filled all fields of the registration form
@@ -142,8 +137,34 @@ public class RegisterActivity extends AppCompatActivity {
                 }
 
                 Date bdate = Utils.ConvertStringToDate(BirthDate,Utils.APP_DATE_FORMAT);
+                System.out.println(bdate);
+
+                //java.util.Date dt = new java.util.Date();
+                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                dateOfBirth = sdf.format(bdate);
+                System.out.println(dateOfBirth);
+
+//                String cdate="Mar 10, 2016 6:30:00 PM";
+//                SimpleDateFormat formatter=new SimpleDateFormat("MMM dd, yyyy hh:mm:ss aaa");
+//                try {
+//                    Date newDate = formatter.parse(cdate);
+//                    formatter= new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+//                    cdate = formatter.format(newDate);
+//                    System.out.println(cdate);
+//                } catch (Exception e) {}
+//
+//                System.out.println(cdate);
 
 
+//                Calendar calendar = Calendar.getInstance();
+//                /* to display time*/
+//                SimpleDateFormat formatter = new SimpleDateFormat("hh:mm");
+//                /* to display date in the given format */
+//                DateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+//                /*get the date using */
+//                Date dDate = dateFormatter.parse(yourObject.getTaskDate());
+//                /*set the date */
+//                calendar.setTime(dDate);
 
                 token = PostResult(firstName, lastName, Username, Password, Email, phoneNumber, bdate);
                 if(token.equals("username exists")){
@@ -154,7 +175,7 @@ public class RegisterActivity extends AppCompatActivity {
                     Toast.makeText(c, "Email already exists, please try again!", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if ( token!=null && !token.isEmpty() &&  (!token.equals("error"))) {
+                if (token!=null && !token.isEmpty() &&  (!token.equals("error"))) {
                     //if data are stored successfully in the data base, the user is now logged in and the home activity starts
                     sessionData = new Session(token, Username, true);
                     updateSessionData(RegisterActivity.this, sessionData);
@@ -168,25 +189,13 @@ public class RegisterActivity extends AppCompatActivity {
                     } catch (Exception ex) {
                         System.out.println(ex.getMessage());
                         ex.printStackTrace();
-                }
-                } else
-                {
+                    }
+                } else {
                     Toast.makeText(c, "Registration failed, please try again!", Toast.LENGTH_SHORT).show();
                     return;
                 }
             }
         });
-    }
-
-
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == RESULT_LOAD_IMAGE && requestCode == RESULT_OK && data != null) {
-            Uri selectedImage = data.getData();
-            imageToUpload.setImageURI(selectedImage);
-        }
     }
 
     public String PostResult(String firstName, String lastName, String username, String password, String email, String phoneNumber, Date bdate) {

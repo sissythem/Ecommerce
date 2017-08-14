@@ -68,5 +68,4 @@ public class Images implements Serializable {
     public String toString() {
         return "domain.Images[ id=" + id + " ]";
     }
-
 }

@@ -48,6 +48,9 @@ dependencies {
     compile 'com.android.support:design:25.3.1'
     compile 'com.roomorama:caldroid:3.0.1'
     compile 'com.android.support:support-v4:25.3.1'
+    compile 'com.squareup.retrofit2:converter-gson:2.0.2'
+
+    compile 'com.google.code.gson:gson:2.8.1'
     compile 'com.fasterxml.jackson.core:jackson-core:2.8.5'
     compile 'com.fasterxml.jackson.core:jackson-annotations:2.8.5'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.8.5'
@@ -55,5 +58,6 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-jackson:2.1.0'
     compile 'com.squareup.retrofit2:converter-scalars:2.1.0'
     compile 'com.android.support:recyclerview-v7:25.3.1'
+    compile 'com.squareup.picasso:picasso:2.5.2'
     testCompile 'junit:junit:4.12'
 }
