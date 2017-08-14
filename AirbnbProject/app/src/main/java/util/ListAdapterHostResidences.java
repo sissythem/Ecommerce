@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import gr.uoa.di.airbnbproject.EditResidenceActivity;
 import gr.uoa.di.airbnbproject.HostActivity;
+import gr.uoa.di.airbnbproject.ProfileActivity;
 import gr.uoa.di.airbnbproject.R;
 import gr.uoa.di.airbnbproject.ResidenceActivity;
 
@@ -88,7 +89,6 @@ public class ListAdapterHostResidences extends ArrayAdapter<String> {
             @Override
             public void onClick(View v) {
                 Session sessionData = Utils.getSessionData(context);
-                System.out.println(sessionData);
                 if (retrofitCalls.deleteResidenceById(sessionData.getToken(), Integer.toString(residenceId[position])) == null) {
                     Toast.makeText(context, "Residence was successfully deleted!", Toast.LENGTH_SHORT).show();
                     Intent hostIntent = new Intent(context, HostActivity.class);
@@ -103,14 +103,10 @@ public class ListAdapterHostResidences extends ArrayAdapter<String> {
                 } else {
                     Toast.makeText(context, "Something went wrong, residence is not deleted. Please try again!", Toast.LENGTH_SHORT).show();
                 }
-
-
-
             }
         });
 
-        String imgpath = BASE_URL + "images/img/" + representativePhoto[position];
-        com.squareup.picasso.Picasso.with(context).load(imgpath).placeholder(R.mipmap.ic_launcher).resize(300, 300).into(imageView);
+        Utils.loadResidenceImage(context, imageView, representativePhoto[position]);
 
         imageView.setTag(position);
         imageView.setOnClickListener(new View.OnClickListener() {

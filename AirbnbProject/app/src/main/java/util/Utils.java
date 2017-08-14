@@ -11,6 +11,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
@@ -27,8 +28,9 @@ import gr.uoa.di.airbnbproject.InboxActivity;
 import gr.uoa.di.airbnbproject.ProfileActivity;
 import gr.uoa.di.airbnbproject.R;
 
-public class Utils
-{
+import static util.RestClient.BASE_URL;
+
+public class Utils {
     public static String USER_LOGIN_PREFERENCES = "login_preferences";
 
     public static final String APP_DATE_FORMAT = "dd-MM-yyyy";
@@ -37,6 +39,7 @@ public class Utils
 
     public static final String DATE_YEAR_FIRST = "yyyy-MM-dd";
     public static final String DATE_TEXT_MONTH = "dd MMMM";
+    public static final String MYSQL_FORMAT = "Y-m-d H:i:s";
 
     public static Date ConvertStringToDate(String date, String format)
     {
@@ -197,8 +200,7 @@ public class Utils
             }
         });
 
-        blogout.setOnClickListener(new View.OnClickListener()
-        {
+        blogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 logout(this_context);
@@ -325,4 +327,23 @@ public class Utils
             }
         }
     }
+
+    public static void loadProfileImage(Context context, ImageView imgView, String imgName) {
+        String imgpath = BASE_URL + "images/img/" + imgName;
+        com.squareup.picasso.Picasso.with(context).load(imgpath)
+                .placeholder(R.drawable.ic_profile)
+                .error(R.drawable.ic_profile)
+                .resize(200, 200)
+                .into(imgView);
+    }
+
+    public static void loadResidenceImage(Context context, ImageView imgView, String imgName) {
+        String imgpath = BASE_URL + "images/img/" + imgName;
+        com.squareup.picasso.Picasso.with(context).load(imgpath)
+                .placeholder(R.drawable.ic_upload_image)
+                .error(R.drawable.ic_upload_image)
+                .resize(200, 200)
+                .into(imgView);
+    }
+
 }

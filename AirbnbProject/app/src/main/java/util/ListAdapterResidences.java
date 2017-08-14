@@ -11,8 +11,6 @@ import android.widget.TextView;
 
 import gr.uoa.di.airbnbproject.R;
 
-import static util.RestClient.BASE_URL;
-
 public class ListAdapterResidences extends ArrayAdapter<String> {
     private final Activity context;
     private final String[] title;
@@ -34,18 +32,19 @@ public class ListAdapterResidences extends ArrayAdapter<String> {
 
     public View getView(int position, View view, ViewGroup parent) {
         LayoutInflater inflater=context.getLayoutInflater();
-        View rowView=inflater.inflate(R.layout.list_layout, null,true);
+        View rowView = inflater.inflate(R.layout.list_layout, null,true);
 
         ImageView resImg = (ImageView) rowView.findViewById(R.id.representativePhoto);
-        String imgpath = BASE_URL + "images/img/" + representativePhoto[position];
-        com.squareup.picasso.Picasso.with(context).load(imgpath).placeholder(R.mipmap.ic_launcher).resize(200, 200).into(resImg);
+        Utils.loadResidenceImage(context, resImg, representativePhoto[position]);
+
         TextView tvTitle = (TextView) rowView.findViewById(R.id.title);
         TextView tvCity = (TextView) rowView.findViewById(R.id.city);
         TextView tvPrice = (TextView) rowView.findViewById(R.id.price);
         RatingBar ratingBar = (RatingBar) rowView.findViewById(R.id.rating);
+
         tvTitle.setText(title[position]);
         tvCity.setText(city[position]);
-        String[] priceString = new String [price.length];
+        String[] priceString = new String[price.length];
         for(int i=0; i<price.length;i++){
             priceString[i] = price[i].toString();
         }
