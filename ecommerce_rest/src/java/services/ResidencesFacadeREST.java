@@ -1,6 +1,8 @@
 package services;
 
 import domain.Residences;
+import java.io.File;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -42,14 +44,7 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
     public void create(Residences entity) {
         super.create(entity);
     }
-
-    @PUT
-    @Path("{id}")
-    @Consumes({MediaType.APPLICATION_JSON})
-    public void edit(@PathParam("id") Integer id, Residences entity) {
-        super.edit(entity);
-    }
-
+    
     @GET
     @Path("{from}/{to}")
     @Produces({MediaType.APPLICATION_JSON})
@@ -72,11 +67,49 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
     /*** CUSTOM METHODS ***/
     private static String className = ResidencesFacadeREST.class.getName();
     
+//    @PUT
+//    @Path("{id}")
+//    @Consumes({MediaType.APPLICATION_JSON})
+//    public String edit(@HeaderParam("Authorization") String token, @PathParam("id") Integer id, Residences entity) {
+//        System.out.println("here");
+//        if (KeyHolder.checkToken(token, className)) {
+//            super.edit(entity);
+//            return token;
+//        }
+//        return "not";
+//    }
+    
+    @PUT
+    @Path("put/{id}")
+    @Consumes({MediaType.APPLICATION_JSON})
+    public String editResidence(@HeaderParam("Authorization") String token, @PathParam("id") Integer id, Residences entity) {
+        if (KeyHolder.checkToken(token, className)) {
+            super.edit(entity);
+            return token;
+        }
+        return "not";
+    }  
+    
     @DELETE
     @Path("delete/{id}")
     @Produces({MediaType.APPLICATION_JSON})
     public String remove(@HeaderParam("Authorization") String token, @PathParam("id")String id) {
         if (KeyHolder.checkToken(token, className)) {
+            Residences res = new Residences();
+            Query query = em.createNativeQuery("SELECT * FROM residences WHERE id =?id", Residences.class);
+            query.setParameter("id", id);
+            List<Residences> residence = query.getResultList();
+            String imgName = residence.get(0).getPhotos();
+            
+            try {
+                File file = new File("C:\\Users\\vasso\\Documents\\ecommerce\\images\\" + imgName);
+                if (file.exists()) {
+                    file.delete();
+                }
+            } catch (Exception ex) {
+                System.out.println("Could not delete residence image");
+            }
+            
             super.remove(super.find(Integer.parseInt(id)));
             token = KeyHolder.issueToken(null);
         }
@@ -205,16 +238,4 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
         }
         return "not";
     }
-    
-    @PUT
-    @Path("put")
-    @Consumes({MediaType.APPLICATION_JSON})
-    public String editResidence(@HeaderParam("Authorization") String token, @PathParam("id") Integer id, Residences entity) {
-        if (KeyHolder.checkToken(token, className)) {
-            super.edit(entity);
-            //return token;
-        }
-        return "not";
-    }
-    
 }
