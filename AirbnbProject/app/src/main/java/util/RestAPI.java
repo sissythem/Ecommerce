@@ -11,12 +11,10 @@ import fromRESTful.Searches;
 import fromRESTful.Users;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
-import okhttp3.Response;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
-import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
@@ -25,9 +23,9 @@ import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
-public interface RestAPI {
+public interface RestAPI
+{
     /***** Check Token *****/
-
     @GET("users/checktoken")
     Call<Boolean> checkTokenExpired();
 
@@ -75,7 +73,7 @@ public interface RestAPI {
 
     @GET("residences/search")
     Call<List<Residences>> getSearchResidences(@Query("userId") String userId, @Query("city") String city, @Query("startDate") String startDate,
-                                               @Query("endDate") String endDate, @Query("guests") String guests);
+                                         @Query("endDate") String endDate, @Query("guests") String guests);
 
     @GET("residences/host")
     Call<List<Residences>> getResidencesByHostId(@Query("hostId") String hostId);
@@ -87,7 +85,7 @@ public interface RestAPI {
     Call<String> deleteResidenceById(@Path("id") String id);
 
     @PUT("residences/put/{id}")
-    Call<String> editResidenceById(@Path("id") Integer id, @Body Residences residence);
+    Call<String> editResidenceById(@Path("id") String id, @Body Residences residence);
 
     @POST("residences/add")
     Call<String> postResidence(@Body Residences residence);
@@ -158,4 +156,5 @@ public interface RestAPI {
 
     @POST("reviews/postreview")
     Call<String> postReview(@Body Reviews review);
+
 }

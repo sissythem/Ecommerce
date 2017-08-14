@@ -24,7 +24,8 @@ import util.Utils;
 
 import static util.Utils.updateSessionData;
 
-public class RegisterActivity extends AppCompatActivity {
+public class RegisterActivity extends AppCompatActivity
+{
     String token;
     Context c;
 
@@ -32,11 +33,8 @@ public class RegisterActivity extends AppCompatActivity {
     TextView birthdate, loginlink;
     ImageButton btnBirthDate;
     Button bregister;
-    Calendar cal;
     private int mYear, mMonth, mDay;
     Session sessionData;
-
-    String dateOfBirth;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -80,10 +78,10 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (v == btnBirthDate) {
                     // Get Current Date
-                    cal = Calendar.getInstance();
-                    mYear = cal.get(Calendar.YEAR);
-                    mMonth = cal.get(Calendar.MONTH);
-                    mDay = cal.get(Calendar.DAY_OF_MONTH);
+                    final Calendar c = Calendar.getInstance();
+                    mYear = c.get(Calendar.YEAR);
+                    mMonth = c.get(Calendar.MONTH);
+                    mDay = c.get(Calendar.DAY_OF_MONTH);
 
                     DatePickerDialog datePickerDialog = new DatePickerDialog(RegisterActivity.this, new DatePickerDialog.OnDateSetListener() {
                         @Override
@@ -137,34 +135,8 @@ public class RegisterActivity extends AppCompatActivity {
                 }
 
                 Date bdate = Utils.ConvertStringToDate(BirthDate,Utils.APP_DATE_FORMAT);
-                System.out.println(bdate);
-
-                //java.util.Date dt = new java.util.Date();
-                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                dateOfBirth = sdf.format(bdate);
-                System.out.println(dateOfBirth);
-
-//                String cdate="Mar 10, 2016 6:30:00 PM";
-//                SimpleDateFormat formatter=new SimpleDateFormat("MMM dd, yyyy hh:mm:ss aaa");
-//                try {
-//                    Date newDate = formatter.parse(cdate);
-//                    formatter= new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-//                    cdate = formatter.format(newDate);
-//                    System.out.println(cdate);
-//                } catch (Exception e) {}
-//
-//                System.out.println(cdate);
 
 
-//                Calendar calendar = Calendar.getInstance();
-//                /* to display time*/
-//                SimpleDateFormat formatter = new SimpleDateFormat("hh:mm");
-//                /* to display date in the given format */
-//                DateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
-//                /*get the date using */
-//                Date dDate = dateFormatter.parse(yourObject.getTaskDate());
-//                /*set the date */
-//                calendar.setTime(dDate);
 
                 token = PostResult(firstName, lastName, Username, Password, Email, phoneNumber, bdate);
                 if(token.equals("username exists")){
@@ -175,7 +147,7 @@ public class RegisterActivity extends AppCompatActivity {
                     Toast.makeText(c, "Email already exists, please try again!", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (token!=null && !token.isEmpty() &&  (!token.equals("error"))) {
+                if ( token!=null && !token.isEmpty() &&  (!token.equals("error"))) {
                     //if data are stored successfully in the data base, the user is now logged in and the home activity starts
                     sessionData = new Session(token, Username, true);
                     updateSessionData(RegisterActivity.this, sessionData);
@@ -189,8 +161,9 @@ public class RegisterActivity extends AppCompatActivity {
                     } catch (Exception ex) {
                         System.out.println(ex.getMessage());
                         ex.printStackTrace();
-                    }
-                } else {
+                }
+                } else
+                {
                     Toast.makeText(c, "Registration failed, please try again!", Toast.LENGTH_SHORT).show();
                     return;
                 }

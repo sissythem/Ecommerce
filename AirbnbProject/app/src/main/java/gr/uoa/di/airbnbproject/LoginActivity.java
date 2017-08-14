@@ -38,9 +38,9 @@ public class LoginActivity extends AppCompatActivity {
         sharedPrefs = getApplicationContext().getSharedPreferences(USER_LOGIN_PREFERENCES, Context.MODE_PRIVATE);
 
         //get user input
-        final EditText etUsername   = (EditText) findViewById(R.id.etUsername);
-        final EditText etPassword   = (EditText) findViewById(R.id.etPassword);
-        final Button blogin         = (Button) findViewById(R.id.login);
+        etUsername = (EditText) findViewById(R.id.etUsername);
+        etPassword = (EditText) findViewById(R.id.etPassword);
+        final Button blogin = (Button) findViewById(R.id.login);
         final TextView registerlink = (TextView) findViewById(R.id.registerlink);
 
         etUsername.setSelected(false);

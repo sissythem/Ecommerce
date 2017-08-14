@@ -9,7 +9,6 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
-import gr.uoa.di.airbnbproject.HomeActivity;
 import gr.uoa.di.airbnbproject.R;
 
 import static util.RestClient.BASE_URL;
@@ -40,15 +39,13 @@ public class ListAdapterResidences extends ArrayAdapter<String> {
         ImageView resImg = (ImageView) rowView.findViewById(R.id.representativePhoto);
         String imgpath = BASE_URL + "images/img/" + representativePhoto[position];
         com.squareup.picasso.Picasso.with(context).load(imgpath).placeholder(R.mipmap.ic_launcher).resize(200, 200).into(resImg);
-
         TextView tvTitle = (TextView) rowView.findViewById(R.id.title);
         TextView tvCity = (TextView) rowView.findViewById(R.id.city);
         TextView tvPrice = (TextView) rowView.findViewById(R.id.price);
         RatingBar ratingBar = (RatingBar) rowView.findViewById(R.id.rating);
-
         tvTitle.setText(title[position]);
         tvCity.setText(city[position]);
-        String[] priceString = new String[price.length];
+        String[] priceString = new String [price.length];
         for(int i=0; i<price.length;i++){
             priceString[i] = price[i].toString();
         }

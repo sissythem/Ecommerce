@@ -65,15 +65,12 @@ import javax.xml.bind.annotation.XmlTransient;
     /* Custom */
     @NamedQuery(name = "findByHost", query = "SELECT r FROM Residences r WHERE r.hostId.id = :hostId")
 
-<<<<<<< HEAD
-=======
 })
 
 
 public class Residences implements Serializable 
 {
 
->>>>>>> origin/master
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -430,9 +427,5 @@ public class Residences implements Serializable
     public String toString() {
         return "domain.Residences[ id=" + id + " ]";
     }
-<<<<<<< HEAD
-}
-=======
     
 }
->>>>>>> origin/master

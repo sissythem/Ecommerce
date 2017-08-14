@@ -29,7 +29,8 @@ import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
 
-public class AddResidenceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class AddResidenceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener
+{
     private static final int RESULT_LOAD_IMAGE =1;
 
     String token;
@@ -90,7 +91,7 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
     }
 
     public void userInputLayout () {
-        //etUpload             = (EditText)findViewById(R.id.etUpload);
+        etUpload             = (EditText)findViewById(R.id.etUpload);
         etTitle              = (EditText)findViewById(R.id.etTitle);
         etAbout              = (EditText)findViewById(R.id.etAbout);
         etAddress            = (EditText)findViewById(R.id.etAddress);
@@ -232,7 +233,8 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
                 } else {
                     token = PostResult(host, title, type, about, cancellationPolicy, country, city, address, rules, amenities, Integer.parseInt(floor),
                             Integer.parseInt(rooms), Integer.parseInt(baths), Double.parseDouble(spaceArea), photo, Integer.parseInt(guests), startDate, endDate,
-                            Double.parseDouble(minPrice), Double.parseDouble(additionalCostPerPerson), Boolean.parseBoolean(kitchen), Boolean.parseBoolean(livingRoom), view);
+                            Double.parseDouble(minPrice), Double.parseDouble(additionalCostPerPerson), Boolean.parseBoolean(kitchen), Boolean.parseBoolean(livingRoom),
+                            view);
 
                     if (!token.isEmpty() && token!=null && token != "not") {
                         Intent hostIntent = new Intent(AddResidenceActivity.this, HostActivity.class);

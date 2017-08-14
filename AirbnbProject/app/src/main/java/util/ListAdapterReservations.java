@@ -9,7 +9,13 @@ import android.widget.TextView;
 
 import gr.uoa.di.airbnbproject.R;
 
-public class ListAdapterReservations extends ArrayAdapter<String> {
+
+/**
+ * Created by sissy on 27/6/2017.
+ */
+
+public class ListAdapterReservations extends ArrayAdapter<String>
+{
     private final Activity context;
     private final String[] residenceTitle;
     private final String[] startDate;

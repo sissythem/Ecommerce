@@ -50,15 +50,6 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true" />
 
-        <ImageButton
-            android:id="@+id/ibContact"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@android:drawable/ic_dialog_email"
-            android:layout_toRightOf="@id/btnReviews"
-            android:text="Reviews"
-            android:layout_alignParentTop="true" />
-
     </android.support.v7.widget.Toolbar>
     <ScrollView
         android:id="@+id/scrollView"

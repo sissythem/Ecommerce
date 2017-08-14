@@ -15,8 +15,6 @@ import fromRESTful.Residences;
 import fromRESTful.Reviews;
 import fromRESTful.Searches;
 import fromRESTful.Users;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -43,7 +41,8 @@ public class RetrofitCalls {
         {
             RestAPI restAPI = RestClient.getClient(params[0]).create(RestAPI.class);
             Call<Boolean> call = restAPI.checkTokenExpired();
-            try {
+            try
+            {
                 Response<Boolean> resp = call.execute();
                 flag = resp.body();
             } catch(IOException e){
@@ -53,7 +52,8 @@ public class RetrofitCalls {
         }
     }
 
-    public Boolean isTokenOk(String token) {
+    public Boolean isTokenOk(String token)
+    {
         checkTokenHttpRequestTask checktoken = new checkTokenHttpRequestTask();
         checktoken.execute(token);
         try{
@@ -67,6 +67,7 @@ public class RetrofitCalls {
     }
 
     /** Calls for User **/
+
     public String getUserImage(String token, String imgname) {
         getUserImageHttpRequestTask getUserImg = new getUserImageHttpRequestTask();
         getUserImg.execute(token, imgname);
@@ -79,6 +80,7 @@ public class RetrofitCalls {
         }
         return token;
     }
+
     private class getUserImageHttpRequestTask extends AsyncTask<String, String, String> {
         @Override
         protected String doInBackground(String... params) {
@@ -97,6 +99,7 @@ public class RetrofitCalls {
     }
 
     private class getUserByUsernameHttpRequestTask extends AsyncTask<String, String, ArrayList<Users>> {
+
         @Override
         protected ArrayList<Users> doInBackground(String... params) {
             usersList = new ArrayList<>();
@@ -553,77 +556,77 @@ public class RetrofitCalls {
         return residencesList;
     }
 
-    private class getResidenceByIdHttpRequestTask extends AsyncTask<String, String, Residences> {
-        @Override
-        protected Residences doInBackground(String... params)
-        {
-            residence = new Residences();
-            RestAPI restAPI = RestClient.getClient(params[0]).create(RestAPI.class);
-            Call<Residences> call = restAPI.getResidencesById(params[1]);
-            try
-            {
-                Response<Residences> resp = call.execute();
-                residence = resp.body();
-            }
-            catch (IOException e) {
-                Log.i("",e.getMessage());
-            }
-            return residence;
-        }
-    }
+     private class getResidenceByIdHttpRequestTask extends AsyncTask<String, String, Residences> {
+         @Override
+         protected Residences doInBackground(String... params)
+         {
+             residence = new Residences();
+             RestAPI restAPI = RestClient.getClient(params[0]).create(RestAPI.class);
+             Call<Residences> call = restAPI.getResidencesById(params[1]);
+             try
+             {
+                 Response<Residences> resp = call.execute();
+                 residence = resp.body();
+             }
+             catch (IOException e) {
+                 Log.i("",e.getMessage());
+             }
+             return residence;
+         }
+     }
 
-    public Residences getResidenceById (String token, String id){
-        getResidenceByIdHttpRequestTask residenceById = new getResidenceByIdHttpRequestTask();
-        residenceById.execute(token, id);
-        try {
-            residenceById.get();
-        } catch (InterruptedException e) {
-            Log.i("",e.getMessage());
-        } catch (ExecutionException e) {
-            Log.i("",e.getMessage());
-        }
-        return residence;
-    }
+     public Residences getResidenceById (String token, String id){
+         getResidenceByIdHttpRequestTask residenceById = new getResidenceByIdHttpRequestTask();
+         residenceById.execute(token, id);
+         try {
+             residenceById.get();
+         } catch (InterruptedException e) {
+             Log.i("",e.getMessage());
+         } catch (ExecutionException e) {
+             Log.i("",e.getMessage());
+         }
+         return residence;
+     }
 
-    private class postResidenceHttpRequestTask extends AsyncTask<Object, Object, String>
-    {
-        @Override
-        protected String doInBackground(Object... params)
-        {
-            RestAPI restAPI = RestClient.getClient((String)params[0]).create(RestAPI.class);
-            Call<String> call = restAPI.postResidence((Residences)params[1]);
-            try
-            {
-                Response<String> resp = call.execute();
-                token = resp.body();
-            }
-            catch(IOException e){
-                Log.i("",e.getMessage());
-            }
-            return token;
-        }
-    }
+     private class postResidenceHttpRequestTask extends AsyncTask<Object, Object, String>
+     {
+         @Override
+         protected String doInBackground(Object... params)
+         {
+             RestAPI restAPI = RestClient.getClient((String)params[0]).create(RestAPI.class);
+             Call<String> call = restAPI.postResidence((Residences)params[1]);
+             try
+             {
+                 Response<String> resp = call.execute();
+                 token = resp.body();
+             }
+             catch(IOException e){
+                 Log.i("",e.getMessage());
+             }
+             return token;
+         }
+     }
 
-    public String postResidence(String token, Residences residence)
-    {
-        postResidenceHttpRequestTask postResidenceTask = new postResidenceHttpRequestTask();
-        postResidenceTask.execute(token, residence);
-        try{
-            postResidenceTask.get();
-        } catch (InterruptedException e) {
-            Log.i("",e.getMessage());
-        } catch (ExecutionException e) {
-            Log.i("",e.getMessage());
-        }
-        return this.token;
-    }
+     public String postResidence(String token, Residences residence)
+     {
+         postResidenceHttpRequestTask postResidenceTask = new postResidenceHttpRequestTask();
+         postResidenceTask.execute(token, residence);
+         try{
+             postResidenceTask.get();
+         } catch (InterruptedException e) {
+             Log.i("",e.getMessage());
+         } catch (ExecutionException e) {
+             Log.i("",e.getMessage());
+         }
+         return this.token;
+     }
 
     private class editResidenceHttpRequestTesk extends AsyncTask<Object, Object, String>
     {
         @Override
         protected String doInBackground(Object... params){
             RestAPI restAPI = RestClient.getClient((String)params[0]).create(RestAPI.class);
-            Call<String> call = restAPI.editResidenceById((Integer)params[1],(Residences) params[2]);
+            Call<String> call = restAPI.editResidenceById((String)params[1],(Residences) params[2]);
             try{
                 Response<String> resp = call.execute();
                 token = resp.body();
@@ -634,7 +637,7 @@ public class RetrofitCalls {
         }
     }
 
-    public String editResidence(String token, Integer residenceId, Residences residence){
+    public String editResidence(String token, String residenceId, Residences residence){
         editResidenceHttpRequestTesk editResidenceTask = new editResidenceHttpRequestTesk();
         editResidenceTask.execute(token, residenceId, residence);
         try{
@@ -647,68 +650,68 @@ public class RetrofitCalls {
         return this.token;
     }
 
-    private class getAllResidencesHttpRequestTask extends AsyncTask<String, String, ArrayList<Residences>> {
-        @Override
-        protected ArrayList<Residences> doInBackground(String... params) {
-            residencesList = new ArrayList<>();
-            RestAPI restAPI = RestClient.getClient(params[0]).create(RestAPI.class);
-            Call<List<Residences>> call = restAPI.getAllResidences();
-            try
-            {
-                Response<List<Residences>> resp = call.execute();
-                residencesList.addAll(resp.body());
-            }
-            catch (IOException e) {
-                Log.i("",e.getMessage());
-            }
-            return residencesList;
-        }
-    }
+     private class getAllResidencesHttpRequestTask extends AsyncTask<String, String, ArrayList<Residences>> {
+         @Override
+         protected ArrayList<Residences> doInBackground(String... params) {
+             residencesList = new ArrayList<>();
+             RestAPI restAPI = RestClient.getClient(params[0]).create(RestAPI.class);
+             Call<List<Residences>> call = restAPI.getAllResidences();
+             try
+             {
+                 Response<List<Residences>> resp = call.execute();
+                 residencesList.addAll(resp.body());
+             }
+             catch (IOException e) {
+                 Log.i("",e.getMessage());
+             }
+             return residencesList;
+         }
+     }
 
-    public ArrayList<Residences> getAllResidences(String token) {
-        getAllResidencesHttpRequestTask residences = new getAllResidencesHttpRequestTask();
-        residences.execute(token);
-        try {
-            residences.get();
-        } catch (InterruptedException e) {
-            Log.i("",e.getMessage());
-        } catch (ExecutionException e) {
-            Log.i("",e.getMessage());
-        }
-        return residencesList;
-    }
+     public ArrayList<Residences> getAllResidences(String token) {
+         getAllResidencesHttpRequestTask residences = new getAllResidencesHttpRequestTask();
+         residences.execute(token);
+         try {
+             residences.get();
+         } catch (InterruptedException e) {
+             Log.i("",e.getMessage());
+         } catch (ExecutionException e) {
+             Log.i("",e.getMessage());
+         }
+         return residencesList;
+     }
 
-    private class getRecommendationsHttPRequestTask extends AsyncTask<String, String, ArrayList<Residences>> {
-        @Override
-        protected ArrayList<Residences> doInBackground(String... params)
-        {
-            residencesList = new ArrayList<>();
-            RestAPI restAPI = RestClient.getClient(params[0]).create(RestAPI.class);
-            Call<List<Residences>> call = restAPI.getSearchResidences(params[1], params[2], params[3], params[4], params[5]);
-            try
-            {
-                Response<List<Residences>> resp = call.execute();
-                residencesList.addAll(resp.body());
-            }
-            catch (IOException e) {
-                Log.i("",e.getMessage());
-            }
-            return residencesList;
-        }
-    }
+     private class getRecommendationsHttPRequestTask extends AsyncTask<String, String, ArrayList<Residences>> {
+         @Override
+         protected ArrayList<Residences> doInBackground(String... params)
+         {
+             residencesList = new ArrayList<>();
+             RestAPI restAPI = RestClient.getClient(params[0]).create(RestAPI.class);
+             Call<List<Residences>> call = restAPI.getSearchResidences(params[1], params[2], params[3], params[4], params[5]);
+             try
+             {
+                 Response<List<Residences>> resp = call.execute();
+                 residencesList.addAll(resp.body());
+             }
+             catch (IOException e) {
+                 Log.i("",e.getMessage());
+             }
+             return residencesList;
+         }
+     }
 
-    public ArrayList<Residences> getRecommendations(String token, String userId, String city, String startDate, String endDate, String guests) {
-        getRecommendationsHttPRequestTask recommendations = new getRecommendationsHttPRequestTask();
-        recommendations.execute(token, userId, city, startDate, endDate, guests);
-        try {
-            recommendations.get();
-        } catch (InterruptedException e) {
-            Log.i("",e.getMessage());
-        } catch (ExecutionException e) {
-            Log.i("",e.getMessage());
-        }
-        return residencesList;
-    }
+     public ArrayList<Residences> getRecommendations(String token, String userId, String city, String startDate, String endDate, String guests) {
+         getRecommendationsHttPRequestTask recommendations = new getRecommendationsHttPRequestTask();
+         recommendations.execute(token, userId, city, startDate, endDate, guests);
+         try {
+             recommendations.get();
+         } catch (InterruptedException e) {
+             Log.i("",e.getMessage());
+         } catch (ExecutionException e) {
+             Log.i("",e.getMessage());
+         }
+         return residencesList;
+     }
 
     private class deleteResidenceByIdHttpRequestTask extends AsyncTask<String, String, String> {
         @Override
@@ -739,7 +742,6 @@ public class RetrofitCalls {
         }
         return token;
     }
-
 
     /** Calls for Conversations**/
 

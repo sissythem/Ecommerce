@@ -264,8 +264,6 @@ public class Users implements Serializable {
     }
 
     @XmlTransient
-<<<<<<< HEAD
-=======
     public Collection<Reviews> getReviewsCollection1() {
         return reviewsCollection1;
     }
@@ -275,7 +273,6 @@ public class Users implements Serializable {
     }
 
     @XmlTransient
->>>>>>> origin/master
     public Collection<Messages> getMessagesCollection() {
         return messagesCollection;
     }

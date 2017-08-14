@@ -99,7 +99,6 @@ public class ViewHostProfileActivity extends AppCompatActivity {
         userdetails[6] = host.getCity();
         userdetails[7] = host.getAbout();
         Date bdate = host.getBirthDate();
-        //Date bdate = new java.util.Date();
         String date="NO DATE";
         if(bdate != null){
             try{

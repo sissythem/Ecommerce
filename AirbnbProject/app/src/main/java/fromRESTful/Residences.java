@@ -70,8 +70,8 @@ public class Residences implements Serializable, Comparable {
     }
 
     public Residences(Users hostId, String title, String type, String about, String cancellationPolicy, String country, String city, String address, String rules, String amenities,
-                      int floor, int rooms, int baths, double spaceArea, String photos, int guests, Date availableDateStart, Date availableDateEnd, double minPrice,
-                      double additionalCostPerPerson, boolean kitchen, boolean livingRoom, String view) {
+        int floor, int rooms, int baths, double spaceArea, String photos, int guests, Date availableDateStart, Date availableDateEnd, double minPrice,
+        double additionalCostPerPerson, boolean kitchen, boolean livingRoom, String view) {
 
         this.hostId = hostId;
         this.title = title;

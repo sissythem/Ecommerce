@@ -47,8 +47,7 @@ import util.Utils;
 public class EditResidenceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     private static final int RESULT_LOAD_IMAGE =1;
     public static final int GET_FROM_GALLERY = 3;
-
-    String resType, token;
+    String resType, token, photo;
     Integer residenceId;
     Residences selectedResidence;
 
@@ -59,7 +58,6 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
     EditText etUpload, etTitle, etAbout, etAddress, etCity, etCountry, etAmenities, etFloor, etRooms, etBaths, etView, etSpaceArea, etGuests, etMinPrice, etAdditionalCost, etCancellationPolicy, etRules;
     TextView tvStartDate, tvEndDate;
     Spinner etType;
-    String photo;
 
     private int mStartYear, mStartMonth, mStartDay, mEndYear, mEndMonth, mEndDay;
 
@@ -174,7 +172,8 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         protected void onPostExecute(String nothing) {}
     }
 
-    public void userInputLayout () {
+    public void userInputLayout ()
+    {
         //etUpload             = (EditText)findViewById(R.id.etUpload);
         etTitle              = (EditText)findViewById(R.id.etTitle);
         etAbout              = (EditText)findViewById(R.id.etAbout);
@@ -204,6 +203,7 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         cbLivingRoom.setChecked(selectedResidence.getLivingRoom());
 
         bcontinue = (ImageButton)findViewById(R.id.ibContinue);
+
 
         etType = (Spinner) findViewById(R.id.etType);
         // Create an ArrayAdapter using the string array and a default spinner layout
@@ -302,6 +302,7 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         bcontinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                final String photo                      = etUpload.getText().toString();
                 final String title                      = etTitle.getText().toString();
                 final String type                       = resType;
                 final String about                      = etAbout.getText().toString();
@@ -369,14 +370,14 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
 
     }
     public String PutResult(Users host, String title, String type, String about, String address, String city, String country, String amenities, int floor, int rooms,
-                            int baths, String view, double spaceArea, int guests, double minPrice, double additionalCostPerPerson, String cancellationPolicy,
-                            String rules, boolean kitchen, boolean livingRoom, Date startDate, Date endDate, String photo)
+                             int baths, String view, double spaceArea, int guests, double minPrice, double additionalCostPerPerson, String cancellationPolicy,
+                             String rules, boolean kitchen, boolean livingRoom, Date startDate, Date endDate, String photo)
     {
         Residences ResidenceParameters = new Residences(host, title, type, about, address, city, country, amenities, floor, rooms, baths, view, spaceArea, guests, minPrice,
                 additionalCostPerPerson, cancellationPolicy, rules, kitchen, livingRoom, startDate, endDate, photo);
 
         RetrofitCalls retrofitCalls = new RetrofitCalls();
-        token = retrofitCalls.editResidence(token, residenceId, ResidenceParameters);
+        token = retrofitCalls.editResidence(token, Integer.toString(residenceId), ResidenceParameters);
         return token;
     }
 
@@ -385,7 +386,7 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
 //        super.onActivityResult(requestCode, resultCode, data);
 //        if(requestCode == RESULT_LOAD_IMAGE && requestCode == RESULT_OK && data != null) {
 //            Uri selectedImage = data.getData();
-//            imageToUpload.setImageURI(selectedImage);
+//            mImageView.setImageURI(selectedImage);
 //        }
 //    }
 }

@@ -42,7 +42,14 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
     public void create(Residences entity) {
         super.create(entity);
     }
-    
+
+    @PUT
+    @Path("{id}")
+    @Consumes({MediaType.APPLICATION_JSON})
+    public void edit(@PathParam("id") Integer id, Residences entity) {
+        super.edit(entity);
+    }
+
     @GET
     @Path("{from}/{to}")
     @Produces({MediaType.APPLICATION_JSON})
@@ -64,29 +71,6 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
     
     /*** CUSTOM METHODS ***/
     private static String className = ResidencesFacadeREST.class.getName();
-    
-//    @PUT
-//    @Path("{id}")
-//    @Consumes({MediaType.APPLICATION_JSON})
-//    public String edit(@HeaderParam("Authorization") String token, @PathParam("id") Integer id, Residences entity) {
-//        System.out.println("here");
-//        if (KeyHolder.checkToken(token, className)) {
-//            super.edit(entity);
-//            return token;
-//        }
-//        return "not";
-//    }
-    
-    @PUT
-    @Path("put/{id}")
-    @Consumes({MediaType.APPLICATION_JSON})
-    public String editResidence(@HeaderParam("Authorization") String token, @PathParam("id") Integer id, Residences entity) {
-        if (KeyHolder.checkToken(token, className)) {
-            super.edit(entity);
-            return token;
-        }
-        return "not";
-    }  
     
     @DELETE
     @Path("delete/{id}")
@@ -221,9 +205,6 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
         }
         return "not";
     }
-<<<<<<< HEAD
-}
-=======
     
     @PUT
     @Path("put")
@@ -231,10 +212,9 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
     public String editResidence(@HeaderParam("Authorization") String token, @PathParam("id") Integer id, Residences entity) {
         if (KeyHolder.checkToken(token, className)) {
             super.edit(entity);
-            return token;
+            //return token;
         }
         return "not";
     }
     
 }
->>>>>>> origin/master

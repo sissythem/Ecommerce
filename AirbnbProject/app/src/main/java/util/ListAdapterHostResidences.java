@@ -15,7 +15,6 @@ import android.widget.Toast;
 
 import gr.uoa.di.airbnbproject.EditResidenceActivity;
 import gr.uoa.di.airbnbproject.HostActivity;
-import gr.uoa.di.airbnbproject.ProfileActivity;
 import gr.uoa.di.airbnbproject.R;
 import gr.uoa.di.airbnbproject.ResidenceActivity;
 
@@ -104,6 +103,9 @@ public class ListAdapterHostResidences extends ArrayAdapter<String> {
                 } else {
                     Toast.makeText(context, "Something went wrong, residence is not deleted. Please try again!", Toast.LENGTH_SHORT).show();
                 }
+
+
+
             }
         });
 

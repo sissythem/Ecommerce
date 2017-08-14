@@ -1,6 +1,5 @@
 package util;
 
-import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -13,14 +12,14 @@ import java.util.ArrayList;
 
 public class RestCalls {
 
-    public static Bitmap getPhoto (String url){
-        ArrayList<Bitmap> Response  = new ArrayList<>();
-        RestCallManager photoManager = new RestCallManager();
-        RestCallParameters photoParams = new RestCallParameters(url, "GET", "TEXT", "", "STREAM");
-        photoManager.execute(photoParams);
-
-        return photoManager.getSingleBitmap();
-    }
+//    public static Bitmap getPhoto (String url){
+//        ArrayList<Bitmap> Response  = new ArrayList<>();
+//        RestCallManager photoManager = new RestCallManager();
+//        RestCallParameters photoParams = new RestCallParameters(url, "GET", "TEXT", "", "STREAM");
+//        photoManager.execute(photoParams);
+//
+//        return photoManager.getSingleBitmap();
+//    }
 
     public static LatLng findCoordinates(String address, String city, String country) {
         double lat, lng;

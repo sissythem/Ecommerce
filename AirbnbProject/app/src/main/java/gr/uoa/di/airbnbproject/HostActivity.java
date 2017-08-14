@@ -19,7 +19,8 @@ import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
 
-public class HostActivity extends AppCompatActivity {
+public class HostActivity extends AppCompatActivity
+{
     String username, token;
     Users host;
 
@@ -72,7 +73,8 @@ public class HostActivity extends AppCompatActivity {
         });
         RetrofitCalls retrofitCalls = new RetrofitCalls();
 
-        if(Utils.isTokenExpired(token)) {
+        if(Utils.isTokenExpired(token))
+        {
             Utils.logout(this);
             finish();
         }

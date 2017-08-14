@@ -2,10 +2,7 @@ package gr.uoa.di.airbnbproject;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
 import android.view.MenuItem;
@@ -15,8 +12,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -27,10 +22,10 @@ import util.Session;
 import util.Utils;
 
 import static util.RestClient.BASE_URL;
-import static util.Utils.getRealPathFromURI;
 import static util.Utils.getSessionData;
 
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileActivity extends AppCompatActivity
+{
     Users loggedinUser;
     String username, token;
     ListView list;
@@ -72,23 +67,24 @@ public class ProfileActivity extends AppCompatActivity {
         btnMenu = (ImageButton)findViewById(R.id.btnMenu);
 
         userdetails = new String[9];
+
         manageToolbarButtons();
         retrofitCalls = new RetrofitCalls();
-        if(Utils.isTokenExpired(token)) {
+        if(Utils.isTokenExpired(token))
+        {
             Utils.logout(this);
             finish();
         }
-        loggedinUser    = retrofitCalls.getUserbyUsername(token, username).get(0);
-        userdetails[0]  = loggedinUser.getFirstName();
-        userdetails[1]  = loggedinUser.getLastName();
-        userdetails[2]  = loggedinUser.getUsername();
-        userdetails[3]  = loggedinUser.getEmail();
-        userdetails[4]  = loggedinUser.getPhoneNumber();
-        userdetails[5]  = loggedinUser.getCountry();
-        userdetails[6]  = loggedinUser.getCity();
-        userdetails[7]  = loggedinUser.getAbout();
-        Date bdate      = loggedinUser.getBirthDate();
-        //Date bdate = new java.util.Date();
+        loggedinUser = retrofitCalls.getUserbyUsername(token, username).get(0);
+        userdetails[0] = loggedinUser.getFirstName();
+        userdetails[1] = loggedinUser.getLastName();
+        userdetails[2] = loggedinUser.getUsername();
+        userdetails[3] = loggedinUser.getEmail();
+        userdetails[4] = loggedinUser.getPhoneNumber();
+        userdetails[5] = loggedinUser.getCountry();
+        userdetails[6] = loggedinUser.getCity();
+        userdetails[7] = loggedinUser.getAbout();
+        Date bdate = loggedinUser.getBirthDate();
         String date="NO DATE";
         if(bdate != null){
             try {

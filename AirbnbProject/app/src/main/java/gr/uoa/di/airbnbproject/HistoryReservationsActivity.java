@@ -100,4 +100,5 @@ public class HistoryReservationsActivity extends AppCompatActivity {
         /** BACK BUTTON **/
         Utils.manageBackButton(this, ProfileActivity.class, user);
     }
+
 }

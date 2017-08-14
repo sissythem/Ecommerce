@@ -42,7 +42,8 @@ import util.Utils;
 
 import static util.Utils.getSessionData;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity
+{
     final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
 
     ListAdapterResidences adapter;
@@ -65,7 +66,8 @@ public class HomeActivity extends AppCompatActivity {
     float[] rating;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
 
         Session sessionData = getSessionData(HomeActivity.this);
@@ -87,7 +89,8 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         user = true;
         c=this;
-        if(Utils.isTokenExpired(token)) {
+        if(Utils.isTokenExpired(token))
+        {
             Toast.makeText(c, "Session is expired", Toast.LENGTH_SHORT).show();
             Utils.logout(this);
         }
@@ -107,7 +110,8 @@ public class HomeActivity extends AppCompatActivity {
         rating                 = new float[Recommendations.size()];
         residenceId            = new int[Recommendations.size()];
 
-        for(int i=0; i<Recommendations.size();i++) {
+        for(int i=0; i<Recommendations.size();i++)
+        {
             title[i]                = Recommendations.get(i).getTitle();
             representativePhoto[i]  = Recommendations.get(i).getPhotos();
             city[i]                 = Recommendations.get(i).getCity();

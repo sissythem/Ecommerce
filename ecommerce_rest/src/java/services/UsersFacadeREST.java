@@ -63,13 +63,8 @@ public class UsersFacadeREST extends AbstractFacade<Users> {
     @Path("put/{id}")
     @Consumes({MediaType.APPLICATION_JSON})
     public String editUser(@HeaderParam("Authorization") String token, @PathParam("id") Integer id, Users entity) {
-<<<<<<< HEAD
-        System.out.println("here");
-        if (KeyHolder.checkToken(token, className)) {
-=======
         if (KeyHolder.checkToken(token, className)) 
         {
->>>>>>> origin/master
             super.edit(entity);
             return token;
         }
@@ -81,11 +76,9 @@ public class UsersFacadeREST extends AbstractFacade<Users> {
     @Produces({MediaType.APPLICATION_JSON})
     public String remove(@HeaderParam("Authorization") String token, @PathParam("id")String id) {
         if (KeyHolder.checkToken(token, className)) {
-            System.out.println("deleteinner");
             super.remove(super.find(Integer.parseInt(id)));
             token = KeyHolder.issueToken(null);
         }
-        System.out.println(token);
         return token;
     }
 
@@ -123,10 +116,8 @@ public class UsersFacadeREST extends AbstractFacade<Users> {
     @POST
     @Path("register")
     @Consumes({MediaType.APPLICATION_JSON})
-    //@Produces(MediaType.TEXT_PLAIN)
     public String createUser(Users entity) 
     {
-        System.out.println(entity);
         List<Users> UsernameList = new ArrayList<>();
         List<Users> EmailList = new ArrayList<>();
         Query query = em.createNamedQuery("Users.findByUsername");
@@ -136,11 +127,12 @@ public class UsersFacadeREST extends AbstractFacade<Users> {
         Query query2 = em.createNamedQuery("Users.findByEmail");
         query2.setParameter("email", entity.getEmail());
         EmailList = query2.getResultList();
-        
-        if(UsernameList.size()!=0) return "username exists";
-        if(EmailList.size()!=0) return "email exists";
-        
-        if(UsernameList.size()==0 && EmailList.size()==0) {
+        if(UsernameList.size()!=0)
+            return "username exists";
+        if(EmailList.size()!=0)
+            return "email exists";
+        if(UsernameList.size()==0 && EmailList.size()==0)
+        {
             super.create(entity);
             String token = KeyHolder.issueToken(entity.getUsername());
             return token;
@@ -206,8 +198,4 @@ public class UsersFacadeREST extends AbstractFacade<Users> {
             return false;
         }
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> origin/master
