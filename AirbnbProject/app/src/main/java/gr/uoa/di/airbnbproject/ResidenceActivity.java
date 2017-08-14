@@ -117,12 +117,6 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         if(!user) {
             //if user is logged in as host, this button does not appear
             bBook.setVisibility(View.INVISIBLE);
-            RatingBar ratingBar = (RatingBar) findViewById(R.id.rating);
-            ratingBar.setVisibility(View.INVISIBLE);
-            TextView tvPrice = (TextView)findViewById(R.id.price);
-            tvPrice.setVisibility(View.INVISIBLE);
-            /** FOOTER TOOLBAR **/
-            Utils.manageFooter(ResidenceActivity.this, user);
         }
     }
 
