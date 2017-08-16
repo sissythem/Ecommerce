@@ -126,13 +126,13 @@ public class EditProfileActivity extends AppCompatActivity {
         /** Load Profile Image **/
         Utils.loadProfileImage(EditProfileActivity.this, mImageView, loggedinUser.getPhoto());
 
-        String date ="";
-        String birthDate = loggedinUser.getBirthDate();
+        String birthDate ="";
+        birthDate = loggedinUser.getBirthDate();
 //        if(birthDate !=null){
 //            SimpleDateFormat newDateFormat = new SimpleDateFormat(Utils.APP_DATE_FORMAT);
 //            date = newDateFormat.format(birthDate);
 //        }
-        tvBirthDate.setText(date);
+        tvBirthDate.setText(birthDate);
         etAbout.setText(loggedinUser.getAbout());
 
         btnBirthDate.setOnClickListener(new View.OnClickListener() {

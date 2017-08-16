@@ -14,8 +14,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.text.SimpleDateFormat;
-
 import fromRESTful.Users;
 import util.ListAdapterProfile;
 import util.RetrofitCalls;
@@ -81,18 +79,17 @@ public class ProfileActivity extends AppCompatActivity {
         userdetails[5]  = loggedinUser.getCountry();
         userdetails[6]  = loggedinUser.getCity();
         userdetails[7]  = loggedinUser.getAbout();
-        String bdate      = loggedinUser.getBirthDate();
+        userdetails[8]  = loggedinUser.getBirthDate();
         //Date bdate = new java.util.Date();
-        String date="NO DATE";
-        if(bdate != null){
-            try {
-                SimpleDateFormat newDateFormat = new SimpleDateFormat(Utils.APP_DATE_FORMAT);
-                date = newDateFormat.format(bdate);
-            } catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-        userdetails[8] = date;
+//        String date="NO DATE";
+//        if(bdate != null){
+//            try {
+//                SimpleDateFormat newDateFormat = new SimpleDateFormat(Utils.APP_DATE_FORMAT);
+//                date = newDateFormat.format(bdate);
+//            } catch (Exception e){
+//                e.printStackTrace();
+//            }
+//        }
         adapter = new ListAdapterProfile(this, userdetails);
         list = (ListView)findViewById(R.id.profilelist);
         list.setAdapter(adapter);
