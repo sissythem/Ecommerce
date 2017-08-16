@@ -43,8 +43,6 @@ import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
 
-import static util.RestClient.BASE_URL;
-
 public class ResidenceActivity extends FragmentActivity implements OnMapReadyCallback {
     Boolean user;
     String username, date_start, date_end, guests, token;
@@ -273,7 +271,9 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         });
     }
 
-    public String PostResult() {
+    public String PostResult()
+    {
+        //TODO change date to int
         Reservations reservationParameters = new Reservations(loggedinUser, selectedResidence, selectedStartDate, selectedEndDate, guestsInt);
         RetrofitCalls retrofitCalls = new RetrofitCalls();
         token = retrofitCalls.postReservation(token, reservationParameters);
@@ -319,6 +319,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         int guestsFromDatabase;
         for(int i=0;i<allReservationsByResidence.size();i++) {
             //get for each reservation the start and the end date, and the number of guests
+            //TODO change ints to date
             dateStart = allReservationsByResidence.get(i).getStartDate();
             dateEnd = allReservationsByResidence.get(i).getEndDate();
             guestsFromDatabase = allReservationsByResidence.get(i).getGuests();
@@ -418,7 +419,8 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         }
     }
 
-    public void filterDates() {
+    public void filterDates()
+    {
         caldroidFragment.clearDisableDates();
         caldroidFragment.setDisableDates(reservedDates);
         guests = etGuests.getText().toString();
