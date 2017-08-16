@@ -85,9 +85,9 @@ public class Users implements Serializable {
     @Size(max = 45)
     @Column(name = "about")
     private String about;
+    @Size(max = 45)
     @Column(name = "birth_date")
-    @Temporal(TemporalType.DATE)
-    private Date birthDate;
+    private String birthDate;
     @Size(max = 45)
     @Column(name = "host")
     private String host;
@@ -211,11 +211,11 @@ public class Users implements Serializable {
         this.about = about;
     }
 
-    public Date getBirthDate() {
+    public String getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(Date birthDate) {
+    public void setBirthDate(String birthDate) {
         this.birthDate = birthDate;
     }
 
