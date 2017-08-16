@@ -76,10 +76,10 @@ public class ProfileActivity extends AppCompatActivity {
         userdetails[2]  = loggedinUser.getUsername();
         userdetails[3]  = loggedinUser.getEmail();
         userdetails[4]  = loggedinUser.getPhoneNumber();
-        userdetails[5]  = loggedinUser.getCountry();
-        userdetails[6]  = loggedinUser.getCity();
-        userdetails[7]  = loggedinUser.getAbout();
-        userdetails[8]  = loggedinUser.getBirthDate();
+        userdetails[5]  = loggedinUser.getBirthDate();
+        userdetails[6]  = loggedinUser.getCountry();
+        userdetails[7]  = loggedinUser.getCity();
+        userdetails[8]  = loggedinUser.getAbout();
         //Date bdate = new java.util.Date();
 //        String date="NO DATE";
 //        if(bdate != null){
