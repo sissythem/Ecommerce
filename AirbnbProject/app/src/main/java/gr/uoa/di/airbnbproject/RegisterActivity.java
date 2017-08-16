@@ -15,12 +15,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Calendar;
-import java.util.Date;
 
 import fromRESTful.Users;
 import util.RetrofitCalls;
 import util.Session;
-import util.Utils;
 
 import static util.Utils.updateSessionData;
 
@@ -136,13 +134,13 @@ public class RegisterActivity extends AppCompatActivity {
                     return;
                 }
 
-                Date bdate = Utils.ConvertStringToDate(BirthDate,Utils.APP_DATE_FORMAT);
-                System.out.println(bdate);
-
-                //java.util.Date dt = new java.util.Date();
-                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                dateOfBirth = sdf.format(bdate);
-                System.out.println(dateOfBirth);
+//                Date bdate = Utils.ConvertStringToDate(BirthDate,Utils.APP_DATE_FORMAT);
+//                System.out.println(bdate);
+//
+//                //java.util.Date dt = new java.util.Date();
+//                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//                dateOfBirth = sdf.format(bdate);
+//                System.out.println(dateOfBirth);
 
 //                String cdate="Mar 10, 2016 6:30:00 PM";
 //                SimpleDateFormat formatter=new SimpleDateFormat("MMM dd, yyyy hh:mm:ss aaa");
@@ -166,7 +164,7 @@ public class RegisterActivity extends AppCompatActivity {
 //                /*set the date */
 //                calendar.setTime(dDate);
 
-                token = PostResult(firstName, lastName, Username, Password, Email, phoneNumber, bdate);
+                token = PostResult(firstName, lastName, Username, Password, Email, phoneNumber, BirthDate);
                 if(token.equals("username exists")){
                     Toast.makeText(c, "Username already exists, please try again!", Toast.LENGTH_SHORT).show();
                     return;
@@ -198,7 +196,7 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-    public String PostResult(String firstName, String lastName, String username, String password, String email, String phoneNumber, Date bdate) {
+    public String PostResult(String firstName, String lastName, String username, String password, String email, String phoneNumber, String bdate) {
         Users UserParameters = new Users(firstName, lastName, username, password, email, phoneNumber, bdate);
         RetrofitCalls retrofitCalls = new RetrofitCalls();
         token = retrofitCalls.postUser(UserParameters);

@@ -12,7 +12,6 @@ import android.widget.ListView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 import fromRESTful.Residences;
 import fromRESTful.Users;
@@ -98,7 +97,7 @@ public class ViewHostProfileActivity extends AppCompatActivity {
         userdetails[5] = host.getCountry();
         userdetails[6] = host.getCity();
         userdetails[7] = host.getAbout();
-        Date bdate = host.getBirthDate();
+        String bdate = host.getBirthDate();
         //Date bdate = new java.util.Date();
         String date="NO DATE";
         if(bdate != null){

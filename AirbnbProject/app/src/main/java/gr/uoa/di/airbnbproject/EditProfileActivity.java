@@ -3,7 +3,6 @@ package gr.uoa.di.airbnbproject;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -25,12 +24,8 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.security.Timestamp;
-import java.sql.Time;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 import fromRESTful.Users;
 import okhttp3.MediaType;
@@ -44,8 +39,6 @@ import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
 
-import static util.RestClient.BASE_URL;
-import static util.Utils.DATABASE_DATE_FORMAT;
 import static util.Utils.updateSessionData;
 
 public class EditProfileActivity extends AppCompatActivity {
@@ -134,11 +127,11 @@ public class EditProfileActivity extends AppCompatActivity {
         Utils.loadProfileImage(EditProfileActivity.this, mImageView, loggedinUser.getPhoto());
 
         String date ="";
-        Date birthDate = loggedinUser.getBirthDate();
-        if(birthDate !=null){
-            SimpleDateFormat newDateFormat = new SimpleDateFormat(Utils.APP_DATE_FORMAT);
-            date = newDateFormat.format(birthDate);
-        }
+        String birthDate = loggedinUser.getBirthDate();
+//        if(birthDate !=null){
+//            SimpleDateFormat newDateFormat = new SimpleDateFormat(Utils.APP_DATE_FORMAT);
+//            date = newDateFormat.format(birthDate);
+//        }
         tvBirthDate.setText(date);
         etAbout.setText(loggedinUser.getAbout());
 
@@ -273,7 +266,7 @@ public class EditProfileActivity extends AppCompatActivity {
         final String photo          = imagePath;
         final String about          = etAbout.getText().toString();
 
-        Date bdate = Utils.ConvertStringToDate(birthdate, DATABASE_DATE_FORMAT);
+//        Date bdate = Utils.ConvertStringToDate(birthdate, DATABASE_DATE_FORMAT);
         boolean emailIsNew;
 
         if(Username.length() == 0 || name.length() == 0 || lastName.length() == 0 || phoneNumber.length() == 0 || Email.length() == 0 || password.length() == 0) {
@@ -292,7 +285,7 @@ public class EditProfileActivity extends AppCompatActivity {
         }
 
         if(emailIsNew) {
-            token = PutResult(loggedinUser.getId(), name, lastName, Username, password, Email, phoneNumber, country, city, photo, about, bdate);
+            token = PutResult(loggedinUser.getId(), name, lastName, Username, password, Email, phoneNumber, country, city, photo, about, birthdate);
             //if (!token.isEmpty() && token!=null && token!="not") {
             if (!token.isEmpty() && token!=null && token!="not") {
                 sessionData.setToken(token);
@@ -326,7 +319,7 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     public String PutResult(int userId, String firstName, String lastName, String username, String password, String email, String phoneNumber, String country, String city,
-                            String photo, String about, Date birthDate) {
+                            String photo, String about, String birthDate) {
         Users UserParameters = new Users(userId, firstName, lastName, username, password, email, phoneNumber, country, city, photo, about, birthDate);
         RetrofitCalls retrofitCalls = new RetrofitCalls();
         token = retrofitCalls.editUser(token, userId, UserParameters);

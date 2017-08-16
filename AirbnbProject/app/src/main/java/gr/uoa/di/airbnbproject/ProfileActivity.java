@@ -3,11 +3,7 @@ package gr.uoa.di.airbnbproject;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
@@ -18,10 +14,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import fromRESTful.Users;
 import util.ListAdapterProfile;
@@ -29,8 +22,6 @@ import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
 
-import static util.RestClient.BASE_URL;
-import static util.Utils.getRealPathFromURI;
 import static util.Utils.getSessionData;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -90,7 +81,7 @@ public class ProfileActivity extends AppCompatActivity {
         userdetails[5]  = loggedinUser.getCountry();
         userdetails[6]  = loggedinUser.getCity();
         userdetails[7]  = loggedinUser.getAbout();
-        Date bdate      = loggedinUser.getBirthDate();
+        String bdate      = loggedinUser.getBirthDate();
         //Date bdate = new java.util.Date();
         String date="NO DATE";
         if(bdate != null){

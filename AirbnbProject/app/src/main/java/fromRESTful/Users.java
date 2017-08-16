@@ -18,13 +18,13 @@ public class Users implements Serializable {
     private String photo;
     private Date registrationDate;
     private String about;
-    private Date birthDate;
+    private String birthDate;
     private String host;
 
     public Users(){}
     //For edit profile
     public Users(int userId, String firstName, String lastName, String username, String password, String email, String phoneNumber, String country, String city,
-                 String photo, String about, Date birthDate)
+                 String photo, String about, String birthDate)
     {
         this.id             = userId;
         this.firstName      = firstName;
@@ -41,7 +41,7 @@ public class Users implements Serializable {
     }
 
     //For Register
-    public Users(String firstName, String lastName, String username, String password, String email, String phoneNumber, Date bdate)
+    public Users(String firstName, String lastName, String username, String password, String email, String phoneNumber, String bdate)
     {
         this.firstName      = firstName;
         this.lastName       = lastName;
@@ -156,11 +156,11 @@ public class Users implements Serializable {
         this.about = about;
     }
 
-    public Date getBirthDate() {
+    public String getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(Date birthDate) {
+    public void setBirthDate(String birthDate) {
         this.birthDate = birthDate;
     }
 
