@@ -4,7 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -15,6 +21,11 @@ import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
 
+import static util.Utils.CONTACT_HOST_ACTION;
+import static util.Utils.DELETE_ACTION;
+import static util.Utils.VIEW_RESIDENCE_ACTION;
+import static util.Utils.reloadActivity;
+
 public class HistoryReviewsActivity extends AppCompatActivity {
     Boolean user;
     String token;
@@ -23,6 +34,7 @@ public class HistoryReviewsActivity extends AppCompatActivity {
     Context c;
     ListAdapterReviews adapter;
     ListView reviewsList;
+    ArrayList<Reviews> userReviews;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +68,7 @@ public class HistoryReviewsActivity extends AppCompatActivity {
         ArrayList<Users> getUserByUsername = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
         loggedinUser = getUserByUsername.get(0);
 
-        ArrayList<Reviews> userReviews = retrofitCalls.getReviewsByTenantId(token, loggedinUser.getId().toString());
+        userReviews = retrofitCalls.getReviewsByTenantId(token, loggedinUser.getId().toString());
 
         String[] representativePhoto    = new String [userReviews.size()];
         String[] username               = new String[userReviews.size()];
@@ -71,10 +83,81 @@ public class HistoryReviewsActivity extends AppCompatActivity {
         adapter = new ListAdapterReviews(this, representativePhoto, username, comment);
         reviewsList = (ListView)findViewById(R.id.reviewslist);
         reviewsList.setAdapter(adapter);
+        registerForContextMenu(reviewsList);
 
         /** FOOTER TOOLBAR **/
         Utils.manageFooter(HistoryReviewsActivity.this, user);
         /** BACK BUTTON **/
         Utils.manageBackButton(this, ProfileActivity.class, user);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+        menu.setHeaderTitle("Reviews Options");
+
+        menu.add(0, info.position, 0, VIEW_RESIDENCE_ACTION);
+        menu.add(0, info.position, 1, CONTACT_HOST_ACTION);
+        menu.add(0, info.position, 2, DELETE_ACTION);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        super.onContextItemSelected(item);
+        if (item.getTitle().equals(DELETE_ACTION)) {
+            RetrofitCalls retrofitCalls = new RetrofitCalls();
+            token = retrofitCalls.deleteReview(token, userReviews.get(item.getItemId()).getId());
+            if (!token.isEmpty() && token!=null && token!="not") {
+                Toast.makeText(c, "Reservation was cancelled!", Toast.LENGTH_SHORT).show();
+                reloadHistoryReviews();
+            } else if (token.equals("not")) {
+                Toast.makeText(c, "Failed to cancel reservation! Your session has finished, please log in again!", Toast.LENGTH_SHORT).show();
+                Utils.logout(HistoryReviewsActivity.this);
+                finish();
+            } else {
+                Toast.makeText(c, "Something went wrong, reservation was not cancelled. Please try again!", Toast.LENGTH_SHORT).show();
+            }
+        } else if (item.getTitle().equals(VIEW_RESIDENCE_ACTION)) {
+            Intent showResidenceIntent = new Intent(HistoryReviewsActivity.this, ResidenceActivity.class);
+            Bundle btype = new Bundle();
+
+            btype.putBoolean("type", user);
+            btype.putInt("residenceId", userReviews.get(item.getItemId()).getResidenceId().getId());
+            showResidenceIntent.putExtras(btype);
+            try {
+                startActivity(showResidenceIntent);
+                finish();
+            } catch (Exception ex) {
+                System.out.println(ex.getMessage());
+                ex.printStackTrace();
+            }
+        } else if (item.getTitle().equals(CONTACT_HOST_ACTION)) {
+            Intent messageIntent = new Intent(HistoryReviewsActivity.this, MessageActivity.class);
+
+            Bundle bmessage = new Bundle();
+            bmessage.putBoolean("type", user);
+            bmessage.putInt("currentUserId", loggedinUser.getId());
+            bmessage.putInt("toUserId", userReviews.get(item.getItemId()).getResidenceId().getHostId().getId());
+            bmessage.putString("msgSubject", userReviews.get(item.getItemId()).getResidenceId().getTitle());
+            bmessage.putInt("residenceId", userReviews.get(item.getItemId()).getResidenceId().getId());
+            messageIntent.putExtras(bmessage);
+            try {
+                startActivity(messageIntent);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                Log.e("",e.getMessage());
+            }
+        } else {
+            Toast.makeText(this, item.getTitle(), Toast.LENGTH_LONG).show();
+        }
+        return true;
+    }
+
+    public void reloadHistoryReviews() {
+        Bundle bupdated = new Bundle();
+        bupdated.putBoolean("type", user);
+        reloadActivity(c, bupdated);
     }
 }

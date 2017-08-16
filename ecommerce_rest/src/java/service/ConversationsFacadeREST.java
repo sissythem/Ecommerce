@@ -26,7 +26,6 @@ public class ConversationsFacadeREST extends AbstractFacade<Conversations> {
 
     @PersistenceContext(unitName = "ecommerce_restPU")
     private EntityManager em;
-    
 
     public ConversationsFacadeREST() {
         super(Conversations.class);
@@ -104,8 +103,6 @@ public class ConversationsFacadeREST extends AbstractFacade<Conversations> {
     @Path("add")
     @Consumes({MediaType.APPLICATION_JSON})
     public String createConversation(@HeaderParam("Authorization") String token, Conversations entity) {
-        System.out.println("here");
-        System.out.println(entity.getSubject());
         if (KeyHolder.checkToken(token, className)) {
             super.create(entity);
             return token;
@@ -130,8 +127,8 @@ public class ConversationsFacadeREST extends AbstractFacade<Conversations> {
     @Path("last")
     @Produces({MediaType.APPLICATION_JSON})
     public List<Conversations> lastConversationEntry(@HeaderParam("Authorization") String token, 
-            @QueryParam("senderId") String senderId, 
-            @QueryParam("receiverId") String receiverId) {
+            @QueryParam("senderId") Integer senderId, 
+            @QueryParam("receiverId") Integer receiverId) {
         
         List<Conversations> data = new ArrayList<Conversations>();
         if (KeyHolder.checkToken(token, className)) {
@@ -146,7 +143,7 @@ public class ConversationsFacadeREST extends AbstractFacade<Conversations> {
     @GET
     @Path("residence/{id}/{user}")
     @Produces({MediaType.APPLICATION_JSON})
-        public List<Conversations> conversationByResidence(@HeaderParam("Authorization") String token, @PathParam("id") String residenceId, @PathParam("user") String userId) {
+        public List<Conversations> conversationByResidence(@HeaderParam("Authorization") String token, @PathParam("id") Integer residenceId, @PathParam("user") Integer userId) {
         List<Conversations> data = new ArrayList<Conversations>();
         if (KeyHolder.checkToken(token, className)) {
             Query query = em.createNativeQuery("SELECT * FROM conversations WHERE residence_id =?residenceId AND (sender_id =?senderId OR receiver_id =?receiverId) LIMIT 1", Conversations.class);
@@ -158,15 +155,18 @@ public class ConversationsFacadeREST extends AbstractFacade<Conversations> {
         return data;
     }
     
-    @GET
+    @POST
     @Path("update_conversation")
-    @Produces({MediaType.APPLICATION_JSON})
-    public Conversations updateReadConversation(@HeaderParam("Authorization") String token, 
+    @Produces({MediaType.TEXT_PLAIN})
+    public String updateReadConversation(@HeaderParam("Authorization") String token, 
             @QueryParam("read") String isRead, 
             @QueryParam("type") String type, 
             @QueryParam("id") String id) {
         
-        Conversations data = new Conversations();
+        System.out.println(isRead);
+        System.out.println(type);
+        System.out.println(id);
+        
         if (KeyHolder.checkToken(token, className)) {
             if (isRead != null && type != null && id != null) {
                 String userType = "";
@@ -181,13 +181,68 @@ public class ConversationsFacadeREST extends AbstractFacade<Conversations> {
                     query.setParameter(1, isRead);
                     query.setParameter(2, id);
                     query.executeUpdate();
-                    System.out.println(query);
                 }
             }
-            Conversations conv = super.find(Integer.parseInt(id));
-            System.out.println(conv);
-            return conv;
+            //Conversations conv = super.find(Integer.parseInt(id));
+            //System.out.println(conv);
+            //return conv;
+        } else {
+            token = KeyHolder.issueToken(null);
         }
-        return null;
+        return token;
+    }
+    
+    @POST
+    @Path("deletecnv/{id}/{user}/{type}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public String removeCNV(@HeaderParam("Authorization") String token, @PathParam("id")Integer id, @PathParam("user")Integer user, @PathParam("type")String type) {
+        if (KeyHolder.checkToken(token, className)) {
+            String userType = "";
+            String cUser = "";
+            if (type.equals("sender")) {
+                userType = "deleted_from_sender";
+                cUser = "sender_id";
+            } else if (type.equals("receiver")) {
+                userType = "deleted_from_receiver";
+                cUser = "receiver_id";
+            }
+            
+            Query query = em.createNativeQuery("UPDATE conversations SET "+userType+" = 1 WHERE id =? AND "+cUser+" =? ");
+            query.setParameter(1, id);
+            query.setParameter(2, user);
+            query.executeUpdate();
+        } else {
+            token = KeyHolder.issueToken(null);
+        }
+        return token;
+    }
+    
+    @POST
+    @Path("restore/{id}/{user}/{type}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public String restoreCNV(@HeaderParam("Authorization") String token, @PathParam("id")Integer id, @PathParam("user")Integer user, @PathParam("type")String type) {
+        System.out.println("to restore");
+        System.out.println(id);
+        System.out.println(user);
+        System.out.println(type);
+        if (KeyHolder.checkToken(token, className)) {
+            String userType = "";
+            String cUser = "";
+            if (type.equals("sender")) {
+                userType = "deleted_from_sender";
+                cUser = "sender_id";
+            } else if (type.equals("receiver")) {
+                userType = "deleted_from_receiver";
+                cUser = "receiver_id";
+            }
+            
+            Query query = em.createNativeQuery("UPDATE conversations SET "+userType+" = 0 WHERE id =? AND "+cUser+" =? ");
+            query.setParameter(1, id);
+            query.setParameter(2, user);
+            query.executeUpdate();
+        } else {
+            token = KeyHolder.issueToken(null);
+        }
+        return token;
     }
 }

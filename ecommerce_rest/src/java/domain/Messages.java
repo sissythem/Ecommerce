@@ -30,7 +30,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     
     /** CUSTOM **/
     @NamedQuery(name = "Messages.findByUserId", query = "SELECT m FROM Messages m WHERE m.userId.id = :id"),
-    @NamedQuery(name = "findByConversation", query = "SELECT m FROM Messages m WHERE m.conversationId.id = :convId order by m.timestamp ASC")
+    @NamedQuery(name = "findByConversation", query = "SELECT m FROM Messages m WHERE m.conversationId.id =:conversationId order by m.timestamp ASC")
 })
 public class Messages implements Serializable {
 

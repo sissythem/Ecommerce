@@ -21,8 +21,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import utils.KeyHolder;
 
-
-
 @Stateless
 @Path("reservations")
 public class ReservationsFacadeREST extends AbstractFacade<Reservations> {
@@ -74,9 +72,12 @@ public class ReservationsFacadeREST extends AbstractFacade<Reservations> {
     @DELETE
     @Path("delete/{id}")
     @Produces({MediaType.APPLICATION_JSON})
-    public String remove(@HeaderParam("Authorization") String token, @PathParam("id")String id) {
+    public String remove(@HeaderParam("Authorization") String token, @PathParam("id")Integer id) {
+        System.out.println("delete Reservation");
+        System.out.println(id);
         if (KeyHolder.checkToken(token, className)) {
-            super.remove(super.find(Integer.parseInt(id)));
+            super.remove(super.find(id));
+        } else {
             token = KeyHolder.issueToken(null);
         }
         return token;
@@ -96,11 +97,9 @@ public class ReservationsFacadeREST extends AbstractFacade<Reservations> {
     @Produces({MediaType.APPLICATION_JSON})
     public List<Reservations> findAll(@HeaderParam("Authorization") String token) {
         List<Reservations> data = new ArrayList<Reservations>();
-        data = super.findAll();
-//        if (KeyHolder.checkToken(token, className)) {
-//            
-//        }
-        
+        if (KeyHolder.checkToken(token, className)) {
+            data = super.findAll();
+        }
         return data;
     }
     

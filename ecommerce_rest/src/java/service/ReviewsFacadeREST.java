@@ -73,13 +73,14 @@ public class ReviewsFacadeREST extends AbstractFacade<Reviews> {
     
     /*** CUSTOM METHODS ***/
     private static String className = ReviewsFacadeREST.class.getName();
-    
+
     @DELETE
     @Path("delete/{id}")
     @Produces({MediaType.APPLICATION_JSON})
-    public String remove(@HeaderParam("Authorization") String token, @PathParam("id")String id) {
+    public String remove(@HeaderParam("Authorization") String token, @PathParam("id")Integer id) {
         if (KeyHolder.checkToken(token, className)) {
-            super.remove(super.find(Integer.parseInt(id)));
+            super.remove(super.find(id));
+        } else {
             token = KeyHolder.issueToken(null);
         }
         return token;
@@ -141,6 +142,4 @@ public class ReviewsFacadeREST extends AbstractFacade<Reviews> {
         }
         return data;
     }
-    
-    
 }

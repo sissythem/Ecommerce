@@ -1,6 +1,7 @@
 package services;
 
 import domain.Messages;
+import domain.Residences;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import java.security.Key;
@@ -78,9 +79,37 @@ public class MessagesFacadeREST extends AbstractFacade<Messages> {
     @DELETE
     @Path("delete/{id}")
     @Produces({MediaType.APPLICATION_JSON})
-    public String remove(@HeaderParam("Authorization") String token, @PathParam("id")String id) {
+    public String remove(@HeaderParam("Authorization") String token, @PathParam("id")Integer id) {
         if (KeyHolder.checkToken(token, className)) {
-            super.remove(super.find(Integer.parseInt(id)));
+            super.remove(super.find(id));
+        } else {
+            token = KeyHolder.issueToken(null);
+        }
+        return token;
+    }
+    
+    @POST
+    @Path("deletemsg/{id}/{user}/{type}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public String removeMSG(@HeaderParam("Authorization") String token, @PathParam("id")Integer id, @PathParam("user")Integer user, @PathParam("type")String type) {
+        if (KeyHolder.checkToken(token, className)) {
+            String userType = "";
+            String cUser = "";
+            if (type.equals("sender")) {
+                userType = "deleted_from_sender";
+                cUser = "sender_id";
+            } else if (type.equals("receiver")) {
+                userType = "deleted_from_receiver";
+                cUser = "receiver_id";
+            }
+            
+            Query query = em.createNativeQuery("UPDATE messages AS m SET m."+userType+" = 1 "
+                    + "WHERE m.id =? AND "
+                    + "(SELECT COUNT(c.id) FROM conversations AS c WHERE c.id = m.conversation_id AND c."+cUser+" =?) > 0");
+            query.setParameter(1, id);
+            query.setParameter(2, user);
+            query.executeUpdate();
+        } else {
             token = KeyHolder.issueToken(null);
         }
         return token;
@@ -107,13 +136,13 @@ public class MessagesFacadeREST extends AbstractFacade<Messages> {
     }
     
     @GET
-    @Path("conversation")
+    @Path("conversation/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Messages> findByConversation(@HeaderParam("Authorization") String token, @QueryParam("convId")Integer convId) {
+    public List<Messages> findByConversation(@HeaderParam("Authorization") String token, @PathParam("id") Integer id) {
         List<Messages> data = new ArrayList<Messages>();
         if (KeyHolder.checkToken(token, className)) {
             Query query = em.createNamedQuery("findByConversation");
-            query.setParameter("convId", convId);
+            query.setParameter("conversationId", id);
             data = query.getResultList();
         }
         return data;
@@ -138,10 +167,26 @@ public class MessagesFacadeREST extends AbstractFacade<Messages> {
             int senderId        = entity.getUserId().getId();
             int conversationId  = entity.getConversationId().getId();
             String msgBody      = entity.getBody();
-        
             addNewMessage(senderId, conversationId, msgBody);
             return token;
         }
         return "";
+    }
+    
+    @GET
+    @Path("count/{user}")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String countNewMessages(@HeaderParam("Authorization") String token, @PathParam("user") Integer user) {
+        String countMsg = "0";
+        if (KeyHolder.checkToken(token, className)) {
+            Query query = em.createNativeQuery("SELECT count(*) FROM conversations WHERE "
+                    + " (CASE WHEN sender_id =? THEN read_from_sender END) != 1 OR "
+                    + " (CASE WHEN receiver_id =? THEN read_from_receiver END) != 1 ");
+            query.setParameter(1, user);
+            query.setParameter(2, user);
+
+            countMsg = query.getSingleResult().toString();
+        }
+        return countMsg;
     }
 }

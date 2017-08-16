@@ -1,12 +1,17 @@
 package gr.uoa.di.airbnbproject;
 
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -17,24 +22,26 @@ import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
 
+import static util.Utils.DELETE_ACTION;
+import static util.Utils.USER_RECEIVER;
+import static util.Utils.USER_SENDER;
 import static util.Utils.getSessionData;
 
-public class InboxActivity extends AppCompatActivity
-{
+public class InboxActivity extends AppCompatActivity {
     String token;
+
+    ArrayList<Conversations> Conversations;
 
     ListView inboxlist;
     ListAdapterInbox inboxadapter;
     int[] conversationId, toUserId;
-    String[] msgsubject, msgname;
+    String[] msgsubject, msgname, userCurrentType;
     Boolean user;
     Integer currentUserId;
-    short[] isRead;
+    short[] isRead, readFromSender, readFromReceiver, deletedFromSender, deletedFromReceiver;
 
     String userType;
     Context c;
-    private static final String USER_SENDER = "sender";
-    private static final String USER_RECEIVER = "receiver";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +68,7 @@ public class InboxActivity extends AppCompatActivity
 
         RetrofitCalls retrofitCalls = new RetrofitCalls();
 
-        if(Utils.isTokenExpired(token))
-        {
+        if(Utils.isTokenExpired(token)) {
             Utils.logout(this);
             finish();
         }
@@ -76,9 +82,17 @@ public class InboxActivity extends AppCompatActivity
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 /** TODO: ANDROID CANT UNDERSTAND UPDATES?? **/
+                System.out.println(isRead[position]);
                 if (isRead[position] != 1) {
+                    String userUnread = "";
+                    if (currentUserId == Conversations.get(position).getSenderId().getId()) {
+                        userUnread = USER_SENDER;
+                    } else if (currentUserId == Conversations.get(position).getReceiverId().getId()) {
+                        userUnread = USER_RECEIVER;
+                    }
+
                     RetrofitCalls retrofitCalls = new RetrofitCalls();
-                    Conversations updatedConversation = retrofitCalls.updateConversation(token, "1", userType, Integer.toString(conversationId[position])).get(0);
+                    token = retrofitCalls.updateConversation(token, "1", userUnread, Integer.toString(conversationId[position]));
                     isRead[position] = 1;
                     loadConversations();
                     setAdapter();
@@ -91,7 +105,6 @@ public class InboxActivity extends AppCompatActivity
                 btype.putInt("toUserId", toUserId[position]);
                 btype.putInt("currentUserId", currentUserId);
                 btype.putString("msgSubject", msgsubject[position]);
-                btype.putString("back", "inbox");
                 showMessageIntent.putExtras(btype);
                 try {
                     startActivity(showMessageIntent);
@@ -109,38 +122,101 @@ public class InboxActivity extends AppCompatActivity
         Utils.manageFooter(InboxActivity.this, user);
     }
 
-    protected void setAdapter()
-    {
-        inboxlist = (ListView) findViewById(R.id.inboxlist);
-        inboxadapter = new ListAdapterInbox(this, msgname, msgsubject, isRead);
-        inboxlist.setAdapter(inboxadapter);
-    }
-
-    protected void loadConversations()
-    {
+    protected void loadConversations() {
         RetrofitCalls retrofitCalls = new RetrofitCalls();
-        ArrayList<Conversations> Conversations = retrofitCalls.getConversations(token, currentUserId.toString());
+        Conversations = retrofitCalls.getConversations(token, currentUserId.toString());
 
+        userCurrentType     = new String[Conversations.size()];
         msgname             = new String[Conversations.size()];
         msgsubject          = new String[Conversations.size()];
         conversationId      = new int[Conversations.size()];
         toUserId            = new int[Conversations.size()];
         isRead              = new short[Conversations.size()];
+        readFromSender      = new short[Conversations.size()];
+        readFromReceiver    = new short[Conversations.size()];
+        deletedFromSender   = new short[Conversations.size()];
+        deletedFromReceiver = new short[Conversations.size()];
 
         for(int i = 0; i < Conversations.size(); i++) {
             if (currentUserId == Conversations.get(i).getSenderId().getId()) {
-                userType    = USER_SENDER;
-                msgname[i]  = Conversations.get(i).getReceiverId().getFirstName() + " " + Conversations.get(i).getReceiverId().getLastName();
-                toUserId[i] = Conversations.get(i).getReceiverId().getId();
-                isRead[i]   = Conversations.get(i).getReadFromSender();
+                userCurrentType[i]  = USER_SENDER;
+                msgname[i]          = Conversations.get(i).getReceiverId().getFirstName() + " " + Conversations.get(i).getReceiverId().getLastName();
+                toUserId[i]         = Conversations.get(i).getReceiverId().getId();
+//                isRead[i]           = Conversations.get(i).getReadFromSender();
             } else {
-                userType    = USER_RECEIVER;
-                msgname[i]  = Conversations.get(i).getSenderId().getFirstName() + " " + Conversations.get(i).getSenderId().getLastName();
-                toUserId[i] = Conversations.get(i).getSenderId().getId();
-                isRead[i]   = Conversations.get(i).getReadFromReceiver();
+                userCurrentType[i]  = USER_RECEIVER;
+                msgname[i]          = Conversations.get(i).getSenderId().getFirstName() + " " + Conversations.get(i).getSenderId().getLastName();
+                toUserId[i]         = Conversations.get(i).getSenderId().getId();
+//                isRead[i]           = Conversations.get(i).getReadFromReceiver();
             }
-            msgsubject[i]       = Conversations.get(i).getSubject();
-            conversationId[i]   = Conversations.get(i).getId();
+            msgsubject[i]           = Conversations.get(i).getSubject();
+            conversationId[i]       = Conversations.get(i).getId();
+
+            readFromSender[i]       = Conversations.get(i).getReadFromSender();
+            readFromReceiver[i]     = Conversations.get(i).getReadFromReceiver();
+
+            deletedFromSender[i]    = Conversations.get(i).getDeletedFromSender();
+            deletedFromReceiver[i]  = Conversations.get(i).getDeletedFromReceiver();
+        }
+    }
+
+    protected void setAdapter() {
+        inboxlist = (ListView) findViewById(R.id.inboxlist);
+        inboxadapter = new ListAdapterInbox(this, currentUserId, userCurrentType, msgname, msgsubject, readFromSender, readFromReceiver, deletedFromSender, deletedFromReceiver);
+        inboxlist.setAdapter(inboxadapter);
+        registerForContextMenu(inboxlist);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+        menu.setHeaderTitle("Conversation Options");
+        menu.add(0, info.position, 0, DELETE_ACTION);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        super.onContextItemSelected(item);
+        if (item.getTitle().equals(DELETE_ACTION)) {
+
+            if (currentUserId == Conversations.get(item.getItemId()).getSenderId().getId()) {
+                userType = USER_SENDER;
+            } else if (currentUserId == Conversations.get(item.getItemId()).getReceiverId().getId()) {
+                userType = USER_RECEIVER;
+            }
+
+            RetrofitCalls retrofitCalls = new RetrofitCalls();
+            token = retrofitCalls.deleteConversation(token, Conversations.get(item.getItemId()).getId(), currentUserId, userType);
+            if (!token.isEmpty() && token!=null && token!="not") {
+                Toast.makeText(c, "Conversation was deleted!", Toast.LENGTH_SHORT).show();
+                reloadInbox();
+            } else if (token.equals("not")) {
+                Toast.makeText(c, "Failed to delete conversation! Your session has finished, please log in again!", Toast.LENGTH_SHORT).show();
+                Utils.logout(InboxActivity.this);
+                finish();
+            } else {
+                Toast.makeText(c, "Something went wrong, conversation is not deleted. Please try again!", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(this, item.getTitle(), Toast.LENGTH_LONG).show();
+        }
+        return true;
+    }
+
+    public void reloadInbox() {
+        Bundle bupdated = new Bundle();
+        bupdated.putBoolean("type", user);
+
+        Intent currentIntent = getIntent();
+        currentIntent.putExtras(bupdated);
+
+        try {
+            startActivity(currentIntent);
+            finish();
+        } catch (Exception e) {
+            Log.e("",e.getMessage());
         }
     }
 }
