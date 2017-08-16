@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package domain;
 
 import java.io.Serializable;
@@ -29,10 +24,6 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-/**
- *
- * @author sissy
- */
 @Entity
 @Table(name = "residences")
 @XmlRootElement
@@ -64,12 +55,9 @@ import javax.xml.bind.annotation.XmlTransient;
     
     /* Custom */
     @NamedQuery(name = "findByHost", query = "SELECT r FROM Residences r WHERE r.hostId.id = :hostId")
-
+    
 })
-
-
-public class Residences implements Serializable 
-{
+public class Residences implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -114,9 +102,9 @@ public class Residences implements Serializable
     @Column(name = "baths")
     private Integer baths;
     @Column(name = "kitchen")
-    private Boolean kitchen;
+    private short kitchen;
     @Column(name = "living_room")
-    private Boolean livingRoom;
+    private short livingRoom;
     @Size(max = 50)
     @Column(name = "view")
     private String view;
@@ -271,19 +259,19 @@ public class Residences implements Serializable
         this.baths = baths;
     }
 
-    public Boolean getKitchen() {
+    public short getKitchen() {
         return kitchen;
     }
 
-    public void setKitchen(Boolean kitchen) {
+    public void setKitchen(short kitchen) {
         this.kitchen = kitchen;
     }
 
-    public Boolean getLivingRoom() {
+    public short getLivingRoom() {
         return livingRoom;
     }
 
-    public void setLivingRoom(Boolean livingRoom) {
+    public void setLivingRoom(short livingRoom) {
         this.livingRoom = livingRoom;
     }
 
@@ -427,5 +415,4 @@ public class Residences implements Serializable
     public String toString() {
         return "domain.Residences[ id=" + id + " ]";
     }
-    
 }

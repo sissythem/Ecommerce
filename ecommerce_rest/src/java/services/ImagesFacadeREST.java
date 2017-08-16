@@ -1,13 +1,29 @@
 package services;
 
 import domain.Images;
+import domain.Residences;
+import java.awt.Desktop;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.StringWriter;
 import java.nio.file.Files;
+import java.util.Base64;
+import services.AbstractFacade;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.activation.MimetypesFileTypeMap;
 import javax.ejb.Stateless;
+import javax.imageio.ImageIO;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -27,6 +43,7 @@ import javax.ws.rs.core.Response;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
+import utils.AuthenticationFilter;
 import utils.KeyHolder;
 
 @Stateless
@@ -117,7 +134,7 @@ public class ImagesFacadeREST extends AbstractFacade<Images> {
         
         if (KeyHolder.checkToken(token, className)) {
             try {
-                File directory = new File("/home/sissy/Documents/Professional/University/UOA/graduate/Semester2/Ecommerce/Project/ecommerce_rest/images/");
+                File directory = new File("C:\\Users\\vasso\\Documents\\ecommerce\\images");
                 File newFile = File.createTempFile("img", ".jpg", directory);
                 saveToFile(uploadedInputStream, newFile);
                 Query query = em.createNativeQuery("UPDATE users SET photo ='"+newFile.getName()+"' WHERE id ="+id);
@@ -140,7 +157,7 @@ public class ImagesFacadeREST extends AbstractFacade<Images> {
         
         if (KeyHolder.checkToken(token, className)) {
             try {
-                File directory = new File("/home/sissy/Documents/Professional/University/UOA/graduate/Semester2/Ecommerce/Project/ecommerce_rest/images/");
+                File directory = new File("C:\\Users\\vasso\\Documents\\ecommerce\\images");
                 File newFile = File.createTempFile("img", ".jpg", directory);
                 saveToFile(uploadedInputStream, newFile);
                 Query query = em.createNativeQuery("UPDATE residences SET photos ='"+newFile.getName()+"' WHERE id ="+id);
@@ -169,7 +186,7 @@ public class ImagesFacadeREST extends AbstractFacade<Images> {
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces("image/*")
     public Response getUserImage(@HeaderParam("Authorization")String token, @PathParam("name")String name) {
-        File f = new File("/home/sissy/Documents/Professional/University/UOA/graduate/Semester2/Ecommerce/Project/ecommerce_rest/images/" + name);
+        File f = new File("C:\\Users\\vasso\\Documents\\ecommerce\\images\\" + name);
         if (!f.exists()) {
             throw new WebApplicationException(404);
         }

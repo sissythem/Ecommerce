@@ -12,9 +12,8 @@ public class KeyHolder
 {
     public static final Key key = MacProvider.generateKey();
     
-    public static String issueToken(String keyname) 
-    {
-         String jws;
+    public static String issueToken(String keyname) {
+        String jws;
         if (keyname != null && keyname != "") {
             Key key = KeyHolder.key;
             long nowMillis = System.currentTimeMillis();
