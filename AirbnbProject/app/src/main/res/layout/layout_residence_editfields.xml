@@ -46,32 +46,32 @@
             android:focusable="true"
             android:focusableInTouchMode="true">
 
-            <ImageView
-                android:id="@+id/photo"
+            <LinearLayout
+                android:id="@+id/imageContent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_profile"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_toStartOf="@+id/etUpload"
-                android:layout_toLeftOf="@+id/etUpload" />
+                android:orientation="horizontal">
 
-            <EditText
-                android:id="@+id/etUpload"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:ems="10"
-                android:hint="Upload photo"
-                android:inputType="textPersonName"/>
+                <ImageView
+                    android:id="@+id/photo"
+                    android:layout_width="100dp"
+                    android:layout_height="fill_parent"
+                    android:scaleType="fitXY"
+                    android:layout_weight="1"
+                    android:src="@drawable/ic_upload_image" />
+
+                <Button android:id="@+id/uploadImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Upload Photo"/>
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/select_type"
-                android:layout_below="@+id/etUpload"
+                android:layout_below="@+id/imageContent"
                 android:orientation="horizontal">
 
                 <TextView android:layout_width="wrap_content" android:layout_height="match_parent" android:text="Select type of residence" />

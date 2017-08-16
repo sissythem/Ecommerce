@@ -10,9 +10,7 @@ import android.widget.TextView;
 
 import gr.uoa.di.airbnbproject.R;
 
-/**
- * Created by sissy on 24/6/2017.
- */
+import static util.RestClient.BASE_URL;
 
 public class ListAdapterReviews extends ArrayAdapter<String>
 {
@@ -34,7 +32,9 @@ public class ListAdapterReviews extends ArrayAdapter<String>
         LayoutInflater inflater = context.getLayoutInflater();
         View rowView = inflater.inflate(R.layout.list_reviews, null, true);
 
-        ImageView imageView = (ImageView) rowView.findViewById(R.id.profilepic);
+        ImageView userImage = (ImageView) rowView.findViewById(R.id.profilepic);
+        Utils.loadProfileImage(context, userImage, representativePhoto[position]);
+
         TextView tvUsername = (TextView) rowView.findViewById(R.id.username);
         TextView tvComment  = (TextView) rowView.findViewById(R.id.comment);
         tvUsername.setText(username[position]);

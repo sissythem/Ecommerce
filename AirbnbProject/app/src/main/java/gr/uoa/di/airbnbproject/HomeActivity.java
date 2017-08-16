@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -12,6 +13,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -31,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import fromRESTful.Conversations;
 import fromRESTful.Residences;
 import fromRESTful.Reviews;
 import fromRESTful.Searches;
@@ -42,8 +45,7 @@ import util.Utils;
 
 import static util.Utils.getSessionData;
 
-public class HomeActivity extends AppCompatActivity
-{
+public class HomeActivity extends AppCompatActivity {
     final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
 
     ListAdapterResidences adapter;
@@ -66,8 +68,7 @@ public class HomeActivity extends AppCompatActivity
     float[] rating;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         Session sessionData = getSessionData(HomeActivity.this);
@@ -83,14 +84,16 @@ public class HomeActivity extends AppCompatActivity
             return;
         }
 
+        /** Start Worker for Notifications **/
+        new Worker().execute();
+
         //getPermissions();
         token = sessionData.getToken();
         username = sessionData.getUsername();
         setContentView(R.layout.activity_home);
         user = true;
-        c=this;
-        if(Utils.isTokenExpired(token))
-        {
+        c = this;
+        if (Utils.isTokenExpired(token)) {
             Toast.makeText(c, "Session is expired", Toast.LENGTH_SHORT).show();
             Utils.logout(this);
         }
@@ -110,8 +113,7 @@ public class HomeActivity extends AppCompatActivity
         rating                 = new float[Recommendations.size()];
         residenceId            = new int[Recommendations.size()];
 
-        for(int i=0; i<Recommendations.size();i++)
-        {
+        for(int i=0; i<Recommendations.size();i++) {
             title[i]                = Recommendations.get(i).getTitle();
             representativePhoto[i]  = Recommendations.get(i).getPhotos();
             city[i]                 = Recommendations.get(i).getCity();
@@ -450,6 +452,41 @@ public class HomeActivity extends AppCompatActivity
                         REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
                 return;
             }
+        }
+    }
+
+    /** Worker options for notification messages **/
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.i("SomeTag", System.currentTimeMillis() / 1000L + "  onDestory()");
+    }
+
+    private class Worker extends AsyncTask<Void, Void, String> {
+        @Override
+        protected String doInBackground(Void... arg0) {
+            Log.i("SomeTag", "start do in background at " + System.currentTimeMillis());
+            String data = null;
+
+            try {
+                //getNewMessages();
+//                Utils.callAsynchronousTask(HomeActivity.this, HomeActivity.class);
+//                DefaultHttpClient httpClient = new DefaultHttpClient();
+//                HttpGet httpGet = new HttpGet("https://stackoverflow.com/questions/tagged/android");
+//
+//                HttpResponse httpResponse = httpClient.execute(httpGet);
+//                HttpEntity httpEntity = httpResponse.getEntity();
+//                data = EntityUtils.toString(httpEntity);
+                Log.i("SomeTag", "doInBackGround done at " + System.currentTimeMillis());
+            } catch (Exception e) {}
+            return data;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            Utils.callAsynchronousTask(HomeActivity.this, token, loggedInUser.getId());
+            Log.i("SomeTag", System.currentTimeMillis() / 1000L + " post execute \n" + result);
         }
     }
 }

@@ -124,15 +124,10 @@
 
         <Button
             android:id="@+id/register"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Register"
-            android:layout_marginTop="46dp"
-            android:layout_below="@+id/confirmpassword"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_below="@+id/confirmpassword" />
 
         <TextView
             android:id="@+id/loginlink"

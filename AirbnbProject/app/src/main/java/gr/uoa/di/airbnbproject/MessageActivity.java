@@ -1,37 +1,39 @@
 package gr.uoa.di.airbnbproject;
 
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import fromRESTful.Conversations;
 import fromRESTful.Messages;
 import fromRESTful.Residences;
 import fromRESTful.Users;
-import retrofit2.Call;
-import retrofit2.Response;
 import util.ListAdapterMessages;
-import util.RestAPI;
-import util.RestClient;
 import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
 
+import static util.Utils.COPY_ACTION;
 import static util.Utils.ConvertStringToDate;
 import static util.Utils.DATABASE_DATE_FORMAT;
+import static util.Utils.DELETE_ACTION;
+import static util.Utils.USER_RECEIVER;
+import static util.Utils.USER_SENDER;
 import static util.Utils.getCurrentDate;
-import static util.Utils.logout;
 
 public class MessageActivity extends AppCompatActivity {
     Context c;
@@ -50,9 +52,7 @@ public class MessageActivity extends AppCompatActivity {
     ArrayList<Messages> Messages;
     Conversations conversation;
 
-    String userType, token, backBundle;
-    private static final String USER_SENDER = "sender";
-    private static final String USER_RECEIVER = "receiver";
+    String userType, token;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +79,6 @@ public class MessageActivity extends AppCompatActivity {
         currentUserId   = bextras.getInt("currentUserId");
         toUserId        = bextras.getInt("toUserId");
         msgSubject      = bextras.getString("msgSubject");
-        backBundle      = bextras.getString("back");
 
         subject = (TextView) findViewById(R.id.subject);
         subject.setText(msgSubject);
@@ -87,8 +86,7 @@ public class MessageActivity extends AppCompatActivity {
 
         RetrofitCalls retrofitCalls = new RetrofitCalls();
 
-        if(Utils.isTokenExpired(token))
-        {
+        if(Utils.isTokenExpired(token)) {
             Utils.logout(this);
             finish();
         }
@@ -97,18 +95,18 @@ public class MessageActivity extends AppCompatActivity {
             isNewMessage = false;
             conversationId = bextras.getInt("conversationId");
 
-            Messages = retrofitCalls.getMessagesByConversation(token, Integer.toString(conversationId));
+            Messages = retrofitCalls.getMessagesByConversation(token, conversationId);
             messagesSize = Messages.size();
-            conversation = retrofitCalls.getConversationById(token, Integer.toString(conversationId));
+            conversation = retrofitCalls.getConversationById(token, conversationId);
         } else if (bextras.containsKey("residenceId")) {
             residenceId = bextras.getInt("residenceId");
 
-            ArrayList<Conversations> conversationData = retrofitCalls.getConversationsByResidenceId(token, Integer.toString(residenceId), currentUserId.toString());
+            ArrayList<Conversations> conversationData = retrofitCalls.getConversationsByResidenceId(token, residenceId, currentUserId);
             if (conversationData.size() > 0) {
                 conversation = conversationData.get(0);
                 isNewMessage = false;
                 conversationId = conversation.getId();
-                Messages = retrofitCalls.getMessagesByConversation(token, Integer.toString(conversationId));
+                Messages = retrofitCalls.getMessagesByConversation(token, conversationId);
                 messagesSize = Messages.size();
             } else {
                 isNewMessage = true;
@@ -116,45 +114,121 @@ public class MessageActivity extends AppCompatActivity {
             }
         }
 
-        int[] msguserid         = new int[messagesSize];
-        String[] msgname        = new String[messagesSize];
-        String[] msgbody        = new String[messagesSize];
-        String[] msgtimestamp   = new String[messagesSize];
+        if (conversation != null) {
+            if (currentUserId == conversation.getSenderId().getId()) {
+                userType = USER_SENDER;
+            } else if (currentUserId == conversation.getReceiverId().getId()) {
+                userType = USER_RECEIVER;
+            }
+
+            if ((userType == USER_SENDER && conversation.getDeletedFromSender() == 1) || (userType == USER_RECEIVER && conversation.getDeletedFromReceiver() == 1)) {
+                token = retrofitCalls.restoreConversation(token, conversation.getId(), currentUserId, userType);
+            }
+        }
+
+        int[] msguserid             = new int[messagesSize];
+        String[] msgname            = new String[messagesSize];
+        String[] msgbody            = new String[messagesSize];
+        String[] msgtimestamp       = new String[messagesSize];
+        short[] deletedFromSender   = new short[messagesSize];
+        short[] deletedFromReceiver = new short[messagesSize];
 
         if (messagesSize > 0) {
             for(int i=0; i < messagesSize; i++) {
-                msguserid[i]    = Messages.get(i).getUserId().getId();
-                msgname[i]      = Messages.get(i).getUserId().getUsername();
-                msgbody[i]      = Messages.get(i).getBody();
-                msgtimestamp[i] = Messages.get(i).getTimestamp().toString();
+                msguserid[i]            = Messages.get(i).getUserId().getId();
+                msgname[i]              = Messages.get(i).getUserId().getUsername();
+                msgbody[i]              = Messages.get(i).getBody();
+                msgtimestamp[i]         = Messages.get(i).getTimestamp().toString();
+                deletedFromSender[i]    = Messages.get(i).getDeletedFromSender();
+                deletedFromReceiver[i]  = Messages.get(i).getDeletedFromReceiver();
             }
         }
 
         messageslist = (ListView) findViewById(R.id.messageslist);
-        msgadapter = new ListAdapterMessages(this, currentUserId, msguserid, msgname, msgbody, msgtimestamp);
+        msgadapter = new ListAdapterMessages(this, currentUserId, userType, msguserid, msgname, msgbody, msgtimestamp, deletedFromSender, deletedFromReceiver);
         messageslist.setAdapter(msgadapter);
+        registerForContextMenu(messageslist);
 
         send = (Button)findViewById(R.id.message_send_btn);
         sendMessage();
 
         /** BACK BUTTON **/
-        if(backBundle.equals("inbox"))
-        {
-            Utils.manageBackButton(this, InboxActivity.class, user);
-        }
-        else if(backBundle.equals("residence"))
-        {
-            Utils.manageBackButton(this, ViewHostProfileActivity.class, user);
-        }
+        Utils.manageBackButton(this, InboxActivity.class, user);
+//        if (bextras.containsKey("residenceId")) {
+//            System.out.println("yes");
+//            backToResidence();
+//        } else {
+//            System.out.println("no");
+//            Utils.manageBackButton(this, InboxActivity.class, user);
+//        }
     }
 
-    public void sendMessage()
-    {
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+        menu.setHeaderTitle("Message Options");
+
+        menu.add(0, info.position, 0, DELETE_ACTION);
+        menu.add(0, info.position, 1, COPY_ACTION);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        super.onContextItemSelected(item);
+        if (item.getTitle().equals(DELETE_ACTION)) {
+            RetrofitCalls retrofitCalls = new RetrofitCalls();
+            token = retrofitCalls.deleteMessage(token, Messages.get(item.getItemId()).getId(), currentUserId, userType);
+            if (!token.isEmpty() && token!=null && token!="not") {
+                Toast.makeText(c, "Message deleted!", Toast.LENGTH_SHORT).show();
+                reloadConversation();
+            } else if (token.equals("not")) {
+                Toast.makeText(c, "Failed to delete message! Your session has finished, please log in again!", Toast.LENGTH_SHORT).show();
+                Utils.logout(MessageActivity.this);
+                finish();
+            } else {
+                Toast.makeText(c, "Something went wrong, message is not deleted. Please try again!", Toast.LENGTH_SHORT).show();
+            }
+        } else if (item.getTitle().equals(COPY_ACTION)) {
+            ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+            clipboard.setText(Messages.get(item.getItemId()).getBody());
+        } else {
+            Toast.makeText(this, item.getTitle(), Toast.LENGTH_LONG).show();
+        }
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        Utils.manageBackButton(this, InboxActivity.class, user);
+//        moveTaskToBack(true);
+    }
+
+//    public void backToResidence() {
+//        ImageButton bback = (ImageButton) this.findViewById(R.id.ibBack);
+//        bback.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent backintent = new Intent(MessageActivity.this, ResidenceActivity.class);
+//                Bundle btores = new Bundle();
+//                btores.putBoolean("type", user);
+//                btores.putInt("residenceId", residenceId);
+//                backintent.putExtras(btores);
+//                try {
+//                    MessageActivity.this.startActivity(backintent);
+//                } catch (Exception ex) {
+//                    System.out.println(ex.getMessage());
+//                    ex.printStackTrace();
+//                }
+//            }
+//        });
+//    }
+
+    public void sendMessage() {
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean success = false;
-
                 msgBody = body.getText().toString();
                 if (msgBody == null || msgBody == "" || msgBody.length() == 0) {
                     Toast.makeText(c, "Please write a message!", Toast.LENGTH_SHORT).show();
@@ -165,88 +239,72 @@ public class MessageActivity extends AppCompatActivity {
                     Users receiverUser = retrofitCalls.getUserbyId(token, toUserId.toString());
 
                     if (!isNewMessage) {
-                        success = PostMessageResult(senderUser, conversation, msgBody);
+                        token = PostMessageResult(senderUser, conversation, msgBody);
                     } else {
-                        if (PostConversationResult(senderUser, receiverUser, retrofitCalls.getResidenceById(token, Integer.toString(residenceId)), msgSubject)) {
+                        token = PostConversationResult(senderUser, receiverUser, retrofitCalls.getResidenceById(token, Integer.toString(residenceId)), msgSubject);
+                        if (!token.isEmpty() && token!=null && token!="not") {
                             /** Last Conversation entry in dbtable **/
-                            conversation = retrofitCalls.getLastConversation(token, currentUserId.toString(), toUserId.toString()).get(0);
+                            conversation = retrofitCalls.getLastConversation(token, currentUserId, toUserId).get(0);
                             conversationId = conversation.getId();
-                            success = PostMessageResult(senderUser, conversation, msgBody);
+                            System.out.println(conversationId);
+
+                            token = PostMessageResult(senderUser, conversation, msgBody);
+                        } else {
+                            Toast.makeText(c, "Message failed to send! Maybe your session has finished, please log in again!", Toast.LENGTH_SHORT).show();
+                            Utils.logout(MessageActivity.this);
+                            finish();
                         }
                     }
 
-                    if (success) {
+                    if (!token.isEmpty() && token!=null && token!="not") {
+                        String userUnreadType = "";
                         if (currentUserId == conversation.getSenderId().getId()) {
-                            userType = USER_RECEIVER;
+                            userUnreadType = USER_RECEIVER;
                         } else if (currentUserId == conversation.getReceiverId().getId()) {
-                            userType = USER_SENDER;
+                            userUnreadType = USER_SENDER;
                         }
-                        retrofitCalls.updateConversation(token, "0", userType, Integer.toString(conversation.getId())).get(0);
-
-                        //finish();
-                        Bundle bupdated = new Bundle();
-                        bupdated.putBoolean("type", user);
-                        bupdated.putInt("currentUserId", currentUserId);
-                        bupdated.putInt("toUserId", toUserId);
-                        bupdated.putString("msgSubject", msgSubject);
-                        bupdated.putInt("conversationId", conversationId);
-
-                        Intent currentIntent = getIntent();
-                        currentIntent.putExtras(bupdated);
-                        startActivity(currentIntent);
-                        finish();
+                        token = retrofitCalls.updateConversation(token, "0", userUnreadType, Integer.toString(conversation.getId()));
+                        reloadConversation();
                     } else {
-                        Toast.makeText(c, "Message failed to send!", Toast.LENGTH_SHORT).show();
-                        return;
+                        Toast.makeText(c, "Message failed to send! Maybe your session has finished, please log in again!", Toast.LENGTH_SHORT).show();
+                        Utils.logout(MessageActivity.this);
+                        finish();
                     }
                 }
             }
         });
     }
 
-    public boolean PostConversationResult(Users senderUser, Users receiverUser, Residences residence, String subject)
-    {
+    public void reloadConversation() {
+        Bundle bupdated = new Bundle();
+        bupdated.putBoolean("type", user);
+
+        Intent currentIntent = getIntent();
+        currentIntent.putExtras(bupdated);
+
+        try {
+            startActivity(currentIntent);
+            finish();
+        } catch (Exception e) {
+            Log.e("",e.getMessage());
+        }
+    }
+
+    public String PostConversationResult(Users senderUser, Users receiverUser, Residences residence, String subject) {
         short val_zero = 0;
         short val_one = 1;
         Conversations ConversationParams = new Conversations(senderUser, receiverUser, residence, subject, val_one, val_zero, val_zero, val_zero);
-        RestAPI restAPI = RestClient.getClient(token).create(RestAPI.class);
-        System.out.println(ConversationParams);
-        Call<String> call = restAPI.postConversation(ConversationParams);
-        try {
-            Response<String> resp = call.execute();
-            token = resp.body();
-        } catch (IOException e) {
-            Log.i("",e.getMessage());
-        }
-
-        boolean success = false;
-        if (!token.equals("not")) {
-            success = true;
-        } else {
-            logout(MessageActivity.this);
-        }
-        return success;
+        RetrofitCalls retrofitCalls = new RetrofitCalls();
+        token = retrofitCalls.startConversation(token, ConversationParams);
+        return token;
     }
 
-    public boolean PostMessageResult(Users usermodel, Conversations conversationmodel, String body) {
+    public String PostMessageResult(Users mUser, Conversations mConversation, String body) {
         short val_zero = 0;
         String currDate = getCurrentDate(DATABASE_DATE_FORMAT);
-        Messages MessagesParams = new Messages(usermodel, conversationmodel, body, ConvertStringToDate(currDate, DATABASE_DATE_FORMAT), val_zero, val_zero);
-        RestAPI restAPI = RestClient.getStringClient().create(RestAPI.class);
-        Call<String> call = restAPI.postMessage(MessagesParams);
-        try {
-            Response<String> resp = call.execute();
-            token = resp.body();
-        } catch (IOException e) {
-            Log.i("",e.getMessage());
-        }
-
-        boolean success = false;
-        if (!token.equals("not")) {
-            success = true;
-        } else {
-            logout(MessageActivity.this);
-        }
-        return success;
+        Messages MessagesParams = new Messages(mUser, mConversation, body, ConvertStringToDate(currDate, DATABASE_DATE_FORMAT), val_zero, val_zero);
+        RetrofitCalls retrofitCalls = new RetrofitCalls();
+        token = retrofitCalls.sendMessage(token, MessagesParams);
+        return token;
     }
 }

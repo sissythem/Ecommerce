@@ -29,8 +29,7 @@ import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
 
-public class AddResidenceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener
-{
+public class AddResidenceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     private static final int RESULT_LOAD_IMAGE =1;
 
     String token;
@@ -43,7 +42,6 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
     EditText etUpload, etAbout, etAddress, etCity, etCountry, etAmenities, etFloor, etRooms, etBaths, etView, etTitle, etSpaceArea, etGuests, etMinPrice, etAdditionalCost, etCancellationPolicy, etRules;
     TextView tvStartDate, tvEndDate;
     CheckBox cbKitchen, cbLivingRoom;
-    boolean bkitchen, blivingRoom;
 
     private int mStartYear, mStartMonth, mStartDay, mEndYear, mEndMonth, mEndDay;
 
@@ -91,7 +89,7 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
     }
 
     public void userInputLayout () {
-        etUpload             = (EditText)findViewById(R.id.etUpload);
+        //etUpload             = (EditText)findViewById(R.id.etUpload);
         etTitle              = (EditText)findViewById(R.id.etTitle);
         etAbout              = (EditText)findViewById(R.id.etAbout);
         etAddress            = (EditText)findViewById(R.id.etAddress);
@@ -116,9 +114,6 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
 
         cbKitchen           = (CheckBox)findViewById(R.id.cbKitchen);
         cbLivingRoom        = (CheckBox)findViewById(R.id.cbLivingRoom);
-
-        bkitchen = (cbKitchen).isChecked();
-        blivingRoom = (cbLivingRoom).isChecked();
 
         bcontinue = (ImageButton)findViewById(R.id.ibContinue);
 
@@ -195,7 +190,8 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
             @Override
             public void onClick(View v) {
                 //Log.w("","SETTING HARDCODED RESIDENCE VALUES FOR DEBUGGING!");
-                final String photo                      = etUpload.getText().toString();
+                //final String photo                      = etUpload.getText().toString();
+                final String photo                      = "sdgdfg";
                 final String title                      = etTitle.getText().toString();
                 final String type                       = resType;
                 final String about                      = etAbout.getText().toString();
@@ -215,8 +211,8 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
                 final String availableEndDate           = tvEndDate.getText().toString();
                 final String cancellationPolicy         = etCancellationPolicy.getText().toString();
                 final String rules                      = etRules.getText().toString();
-                final String kitchen                    = Boolean.toString(bkitchen);
-                final String livingRoom                 = Boolean.toString(blivingRoom);
+                final short kitchen                    = cbKitchen.isChecked() ? (short)1 : (short)0;
+                final short livingRoom                 = cbLivingRoom.isChecked() ? (short)1 : (short)0;
 
                 Date startDate = Utils.ConvertStringToDate(availableStartDate, Utils.APP_DATE_FORMAT);
                 String convertedStartDate = Utils.ConvertDateToString(startDate, Utils.DATABASE_DATE_FORMAT);
@@ -226,15 +222,14 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
 
                 if (title.length() == 0 || type.length() == 0 || about.length() == 0 || address.length() == 0 || city.length() == 0 || country.length() == 0 || amenities.length() == 0 || floor.length() == 0
                         || rooms.length() == 0 || baths.length() == 0 || view.length() == 0 || spaceArea.length() == 0 || guests.length() == 0 || minPrice.length() == 0
-                        || additionalCostPerPerson.length() == 0 || cancellationPolicy.length() == 0 || rules.length() == 0 || kitchen.length() == 0 || livingRoom.length() == 0
+                        || additionalCostPerPerson.length() == 0 || cancellationPolicy.length() == 0 || rules.length() == 0
                         || convertedStartDate.length() == 0 || convertedEndDate.length() == 0 || photo.length() == 0) {
                     Toast.makeText(c, "Please fill in all fields!", Toast.LENGTH_SHORT).show();
                     return;
                 } else {
                     token = PostResult(host, title, type, about, cancellationPolicy, country, city, address, rules, amenities, Integer.parseInt(floor),
                             Integer.parseInt(rooms), Integer.parseInt(baths), Double.parseDouble(spaceArea), photo, Integer.parseInt(guests), startDate, endDate,
-                            Double.parseDouble(minPrice), Double.parseDouble(additionalCostPerPerson), Boolean.parseBoolean(kitchen), Boolean.parseBoolean(livingRoom),
-                            view);
+                            Double.parseDouble(minPrice), Double.parseDouble(additionalCostPerPerson), kitchen, livingRoom, view);
 
                     if (!token.isEmpty() && token!=null && token != "not") {
                         Intent hostIntent = new Intent(AddResidenceActivity.this, HostActivity.class);
@@ -259,8 +254,7 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
 
     public String PostResult(Users hostId, String title, String type, String about, String cancellationPolicy, String country, String city, String address, String rules,
                              String amenities, int floor, int rooms, int baths, double spaceArea, String photos, int guests, Date availableDateStart,
-                             Date availableDateEnd, double minPrice, double additionalCostPerPerson, boolean kitchen, boolean livingRoom, String view)
-    {
+                             Date availableDateEnd, double minPrice, double additionalCostPerPerson, short kitchen, short livingRoom, String view) {
         Residences ResidenceParameters = new Residences(hostId, title, type, about, cancellationPolicy, country, city, address, rules, amenities, floor, rooms,
                 baths, spaceArea, photos, guests, availableDateStart, availableDateEnd, minPrice, additionalCostPerPerson, kitchen, livingRoom, view);
 

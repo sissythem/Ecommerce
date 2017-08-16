@@ -53,7 +53,7 @@
         <activity android:name=".ViewHostProfileActivity" />
         <activity android:name=".ReviewsActivity" />
         <activity android:name=".HistoryReviewsActivity" />
-        <activity android:name=".HistoryReservationsActivity"></activity>
+        <activity android:name=".HistoryReservationsActivity" />
     </application>
 
 </manifest>

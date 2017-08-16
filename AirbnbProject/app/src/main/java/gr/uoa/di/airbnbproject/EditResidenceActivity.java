@@ -45,9 +45,9 @@ import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
 public class EditResidenceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
-    private static final int RESULT_LOAD_IMAGE =1;
     public static final int GET_FROM_GALLERY = 3;
-    String resType, token, photo;
+
+    String resType, token;
     Integer residenceId;
     Residences selectedResidence;
 
@@ -55,14 +55,14 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
 
     ImageButton bcontinue, btnStartDate, btnEndDate;
     ImageView mImageView;
-    EditText etUpload, etTitle, etAbout, etAddress, etCity, etCountry, etAmenities, etFloor, etRooms, etBaths, etView, etSpaceArea, etGuests, etMinPrice, etAdditionalCost, etCancellationPolicy, etRules;
+    EditText etTitle, etAbout, etAddress, etCity, etCountry, etAmenities, etFloor, etRooms, etBaths, etView, etSpaceArea, etGuests, etMinPrice, etAdditionalCost, etCancellationPolicy, etRules;
     TextView tvStartDate, tvEndDate;
     Spinner etType;
+    String photo;
 
     private int mStartYear, mStartMonth, mStartDay, mEndYear, mEndMonth, mEndDay;
 
     CheckBox cbKitchen, cbLivingRoom;
-    boolean bkitchen, blivingRoom;
 
     Context c;
     Users host;
@@ -172,9 +172,7 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         protected void onPostExecute(String nothing) {}
     }
 
-    public void userInputLayout ()
-    {
-        //etUpload             = (EditText)findViewById(R.id.etUpload);
+    public void userInputLayout () {
         etTitle              = (EditText)findViewById(R.id.etTitle);
         etAbout              = (EditText)findViewById(R.id.etAbout);
         etAddress            = (EditText)findViewById(R.id.etAddress);
@@ -199,11 +197,11 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
 
         cbKitchen           = (CheckBox)findViewById(R.id.cbKitchen);
         cbLivingRoom        = (CheckBox)findViewById(R.id.cbLivingRoom);
-        cbKitchen.setChecked(selectedResidence.getKitchen());
-        cbLivingRoom.setChecked(selectedResidence.getLivingRoom());
+
+        cbKitchen.setChecked((selectedResidence.getKitchen() == 1 ? true : false));
+        cbLivingRoom.setChecked((selectedResidence.getLivingRoom() == 1 ? true : false));
 
         bcontinue = (ImageButton)findViewById(R.id.ibContinue);
-
 
         etType = (Spinner) findViewById(R.id.etType);
         // Create an ArrayAdapter using the string array and a default spinner layout
@@ -232,6 +230,7 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         etAdditionalCost.setText(Double.toString(selectedResidence.getAdditionalCostPerPerson()));
         etCancellationPolicy.setText(selectedResidence.getCancellationPolicy());
         etRules.setText(selectedResidence.getRules());
+
         String startdate ="";
         Date startDate = selectedResidence.getAvailableDateStart();
 
@@ -302,7 +301,6 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         bcontinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String photo                      = etUpload.getText().toString();
                 final String title                      = etTitle.getText().toString();
                 final String type                       = resType;
                 final String about                      = etAbout.getText().toString();
@@ -322,12 +320,8 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
                 final String availableEndDate           = tvEndDate.getText().toString();
                 final String cancellationPolicy         = etCancellationPolicy.getText().toString();
                 final String rules                      = etRules.getText().toString();
-
-                bkitchen = (cbKitchen).isChecked();
-                blivingRoom = (cbLivingRoom).isChecked();
-
-                final String kitchen = Boolean.toString(bkitchen);
-                final String livingRoom = Boolean.toString(blivingRoom);
+                final short kitchen                     = cbKitchen.isChecked() ? (short)1 : (short)0;
+                final short livingRoom                  = cbLivingRoom.isChecked() ? (short)1 : (short)0;
 
                 Date startDate = Utils.ConvertStringToDate(availableStartDate, Utils.DATABASE_DATE_FORMAT);
                 String convertedStartDate = Utils.ConvertDateToString(startDate, Utils.DATABASE_DATE_FORMAT);
@@ -337,15 +331,14 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
 
                 if (type.length() == 0 || title.length() == 0 || about.length() == 0 || address.length() == 0 || city.length() == 0 || country.length() == 0 || amenities.length() == 0 || floor.length() == 0
                         || rooms.length() == 0 || baths.length() == 0 || view.length() == 0 || spaceArea.length() == 0 || guests.length() == 0 || minPrice.length() == 0
-                        || additionalCostPerPerson.length() == 0 || cancellationPolicy.length() == 0 || rules.length() == 0 || kitchen.length() == 0 || livingRoom.length() == 0
-                        || convertedStartDate.length() == 0 || convertedEndDate.length() == 0 || photo.length() == 0) {
+                        || additionalCostPerPerson.length() == 0 || cancellationPolicy.length() == 0 || rules.length() == 0
+                        || convertedStartDate.length() == 0 || convertedEndDate.length() == 0) {
                     Toast.makeText(c, "Please fill in all fields!", Toast.LENGTH_SHORT).show();
                     return;
                 } else {
                     token = PutResult(host, title, type, about, address, city, country, amenities, Integer.parseInt(floor), Integer.parseInt(rooms),
                             Integer.parseInt(baths), view, Double.parseDouble(spaceArea), Integer.parseInt(guests), Double.parseDouble(minPrice),
-                            Double.parseDouble(additionalCostPerPerson), cancellationPolicy, rules, Boolean.parseBoolean(kitchen),
-                            Boolean.parseBoolean(livingRoom), startDate, endDate, photo);
+                            Double.parseDouble(additionalCostPerPerson), cancellationPolicy, rules, kitchen, livingRoom, startDate, endDate, photo);
 
                     if (!token.isEmpty() && token!=null && token!="not") {
                         Intent hostIntent = new Intent(EditResidenceActivity.this, HostActivity.class);
@@ -370,14 +363,14 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
 
     }
     public String PutResult(Users host, String title, String type, String about, String address, String city, String country, String amenities, int floor, int rooms,
-                             int baths, String view, double spaceArea, int guests, double minPrice, double additionalCostPerPerson, String cancellationPolicy,
-                             String rules, boolean kitchen, boolean livingRoom, Date startDate, Date endDate, String photo)
-    {
+                            int baths, String view, double spaceArea, int guests, double minPrice, double additionalCostPerPerson, String cancellationPolicy,
+                            String rules, short kitchen, short livingRoom, Date startDate, Date endDate, String photo) {
+
         Residences ResidenceParameters = new Residences(host, title, type, about, address, city, country, amenities, floor, rooms, baths, view, spaceArea, guests, minPrice,
                 additionalCostPerPerson, cancellationPolicy, rules, kitchen, livingRoom, startDate, endDate, photo);
 
         RetrofitCalls retrofitCalls = new RetrofitCalls();
-        token = retrofitCalls.editResidence(token, Integer.toString(residenceId), ResidenceParameters);
+        token = retrofitCalls.editResidence(token, residenceId, ResidenceParameters);
         return token;
     }
 
@@ -386,7 +379,7 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
 //        super.onActivityResult(requestCode, resultCode, data);
 //        if(requestCode == RESULT_LOAD_IMAGE && requestCode == RESULT_OK && data != null) {
 //            Uri selectedImage = data.getData();
-//            mImageView.setImageURI(selectedImage);
+//            imageToUpload.setImageURI(selectedImage);
 //        }
 //    }
 }

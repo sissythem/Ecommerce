@@ -57,6 +57,5 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="48dp"
             android:text="You don't have an account? Register here" />
-
     </RelativeLayout>
 </ScrollView>

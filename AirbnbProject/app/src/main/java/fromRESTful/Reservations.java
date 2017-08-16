@@ -107,5 +107,4 @@ public class Reservations implements Serializable {
     public String toString() {
         return "domain.Reservations[ id=" + id + " ]";
     }
-
 }

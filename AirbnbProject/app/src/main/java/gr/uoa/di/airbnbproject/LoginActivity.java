@@ -3,8 +3,10 @@ package gr.uoa.di.airbnbproject;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,6 +15,7 @@ import android.widget.Toast;
 
 import util.RetrofitCalls;
 import util.Session;
+import util.Utils;
 
 import static util.Utils.USER_LOGIN_PREFERENCES;
 import static util.Utils.updateSessionData;
@@ -23,8 +26,6 @@ public class LoginActivity extends AppCompatActivity {
 
     SharedPreferences sharedPrefs;
     Session sessionData;
-
-    EditText etUsername, etPassword;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -38,9 +39,9 @@ public class LoginActivity extends AppCompatActivity {
         sharedPrefs = getApplicationContext().getSharedPreferences(USER_LOGIN_PREFERENCES, Context.MODE_PRIVATE);
 
         //get user input
-        etUsername = (EditText) findViewById(R.id.etUsername);
-        etPassword = (EditText) findViewById(R.id.etPassword);
-        final Button blogin = (Button) findViewById(R.id.login);
+        final EditText etUsername   = (EditText) findViewById(R.id.etUsername);
+        final EditText etPassword   = (EditText) findViewById(R.id.etPassword);
+        final Button blogin         = (Button) findViewById(R.id.login);
         final TextView registerlink = (TextView) findViewById(R.id.registerlink);
 
         etUsername.setSelected(false);

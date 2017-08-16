@@ -1,7 +1,6 @@
 package util;
 
-public class Session
-{
+public class Session {
 
     private String token;
     private String username;

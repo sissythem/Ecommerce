@@ -24,8 +24,8 @@ public class Residences implements Serializable, Comparable {
     private int floor;
     private int rooms;
     private int baths;
-    private Boolean kitchen;
-    private Boolean livingRoom;
+    private short kitchen;
+    private short livingRoom;
     private String view;
     private double spaceArea;
     private String photos;
@@ -42,60 +42,60 @@ public class Residences implements Serializable, Comparable {
 
     public Residences(Users host, String title, String type, String about, String address, String city, String country, String amenities, int floor, int rooms,
                       int baths, String view, double spaceArea, int guests, double minPrice, double additionalCostPerPerson, String cancellationPolicy,
-                      String rules, boolean kitchen, boolean livingRoom, Date startDate, Date endDate, String photo)
+                      String rules, short kitchen, short livingRoom, Date startDate, Date endDate, String photo)
     {
-        this.hostId=host;
-        this.title = title;
-        this.type = type;
-        this.about = about;
-        this.cancellationPolicy = cancellationPolicy;
-        this.country = country;
-        this.city = city;
-        this.address = address;
-        this.rules = rules;
-        this.amenities = amenities;
-        this.floor = floor;
-        this.rooms = rooms;
-        this.baths = baths;
-        this.spaceArea = spaceArea;
-        this.photos = photo;
-        this.guests = guests;
-        this.availableDateStart = startDate;
-        this.availableDateEnd = endDate;
-        this.minPrice = minPrice;
-        this.additionalCostPerPerson = additionalCostPerPerson;
-        this.view=view;
-        this.kitchen=kitchen;
-        this.livingRoom=livingRoom;
+        this.hostId                     = host;
+        this.title                      = title;
+        this.type                       = type;
+        this.about                      = about;
+        this.cancellationPolicy         = cancellationPolicy;
+        this.country                    = country;
+        this.city                       = city;
+        this.address                    = address;
+        this.rules                      = rules;
+        this.amenities                  = amenities;
+        this.floor                      = floor;
+        this.rooms                      = rooms;
+        this.baths                      = baths;
+        this.spaceArea                  = spaceArea;
+        this.photos                     = photo;
+        this.guests                     = guests;
+        this.availableDateStart         = startDate;
+        this.availableDateEnd           = endDate;
+        this.minPrice                   = minPrice;
+        this.additionalCostPerPerson    = additionalCostPerPerson;
+        this.view                       = view;
+        this.kitchen                    = kitchen;
+        this.livingRoom                 = livingRoom;
     }
 
     public Residences(Users hostId, String title, String type, String about, String cancellationPolicy, String country, String city, String address, String rules, String amenities,
-        int floor, int rooms, int baths, double spaceArea, String photos, int guests, Date availableDateStart, Date availableDateEnd, double minPrice,
-        double additionalCostPerPerson, boolean kitchen, boolean livingRoom, String view) {
+                      int floor, int rooms, int baths, double spaceArea, String photos, int guests, Date availableDateStart, Date availableDateEnd, double minPrice,
+                      double additionalCostPerPerson, short kitchen, short livingRoom, String view) {
 
-        this.hostId = hostId;
-        this.title = title;
-        this.type = type;
-        this.about = about;
-        this.cancellationPolicy = cancellationPolicy;
-        this.country = country;
-        this.city = city;
-        this.address = address;
-        this.rules = rules;
-        this.amenities = amenities;
-        this.floor = floor;
-        this.rooms = rooms;
-        this.baths = baths;
-        this.spaceArea = spaceArea;
-        this.photos = photos;
-        this.guests = guests;
-        this.availableDateStart = availableDateStart;
-        this.availableDateEnd = availableDateEnd;
-        this.minPrice = minPrice;
-        this.additionalCostPerPerson = additionalCostPerPerson;
-        this.kitchen=kitchen;
-        this.livingRoom=livingRoom;
-        this.view=view;
+        this.hostId                     = hostId;
+        this.title                      = title;
+        this.type                       = type;
+        this.about                      = about;
+        this.cancellationPolicy         = cancellationPolicy;
+        this.country                    = country;
+        this.city                       = city;
+        this.address                    = address;
+        this.rules                      = rules;
+        this.amenities                  = amenities;
+        this.floor                      = floor;
+        this.rooms                      = rooms;
+        this.baths                      = baths;
+        this.spaceArea                  = spaceArea;
+        this.photos                     = photos;
+        this.guests                     = guests;
+        this.availableDateStart         = availableDateStart;
+        this.availableDateEnd           = availableDateEnd;
+        this.minPrice                   = minPrice;
+        this.additionalCostPerPerson    = additionalCostPerPerson;
+        this.kitchen                    = kitchen;
+        this.livingRoom                 = livingRoom;
+        this.view                       = view;
     }
 
     public Integer getId() {
@@ -208,19 +208,19 @@ public class Residences implements Serializable, Comparable {
         this.baths = baths;
     }
 
-    public Boolean getKitchen() {
+    public short getKitchen() {
         return kitchen;
     }
 
-    public void setKitchen(Boolean kitchen) {
+    public void setKitchen(short kitchen) {
         this.kitchen = kitchen;
     }
 
-    public Boolean getLivingRoom() {
+    public short getLivingRoom() {
         return livingRoom;
     }
 
-    public void setLivingRoom(Boolean livingRoom) {
+    public void setLivingRoom(short livingRoom) {
         this.livingRoom = livingRoom;
     }
 

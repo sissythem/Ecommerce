@@ -26,33 +26,34 @@ public class Users implements Serializable {
     public Users(int userId, String firstName, String lastName, String username, String password, String email, String phoneNumber, String country, String city,
                  String photo, String about, Date birthDate)
     {
-        this.id=userId;
-        this.firstName=firstName;
-        this.lastName=lastName;
-        this.username=username;
-        this.password=password;
-        this.email=email;
-        this.phoneNumber=phoneNumber;
-        this.country=country;
-        this.city=city;
-        this.photo=photo;
-        this.about=about;
-        this.birthDate=birthDate;
+        this.id             = userId;
+        this.firstName      = firstName;
+        this.lastName       = lastName;
+        this.username       = username;
+        this.password       = password;
+        this.email          = email;
+        this.phoneNumber    = phoneNumber;
+        this.country        = country;
+        this.city           = city;
+        this.photo          = photo;
+        this.about          = about;
+        this.birthDate      = birthDate;
     }
 
     //For Register
     public Users(String firstName, String lastName, String username, String password, String email, String phoneNumber, Date bdate)
     {
-        this.firstName=firstName;
-        this.lastName=lastName;
-        this.username=username;
-        this.password=password;
-        this.email=email;
-        this.phoneNumber=phoneNumber;
-        this.birthDate=bdate;
-        this.country="";
-        this.city="";
-        this.about="";
+        this.firstName      = firstName;
+        this.lastName       = lastName;
+        this.username       = username;
+        this.password       = password;
+        this.email          = email;
+        this.phoneNumber    = phoneNumber;
+        this.birthDate      = bdate;
+        this.country        = "";
+        this.city           = "";
+        this.about          = "";
+        //this.registrationDate= new Date();
     }
 
     public Users(Integer id) {
