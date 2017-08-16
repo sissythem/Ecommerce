@@ -1,6 +1,7 @@
 package domain;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
@@ -58,7 +59,7 @@ import javax.xml.bind.annotation.XmlTransient;
     
 })
 public class Residences implements Serializable {
-
+    
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -117,11 +118,9 @@ public class Residences implements Serializable {
     @Column(name = "guests")
     private Integer guests;
     @Column(name = "available_date_start")
-    @Temporal(TemporalType.DATE)
-    private Date availableDateStart;
+    private BigInteger availableDateStart;
     @Column(name = "available_date_end")
-    @Temporal(TemporalType.DATE)
-    private Date availableDateEnd;
+    private BigInteger availableDateEnd;
     @Column(name = "min_price")
     private Double minPrice;
     @Column(name = "additional_cost_per_person")
@@ -307,19 +306,19 @@ public class Residences implements Serializable {
         this.guests = guests;
     }
 
-    public Date getAvailableDateStart() {
+    public BigInteger getAvailableDateStart() {
         return availableDateStart;
     }
 
-    public void setAvailableDateStart(Date availableDateStart) {
+    public void setAvailableDateStart(BigInteger availableDateStart) {
         this.availableDateStart = availableDateStart;
     }
 
-    public Date getAvailableDateEnd() {
+    public BigInteger getAvailableDateEnd() {
         return availableDateEnd;
     }
 
-    public void setAvailableDateEnd(Date availableDateEnd) {
+    public void setAvailableDateEnd(BigInteger availableDateEnd) {
         this.availableDateEnd = availableDateEnd;
     }
 

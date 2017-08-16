@@ -1,7 +1,6 @@
 package services;
 
 import domain.Reservations;
-import domain.Residences;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -73,8 +72,6 @@ public class ReservationsFacadeREST extends AbstractFacade<Reservations> {
     @Path("delete/{id}")
     @Produces({MediaType.APPLICATION_JSON})
     public String remove(@HeaderParam("Authorization") String token, @PathParam("id")Integer id) {
-        System.out.println("delete Reservation");
-        System.out.println(id);
         if (KeyHolder.checkToken(token, className)) {
             super.remove(super.find(id));
         } else {

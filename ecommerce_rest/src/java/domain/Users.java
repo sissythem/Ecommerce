@@ -85,7 +85,7 @@ public class Users implements Serializable {
     @Size(max = 45)
     @Column(name = "about")
     private String about;
-    @Size(max = 45)
+    @Size(max = 50)
     @Column(name = "birth_date")
     private String birthDate;
     @Size(max = 45)
