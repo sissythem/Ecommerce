@@ -32,7 +32,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class RestClient {
 
-    public static final String BASE_URL = "http://192.168.1.5:8080/ecommerce_rest/webresources/";
+    public static final String BASE_URL = "http://192.168.1.9:8080/ecommerce_rest/webresources/";
     private static Retrofit retrofit = null;
     private static Retrofit stringRetrofit = null;
 

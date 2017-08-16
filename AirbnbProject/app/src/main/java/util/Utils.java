@@ -1,22 +1,16 @@
 package util;
 
 import android.app.Activity;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.MediaStore;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
@@ -25,22 +19,16 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
 
-import fromRESTful.Conversations;
 import gr.uoa.di.airbnbproject.GreetingActivity;
 import gr.uoa.di.airbnbproject.HomeActivity;
 import gr.uoa.di.airbnbproject.HostActivity;
 import gr.uoa.di.airbnbproject.InboxActivity;
-import gr.uoa.di.airbnbproject.MessageActivity;
 import gr.uoa.di.airbnbproject.ProfileActivity;
 import gr.uoa.di.airbnbproject.R;
 
-import static android.content.Context.NOTIFICATION_SERVICE;
-import static util.RestClient.BASE_URL;
-
-public class Utils {
+public class Utils
+{
     public static String USER_LOGIN_PREFERENCES = "login_preferences";
 
     public static final String APP_DATE_FORMAT = "dd-MM-yyyy";
@@ -49,15 +37,6 @@ public class Utils {
 
     public static final String DATE_YEAR_FIRST = "yyyy-MM-dd";
     public static final String DATE_TEXT_MONTH = "dd MMMM";
-    public static final String MYSQL_FORMAT = "Y-m-d H:i:s";
-
-    /** Message & Conversation Constants **/
-    public static final String USER_SENDER      = "sender";
-    public static final String USER_RECEIVER    = "receiver";
-    public static final String DELETE_ACTION    = "Delete";
-    public static final String COPY_ACTION      = "Copy";
-    public static final String VIEW_RESIDENCE_ACTION    = "View Residence";
-    public static final String CONTACT_HOST_ACTION      = "Contact Host";
 
     public static Date ConvertStringToDate(String date, String format)
     {
@@ -218,7 +197,8 @@ public class Utils {
             }
         });
 
-        blogout.setOnClickListener(new View.OnClickListener() {
+        blogout.setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View v) {
                 logout(this_context);
@@ -345,104 +325,4 @@ public class Utils {
             }
         }
     }
-
-    public static void loadProfileImage(Context context, ImageView imgView, String imgName) {
-        String imgpath = BASE_URL + "images/img/" + imgName;
-        com.squareup.picasso.Picasso.with(context).load(imgpath)
-                .placeholder(R.drawable.ic_profile)
-                .error(R.drawable.ic_profile)
-                .resize(200, 200)
-                .into(imgView);
-    }
-
-    public static void loadResidenceImage(Context context, ImageView imgView, String imgName) {
-        String imgpath = BASE_URL + "images/img/" + imgName;
-        com.squareup.picasso.Picasso.with(context).load(imgpath)
-                .placeholder(R.drawable.ic_upload_image)
-                .error(R.drawable.ic_upload_image)
-                .resize(200, 200)
-                .into(imgView);
-    }
-
-    public static void reloadActivity(Context context, Bundle bupdated) {
-        Intent currentIntent = ((Activity) context).getIntent();
-        currentIntent.putExtras(bupdated);
-
-        try {
-            context.startActivity(currentIntent);
-            ((Activity) context).finish();
-        } catch (Exception e) {
-            Log.e("",e.getMessage());
-        }
-    }
-
-    protected static Integer getNewMessages(String token, Integer userId) {
-        RetrofitCalls retrofitCalls = new RetrofitCalls();
-        Integer countMsg = retrofitCalls.countNewMessages(token, userId);
-        System.out.println(countMsg);
-        return countMsg;
-    }
-
-    public static NotificationCompat.Builder notification;
-    private static final int uniqueID = 45612;
-
-    public static void callAsynchronousTask(final Context context, final String token, final Integer userId) {
-        final Handler handler = new Handler();
-        Timer timer = new Timer();
-        TimerTask doAsynchronousTask = new TimerTask() {
-            @Override
-            public void run() {
-                handler.post(new Runnable() {
-                    public void run() {
-                        try {
-                            notification = new NotificationCompat.Builder(context);
-                            notification.setAutoCancel(true);
-
-                            Integer unreadConversations = getNewMessages(token, userId);
-                            if (unreadConversations > 0) {
-                                buckysButtonClicked(context,
-                                        HomeActivity.class,
-                                        InboxActivity.class,
-                                        "New messages",
-                                        "Residence Conversation",
-                                        "You have new messages in " + unreadConversations + " " + (unreadConversations == 1 ? "conversation" : "conversations")
-                                );
-                            }
-
-//                            PerformBackgroundTask performBackgroundTask = new PerformBackgroundTask();
-                            // PerformBackgroundTask this class is the class that extends AsynchTask
-//                            performBackgroundTask.execute();
-                        } catch (Exception e) {
-                            // TODO Auto-generated catch block
-                        }
-                    }
-                });
-            }
-        };
-        timer.schedule(doAsynchronousTask, 0, 300000); //execute in every 300000ms (5 minutes)
-    }
-
-    public static void buckysButtonClicked(Context context, Class newContextClass, Class newIntentClass, String ticker, String title, String text){
-        //Build the notification
-        notification.setSmallIcon(R.mipmap.ic_launcher);
-        notification.setTicker(ticker);
-        notification.setWhen(System.currentTimeMillis());
-        notification.setContentTitle(title);
-        notification.setContentText(text);
-        notification.setPriority(Notification.PRIORITY_HIGH);
-        notification.setDefaults(Notification.DEFAULT_ALL);
-
-        Intent intent = new Intent(context, newContextClass);
-
-        Intent newIntent = new Intent(context, newIntentClass);
-        newIntent.putExtra("openActivity", newIntentClass);
-
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, newIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        notification.setContentIntent(pendingIntent);
-
-        //Builds notification and issues it
-        NotificationManager nm = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
-        nm.notify(uniqueID, notification.build());
-    }
-
 }

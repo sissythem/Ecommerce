@@ -121,6 +121,16 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
         blivingRoom = (cbLivingRoom).isChecked();
 
         bcontinue = (ImageButton)findViewById(R.id.ibContinue);
+
+//        imageToUpload = (ImageView)findViewById(R.id.imageToUpload);
+//        imageToUpload.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick(View v) {
+//                Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//                startActivityForResult(galleryIntent, RESULT_LOAD_IMAGE);
+//            }
+//        });
+
         btnStartDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

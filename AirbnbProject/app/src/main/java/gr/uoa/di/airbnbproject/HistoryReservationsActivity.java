@@ -4,13 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.ContextMenu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,22 +18,15 @@ import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
 
-import static util.Utils.CONTACT_HOST_ACTION;
-import static util.Utils.DELETE_ACTION;
-import static util.Utils.VIEW_RESIDENCE_ACTION;
-import static util.Utils.reloadActivity;
-
 public class HistoryReservationsActivity extends AppCompatActivity {
     Boolean user;
     String token;
     Users loggedinUser;
-    int[] residenceId;
-    String[] residenceTitle;
+    int[]residenceId;
 
     Context c;
     ListAdapterReservations adapter;
     ListView reservationsList;
-    ArrayList<Reservations> userReservations;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,10 +60,10 @@ public class HistoryReservationsActivity extends AppCompatActivity {
         ArrayList<Users> getUserByUsername = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
         loggedinUser = getUserByUsername.get(0);
 
-        userReservations = retrofitCalls.getReservationsByTenantId(token, loggedinUser.getId().toString());
+        ArrayList<Reservations> userReservations = retrofitCalls.getReservationsByTenantId(token, loggedinUser.getId().toString());
 
         residenceId             = new int [userReservations.size()];
-        residenceTitle          = new String[userReservations.size()];
+        String[] residenceTitle = new String[userReservations.size()];
         String[] startDate      = new String[userReservations.size()];
         String[] endDate        = new String[userReservations.size()];
 
@@ -87,7 +76,24 @@ public class HistoryReservationsActivity extends AppCompatActivity {
         adapter = new ListAdapterReservations(this, residenceTitle, startDate, endDate);
         reservationsList = (ListView)findViewById(R.id.reservationsList);
         reservationsList.setAdapter(adapter);
-        registerForContextMenu(reservationsList);
+
+        reservationsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
+                Intent showResidenceIntent = new Intent(HistoryReservationsActivity.this, ResidenceActivity.class);
+                Bundle btype = new Bundle();
+                btype.putBoolean("type", user);
+                btype.putInt("residenceId", residenceId[position]);
+                showResidenceIntent.putExtras(btype);
+                try {
+                    startActivity(showResidenceIntent);
+                } catch (Exception ex) {
+                    System.out.println(ex.getMessage());
+                    ex.printStackTrace();
+                }
+            }
+        });
 
         /** FOOTER TOOLBAR **/
         Utils.manageFooter(HistoryReservationsActivity.this, user);
@@ -95,73 +101,4 @@ public class HistoryReservationsActivity extends AppCompatActivity {
         Utils.manageBackButton(this, ProfileActivity.class, user);
     }
 
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
-        menu.setHeaderTitle("Reservation Options");
-
-        menu.add(0, info.position, 0, VIEW_RESIDENCE_ACTION);
-        menu.add(0, info.position, 1, CONTACT_HOST_ACTION);
-        menu.add(0, info.position, 2, DELETE_ACTION);
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        super.onContextItemSelected(item);
-        if (item.getTitle().equals(DELETE_ACTION)) {
-            RetrofitCalls retrofitCalls = new RetrofitCalls();
-            token = retrofitCalls.deleteReservation(token, userReservations.get(item.getItemId()).getId());
-            if (!token.isEmpty() && token!=null && token!="not") {
-                Toast.makeText(c, "Reservation was cancelled!", Toast.LENGTH_SHORT).show();
-                reloadHistoryReservations();
-            } else if (token.equals("not")) {
-                Toast.makeText(c, "Failed to cancel reservation! Your session has finished, please log in again!", Toast.LENGTH_SHORT).show();
-                Utils.logout(HistoryReservationsActivity.this);
-                finish();
-            } else {
-                Toast.makeText(c, "Something went wrong, reservation was not cancelled. Please try again!", Toast.LENGTH_SHORT).show();
-            }
-        } else if (item.getTitle().equals(VIEW_RESIDENCE_ACTION)) {
-            Intent showResidenceIntent = new Intent(HistoryReservationsActivity.this, ResidenceActivity.class);
-            Bundle btype = new Bundle();
-
-            btype.putBoolean("type", user);
-            btype.putInt("residenceId", residenceId[item.getItemId()]);
-            showResidenceIntent.putExtras(btype);
-            try {
-                startActivity(showResidenceIntent);
-                finish();
-            } catch (Exception ex) {
-                System.out.println(ex.getMessage());
-                ex.printStackTrace();
-            }
-        } else if (item.getTitle().equals(CONTACT_HOST_ACTION)) {
-            Intent messageIntent = new Intent(HistoryReservationsActivity.this, MessageActivity.class);
-
-            Bundle bmessage = new Bundle();
-            bmessage.putBoolean("type", user);
-            bmessage.putInt("currentUserId", loggedinUser.getId());
-            bmessage.putInt("toUserId", userReservations.get(item.getItemId()).getResidenceId().getHostId().getId());
-            bmessage.putString("msgSubject", residenceTitle[item.getItemId()]);
-            bmessage.putInt("residenceId", residenceId[item.getItemId()]);
-            messageIntent.putExtras(bmessage);
-            try {
-                startActivity(messageIntent);
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-                Log.e("",e.getMessage());
-            }
-        } else {
-            Toast.makeText(this, item.getTitle(), Toast.LENGTH_LONG).show();
-        }
-        return true;
-    }
-
-    public void reloadHistoryReservations() {
-        Bundle bupdated = new Bundle();
-        bupdated.putBoolean("type", user);
-        reloadActivity(c, bupdated);
-    }
 }

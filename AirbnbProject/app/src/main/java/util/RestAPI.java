@@ -11,12 +11,10 @@ import fromRESTful.Searches;
 import fromRESTful.Users;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
-import okhttp3.Response;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
-import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
@@ -25,9 +23,9 @@ import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
-public interface RestAPI {
+public interface RestAPI
+{
     /***** Check Token *****/
-
     @GET("users/checktoken")
     Call<Boolean> checkTokenExpired();
 
@@ -75,7 +73,7 @@ public interface RestAPI {
 
     @GET("residences/search")
     Call<List<Residences>> getSearchResidences(@Query("userId") String userId, @Query("city") String city, @Query("startDate") String startDate,
-                                               @Query("endDate") String endDate, @Query("guests") String guests);
+                                         @Query("endDate") String endDate, @Query("guests") String guests);
 
     @GET("residences/host")
     Call<List<Residences>> getResidencesByHostId(@Query("hostId") String hostId);
@@ -87,7 +85,7 @@ public interface RestAPI {
     Call<String> deleteResidenceById(@Path("id") String id);
 
     @PUT("residences/put/{id}")
-    Call<String> editResidenceById(@Path("id") Integer id, @Body Residences residence);
+    Call<String> editResidenceById(@Path("id") String id, @Body Residences residence);
 
     @POST("residences/add")
     Call<String> postResidence(@Body Residences residence);
@@ -97,40 +95,29 @@ public interface RestAPI {
 
     /***** Messages Facade Methods *****/
 
-    @GET("messages/count/{user}")
-    Call<String> countNewMessages(@Path("user") Integer user);
-
-    @GET("messages/conversation/{id}")
-    Call<List<Messages>> getMessagesByConversation(@Path("id") Integer id);
+    @GET("messages/conversation")
+    Call<List<Messages>> getMessagesByConversation(@Query("conversationId") String conversationId);
 
     @POST("messages/addmessage")
     Call<String> postMessage(@Body Messages message);
 
-    @POST("messages/deletemsg/{id}/{user}/{type}")
-    Call<String> deleteMessage(@Path("id") Integer id, @Path("user") Integer user, @Path("type") String type);
 
     /** Conversations Facade Methods **/
 
     @GET("conversations/user")
     Call<List<Conversations>> getConversations(@Query("userId") String userId);
 
-    @GET("conversations/{id}")
-    Call<Conversations> getConversationById(@Path("id") Integer id);
+    @GET("conversations/{conversationId}")
+    Call<Conversations> getConversationById(@Path("conversationId") String conversationId);
 
     @GET("conversations/last")
-    Call<List<Conversations>> lastConversationEntry(@Query("senderId") Integer senderId, @Query("receiverId") Integer receiverId);
+    Call<List<Conversations>> lastConversationEntry(@Query("senderId") String senderId, @Query("receiverId") String receiverId);
 
     @GET("conversations/residence/{id}/{user}")
-    Call<List<Conversations>> getConversationByResidenceId(@Path("id") Integer residenceId, @Path("user") Integer userId);
+    Call<List<Conversations>> getConversationByResidenceId(@Path("id") String residenceId, @Path("user") String userId);
 
-    @POST("conversations/update_conversation")
-    Call<String> updateConversation(@Query("read") String isRead, @Query("type") String userType, @Query("id") String id);
-
-    @POST("conversations/deletecnv/{id}/{user}/{type}")
-    Call<String> deleteConversation(@Path("id") Integer id, @Path("user") Integer user, @Path("type") String type);
-
-    @POST("conversations/restore/{id}/{user}/{type}")
-    Call<String> restoreConversation(@Path("id") Integer id, @Path("user") Integer user, @Path("type") String type);
+    @GET("conversations/update_conversation")
+    Call<List<Conversations>> updateConversation(@Query("read") String isRead, @Query("type") String userType, @Query("id") String id);
 
     @POST("conversations/add")
     Call<String> postConversation(@Body Conversations conversation);
@@ -152,8 +139,6 @@ public interface RestAPI {
     @POST("reservations/makereservation")
     Call<String> postReservation(@Body Reservations reservation);
 
-    @DELETE("reservations/delete/{id}")
-    Call<String> deleteReservation(@Path("id") Integer id);
 
     /** Reviews Facade Methods **/
 
@@ -172,6 +157,4 @@ public interface RestAPI {
     @POST("reviews/postreview")
     Call<String> postReview(@Body Reviews review);
 
-    @DELETE("reviews/delete/{id}")
-    Call<String> deleteReview(@Path("id") Integer id);
 }
