@@ -12,38 +12,14 @@ design process, the assumptions and all necessary details related to the project
 
 ### Description of E-commerce
 
-Electronic commerce (e-commerce) is a type of a business model, or a segment of
-a larger business model, that enables a firm or an individual to conduct business
-over an electronic network, typically the Internet. Electronic commerce operates in
-all four of the major market segments: business to business, business to consumer,
-consumer to consumer and consumer to business. Almost any product or service
-can be offered via e-commerce, from books and music to financial services and plane
-tickets. E-commerce has allowed firms to establish a market presence, or to enhance
-an existing market position, by providing a cheaper and more efficient distribution
+Electronic commerce (e-commerce) is a type of a business model, or a segment of a larger business model, that enables a firm or an individual to conduct business over an electronic network, typically the Internet. Electronic commerce operates in all four of the major market segments: business to business, business to consumer, consumer to consumer and consumer to business. Almost any product or service can be offered via e-commerce, from books and music to financial services and plane tickets. E-commerce has allowed firms to establish a market presence, or to enhance an existing market position, by providing a cheaper and more efficient distribution
 chain for their products or services.
 
-There are several types of electronic commerce. The most common is business to
-consumer, in which a business sells products or services directly to consumers over
-the Internet. An example of a business to consumer e-commerce transaction would
-be to individually purchasing a pair of sneakers through Nike’s website. As of busi-
-ness to business type of electronic commerce, companies can sell their products
-or services to other companies over the Internet. An example would be the com-
-pany GoDaddy, which sells domain names, websites, and hosting services to other
-businesses. Consumer to business electronic commerce involves consumers selling
-products or services to businesses. You’ve taken part in this form of e-commerce if
-you’ve ever completed an online payment survey where you’ve given your opinion
-about a product. Finally, regarding consumer to consumer e-commerce, consumers
-can sell products to other consumers via a website such as Amazon or eBay.
+There are several types of electronic commerce. The most common is business to consumer, in which a business sells products or services directly to consumers over the Internet. An example of a business to consumer e-commerce transaction would be to individually purchasing a pair of sneakers through Nike’s website. As of business to business type of electronic commerce, companies can sell their products or services to other companies over the Internet. An example would be the company GoDaddy, which sells domain names, websites, and hosting services to other businesses. Consumer to business electronic commerce involves consumers selling products or services to businesses. You’ve taken part in this form of e-commerce if you’ve ever completed an online payment survey where you’ve given your opinion about a product. Finally, regarding consumer to consumer e-commerce, consumers can sell products to other consumers via a website such as Amazon or eBay.
 
-The rise of e-commerce forces IT personnel to move beyond infrastructure design
-and maintenance and consider numerous customer-facing aspects such as consumer
-data privacy and security. When developing IT systems and applications to ac-
-commodate e-commerce activities, several things must be taken into consideration,
-like data governance related regulatory compliance mandates, personally identifiable
-information privacy rules and information protection protocols.
+The rise of e-commerce forces IT personnel to move beyond infrastructure design and maintenance and consider numerous customer-facing aspects such as consumer data privacy and security. When developing IT systems and applications to accommodate e-commerce activities, several things must be taken into consideration, like data governance related regulatory compliance mandates, personally identifiable information privacy rules and information protection protocols.
 
-Some benefits of e-commerce include its around-the-clock availability, the speed of
-access, the wide availability of goods and services for the consumer, easy accessibility, and international reach. Its perceived downsides include sometimes-limited customer service, consumers not being able to see or touch a product prior to purchase, and the necessitated wait time for product shipping.
+Some benefits of e-commerce include its around-the-clock availability, the speed of access, the wide availability of goods and services for the consumer, easy accessibility, and international reach. Its perceived downsides include sometimes-limited customer service, consumers not being able to see or touch a product prior to purchase, and the necessitated wait time for product shipping.
   
   ### Purpose of the application
 
