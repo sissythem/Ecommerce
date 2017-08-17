@@ -65,7 +65,7 @@ access, the wide availability of goods and services for the consumer, easy acces
   * __Conversations:__ An inbox service is provided to the users, where they can see messages from other users (either hosts or tenants) and reply back to them. All messages are grouped based on the subject of the conversation. As a result, two tables are created. In this table, the only necessary fields are the sender's and receiver's (user) id and the subject of the conversation.
   * __Messages:__ In addition to the above, there is the messages table with more data, such as the body of the message and a timestamp of the date in order to keep in track every action of sending/receiving and make a proper management. Moreover, the messages are linked to a conversation ("converations" table) based on the field "conversation\_id", in order for all the messages with the same subject to be grouped together.
   * __Searches:__ This table was created in order to maintain all location searches that user performs. This information is used at the home activity where application shows to user some recommendations, based on search history.
-  *__Images:__ In this table we store the paths to all images related to each residence.
+  * __Images:__ In this table we store the paths to all images related to each residence.
 
   
   ### RESTful Services
