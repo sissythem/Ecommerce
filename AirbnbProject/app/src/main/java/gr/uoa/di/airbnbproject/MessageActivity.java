@@ -2,7 +2,9 @@ package gr.uoa.di.airbnbproject;
 
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,7 +31,7 @@ import util.Utils;
 
 import static util.Utils.COPY_ACTION;
 import static util.Utils.ConvertStringToDate;
-import static util.Utils.DATABASE_DATE_FORMAT;
+import static util.Utils.FORMAT_DATE_YMD;
 import static util.Utils.DELETE_ACTION;
 import static util.Utils.USER_RECEIVER;
 import static util.Utils.USER_SENDER;
@@ -175,21 +177,27 @@ public class MessageActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onContextItemSelected(MenuItem item) {
+    public boolean onContextItemSelected(final MenuItem item) {
         super.onContextItemSelected(item);
         if (item.getTitle().equals(DELETE_ACTION)) {
-            RetrofitCalls retrofitCalls = new RetrofitCalls();
-            token = retrofitCalls.deleteMessage(token, Messages.get(item.getItemId()).getId(), currentUserId, userType);
-            if (!token.isEmpty() && token!=null && token!="not") {
-                Toast.makeText(c, "Message deleted!", Toast.LENGTH_SHORT).show();
-                reloadConversation();
-            } else if (token.equals("not")) {
-                Toast.makeText(c, "Failed to delete message! Your session has finished, please log in again!", Toast.LENGTH_SHORT).show();
-                Utils.logout(MessageActivity.this);
-                finish();
-            } else {
-                Toast.makeText(c, "Something went wrong, message is not deleted. Please try again!", Toast.LENGTH_SHORT).show();
-            }
+            new AlertDialog.Builder(MessageActivity.this)
+                .setTitle("Delete Message").setMessage("Do you really want to delete this message?").setIcon(R.drawable.ic_delete)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        RetrofitCalls retrofitCalls = new RetrofitCalls();
+                        token = retrofitCalls.deleteMessage(token, Messages.get(item.getItemId()).getId(), currentUserId, userType);
+                        if (!token.isEmpty() && token!=null && token!="not") {
+                            Toast.makeText(c, "Message deleted!", Toast.LENGTH_SHORT).show();
+                            reloadConversation();
+                        } else if (token.equals("not")) {
+                            Toast.makeText(c, "Failed to delete message! Your session has finished, please log in again!", Toast.LENGTH_SHORT).show();
+                            Utils.logout(MessageActivity.this);
+                            finish();
+                        } else {
+                            Toast.makeText(c, "Something went wrong, message is not deleted. Please try again!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }).setNegativeButton(android.R.string.no, null).show();
         } else if (item.getTitle().equals(COPY_ACTION)) {
             ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
             clipboard.setText(Messages.get(item.getItemId()).getBody());
@@ -246,7 +254,6 @@ public class MessageActivity extends AppCompatActivity {
                             /** Last Conversation entry in dbtable **/
                             conversation = retrofitCalls.getLastConversation(token, currentUserId, toUserId).get(0);
                             conversationId = conversation.getId();
-                            System.out.println(conversationId);
 
                             token = PostMessageResult(senderUser, conversation, msgBody);
                         } else {
@@ -301,8 +308,8 @@ public class MessageActivity extends AppCompatActivity {
 
     public String PostMessageResult(Users mUser, Conversations mConversation, String body) {
         short val_zero = 0;
-        String currDate = getCurrentDate(DATABASE_DATE_FORMAT);
-        Messages MessagesParams = new Messages(mUser, mConversation, body, ConvertStringToDate(currDate, DATABASE_DATE_FORMAT), val_zero, val_zero);
+        String currDate = getCurrentDate(FORMAT_DATE_YMD);
+        Messages MessagesParams = new Messages(mUser, mConversation, body, ConvertStringToDate(currDate, FORMAT_DATE_YMD), val_zero, val_zero);
         RetrofitCalls retrofitCalls = new RetrofitCalls();
         token = retrofitCalls.sendMessage(token, MessagesParams);
         return token;
