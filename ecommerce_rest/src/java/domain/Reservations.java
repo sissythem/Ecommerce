@@ -1,8 +1,6 @@
 package domain;
 
 import java.io.Serializable;
-import java.math.BigInteger;
-import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -42,9 +40,9 @@ public class Reservations implements Serializable {
     @Column(name = "id")
     private Integer id;
     @Column(name = "start_date")
-    private BigInteger startDate;
+    private long startDate;
     @Column(name = "end_date")
-    private BigInteger endDate;
+    private long endDate;
     @Column(name = "guests")
     private Integer guests;
     @JoinColumn(name = "residence_id", referencedColumnName = "id")
@@ -69,19 +67,19 @@ public class Reservations implements Serializable {
         this.id = id;
     }
 
-    public BigInteger getStartDate() {
+    public long getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(BigInteger startDate) {
+    public void setStartDate(long startDate) {
         this.startDate = startDate;
     }
 
-    public BigInteger getEndDate() {
+    public long getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(BigInteger endDate) {
+    public void setEndDate(long endDate) {
         this.endDate = endDate;
     }
 

@@ -1,7 +1,6 @@
 package domain;
 
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
@@ -118,9 +117,9 @@ public class Residences implements Serializable {
     @Column(name = "guests")
     private Integer guests;
     @Column(name = "available_date_start")
-    private BigInteger availableDateStart;
+    private long availableDateStart;
     @Column(name = "available_date_end")
-    private BigInteger availableDateEnd;
+    private long availableDateEnd;
     @Column(name = "min_price")
     private Double minPrice;
     @Column(name = "additional_cost_per_person")
@@ -306,19 +305,19 @@ public class Residences implements Serializable {
         this.guests = guests;
     }
 
-    public BigInteger getAvailableDateStart() {
+    public long getAvailableDateStart() {
         return availableDateStart;
     }
 
-    public void setAvailableDateStart(BigInteger availableDateStart) {
+    public void setAvailableDateStart(long availableDateStart) {
         this.availableDateStart = availableDateStart;
     }
 
-    public BigInteger getAvailableDateEnd() {
+    public long getAvailableDateEnd() {
         return availableDateEnd;
     }
 
-    public void setAvailableDateEnd(BigInteger availableDateEnd) {
+    public void setAvailableDateEnd(long availableDateEnd) {
         this.availableDateEnd = availableDateEnd;
     }
 

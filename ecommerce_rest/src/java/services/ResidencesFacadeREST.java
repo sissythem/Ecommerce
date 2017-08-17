@@ -24,7 +24,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import utils.General;
 import utils.KeyHolder;
 
 @Stateless
@@ -162,9 +161,9 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
         return data;
     }
     
-    private void addUserSearch(Integer userId, String city) {
-        Query query = em.createNativeQuery("INSERT IGNORE INTO searches (user_id, city) VALUES (?, ?)");
-        query.setParameter(1, userId);
+    private void addUserSearch(String username, String city) {
+        Query query = em.createNativeQuery("INSERT IGNORE INTO searches (user_id, city) VALUES ((SELECT u.id from users as u where u.username = ?), ?)");
+        query.setParameter(1, username);
         query.setParameter(2, city);
         query.executeUpdate();
     }
@@ -174,31 +173,32 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
     @Produces({MediaType.APPLICATION_JSON})
     public List<Residences> findRecommendations(
         @HeaderParam("Authorization") String token,
-        @QueryParam("userId")String userId, 
+        @QueryParam("username")String username, 
         @QueryParam("city")String city,
-        @QueryParam("startDate")String startDate,
-        @QueryParam("endDate")String endDate,
+        @QueryParam("startDate")long startDate,
+        @QueryParam("endDate")long endDate,
         @QueryParam("guests") Integer guests
     ) {
+        
+        System.out.println(token);
+        System.out.println(username);
+        System.out.println(city);
+        System.out.println(startDate);
+        System.out.println(endDate);
+        
         List<Residences> data = new ArrayList<Residences>();
         if (KeyHolder.checkToken(token, className)) {
-            
             Query query;
             List<Residences> results = new ArrayList<>();
-        
+            
             /* Date validator from utils.General */
-            General dateValidator = new General();
+            if (isEmpty(startDate) || startDate <= 0) {
+                startDate = getCurrentTimestamp(null);
+            }
+            if (isEmpty(endDate) || endDate <= 0) {
+                endDate = getCurrentTimestamp(7);
+            }
 
-            if (isEmpty(startDate) || !dateValidator.isThisDateValid(startDate, "yyyy-MM-dd")) {
-                String currentdate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-                startDate = currentdate;
-            }
-            if (isEmpty(endDate) || !dateValidator.isThisDateValid(endDate, "yyyy-MM-dd")) {
-                Calendar cal = Calendar.getInstance();
-                cal.add(Calendar.DATE, +7);
-                endDate = new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime());
-            }
-        
             String querystring = "SELECT * FROM residences as res"
             + " WHERE '"+startDate+"' >= res.available_date_start AND '"+endDate+"' <= res.available_date_end AND res.rooms > 0"
             + " AND res.guests > 0";
@@ -208,12 +208,12 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
                 + "WHERE r.residence_id = res.id AND r.start_date < '"+endDate+"' AND r.end_date > '"+startDate+"'"
                 + ")) >= " + guests;
         
-            if (!isEmpty(userId)) {            
-            querystring += " AND res.host_id != " + userId;
-            
+            if (!isEmpty(username)) {
+                querystring += " AND res.host_id != (SELECT u.id from users as u where u.username = '"+username+"')";
+                
                 if (!isEmpty(city)) {
                     city = city.toLowerCase();
-                    addUserSearch(Integer.parseInt(userId), city);
+                    addUserSearch(username, city);
                     querystring += " AND res.city = '" + city + "'";
                 }
             }
@@ -222,7 +222,6 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
         
             System.out.println(querystring);
             query = em.createNativeQuery(querystring, Residences.class);
-
             data = query.getResultList();
         }
         return data;
@@ -237,5 +236,23 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
             return token;
         }
         return "not";
+    }
+    
+    private long getCurrentTimestamp(Integer plus) {
+        String DateFormat = "yyyy-MM-dd";
+        long date = 0;
+        String currentdate = "";
+        
+        if (plus != null) {
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.DATE, + plus);
+            date = cal.getTimeInMillis();
+//            currentdate = new SimpleDateFormat(DateFormat).format(cal.getTime());
+        } else {
+            date = new Date().getTime();
+//            currentdate = new SimpleDateFormat(DateFormat).format(new Date());
+        }
+        System.out.println(date);
+        return date;
     }
 }
