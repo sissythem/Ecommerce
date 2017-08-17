@@ -33,9 +33,9 @@
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:text="Home"
                 android:background="@color/colorPrimary"
-                android:text="Inbox"
-                app:srcCompat="@android:drawable/ic_menu_search" />
+                app:srcCompat="@drawable/ic_home_holo_dark" />
 
             <ImageButton
                 android:id="@+id/inbox"
@@ -44,7 +44,7 @@
                 android:layout_height="match_parent"
                 android:text="Inbox"
                 android:background="@color/colorPrimary"
-                app:srcCompat="@android:drawable/ic_dialog_email" />
+                app:srcCompat="@drawable/ic_message_holo_dark" />
 
             <ImageButton
                 android:id="@+id/profile"
@@ -53,7 +53,7 @@
                 android:layout_height="match_parent"
                 android:background="@color/colorPrimary"
                 android:text="Profile"
-                app:srcCompat="@drawable/ic_profile" />
+                app:srcCompat="@drawable/ic_profile_holo_dark" />
 
             <ImageButton
                 android:id="@+id/host"
@@ -61,9 +61,8 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:background="@color/colorPrimary"
-                android:text="Residences"
-
-                app:srcCompat="@drawable/ic_switchrole"/>
+                android:text="Switch Role"
+                app:srcCompat="@drawable/ic_switch_holo_dark"/>
 
             <ImageButton
                 android:id="@+id/logout"
@@ -72,7 +71,7 @@
                 android:layout_height="match_parent"
                 android:text="Log Out"
                 android:background="@color/colorPrimary"
-                app:srcCompat="@android:drawable/ic_lock_power_off"/>
+                app:srcCompat="@drawable/ic_logout_holo_dark"/>
         </LinearLayout>
 
 

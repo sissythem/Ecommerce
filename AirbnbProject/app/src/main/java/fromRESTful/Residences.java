@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 
 public class Residences implements Serializable, Comparable {
 
@@ -30,8 +29,8 @@ public class Residences implements Serializable, Comparable {
     private double spaceArea;
     private String photos;
     private int guests;
-    private Date availableDateStart;
-    private Date availableDateEnd;
+    private long availableDateStart;
+    private long availableDateEnd;
     private double minPrice;
     private double additionalCostPerPerson;
     private Collection<Reviews> reviewsCollection;
@@ -40,62 +39,104 @@ public class Residences implements Serializable, Comparable {
 
     public Residences(){}
 
-    public Residences(Users host, String title, String type, String about, String address, String city, String country, String amenities, int floor, int rooms,
-                      int baths, String view, double spaceArea, int guests, double minPrice, double additionalCostPerPerson, String cancellationPolicy,
-                      String rules, short kitchen, short livingRoom, Date startDate, Date endDate, String photo)
+    public Residences(Users host,
+                      String title,
+                      String type,
+                      String about,
+                      String address,
+                      String city,
+                      String country,
+                      String amenities,
+                      int floor,
+                      int rooms,
+                      int baths,
+                      String view,
+                      double spaceArea,
+                      int guests,
+                      double minPrice,
+                      double additionalCostPerPerson,
+                      String cancellationPolicy,
+                      String rules,
+                      short kitchen,
+                      short livingRoom,
+                      long startDate,
+                      long endDate,
+                      String photo)
     {
         this.hostId                     = host;
         this.title                      = title;
         this.type                       = type;
         this.about                      = about;
-        this.cancellationPolicy         = cancellationPolicy;
-        this.country                    = country;
-        this.city                       = city;
         this.address                    = address;
-        this.rules                      = rules;
+        this.city                       = city;
+        this.country                    = country;
         this.amenities                  = amenities;
         this.floor                      = floor;
         this.rooms                      = rooms;
         this.baths                      = baths;
+        this.view                       = view;
         this.spaceArea                  = spaceArea;
-        this.photos                     = photo;
         this.guests                     = guests;
-        this.availableDateStart         = startDate;
-        this.availableDateEnd           = endDate;
         this.minPrice                   = minPrice;
         this.additionalCostPerPerson    = additionalCostPerPerson;
-        this.view                       = view;
+        this.cancellationPolicy         = cancellationPolicy;
+        this.rules                      = rules;
         this.kitchen                    = kitchen;
         this.livingRoom                 = livingRoom;
+        this.availableDateStart         = startDate;
+        this.availableDateEnd           = endDate;
+        this.photos                     = photo;
     }
 
-    public Residences(Users hostId, String title, String type, String about, String cancellationPolicy, String country, String city, String address, String rules, String amenities,
-                      int floor, int rooms, int baths, double spaceArea, String photos, int guests, Date availableDateStart, Date availableDateEnd, double minPrice,
-                      double additionalCostPerPerson, short kitchen, short livingRoom, String view) {
-
-        this.hostId                     = hostId;
+    public Residences(Integer residenceId,
+                      Users host,
+                      String title,
+                      String type,
+                      String about,
+                      String address,
+                      String city,
+                      String country,
+                      String amenities,
+                      int floor,
+                      int rooms,
+                      int baths,
+                      String view,
+                      double spaceArea,
+                      int guests,
+                      double minPrice,
+                      double additionalCostPerPerson,
+                      String cancellationPolicy,
+                      String rules,
+                      short kitchen,
+                      short livingRoom,
+                      long startDate,
+                      long endDate,
+                      String photo)
+    {
+        this.id                         = residenceId;
+        this.hostId                     = host;
         this.title                      = title;
         this.type                       = type;
         this.about                      = about;
-        this.cancellationPolicy         = cancellationPolicy;
-        this.country                    = country;
-        this.city                       = city;
         this.address                    = address;
-        this.rules                      = rules;
+        this.city                       = city;
+        this.country                    = country;
         this.amenities                  = amenities;
         this.floor                      = floor;
         this.rooms                      = rooms;
         this.baths                      = baths;
+        this.view                       = view;
         this.spaceArea                  = spaceArea;
-        this.photos                     = photos;
         this.guests                     = guests;
-        this.availableDateStart         = availableDateStart;
-        this.availableDateEnd           = availableDateEnd;
         this.minPrice                   = minPrice;
         this.additionalCostPerPerson    = additionalCostPerPerson;
+        this.cancellationPolicy         = cancellationPolicy;
+        this.rules                      = rules;
         this.kitchen                    = kitchen;
         this.livingRoom                 = livingRoom;
-        this.view                       = view;
+        this.availableDateStart         = startDate;
+        this.availableDateEnd           = endDate;
+        this.photos                     = photo;
     }
 
     public Integer getId() {
@@ -142,9 +183,7 @@ public class Residences implements Serializable, Comparable {
         return cancellationPolicy;
     }
 
-    public void setCancellationPolicy(String cancellationPolicy) {
-        this.cancellationPolicy = cancellationPolicy;
-    }
+    public void setCancellationPolicy(String cancellationPolicy) { this.cancellationPolicy = cancellationPolicy; }
 
     public String getCountry() {
         return country;
@@ -256,21 +295,17 @@ public class Residences implements Serializable, Comparable {
         this.guests = guests;
     }
 
-    public Date getAvailableDateStart() {
+    public long getAvailableDateStart() {
         return availableDateStart;
     }
 
-    public void setAvailableDateStart(Date availableDateStart) {
-        this.availableDateStart = availableDateStart;
-    }
+    public void setAvailableDateStart(long availableDateStart) { this.availableDateStart = availableDateStart; }
 
-    public Date getAvailableDateEnd() {
+    public long getAvailableDateEnd() {
         return availableDateEnd;
     }
 
-    public void setAvailableDateEnd(Date availableDateEnd) {
-        this.availableDateEnd = availableDateEnd;
-    }
+    public void setAvailableDateEnd(long availableDateEnd) { this.availableDateEnd = availableDateEnd; }
 
     public double getMinPrice() {
         return minPrice;
@@ -284,9 +319,7 @@ public class Residences implements Serializable, Comparable {
         return additionalCostPerPerson;
     }
 
-    public void setAdditionalCostPerPerson(double additionalCostPerPerson) {
-        this.additionalCostPerPerson = additionalCostPerPerson;
-    }
+    public void setAdditionalCostPerPerson(double additionalCostPerPerson) { this.additionalCostPerPerson = additionalCostPerPerson; }
 
     public short getActive() {return active;}
 
@@ -296,25 +329,18 @@ public class Residences implements Serializable, Comparable {
         return reviewsCollection;
     }
 
-    public void setReviewsCollection(Collection<Reviews> reviewsCollection) {
-        this.reviewsCollection = reviewsCollection;
-    }
+    public void setReviewsCollection(Collection<Reviews> reviewsCollection) { this.reviewsCollection = reviewsCollection; }
 
-    public Collection<Conversations> getConversationsCollection() {
-        return conversationsCollection;
-    }
+    public Collection<Conversations> getConversationsCollection() { return conversationsCollection; }
 
-    public void setConversationsCollection(Collection<Conversations> conversationsCollection) {
-        this.conversationsCollection = conversationsCollection;
-    }
+    public void setConversationsCollection(Collection<Conversations> conversationsCollection) { this.conversationsCollection = conversationsCollection; }
 
     public double getAverageRating(){
         double rating = 0.0;
         double averageRating;
         if(reviewsCollection == null){
             averageRating=0.0;
-        }
-        else{
+        } else {
             for(int i=0;i<reviewsCollection.size();i++){
                 rating = rating + ((ArrayList<Reviews>)reviewsCollection).get(i).getRating();
             }

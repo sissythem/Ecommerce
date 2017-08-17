@@ -27,10 +27,8 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 import fromRESTful.Residences;
 import fromRESTful.Users;
@@ -44,6 +42,11 @@ import util.RestClient;
 import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
+
+import static util.Utils.FORMAT_DATE_DMY;
+import static util.Utils.convertDateToMillisSec;
+import static util.Utils.convertTimestampToDateStr;
+
 public class EditResidenceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     public static final int GET_FROM_GALLERY = 3;
 
@@ -100,6 +103,7 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
             finish();
         }
         selectedResidence = retrofitCalls.getResidenceById(token, Integer.toString(residenceId));
+
         userInputLayout();
         ArrayList<Users> getUsersByUsername = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
         host = getUsersByUsername.get(0);
@@ -151,7 +155,6 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
             File file = new File(params[0]);
 
             RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpg"), file);
-//            RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
             /** MultipartBody.Part is used to send also the actual file name **/
             MultipartBody.Part body = MultipartBody.Part.createFormData("picture", file.getName(), requestFile);
             /** add another part within the multipart request **/
@@ -231,23 +234,8 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         etCancellationPolicy.setText(selectedResidence.getCancellationPolicy());
         etRules.setText(selectedResidence.getRules());
 
-        String startdate ="";
-        Date startDate = selectedResidence.getAvailableDateStart();
-
-        if(startDate !=null){
-            SimpleDateFormat newDateFormat = new SimpleDateFormat(Utils.APP_DATE_FORMAT);
-            startdate = newDateFormat.format(startDate);
-        }
-        tvStartDate.setText(startdate);
-
-        String enddate ="";
-        Date endDate = selectedResidence.getAvailableDateEnd();
-
-        if(endDate !=null){
-            SimpleDateFormat newDateFormat = new SimpleDateFormat(Utils.APP_DATE_FORMAT);
-            enddate = newDateFormat.format(endDate);
-        }
-        tvEndDate.setText(enddate);
+        tvStartDate.setText(convertTimestampToDateStr(selectedResidence.getAvailableDateStart(), FORMAT_DATE_DMY));
+        tvEndDate.setText(convertTimestampToDateStr(selectedResidence.getAvailableDateEnd(), FORMAT_DATE_DMY));
 
         btnStartDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -323,22 +311,45 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
                 final short kitchen                     = cbKitchen.isChecked() ? (short)1 : (short)0;
                 final short livingRoom                  = cbLivingRoom.isChecked() ? (short)1 : (short)0;
 
-                Date startDate = Utils.ConvertStringToDate(availableStartDate, Utils.DATABASE_DATE_FORMAT);
-                String convertedStartDate = Utils.ConvertDateToString(startDate, Utils.DATABASE_DATE_FORMAT);
-
-                Date endDate = Utils.ConvertStringToDate(availableEndDate, Utils.DATABASE_DATE_FORMAT);
-                String convertedEndDate = Utils.ConvertDateToString(endDate, Utils.DATABASE_DATE_FORMAT);
+                long startDate = convertDateToMillisSec(availableStartDate, FORMAT_DATE_DMY);
+                long endDate = convertDateToMillisSec(availableEndDate, FORMAT_DATE_DMY);
 
                 if (type.length() == 0 || title.length() == 0 || about.length() == 0 || address.length() == 0 || city.length() == 0 || country.length() == 0 || amenities.length() == 0 || floor.length() == 0
                         || rooms.length() == 0 || baths.length() == 0 || view.length() == 0 || spaceArea.length() == 0 || guests.length() == 0 || minPrice.length() == 0
                         || additionalCostPerPerson.length() == 0 || cancellationPolicy.length() == 0 || rules.length() == 0
-                        || convertedStartDate.length() == 0 || convertedEndDate.length() == 0) {
+                        || startDate <= 0 || endDate <= 0 || endDate <= startDate) {
                     Toast.makeText(c, "Please fill in all fields!", Toast.LENGTH_SHORT).show();
                     return;
                 } else {
-                    token = PutResult(host, title, type, about, address, city, country, amenities, Integer.parseInt(floor), Integer.parseInt(rooms),
-                            Integer.parseInt(baths), view, Double.parseDouble(spaceArea), Integer.parseInt(guests), Double.parseDouble(minPrice),
-                            Double.parseDouble(additionalCostPerPerson), cancellationPolicy, rules, kitchen, livingRoom, startDate, endDate, photo);
+                    Residences ResidenceParameters = new Residences(
+                            residenceId,
+                            host,
+                            title,
+                            type,
+                            about,
+                            address,
+                            city,
+                            country,
+                            amenities,
+                            Integer.parseInt(floor),
+                            Integer.parseInt(rooms),
+                            Integer.parseInt(baths),
+                            view,
+                            Double.parseDouble(spaceArea),
+                            Integer.parseInt(guests),
+                            Double.parseDouble(minPrice),
+                            Double.parseDouble(additionalCostPerPerson),
+                            cancellationPolicy,
+                            rules,
+                            kitchen,
+                            livingRoom,
+                            startDate,
+                            endDate,
+                            photo
+                    );
+
+                    RetrofitCalls retrofitCalls = new RetrofitCalls();
+                    token = retrofitCalls.editResidence(token, residenceId, ResidenceParameters);
 
                     if (!token.isEmpty() && token!=null && token!="not") {
                         Intent hostIntent = new Intent(EditResidenceActivity.this, HostActivity.class);
@@ -360,18 +371,6 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
                 }
             }
         });
-
-    }
-    public String PutResult(Users host, String title, String type, String about, String address, String city, String country, String amenities, int floor, int rooms,
-                            int baths, String view, double spaceArea, int guests, double minPrice, double additionalCostPerPerson, String cancellationPolicy,
-                            String rules, short kitchen, short livingRoom, Date startDate, Date endDate, String photo) {
-
-        Residences ResidenceParameters = new Residences(host, title, type, about, address, city, country, amenities, floor, rooms, baths, view, spaceArea, guests, minPrice,
-                additionalCostPerPerson, cancellationPolicy, rules, kitchen, livingRoom, startDate, endDate, photo);
-
-        RetrofitCalls retrofitCalls = new RetrofitCalls();
-        token = retrofitCalls.editResidence(token, residenceId, ResidenceParameters);
-        return token;
     }
 
 //    @Override

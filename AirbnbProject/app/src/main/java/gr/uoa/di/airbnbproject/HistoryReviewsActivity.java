@@ -1,8 +1,10 @@
 package gr.uoa.di.airbnbproject;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -104,21 +106,29 @@ public class HistoryReviewsActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onContextItemSelected(MenuItem item) {
+    public boolean onContextItemSelected(final MenuItem item) {
         super.onContextItemSelected(item);
         if (item.getTitle().equals(DELETE_ACTION)) {
-            RetrofitCalls retrofitCalls = new RetrofitCalls();
-            token = retrofitCalls.deleteReview(token, userReviews.get(item.getItemId()).getId());
-            if (!token.isEmpty() && token!=null && token!="not") {
-                Toast.makeText(c, "Reservation was cancelled!", Toast.LENGTH_SHORT).show();
-                reloadHistoryReviews();
-            } else if (token.equals("not")) {
-                Toast.makeText(c, "Failed to cancel reservation! Your session has finished, please log in again!", Toast.LENGTH_SHORT).show();
-                Utils.logout(HistoryReviewsActivity.this);
-                finish();
-            } else {
-                Toast.makeText(c, "Something went wrong, reservation was not cancelled. Please try again!", Toast.LENGTH_SHORT).show();
-            }
+
+            new AlertDialog.Builder(HistoryReviewsActivity.this)
+                .setTitle("Delete Review").setMessage("Do you really want to delete your review?").setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        RetrofitCalls retrofitCalls = new RetrofitCalls();
+                        token = retrofitCalls.deleteReview(token, userReviews.get(item.getItemId()).getId());
+                        if (!token.isEmpty() && token!=null && token!="not") {
+                            Toast.makeText(c, "Your review was deleted!", Toast.LENGTH_SHORT).show();
+                            reloadHistoryReviews();
+                        } else if (token.equals("not")) {
+                            Toast.makeText(c, "Failed to delete review! Your session has finished, please log in again!", Toast.LENGTH_SHORT).show();
+                            Utils.logout(HistoryReviewsActivity.this);
+                            finish();
+                        } else {
+                            Toast.makeText(c, "Something went wrong, review was not deleted. Please try again!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                })
+                .setNegativeButton(android.R.string.no, null).show();
         } else if (item.getTitle().equals(VIEW_RESIDENCE_ACTION)) {
             Intent showResidenceIntent = new Intent(HistoryReviewsActivity.this, ResidenceActivity.class);
             Bundle btype = new Bundle();

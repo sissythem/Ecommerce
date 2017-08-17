@@ -1,38 +1,36 @@
 package fromRESTful;
 
 import java.io.Serializable;
-import java.util.Date;
 
 public class Reservations implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private Integer id;
-    private Date startDate;
-    private Date endDate;
+    private long startDate;
+    private long endDate;
     private int guests;
     private Residences residenceId;
     private Users tenantId;
 
     public Reservations() {}
 
-    public Reservations(Users user, Residences residence, Date date_start, Date date_end, int guests)
-    {
-        this.tenantId=user;
-        this.residenceId=residence;
-        this.startDate=date_start;
-        this.endDate=date_end;
-        this.guests=guests;
+    public Reservations(Users user, Residences residence, long date_start, long date_end, int guests) {
+        this.tenantId       = user;
+        this.residenceId    = residence;
+        this.startDate      = date_start;
+        this.endDate        = date_end;
+        this.guests         = guests;
     }
 
     public Reservations(Integer id) {
         this.id = id;
     }
 
-    public Reservations(Integer id, Date startDate, Date endDate, int guests) {
+    public Reservations(Integer id, long startDate, long endDate, int guests) {
         this.id = id;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.guests = guests;
+        this.startDate  = startDate;
+        this.endDate    = endDate;
+        this.guests     = guests;
     }
 
     public Integer getId() {
@@ -43,21 +41,19 @@ public class Reservations implements Serializable {
         this.id = id;
     }
 
-    public Date getStartDate() {
+    public long getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(long startDate) {
         this.startDate = startDate;
     }
 
-    public Date getEndDate() {
+    public long getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
-    }
+    public void setEndDate(long endDate) { this.endDate = endDate; }
 
     public int getGuests() {
         return guests;

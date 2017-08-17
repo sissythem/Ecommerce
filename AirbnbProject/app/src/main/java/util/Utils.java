@@ -5,6 +5,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -13,12 +14,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.app.NotificationCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -29,6 +33,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import fromRESTful.Conversations;
+import fromRESTful.Reservations;
 import gr.uoa.di.airbnbproject.GreetingActivity;
 import gr.uoa.di.airbnbproject.HomeActivity;
 import gr.uoa.di.airbnbproject.HostActivity;
@@ -36,28 +41,35 @@ import gr.uoa.di.airbnbproject.InboxActivity;
 import gr.uoa.di.airbnbproject.MessageActivity;
 import gr.uoa.di.airbnbproject.ProfileActivity;
 import gr.uoa.di.airbnbproject.R;
+import gr.uoa.di.airbnbproject.ResidenceActivity;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 import static util.RestClient.BASE_URL;
 
 public class Utils {
-    public static String USER_LOGIN_PREFERENCES = "login_preferences";
 
-    public static final String APP_DATE_FORMAT = "dd-MM-yyyy";
-    public static final String DATABASE_DATETIME_FORMAT = "dd-MM-yyyy'T'HH:mm:ss";
-    public static final String DATABASE_DATE_FORMAT = "yyyy-MM-dd";
+    /** SHARED PREFERENCES TITLE FOR LOGGED IN USER **/
+    public static String USER_LOGIN_PREFERENCES         = "login_preferences";
 
-    public static final String DATE_YEAR_FIRST = "yyyy-MM-dd";
-    public static final String DATE_TEXT_MONTH = "dd MMMM";
-    public static final String MYSQL_FORMAT = "Y-m-d H:i:s";
+    /** DATE FORMATS **/
+    public static final String FORMAT_DATE_YMD          = "yyyy-MM-dd";
+    public static final String FORMAT_DATE_DMY          = "dd-MM-yyyy";
+    public static final String FORMAT_DATETIME_DMY_HMS  = "dd-MM-yyyy'T'HH:mm:ss";
+    public static final String FORMAT_DATE_DM           = "dd MMMM";
+    public static final String FORMAT_DATE_DB           = "Y-m-d H:i:s";
 
     /** Message & Conversation Constants **/
-    public static final String USER_SENDER      = "sender";
-    public static final String USER_RECEIVER    = "receiver";
-    public static final String DELETE_ACTION    = "Delete";
-    public static final String COPY_ACTION      = "Copy";
-    public static final String VIEW_RESIDENCE_ACTION    = "View Residence";
-    public static final String CONTACT_HOST_ACTION      = "Contact Host";
+    public static final String USER_SENDER              = "sender";
+    public static final String USER_RECEIVER            = "receiver";
+
+    /** Options Menus on ContextMenu **/
+    public static final String EDIT_ACTION                  = "Edit";
+    public static final String DELETE_ACTION                = "Delete";
+    public static final String COPY_ACTION                  = "Copy";
+    public static final String RESERVATIONS_ACTION          = "Reservations";
+    public static final String VIEW_RESIDENCE_ACTION        = "View Residence";
+    public static final String CONTACT_HOST_ACTION          = "Contact Host";
+    public static final String CANCEL_RESERVATION_ACTION    = "Cancel Reservation";
 
     public static Date ConvertStringToDate(String date, String format)
     {
@@ -98,6 +110,49 @@ public class Utils {
         return "DATE_ERROR";
     }
 
+    public static long convertDateToMillisSec(Date date, String format) {
+        return convertDateToMillisSec(ConvertDateToString(date, format), format);
+    }
+
+    public static long convertDateToMillisSec(String date, String format) {
+        long milliseconds = 0;
+        SimpleDateFormat f = new SimpleDateFormat(format);
+        try {
+            Date d = f.parse(date);
+            milliseconds = d.getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return milliseconds;
+    }
+
+    public static String convertTimestampToDateStr(long milliseconds, String format) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(milliseconds);
+
+        int mYear = calendar.get(Calendar.YEAR);
+        int mMonth = calendar.get(Calendar.MONTH);
+        int mDay = calendar.get(Calendar.DAY_OF_MONTH);
+
+        String finaldate;
+        switch (format) {
+            case FORMAT_DATE_DMY:
+                finaldate = mDay + "-" + mMonth + "-" + mYear;
+                break;
+            case FORMAT_DATE_YMD:
+            default:
+                finaldate = mYear + "-" + mMonth + "-" + mDay;
+                break;
+        }
+        return finaldate;
+    }
+
+    public static Date convertTimestampToDate(long milliseconds, String format) {
+        String strDate = convertTimestampToDateStr(milliseconds, format);
+        Date date = ConvertStringToDate(strDate, format);
+        return date;
+    }
+
     public static boolean isThisDateValid(String dateToValidate, String dateFormat){
         if(dateToValidate == null){
             return false;
@@ -109,7 +164,6 @@ public class Utils {
         try {
             //if not valid, it will throw ParseException
             Date date = sdf.parse(dateToValidate);
-            System.out.println(date);
         } catch (ParseException e) {
             Log.i("",e.getMessage());
             return false;
@@ -136,11 +190,9 @@ public class Utils {
         return formatteddate;
     }
 
-    public static void manageFooter(Activity context, Boolean user) {
+    public static void manageFooter(final Activity context, Boolean user) {
         final Activity this_context = context;
         final Boolean this_user = user;
-
-        SharedPreferences sharedPrefs = context.getApplicationContext().getSharedPreferences(USER_LOGIN_PREFERENCES, Context.MODE_PRIVATE);
 
         ImageButton bhome = (ImageButton) this_context.findViewById(R.id.home);
         ImageButton binbox = (ImageButton) this_context.findViewById(R.id.inbox);
@@ -202,19 +254,26 @@ public class Utils {
         bswitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bundle buser = new Bundle();
-                if(this_user == false) {
-                    Intent homeIntent = new Intent(this_context, HomeActivity.class);
-                    buser.putBoolean("type", true);
-                    homeIntent.putExtras(buser);
-                    this_context.startActivity(homeIntent);
-                } else {
-                    Intent hostIntent = new Intent(this_context, HostActivity.class);
-                    buser.putBoolean("type", false);
-                    hostIntent.putExtras(buser);
-                    this_context.startActivity(hostIntent);
-                }
+                new AlertDialog.Builder(context)
+                        .setTitle("Switch Role")
+                        .setMessage("You switch role as " + (!this_user ? "User":"Host"))
+                        .setIcon(R.drawable.ic_profile)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                Intent newIntent;
+                                Bundle buser = new Bundle();
+                                if(this_user == false) {
+                                    newIntent = new Intent(this_context, HomeActivity.class);
+                                    buser.putBoolean("type", true);
+                                } else {
+                                    newIntent = new Intent(this_context, HostActivity.class);
+                                    buser.putBoolean("type", false);
+                                }
 
+                                newIntent.putExtras(buser);
+                                this_context.startActivity(newIntent);
+                            }
+                        }).setNegativeButton(android.R.string.no, null).show();
             }
         });
 
@@ -246,8 +305,6 @@ public class Utils {
         final Activity this_context = context;
         final Class this_new_context = newContext;
         final boolean this_user = user;
-
-        SharedPreferences sharedPrefs = context.getApplicationContext().getSharedPreferences(USER_LOGIN_PREFERENCES, Context.MODE_PRIVATE);
 
         ImageButton bback = (ImageButton) this_context.findViewById(R.id.ibBack);
         bback.setOnClickListener(new View.OnClickListener()
@@ -364,9 +421,21 @@ public class Utils {
                 .into(imgView);
     }
 
-    public static void reloadActivity(Context context, Bundle bupdated) {
+    public static void goToActivity(Context context, Class newIntentClass, Bundle extras) {
+        Intent newIntent = new Intent(context, newIntentClass);
+        newIntent.putExtras(extras);
+        try {
+            context.startActivity(newIntent);
+            ((Activity) context).finish();
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
+
+    public static void reloadActivity(Context context, Bundle extras) {
         Intent currentIntent = ((Activity) context).getIntent();
-        currentIntent.putExtras(bupdated);
+        currentIntent.putExtras(extras);
 
         try {
             context.startActivity(currentIntent);
@@ -379,7 +448,6 @@ public class Utils {
     protected static Integer getNewMessages(String token, Integer userId) {
         RetrofitCalls retrofitCalls = new RetrofitCalls();
         Integer countMsg = retrofitCalls.countNewMessages(token, userId);
-        System.out.println(countMsg);
         return countMsg;
     }
 
@@ -433,7 +501,6 @@ public class Utils {
         notification.setDefaults(Notification.DEFAULT_ALL);
 
         Intent intent = new Intent(context, newContextClass);
-
         Intent newIntent = new Intent(context, newIntentClass);
         newIntent.putExtra("openActivity", newIntentClass);
 

@@ -102,7 +102,7 @@ public class ViewHostProfileActivity extends AppCompatActivity {
         String date="NO DATE";
         if(bdate != null){
             try{
-                SimpleDateFormat newDateFormat = new SimpleDateFormat(Utils.APP_DATE_FORMAT);
+                SimpleDateFormat newDateFormat = new SimpleDateFormat(Utils.FORMAT_DATE_DMY);
                 date = newDateFormat.format(bdate);
             }
             catch (Exception e){

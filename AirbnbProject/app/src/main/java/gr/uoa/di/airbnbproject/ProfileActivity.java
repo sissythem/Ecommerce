@@ -129,17 +129,18 @@ public class ProfileActivity extends AppCompatActivity {
                             startActivity(editIntent);
                         } else if (item.getItemId() == R.id.deleteProfile) {
                             new AlertDialog.Builder(ProfileActivity.this)
-                                    .setTitle("Delete Account").setMessage("Do you really want to delete your account?").setIcon(android.R.drawable.ic_dialog_alert)
-                                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int whichButton) {
-                                            if (retrofitCalls.deleteUserById(token, loggedinUser.getId().toString()) == null) {
-                                                Toast.makeText(c, "Account deleted!", Toast.LENGTH_SHORT).show();
-                                                Utils.logout(ProfileActivity.this);
-                                            } else {
-                                                Toast.makeText(c, "Something went wrong, account is not deleted. Please try again!", Toast.LENGTH_SHORT).show();
-                                            }
-                                        }})
-                                    .setNegativeButton(android.R.string.no, null).show();
+                                .setTitle("Delete Account").setMessage("Do you really want to delete your account?").setIcon(android.R.drawable.ic_dialog_alert)
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        if (retrofitCalls.deleteUserById(token, loggedinUser.getId().toString()) == null) {
+                                            Toast.makeText(c, "Account deleted!", Toast.LENGTH_SHORT).show();
+                                            Utils.logout(ProfileActivity.this);
+                                        } else {
+                                            Toast.makeText(c, "Something went wrong, account is not deleted. Please try again!", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                })
+                                .setNegativeButton(android.R.string.no, null).show();
                         }
                         return true;
                     }

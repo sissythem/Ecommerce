@@ -18,8 +18,9 @@ import util.Session;
 import util.Utils;
 
 import static android.text.TextUtils.isEmpty;
-import static util.Utils.DATE_TEXT_MONTH;
-import static util.Utils.DATE_YEAR_FIRST;
+import static util.Utils.FORMAT_DATE_DM;
+import static util.Utils.FORMAT_DATE_YMD;
+import static util.Utils.convertDateToMillisSec;
 import static util.Utils.getSessionData;
 
 public class SearchResultsActivity extends AppCompatActivity {
@@ -31,7 +32,8 @@ public class SearchResultsActivity extends AppCompatActivity {
     ListAdapterResidences adapter;
     List<Residences> Recommendations;
 
-    String guests, startDate, endDate;
+    Integer guests;
+    String startDate, endDate;
     Context c;
 
     @Override
@@ -56,34 +58,36 @@ public class SearchResultsActivity extends AppCompatActivity {
 
         Bundle buser    = getIntent().getExtras();
         String city     = buser.getString("city");
-        guests          = buser.getString("guests");
+        guests          = buser.getInt("guests");
         startDate       = buser.getString("startDate");
         endDate         = buser.getString("endDate");
         user            = buser.getBoolean("type");
         user=true;
         c=this;
 
-        if(Utils.isTokenExpired(token))
-        {
+        if(Utils.isTokenExpired(token)) {
             Utils.logout(this);
             finish();
         }
-        if (isEmpty(guests)) guests = "1";
+        if (guests <= 0) guests = 1;
 
-        if (isEmpty(startDate) || Utils.isThisDateValid(startDate, DATE_YEAR_FIRST)) startDate = Utils.getCurrentDate(DATE_YEAR_FIRST);
-        if (isEmpty(endDate) || Utils.isThisDateValid(endDate, DATE_YEAR_FIRST)) endDate = Utils.getDefaultEndDate(DATE_YEAR_FIRST);
+        if (isEmpty(startDate) || !Utils.isThisDateValid(startDate, FORMAT_DATE_YMD)) startDate = Utils.getCurrentDate(FORMAT_DATE_YMD);
+        if (isEmpty(endDate) || !Utils.isThisDateValid(endDate, FORMAT_DATE_YMD)) endDate = Utils.getDefaultEndDate(FORMAT_DATE_YMD);
 
         String str_city = (!isEmpty(city)) ? Character.toUpperCase(city.charAt(0)) + city.substring(1) : "Anywhere";
-        String str_startdate = Utils.formatDate(startDate, DATE_TEXT_MONTH);
-        String str_enddate = Utils.getDefaultEndDate(DATE_TEXT_MONTH);
-        String str_guests = guests + " " + ((Integer.parseInt(guests) > 1) ? "guests" : "guest");
+        String str_startdate = Utils.formatDate(startDate, FORMAT_DATE_DM);
+        String str_enddate = Utils.getDefaultEndDate(FORMAT_DATE_DM);
+        String str_guests = guests + " " + ((guests > 1) ? "guests" : "guest");
 
         searchlist = (TextView) findViewById(R.id.searchlist);
         searchlist.setText(str_city + ", " + str_startdate + "-" + str_enddate + ", " + str_guests);
 
         RetrofitCalls retrofitCalls = new RetrofitCalls();
 
-        Recommendations = retrofitCalls.getRecommendations(token, sessionData.getUsername(), city, startDate, endDate, guests);
+        long start_timestamp = convertDateToMillisSec(startDate, FORMAT_DATE_YMD);
+        long end_timestamp = convertDateToMillisSec(endDate, FORMAT_DATE_YMD);
+
+        Recommendations = retrofitCalls.getRecommendations(token, sessionData.getUsername(), city, start_timestamp, end_timestamp, guests);
 
         String[] title                  = new String [Recommendations.size()];
         String[] representativePhoto    = new String [Recommendations.size()];
@@ -108,7 +112,7 @@ public class SearchResultsActivity extends AppCompatActivity {
                 Intent showResidenceIntent = new Intent(SearchResultsActivity.this, ResidenceActivity.class);
                 Bundle bsearch = new Bundle();
                 bsearch.putBoolean("type", user);
-                bsearch.putString("guests", guests);
+                bsearch.putInt("guests", guests);
                 bsearch.putString("startDate", startDate);
                 bsearch.putString("endDate", endDate);
                 startActivity(showResidenceIntent);

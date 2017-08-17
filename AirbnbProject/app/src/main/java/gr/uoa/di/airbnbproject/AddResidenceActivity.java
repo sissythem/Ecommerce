@@ -29,6 +29,9 @@ import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
 
+import static util.Utils.FORMAT_DATE_DMY;
+import static util.Utils.convertDateToMillisSec;
+
 public class AddResidenceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     private static final int RESULT_LOAD_IMAGE =1;
 
@@ -214,22 +217,46 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
                 final short kitchen                    = cbKitchen.isChecked() ? (short)1 : (short)0;
                 final short livingRoom                 = cbLivingRoom.isChecked() ? (short)1 : (short)0;
 
-                Date startDate = Utils.ConvertStringToDate(availableStartDate, Utils.APP_DATE_FORMAT);
-                String convertedStartDate = Utils.ConvertDateToString(startDate, Utils.DATABASE_DATE_FORMAT);
-
-                Date endDate = Utils.ConvertStringToDate(availableEndDate, Utils.APP_DATE_FORMAT);
-                String convertedEndDate = Utils.ConvertDateToString(endDate, Utils.DATABASE_DATE_FORMAT);
+                long startDate = convertDateToMillisSec(availableStartDate, FORMAT_DATE_DMY);
+                long endDate = convertDateToMillisSec(availableEndDate, FORMAT_DATE_DMY);
 
                 if (title.length() == 0 || type.length() == 0 || about.length() == 0 || address.length() == 0 || city.length() == 0 || country.length() == 0 || amenities.length() == 0 || floor.length() == 0
                         || rooms.length() == 0 || baths.length() == 0 || view.length() == 0 || spaceArea.length() == 0 || guests.length() == 0 || minPrice.length() == 0
                         || additionalCostPerPerson.length() == 0 || cancellationPolicy.length() == 0 || rules.length() == 0
-                        || convertedStartDate.length() == 0 || convertedEndDate.length() == 0 || photo.length() == 0) {
+                        || startDate <= 0 || endDate <= 0 || endDate <= startDate || photo.length() == 0) {
                     Toast.makeText(c, "Please fill in all fields!", Toast.LENGTH_SHORT).show();
                     return;
                 } else {
-                    token = PostResult(host, title, type, about, cancellationPolicy, country, city, address, rules, amenities, Integer.parseInt(floor),
-                            Integer.parseInt(rooms), Integer.parseInt(baths), Double.parseDouble(spaceArea), photo, Integer.parseInt(guests), startDate, endDate,
-                            Double.parseDouble(minPrice), Double.parseDouble(additionalCostPerPerson), kitchen, livingRoom, view);
+
+                    /** CALL AND GET REST PUT EDIT RESULT **/
+                    Residences ResidenceParameters = new Residences(
+                            host,
+                            title,
+                            type,
+                            about,
+                            address,
+                            city,
+                            country,
+                            amenities,
+                            Integer.parseInt(floor),
+                            Integer.parseInt(rooms),
+                            Integer.parseInt(baths),
+                            view,
+                            Double.parseDouble(spaceArea),
+                            Integer.parseInt(guests),
+                            Double.parseDouble(minPrice),
+                            Double.parseDouble(additionalCostPerPerson),
+                            cancellationPolicy,
+                            rules,
+                            kitchen,
+                            livingRoom,
+                            startDate,
+                            endDate,
+                            photo
+                    );
+
+                    RetrofitCalls retrofitCalls = new RetrofitCalls();
+                    token = retrofitCalls.postResidence(token, ResidenceParameters);
 
                     if (!token.isEmpty() && token!=null && token != "not") {
                         Intent hostIntent = new Intent(AddResidenceActivity.this, HostActivity.class);
@@ -250,17 +277,6 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
                 }
             }
         });
-    }
-
-    public String PostResult(Users hostId, String title, String type, String about, String cancellationPolicy, String country, String city, String address, String rules,
-                             String amenities, int floor, int rooms, int baths, double spaceArea, String photos, int guests, Date availableDateStart,
-                             Date availableDateEnd, double minPrice, double additionalCostPerPerson, short kitchen, short livingRoom, String view) {
-        Residences ResidenceParameters = new Residences(hostId, title, type, about, cancellationPolicy, country, city, address, rules, amenities, floor, rooms,
-                baths, spaceArea, photos, guests, availableDateStart, availableDateEnd, minPrice, additionalCostPerPerson, kitchen, livingRoom, view);
-
-        RetrofitCalls retrofitCalls = new RetrofitCalls();
-        token = retrofitCalls.postResidence(token, ResidenceParameters);
-        return token;
     }
 
     @Override

@@ -28,23 +28,6 @@
                 android:layout_weight="1"
                 android:layout_toRightOf="@id/representativePhoto"
                 android:textSize="20sp" />
-
-            <ImageButton
-                android:id="@+id/editResidence"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_toRightOf="@+id/title"
-                app:srcCompat="@android:drawable/ic_menu_edit" />
-
-            <ImageButton
-                android:id="@+id/deleteResidence"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_toRightOf="@+id/editResidence"
-                app:srcCompat="@android:drawable/ic_delete" />
-
         </LinearLayout>
 
         <TextView

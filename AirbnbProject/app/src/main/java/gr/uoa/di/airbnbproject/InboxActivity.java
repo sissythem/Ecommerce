@@ -2,8 +2,10 @@ package gr.uoa.di.airbnbproject;
 
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -80,9 +82,7 @@ public class InboxActivity extends AppCompatActivity {
         inboxlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
                 /** TODO: ANDROID CANT UNDERSTAND UPDATES?? **/
-                System.out.println(isRead[position]);
                 if (isRead[position] != 1) {
                     String userUnread = "";
                     if (currentUserId == Conversations.get(position).getSenderId().getId()) {
@@ -177,28 +177,35 @@ public class InboxActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onContextItemSelected(MenuItem item) {
+    public boolean onContextItemSelected(final MenuItem item) {
         super.onContextItemSelected(item);
         if (item.getTitle().equals(DELETE_ACTION)) {
+            new AlertDialog.Builder(InboxActivity.this)
+                .setTitle("Delete Conversation").setMessage("Do you really want to delete this conversation?").setIcon(R.drawable.ic_delete)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        if (currentUserId == Conversations.get(item.getItemId()).getSenderId().getId()) {
+                            userType = USER_SENDER;
+                        } else if (currentUserId == Conversations.get(item.getItemId()).getReceiverId().getId()) {
+                            userType = USER_RECEIVER;
+                        }
 
-            if (currentUserId == Conversations.get(item.getItemId()).getSenderId().getId()) {
-                userType = USER_SENDER;
-            } else if (currentUserId == Conversations.get(item.getItemId()).getReceiverId().getId()) {
-                userType = USER_RECEIVER;
-            }
+                        RetrofitCalls retrofitCalls = new RetrofitCalls();
+                        token = retrofitCalls.deleteConversation(token, Conversations.get(item.getItemId()).getId(), currentUserId, userType);
+                        if (!token.isEmpty() && token!=null && token!="not") {
+                            Toast.makeText(c, "Conversation was deleted!", Toast.LENGTH_SHORT).show();
+                            reloadInbox();
+                        } else if (token.equals("not")) {
+                            Toast.makeText(c, "Failed to delete conversation! Your session has finished, please log in again!", Toast.LENGTH_SHORT).show();
+                            Utils.logout(InboxActivity.this);
+                            finish();
+                        } else {
+                            Toast.makeText(c, "Something went wrong, conversation is not deleted. Please try again!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }).setNegativeButton(android.R.string.no, null).show();
 
-            RetrofitCalls retrofitCalls = new RetrofitCalls();
-            token = retrofitCalls.deleteConversation(token, Conversations.get(item.getItemId()).getId(), currentUserId, userType);
-            if (!token.isEmpty() && token!=null && token!="not") {
-                Toast.makeText(c, "Conversation was deleted!", Toast.LENGTH_SHORT).show();
-                reloadInbox();
-            } else if (token.equals("not")) {
-                Toast.makeText(c, "Failed to delete conversation! Your session has finished, please log in again!", Toast.LENGTH_SHORT).show();
-                Utils.logout(InboxActivity.this);
-                finish();
-            } else {
-                Toast.makeText(c, "Something went wrong, conversation is not deleted. Please try again!", Toast.LENGTH_SHORT).show();
-            }
+
         } else {
             Toast.makeText(this, item.getTitle(), Toast.LENGTH_LONG).show();
         }

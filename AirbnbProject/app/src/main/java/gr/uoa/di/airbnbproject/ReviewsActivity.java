@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -26,6 +27,7 @@ import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
 
+import static util.Utils.convertTimestampToDate;
 import static util.Utils.getSessionData;
 
 public class ReviewsActivity extends AppCompatActivity {
@@ -68,13 +70,11 @@ public class ReviewsActivity extends AppCompatActivity {
 
         c = this;
         Bundle buser = getIntent().getExtras();
-        user = buser.getBoolean("type");
-
-        residenceId         = buser.getInt("residenceId");
+        user        = buser.getBoolean("type");
+        residenceId = buser.getInt("residenceId");
         RetrofitCalls retrofitCalls = new RetrofitCalls();
 
-        if(Utils.isTokenExpired(token))
-        {
+        if(Utils.isTokenExpired(token)) {
             Utils.logout(this);
             finish();
         }
@@ -101,7 +101,28 @@ public class ReviewsActivity extends AppCompatActivity {
         /** FOOTER TOOLBAR **/
         Utils.manageFooter(ReviewsActivity.this, user);
         /** BACK BUTTON **/
-        Utils.manageBackButton(this, ResidenceActivity.class, user);
+
+        ImageButton bback = (ImageButton) findViewById(R.id.ibBack);
+        bback.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent backintent = new Intent(ReviewsActivity.this, ResidenceActivity.class);
+                Bundle bextras = new Bundle();
+                bextras.putBoolean("type", user);
+                bextras.putInt("residenceId", residenceId);
+                backintent.putExtras(bextras);
+
+                try {
+                    startActivity(backintent);
+                    finish();
+                } catch (Exception ex) {
+                    System.out.println(ex.getMessage());
+                    ex.printStackTrace();
+                }
+            }
+        });
+
+        Utils.manageBackButton(this, (user)?HomeActivity.class:HostActivity.class, user);
 
         etcomment = (EditText)findViewById(R.id.writeComment);
         btnreview = (Button)findViewById(R.id.btnreview);
@@ -116,35 +137,22 @@ public class ReviewsActivity extends AppCompatActivity {
             }
         });
 
-        ArrayList<Reservations> reservationsByTenantIdandResidenceId= retrofitCalls.getReservationsByTenantIdandResidenceId(token,
-                loggedinUser.getId().toString(), selectedResidence.getId().toString());
+        ArrayList<Reservations> reservationsByTenantIdandResidenceId= retrofitCalls.getReservationsByTenantIdandResidenceId(token, loggedinUser.getId().toString(), selectedResidence.getId().toString());
+
+        Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
+        long currentDate = calendar.getTimeInMillis();
 
         boolean isDatePassed = false;
-        Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
-        Date currentDate = calendar.getTime();
-
-        for(int i=0;i<reservationsByTenantIdandResidenceId.size();i++)
-        {
-            if(reservationsByTenantIdandResidenceId.get(i).getEndDate().before(currentDate))
-            {
-                //at least one reservation in the past
-                isDatePassed=true;
-            }
-            else
-            {
-                isDatePassed=false;
-            }
+        for(int i=0;i<reservationsByTenantIdandResidenceId.size();i++) {
+            isDatePassed = reservationsByTenantIdandResidenceId.get(i).getEndDate() < currentDate;
         }
 
-        if (reservationsByTenantIdandResidenceId.isEmpty() || isDatePassed==false)
-        {
+        if (reservationsByTenantIdandResidenceId.isEmpty() || !isDatePassed) {
             etcomment.setVisibility(View.GONE);
             btnreview.setVisibility(View.GONE);
             ratingBar.setVisibility(View.GONE);
             txtrating.setVisibility(View.GONE);
-        }
-        else
-        {
+        } else {
             btnreview.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v)
@@ -155,7 +163,10 @@ public class ReviewsActivity extends AppCompatActivity {
                         Toast.makeText(c, "Please write your comment and rate the residence", Toast.LENGTH_SHORT).show();
                         return;
                     } else {
-                        token = postResult(selectedResidence, host, loggedinUser, comment, ratingfromuser);
+                        Reviews reviews = new Reviews(selectedResidence, host, loggedinUser, comment, ratingfromuser);
+                        RetrofitCalls retrofitCalls = new RetrofitCalls();
+                        token = retrofitCalls.postReview(token, reviews);
+
                         if (!token.isEmpty()) {
                             Toast.makeText(c, "Your comment has been successfully submitted. Thank you!", Toast.LENGTH_SHORT).show();
                             return;
@@ -168,14 +179,5 @@ public class ReviewsActivity extends AppCompatActivity {
                 }
             });
         }
-    }
-
-    public String postResult(Residences residence, Users host, Users tenant, String comment, double rating)
-    {
-        Reviews reviews = new Reviews(residence, host, tenant, comment, rating);
-        RetrofitCalls retrofitCalls = new RetrofitCalls();
-        token = retrofitCalls.postReview(token, reviews);
-
-        return token;
     }
 }

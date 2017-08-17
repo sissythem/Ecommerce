@@ -1,12 +1,14 @@
 package gr.uoa.di.airbnbproject;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -42,6 +44,10 @@ import util.RestCalls;
 import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
+
+import static util.Utils.FORMAT_DATE_YMD;
+import static util.Utils.convertDateToMillisSec;
+import static util.Utils.convertTimestampToDate;
 
 public class ResidenceActivity extends FragmentActivity implements OnMapReadyCallback {
     Boolean user;
@@ -109,7 +115,6 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapResidence);
         mapFragment.getMapAsync(this);
 
-        System.out.println(user);
         /** BACK BUTTON **/
         Utils.manageBackButton(this, (user)?HomeActivity.class:HostActivity.class, user);
     }
@@ -136,11 +141,12 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         rating                  = (RatingBar)findViewById(R.id.rating);
         bReviews                = (Button)findViewById(R.id.btnReviews);
         bBook                   = (Button)findViewById(R.id.btnReservation);
+
         etGuests                = (EditText)findViewById(R.id.etGuests);
         etGuests.setSelected(false);
-        bback=(ImageButton)findViewById(R.id.ibBack);
 
-        ibContact = (ImageButton) findViewById(R.id.ibContact);
+        bback                   = (ImageButton)findViewById(R.id.ibBack);
+        ibContact               = (ImageButton) findViewById(R.id.ibContact);
 
         tvTitle.setText(selectedResidence.getTitle());
         tvType.setText(selectedResidence.getType());
@@ -193,7 +199,8 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
             public void onClick(View v) {
                 guests = etGuests.getText().toString();
                 guestsInt = Integer.parseInt(guests);
-                //gets selected dates from user input
+
+                /** Gets selected dates from user input **/
                 if(selectedDates[0] != null && selectedDates[1] != null) {
                     if (selectedDates[0].before(selectedDates[1])) {
                         selectedStartDate = selectedDates[0];
@@ -203,26 +210,48 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
                         selectedEndDate = selectedDates[0];
                     }
                 }
-                //in case user has not specified the period for booking or the number of guests, reservation cannot be performed
+
+                /** In case user has not specified the period for booking or the number of guests, reservation cannot be performed **/
                 if(selectedStartDate == null || selectedEndDate == null || guests == null) {
                     Toast.makeText(c, "Please fill in the dates and the number of guests", Toast.LENGTH_SHORT).show();
                     return;
                 } else {
-                    //user makes a reservation and goes back to home activity
-                    token = PostResult();
-                    if (!token.isEmpty()) {
-                        Intent homeIntent = new Intent(ResidenceActivity.this, HomeActivity.class);
-                        user = true;
-                        Bundle buser = new Bundle();
-                        buser.putBoolean("type", user);
-                        homeIntent.putExtras(buser);
-                        startActivity(homeIntent);
-                        finish();
-                    } else {
-                        Toast.makeText(c, "Booking failed, your session is terminated, please log in again!", Toast.LENGTH_SHORT).show();
-                        Utils.logout(ResidenceActivity.this);
-                        finish();
-                    }
+                    new AlertDialog.Builder(ResidenceActivity.this)
+                        .setTitle("Booking Confirmation")
+                        .setMessage("Please confirm the details below:"
+                            + "\n\n" + selectedResidence.getTitle()
+                            + "\n\n" + guestsInt + (guestsInt == 1 ? " guest" : " guests")
+                            + "\n" + "Arrival Date: " + selectedStartDate
+                            + "\n" + "Departure Date: " + selectedEndDate
+                            + "\n\n" + "Click OK to continue, or CANCEL to go back to the residence"
+                        )
+                        .setIcon(android.R.drawable.ic_secure)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+
+                                /** User makes a reservation and goes back to home activity **/
+                                long date_start = convertDateToMillisSec(selectedStartDate, FORMAT_DATE_YMD);
+                                long date_end = convertDateToMillisSec(selectedEndDate, FORMAT_DATE_YMD);
+
+                                Reservations reservationParameters = new Reservations(loggedinUser, selectedResidence, date_start, date_end, guestsInt);
+                                RetrofitCalls retrofitCalls = new RetrofitCalls();
+                                token = retrofitCalls.postReservation(token, reservationParameters);
+
+                                if (!token.isEmpty()) {
+                                    Intent reservationsIntent = new Intent(ResidenceActivity.this, HistoryReservationsActivity.class);
+                                    user = true;
+                                    Bundle buser = new Bundle();
+                                    buser.putBoolean("type", user);
+                                    reservationsIntent.putExtras(buser);
+                                    startActivity(reservationsIntent);
+                                    finish();
+                                } else {
+                                    Toast.makeText(c, "Booking failed, your session is terminated, please log in again!", Toast.LENGTH_SHORT).show();
+                                    Utils.logout(ResidenceActivity.this);
+                                    finish();
+                                }
+                            }
+                        }).setNegativeButton(android.R.string.no, null).show();
                 }
             }
         });
@@ -271,15 +300,6 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         });
     }
 
-    public String PostResult()
-    {
-        //TODO change date to int
-        Reservations reservationParameters = new Reservations(loggedinUser, selectedResidence, selectedStartDate, selectedEndDate, guestsInt);
-        RetrofitCalls retrofitCalls = new RetrofitCalls();
-        token = retrofitCalls.postReservation(token, reservationParameters);
-        return token;
-    }
-
     public void setCalendar () {
         caldroidFragment = new CaldroidFragment();
 
@@ -287,9 +307,12 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         t.replace(R.id.calendar, caldroidFragment);
         t.commit();
 
-        //get available dates from host
-        Date startDate = selectedResidence.getAvailableDateStart();
-        Date endDate = selectedResidence.getAvailableDateEnd();
+        /** Get available dates from host **/
+        long available_date_start = selectedResidence.getAvailableDateStart();
+        long available_date_end = selectedResidence.getAvailableDateEnd();
+
+        Date startDate = convertTimestampToDate(available_date_start, FORMAT_DATE_YMD);
+        Date endDate = convertTimestampToDate(available_date_end, FORMAT_DATE_YMD);
 
         ColorDrawable blue = new ColorDrawable(Color.BLUE);
         caldroidFragment.setMinDate(startDate);
@@ -300,28 +323,28 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
 
         NumGuestsPerDay = new HashMap<>();
         Date current = new Date();
-        // initialize guest sum
+
+        /** Initialize guest sum **/
         while (!current.after(endDate)) {
             NumGuestsPerDay.put(current, 0);
             calendar.add(Calendar.DAY_OF_MONTH,1);
             current = calendar.getTime();
         }
-        //get all reservations for the selected residence
+
+        /** Get all reservations for the selected residence **/
         ArrayList<Reservations> allReservationsByResidence = retrofitCalls.getReservationsByResidenceId(token, Integer.toString(residenceId));
-        System.out.println(allReservationsByResidence);
 
         //get the max guests for this residence
         maxGuests = selectedResidence.getGuests();
 
         reservedDates = new ArrayList<>();
-        Date dateStart;
-        Date dateEnd;
+        Date dateStart, dateEnd;
         int guestsFromDatabase;
         for(int i=0;i<allReservationsByResidence.size();i++) {
-            //get for each reservation the start and the end date, and the number of guests
-            //TODO change ints to date
-            dateStart = allReservationsByResidence.get(i).getStartDate();
-            dateEnd = allReservationsByResidence.get(i).getEndDate();
+            /** Gt for each reservation the start and the end date, and the number of guests **/
+            dateStart = convertTimestampToDate(allReservationsByResidence.get(i).getStartDate(), FORMAT_DATE_YMD);
+            dateEnd = convertTimestampToDate(allReservationsByResidence.get(i).getEndDate(), FORMAT_DATE_YMD);
+
             guestsFromDatabase = allReservationsByResidence.get(i).getGuests();
 
             Date currentDate = dateStart;
@@ -335,7 +358,8 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
                 currentDate = cal.getTime();
             }
         }
-        //disable all dates that are already fully booked
+
+        /** Disable all dates that are already fully booked **/
         for(Date date : NumGuestsPerDay.keySet()) {
             if(NumGuestsPerDay.get(date)>= maxGuests) {
                 reservedDates.add(date);
@@ -344,7 +368,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         caldroidFragment.setDisableDates(reservedDates);
         datesDisabled_byGuestCount = new ArrayList<>();
 
-        //this field is visible only if user has not already provided number of guests
+        /** This field is visible only if user has not already provided number of guests **/
         if(guests != null) {
             etGuests.setText(guests);
             filterDates();
@@ -367,11 +391,11 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         selectedDates[1] = null;
 
         if(date_start != null) {
-            selectedDates[0] = Utils.ConvertStringToDate(date_start, Utils.DATABASE_DATE_FORMAT);
+            selectedDates[0] = Utils.ConvertStringToDate(date_start, FORMAT_DATE_YMD);
             caldroidFragment.setBackgroundDrawableForDate(blue, selectedDates[0]);
         }
         if(date_end !=null) {
-            selectedDates[1] = Utils.ConvertStringToDate(date_end, Utils.DATABASE_DATE_FORMAT);
+            selectedDates[1] = Utils.ConvertStringToDate(date_end, FORMAT_DATE_YMD);
             caldroidFragment.setBackgroundDrawableForDate(blue, selectedDates[1]);
         }
         final CaldroidListener listener = new CaldroidListener() {
@@ -399,7 +423,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
                 }
 
                 if(freeIdx < 0) {
-                    // no space left
+                    /** No space left **/
                     Toast.makeText(c, "You have already selected two days", Toast.LENGTH_SHORT).show();
                     return;
                 }

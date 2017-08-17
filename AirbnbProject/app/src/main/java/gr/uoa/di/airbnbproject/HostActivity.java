@@ -1,14 +1,19 @@
 package gr.uoa.di.airbnbproject;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -18,6 +23,13 @@ import util.ListAdapterHostResidences;
 import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
+
+import static util.Utils.DELETE_ACTION;
+import static util.Utils.EDIT_ACTION;
+import static util.Utils.RESERVATIONS_ACTION;
+import static util.Utils.VIEW_RESIDENCE_ACTION;
+import static util.Utils.goToActivity;
+import static util.Utils.reloadActivity;
 
 public class HostActivity extends AppCompatActivity {
     String username, token;
@@ -100,6 +112,7 @@ public class HostActivity extends AppCompatActivity {
         adapter = new ListAdapterHostResidences(this, representativePhoto, title, city, price, rating, residenceId);
         residencesList = (ListView)findViewById(R.id.residenceList);
         residencesList.setAdapter(adapter);
+        registerForContextMenu(residencesList);
 
         residencesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -113,13 +126,64 @@ public class HostActivity extends AppCompatActivity {
                     startActivity(showResidenceIntent);
                 } catch (Exception ex) {
                     System.out.println(ex.getMessage());
-                    Log.i("",ex.getMessage());
+                    ex.printStackTrace();
                 }
             }
         });
 
         /** FOOTER TOOLBAR **/
         Utils.manageFooter(HostActivity.this, user);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+        menu.setHeaderTitle("Reservations - Host Options");
+
+        menu.add(0, info.position, 0, VIEW_RESIDENCE_ACTION);
+        menu.add(0, info.position, 1, EDIT_ACTION);
+        menu.add(0, info.position, 2, RESERVATIONS_ACTION);
+        menu.add(0, info.position, 3, DELETE_ACTION);
+    }
+
+    @Override
+    public boolean onContextItemSelected(final MenuItem item) {
+        super.onContextItemSelected(item);
+        final Bundle btype = new Bundle();
+        btype.putBoolean("type", user);
+
+        if (item.getTitle().equals(VIEW_RESIDENCE_ACTION)) {
+            btype.putInt("residenceId", residenceId[item.getItemId()]);
+            goToActivity(this, ResidenceActivity.class, btype);
+        }
+        else if (item.getTitle().equals(EDIT_ACTION)) {
+            btype.putInt("residenceId", residenceId[item.getItemId()]);
+            goToActivity(this, EditResidenceActivity.class, btype);
+        }
+        else if (item.getTitle().equals(RESERVATIONS_ACTION)) {
+            Toast.makeText(this, item.getTitle(), Toast.LENGTH_LONG).show();
+        }
+        else if (item.getTitle().equals(DELETE_ACTION)) {
+            new AlertDialog.Builder(this)
+                .setTitle("Delete Residence").setMessage("Do you really want to delete this residence?").setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        RetrofitCalls retrofitCalls = new RetrofitCalls();
+                        if (retrofitCalls.deleteResidenceById(token, Integer.toString(residenceId[item.getItemId()])) == null) {
+                            Toast.makeText(HostActivity.this, "Residence was successfully deleted!", Toast.LENGTH_SHORT).show();
+                            reloadActivity(HostActivity.this, btype);
+                        } else {
+                            Toast.makeText(HostActivity.this, "Something went wrong, residence is not deleted. Please try again!", Toast.LENGTH_SHORT).show();
+                        }
+                    }})
+                .setNegativeButton(android.R.string.no, null).show();
+
+        } else {
+            Toast.makeText(this, item.getTitle(), Toast.LENGTH_LONG).show();
+        }
+        return true;
     }
 
     @Override

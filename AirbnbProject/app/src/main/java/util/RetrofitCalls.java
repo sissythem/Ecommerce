@@ -659,15 +659,13 @@ public class RetrofitCalls {
         return residencesList;
     }
 
-    private class getRecommendationsHttPRequestTask extends AsyncTask<String, String, ArrayList<Residences>> {
+    private class getRecommendationsHttPRequestTask extends AsyncTask<Object, Object, ArrayList<Residences>> {
         @Override
-        protected ArrayList<Residences> doInBackground(String... params)
-        {
+        protected ArrayList<Residences> doInBackground(Object... params) {
             residencesList = new ArrayList<>();
-            RestAPI restAPI = RestClient.getClient(params[0]).create(RestAPI.class);
-            Call<List<Residences>> call = restAPI.getSearchResidences(params[1], params[2], params[3], params[4], params[5]);
-            try
-            {
+            RestAPI restAPI = RestClient.getClient((String)params[0]).create(RestAPI.class);
+            Call<List<Residences>> call = restAPI.getSearchResidences((String)params[1], (String)params[2], (long)params[3], (long)params[4], (Integer)params[5]);
+            try {
                 Response<List<Residences>> resp = call.execute();
                 residencesList.addAll(resp.body());
             }
@@ -678,9 +676,9 @@ public class RetrofitCalls {
         }
     }
 
-    public ArrayList<Residences> getRecommendations(String token, String userId, String city, String startDate, String endDate, String guests) {
+    public ArrayList<Residences> getRecommendations(String token, String username, String city, long startDate, long endDate, Integer guests) {
         getRecommendationsHttPRequestTask recommendations = new getRecommendationsHttPRequestTask();
-        recommendations.execute(token, userId, city, startDate, endDate, guests);
+        recommendations.execute(token, username, city, startDate, endDate, guests);
         try {
             recommendations.get();
         } catch (InterruptedException e) {
@@ -1074,7 +1072,6 @@ public class RetrofitCalls {
         } catch (ExecutionException e) {
             Log.i("",e.getMessage());
         }
-        System.out.println(token);
         return token;
     }
 

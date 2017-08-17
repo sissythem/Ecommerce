@@ -31,7 +31,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class RestClient {
-    public static final String BASE_URL = "http://192.168.1.9:8080/ecommerce_rest/webresources/";
+    public static final String BASE_URL = "http://192.168.2.3:8080/ecommerce_rest/webresources/";
     private static Retrofit retrofit = null;
     private static Retrofit stringRetrofit = null;
 
@@ -53,7 +53,7 @@ public class RestClient {
     public static Retrofit getStringClient() {
         if (stringRetrofit==null) {
             Gson gson = new GsonBuilder()
-                    .setDateFormat(Utils.DATABASE_DATETIME_FORMAT)
+                    .setDateFormat(Utils.FORMAT_DATETIME_DMY_HMS)
                     .registerTypeAdapter(Date.class, new JsonDeserializer<Date>() {
                         @Override
                         public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
@@ -64,7 +64,7 @@ public class RestClient {
                     .registerTypeAdapter(Date.class, new JsonSerializer<Date>() {
                         @Override
                         public JsonElement serialize(Date src, Type typeOfSrc, JsonSerializationContext context) {
-                            Gson ggson = new GsonBuilder().setDateFormat(Utils.DATABASE_DATETIME_FORMAT).create();
+                            Gson ggson = new GsonBuilder().setDateFormat(Utils.FORMAT_DATETIME_DMY_HMS).create();
                             return new JsonPrimitive(ggson.toJson(src));
                         }
                     })

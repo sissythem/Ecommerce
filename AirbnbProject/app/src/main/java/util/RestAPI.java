@@ -74,8 +74,8 @@ public interface RestAPI {
     Call<List<Residences>> getResidenceByCity(@Query("city") String city);
 
     @GET("residences/search")
-    Call<List<Residences>> getSearchResidences(@Query("userId") String userId, @Query("city") String city, @Query("startDate") String startDate,
-                                               @Query("endDate") String endDate, @Query("guests") String guests);
+    Call<List<Residences>> getSearchResidences(@Query("username") String username, @Query("city") String city, @Query("startDate") long startDate,
+                                               @Query("endDate") long endDate, @Query("guests") Integer guests);
 
     @GET("residences/host")
     Call<List<Residences>> getResidencesByHostId(@Query("hostId") String hostId);

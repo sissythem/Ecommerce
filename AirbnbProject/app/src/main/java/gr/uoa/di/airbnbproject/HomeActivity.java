@@ -194,7 +194,7 @@ public class HomeActivity extends AppCompatActivity {
                         @Override
                         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                             startDate.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
-                            date_start = year + "-" + dayOfMonth + "-" + (monthOfYear + 1);
+                            date_start = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
                         }
                     }, mStartYear, mStartMonth, mStartDay);
                     datePickerDialog.show();
@@ -217,7 +217,7 @@ public class HomeActivity extends AppCompatActivity {
                         @Override
                         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                             endDate.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
-                            date_end = year + "-" + dayOfMonth + "-" + (monthOfYear + 1);
+                            date_end = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
                         }
                     }, mEndYear, mEndMonth, mEndDay);
                     datePickerDialog.show();
@@ -233,7 +233,7 @@ public class HomeActivity extends AppCompatActivity {
                 Bundle bsearch = new Bundle();
 
                 bsearch.putString("city", field_city.getText().toString());
-                bsearch.putString("guests", field_guests.getText().toString());
+                bsearch.putInt("guests", Integer.parseInt(field_guests.getText().toString()));
                 bsearch.putString("startDate", date_start);
                 bsearch.putString("endDate", date_end);
                 bsearch.putBoolean("type", user);
