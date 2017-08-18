@@ -63,9 +63,11 @@ public class UsersFacadeREST extends AbstractFacade<Users> {
     @Path("put/{id}")
     @Consumes({MediaType.APPLICATION_JSON})
     public String editUser(@HeaderParam("Authorization") String token, @PathParam("id") Integer id, Users entity) {
-        System.out.println("here");
         if (KeyHolder.checkToken(token, className)) {
             super.edit(entity);
+            
+            /** Update token and restart session **/
+            token = KeyHolder.issueToken(entity.getUsername());
             return token;
         }
         return "not";
