@@ -97,6 +97,8 @@ public class HomeActivity extends AppCompatActivity {
         if(Utils.isTokenExpired(sessionData.getToken())){
             Toast.makeText(c, "Session is expired", Toast.LENGTH_SHORT).show();
             Utils.logout(this);
+            finish();
+            return;
         }
 
         //getPermissions();

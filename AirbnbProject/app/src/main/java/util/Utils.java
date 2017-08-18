@@ -333,12 +333,6 @@ public class Utils {
         SharedPreferences sharedPrefs = context.getApplicationContext().getSharedPreferences(USER_LOGIN_PREFERENCES, Context.MODE_PRIVATE);
         Session sessionData = new Session(sharedPrefs.getString("token", ""), sharedPrefs.getString("username", ""),
                 sharedPrefs.getBoolean("userLoggedInState", false));
-
-//        if (isTokenExpired(sessionData.getToken())) {
-//            SharedPreferences.Editor editor = sharedPrefs.edit();
-//            editor.putString("token", "expired");
-//            editor.commit();
-//        }
         return sessionData;
     }
 
