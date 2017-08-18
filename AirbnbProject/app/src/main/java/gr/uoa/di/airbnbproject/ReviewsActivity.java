@@ -15,7 +15,6 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.TimeZone;
 
 import fromRESTful.Reservations;
@@ -27,7 +26,6 @@ import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
 
-import static util.Utils.convertTimestampToDate;
 import static util.Utils.getSessionData;
 
 public class ReviewsActivity extends AppCompatActivity {
@@ -147,12 +145,16 @@ public class ReviewsActivity extends AppCompatActivity {
             isDatePassed = reservationsByTenantIdandResidenceId.get(i).getEndDate() < currentDate;
         }
 
-        if (reservationsByTenantIdandResidenceId.isEmpty() || !isDatePassed) {
+        //only users who have already made a reservation and the relevant dates are in the past can rate and comment
+        if (reservationsByTenantIdandResidenceId.isEmpty() || !isDatePassed)
+        {
             etcomment.setVisibility(View.GONE);
             btnreview.setVisibility(View.GONE);
             ratingBar.setVisibility(View.GONE);
             txtrating.setVisibility(View.GONE);
-        } else {
+        }
+        else
+        {
             btnreview.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v)

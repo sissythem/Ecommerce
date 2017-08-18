@@ -9,9 +9,11 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.PopupMenu;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -57,8 +59,8 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
     Context c;
 
     TextView tvTitle, tvType, tvAddress, tvCity, tvCountry, tvHostName, tvAbout, tvAmenities, tvCancellationPolicy, tvHostAbout, tvRules, tvPrice;
-    ImageButton bback, ibContact;
-    Button bReviews, bBook;
+    ImageButton bback, btnMenu;
+    Button bBook;
     RatingBar rating;
     EditText etGuests;
     GoogleMap mMap;
@@ -98,12 +100,12 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         user                = buser.getBoolean("type");
         residenceId         = buser.getInt("residenceId");
 
-        date_start          = buser.getString("startDate");
-        date_end            = buser.getString("endDate");
-        guests              = buser.getString("guests");
-//        if (buser.containsKey("startDate")) date_start = buser.getString("startDate");
-//        if (buser.containsKey("endDate")) date_end = buser.getString("endDate");
-//        if (buser.containsKey("guests")) guests = buser.getString("guests");
+//        date_start          = buser.getString("startDate");
+//        date_end            = buser.getString("endDate");
+//        guests              = buser.getString("guests");
+        if (buser.containsKey("startDate")) date_start = buser.getString("startDate");
+        if (buser.containsKey("endDate")) date_end = buser.getString("endDate");
+        if (buser.containsKey("guests")) guests = buser.getString("guests");
 
         retrofitCalls = new RetrofitCalls();
         if(Utils.isTokenExpired(token)) {
@@ -142,14 +144,13 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         tvPrice                 = (TextView)findViewById(R.id.price);
 
         rating                  = (RatingBar)findViewById(R.id.rating);
-        bReviews                = (Button)findViewById(R.id.btnReviews);
         bBook                   = (Button)findViewById(R.id.btnReservation);
+        btnMenu                 = (ImageButton)findViewById(R.id.btnMenu);
 
         etGuests                = (EditText)findViewById(R.id.etGuests);
         etGuests.setSelected(false);
 
         bback                   = (ImageButton)findViewById(R.id.ibBack);
-        ibContact               = (ImageButton) findViewById(R.id.ibContact);
 
         tvTitle.setText(selectedResidence.getTitle());
         tvType.setText(selectedResidence.getType());
@@ -189,14 +190,13 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
             setCalendar();
         } else {
             bBook.setVisibility(View.GONE);
-            ibContact.setVisibility(View.GONE);
         }
         setBookResidence();
-        setContactHost();
-        setReview();
+        setUpMenu();
     }
 
-    public void setBookResidence() {
+    public void setBookResidence()
+    {
         bBook.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -260,45 +260,36 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         });
     }
 
-    public void setContactHost() {
-        ibContact.setBackgroundResource(R.drawable.ic_contact);
-        ibContact.setOnClickListener(new View.OnClickListener() {
+    public void setUpMenu()
+    {
+        btnMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent messageIntent = new Intent(ResidenceActivity.this, MessageActivity.class);
+                PopupMenu popup = new PopupMenu(ResidenceActivity.this, btnMenu);
+                popup.getMenuInflater().inflate(R.menu.menu_residence, popup.getMenu());
 
-                Bundle bmessage = new Bundle();
-                bmessage.putBoolean("type", user);
-                bmessage.putInt("currentUserId", loggedinUser.getId());
-                bmessage.putInt("toUserId", host.getId());
-                bmessage.putString("msgSubject", tvTitle.getText().toString());
-                bmessage.putInt("residenceId", residenceId);
-                messageIntent.putExtras(bmessage);
-                try {
-                    startActivity(messageIntent);
-                } catch (Exception e) {
-                    System.out.println(e.getMessage());
-                    Log.e("",e.getMessage());
-                }
-            }
-        });
-    }
-
-    public void setReview() {
-        bReviews.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent reviewsIntent = new Intent(ResidenceActivity.this, ReviewsActivity.class);
-                Bundle buser = new Bundle();
-                buser.putBoolean("type", user);
-                buser.putInt("residenceId", residenceId);
-                reviewsIntent.putExtras(buser);
-                try {
-                    startActivity(reviewsIntent);
-                }
-                catch (Exception e) {
-                    Log.e("",e.getMessage());
-                }
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    public boolean onMenuItemClick(MenuItem item) {
+                        Bundle buser = new Bundle();
+                        buser.putBoolean("type", user);
+                        if (item.getItemId() == R.id.reviews) {
+                            Intent historyReviewsIntent = new Intent(ResidenceActivity.this, ReviewsActivity.class);
+                            buser.putInt("residenceId", residenceId);
+                            historyReviewsIntent.putExtras(buser);
+                            startActivity(historyReviewsIntent);
+                        } else if (item.getItemId() == R.id.contact) {
+                            Intent contactIntent = new Intent(ResidenceActivity.this, MessageActivity.class);
+                            buser.putInt("currentUserId", loggedinUser.getId());
+                            buser.putInt("toUserId", host.getId());
+                            buser.putString("msgSubject", tvTitle.getText().toString());
+                            buser.putInt("residenceId", residenceId);
+                            contactIntent.putExtras(buser);
+                            startActivity(contactIntent);
+                        }
+                        return true;
+                    }
+                });
+                popup.show();
             }
         });
     }
