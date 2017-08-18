@@ -73,6 +73,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
     Date selectedStartDate, selectedEndDate;
     Map<Date, Integer> NumGuestsPerDay;
     ArrayList <Date> reservedDates, datesDisabled_byGuestCount;
+    PopupMenu popup;
 
     RetrofitCalls retrofitCalls;
 
@@ -265,19 +266,20 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         btnMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PopupMenu popup = new PopupMenu(ResidenceActivity.this, btnMenu);
+                popup = new PopupMenu(ResidenceActivity.this, btnMenu);
                 popup.getMenuInflater().inflate(R.menu.menu_residence, popup.getMenu());
-
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
                         Bundle buser = new Bundle();
                         buser.putBoolean("type", user);
+                        if(user == false){popup.getMenu().findItem(R.id.contact).setVisible(false);}
                         if (item.getItemId() == R.id.reviews) {
                             Intent historyReviewsIntent = new Intent(ResidenceActivity.this, ReviewsActivity.class);
                             buser.putInt("residenceId", residenceId);
                             historyReviewsIntent.putExtras(buser);
                             startActivity(historyReviewsIntent);
-                        } else if (item.getItemId() == R.id.contact) {
+                        } else if (item.getItemId() == R.id.contact)
+                        {
                             Intent contactIntent = new Intent(ResidenceActivity.this, MessageActivity.class);
                             buser.putInt("currentUserId", loggedinUser.getId());
                             buser.putInt("toUserId", host.getId());
