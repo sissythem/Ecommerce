@@ -50,7 +50,7 @@ public class RetrofitCalls {
         }
     }
 
-    public Boolean isTokenOk(String token) {
+    public Boolean isTokenExpired(String token) {
         checkTokenHttpRequestTask checktoken = new checkTokenHttpRequestTask();
         checktoken.execute(token);
         try{

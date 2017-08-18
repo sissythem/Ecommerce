@@ -331,16 +331,14 @@ public class Utils {
 
     public static Session getSessionData(Activity context) {
         SharedPreferences sharedPrefs = context.getApplicationContext().getSharedPreferences(USER_LOGIN_PREFERENCES, Context.MODE_PRIVATE);
-        Session sessionData = new Session();
+        Session sessionData = new Session(sharedPrefs.getString("token", ""), sharedPrefs.getString("username", ""),
+                sharedPrefs.getBoolean("userLoggedInState", false));
 
-        sessionData.setToken(sharedPrefs.getString("token", ""));
-        sessionData.setUsername(sharedPrefs.getString("username", "")); //currentLoggedInUser
-        sessionData.setUserLoggedInState(sharedPrefs.getBoolean("userLoggedInState", false));
-
-        if (isTokenExpired(sessionData.getToken())) {
-            SharedPreferences.Editor editor = sharedPrefs.edit();
-            editor.putString("token", "expired");
-        }
+//        if (isTokenExpired(sessionData.getToken())) {
+//            SharedPreferences.Editor editor = sharedPrefs.edit();
+//            editor.putString("token", "expired");
+//            editor.commit();
+//        }
         return sessionData;
     }
 
@@ -381,11 +379,8 @@ public class Utils {
     public static boolean isTokenExpired(String token)
     {
         RetrofitCalls retrofitCalls = new RetrofitCalls();
-        boolean flag = retrofitCalls.isTokenOk(token);
-        if(flag)
-            return true;
-        else
-            return false;
+        boolean isExpired = retrofitCalls.isTokenExpired(token);
+        return isExpired;
     }
 
     public static String getRealPathFromURI(Context context, Uri contentUri) {

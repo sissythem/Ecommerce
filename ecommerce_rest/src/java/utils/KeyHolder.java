@@ -41,7 +41,8 @@ public class KeyHolder
         } 
         catch(Exception ex) 
         {
-            Logger.getLogger(entityName).log(Level.SEVERE, null, ex);
+//            Logger.getLogger(entityName).log(Level.SEVERE, null, ex);
+            Logger.getLogger(entityName).info("Token [" + token.toString() + "] is expired");
             return false;
         }
         

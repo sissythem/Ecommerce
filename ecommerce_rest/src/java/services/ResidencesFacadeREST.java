@@ -179,7 +179,7 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
         @QueryParam("endDate")long endDate,
         @QueryParam("guests") Integer guests
     ) {
-        
+        System.out.println("findRecommendations with params:");
         System.out.println(token);
         System.out.println(username);
         System.out.println(city);

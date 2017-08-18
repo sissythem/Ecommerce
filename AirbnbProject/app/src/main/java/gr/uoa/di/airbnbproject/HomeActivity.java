@@ -20,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,6 +44,7 @@ import util.Session;
 import util.Utils;
 
 import static util.Utils.getSessionData;
+
 
 public class HomeActivity extends AppCompatActivity {
     final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
@@ -77,7 +79,7 @@ public class HomeActivity extends AppCompatActivity {
     {
         super.onResume();
 
-        Session sessionData = Utils.getSessionData(HomeActivity.this);
+        Session sessionData = getSessionData(HomeActivity.this);
 
         username=sessionData.getUsername();
         user = true;
@@ -92,7 +94,7 @@ public class HomeActivity extends AppCompatActivity {
             finish();
             return;
         }
-        if(token.equals("expired")){
+        if(Utils.isTokenExpired(sessionData.getToken())){
             Toast.makeText(c, "Session is expired", Toast.LENGTH_SHORT).show();
             Utils.logout(this);
         }
@@ -152,17 +154,19 @@ public class HomeActivity extends AppCompatActivity {
                     }
                 });
             } else {
-                list.setVisibility(View.GONE);
+//                list.setVisibility(View.GONE);
 
-//                LinearLayout layout = (LinearLayout)findViewById(R.id.homelayout);
-//                TextView text = new TextView(this);
-//                text.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-//                text.setText("No Results");
-//                layout.addView(text);
+                LinearLayout layout = (LinearLayout)findViewById(R.id.homelayout);
+                TextView text = new TextView(this);
+                text.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                text.setText("No Results");
+                layout.addView(text);
             }
         } catch (Exception e) {
             Log.e("", e.getMessage());
         }
+
+
     }
 
     public void setupSearchView() {
@@ -270,7 +274,11 @@ public class HomeActivity extends AppCompatActivity {
         ArrayList<Users> Users;
         RetrofitCalls retrofitCalls = new RetrofitCalls();
         Users = retrofitCalls.getUserbyUsername(token, username);
-
+        if(Users.isEmpty())
+        {
+            Toast.makeText(this,"Failed to get users from database.", Toast.LENGTH_LONG).show();
+            return new ArrayList<>();
+        }
         loggedInUser = Users.get(0);
 
         ArrayList<Residences> reviewedResidences = new ArrayList<>();
@@ -350,7 +358,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void resetActivity() {
-        Session sessionData = getSessionData(HomeActivity.this);
+        Session sessionData = Utils.getSessionData(HomeActivity.this);
         if (!sessionData.getUserLoggedInState()) {
             Intent intent = new Intent(this, GreetingActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

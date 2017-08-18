@@ -82,7 +82,7 @@ public class UsersFacadeREST extends AbstractFacade<Users> {
             super.remove(super.find(Integer.parseInt(id)));
             token = KeyHolder.issueToken(null);
         }
-        System.out.println(token);
+        System.out.println("Deleted user using token " + token);
         return token;
     }
 
@@ -157,7 +157,7 @@ public class UsersFacadeREST extends AbstractFacade<Users> {
         List<Users> isUser = query.getResultList();
         if(!isUser.isEmpty()){
             String token = KeyHolder.issueToken(isUser.get(0).getUsername());
-            System.out.println(token);
+            System.out.println("Logged in user " + username + ", issued token " + token);
             return token;
         }
         return "not";
