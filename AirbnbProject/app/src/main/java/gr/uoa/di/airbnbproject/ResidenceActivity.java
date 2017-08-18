@@ -96,18 +96,21 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
 
         Bundle buser        = getIntent().getExtras();
         user                = buser.getBoolean("type");
+        residenceId         = buser.getInt("residenceId");
+
         date_start          = buser.getString("startDate");
         date_end            = buser.getString("endDate");
         guests              = buser.getString("guests");
-        residenceId         = buser.getInt("residenceId");
+//        if (buser.containsKey("startDate")) date_start = buser.getString("startDate");
+//        if (buser.containsKey("endDate")) date_end = buser.getString("endDate");
+//        if (buser.containsKey("guests")) guests = buser.getString("guests");
 
         retrofitCalls = new RetrofitCalls();
         if(Utils.isTokenExpired(token)) {
             Utils.logout(this);
             finish();
         }
-        ArrayList<Users> userLoggedIn = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
-        loggedinUser = userLoggedIn.get(0);
+        loggedinUser = retrofitCalls.getUserbyUsername(token, sessionData.getUsername()).get(0);
         selectedResidence   = retrofitCalls.getResidenceById(token, Integer.toString(residenceId));
 
         setUpResidenceView();
@@ -332,7 +335,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         }
 
         /** Get all reservations for the selected residence **/
-        ArrayList<Reservations> allReservationsByResidence = retrofitCalls.getReservationsByResidenceId(token, Integer.toString(residenceId));
+        ArrayList<Reservations> allReservationsByResidence = retrofitCalls.getReservationsByResidenceId(token, residenceId);
 
         //get the max guests for this residence
         maxGuests = selectedResidence.getGuests();
