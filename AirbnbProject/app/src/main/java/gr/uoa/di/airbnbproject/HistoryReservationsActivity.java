@@ -12,11 +12,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Date;
-
 import fromRESTful.Reservations;
 import fromRESTful.Users;
 import util.ListAdapterReservations;
@@ -26,10 +25,9 @@ import util.Utils;
 
 import static util.Utils.CANCEL_RESERVATION_ACTION;
 import static util.Utils.CONTACT_HOST_ACTION;
+import static util.Utils.CONTACT_USER_ACTION;
 import static util.Utils.FORMAT_DATE_YMD;
-import static util.Utils.DELETE_ACTION;
 import static util.Utils.VIEW_RESIDENCE_ACTION;
-import static util.Utils.convertTimestampToDate;
 import static util.Utils.convertTimestampToDateStr;
 import static util.Utils.reloadActivity;
 
@@ -44,6 +42,7 @@ public class HistoryReservationsActivity extends AppCompatActivity {
     ListAdapterReservations adapter;
     ListView reservationsList;
     ArrayList<Reservations> userReservations;
+    Bundle buser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +64,7 @@ public class HistoryReservationsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_history_reservations);
         c = this;
 
-        Bundle buser = getIntent().getExtras();
+        buser = getIntent().getExtras();
         user = buser.getBoolean("type");
 
         RetrofitCalls retrofitCalls = new RetrofitCalls();
@@ -77,7 +76,14 @@ public class HistoryReservationsActivity extends AppCompatActivity {
         ArrayList<Users> getUserByUsername = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
         loggedinUser = getUserByUsername.get(0);
 
-        userReservations = retrofitCalls.getReservationsByTenantId(token, loggedinUser.getId().toString());
+        if (buser.containsKey("residenceId")) {
+            TextView reservationsTxt = (TextView) findViewById(R.id.reservationsTxt);
+            reservationsTxt.setText("Reservations made by users");
+            System.out.println(buser.getInt("residenceId"));
+            userReservations = retrofitCalls.getReservationsByResidenceId(token, buser.getInt("residenceId"));
+        } else {
+            userReservations = retrofitCalls.getReservationsByTenantId(token, loggedinUser.getId().toString());
+        }
 
         residenceId             = new int [userReservations.size()];
         residenceTitle          = new String[userReservations.size()];
@@ -91,7 +97,7 @@ public class HistoryReservationsActivity extends AppCompatActivity {
             startDate[i]    = convertTimestampToDateStr(userReservations.get(i).getResidenceId().getAvailableDateStart(), FORMAT_DATE_YMD);
             endDate[i]      = convertTimestampToDateStr(userReservations.get(i).getResidenceId().getAvailableDateEnd(), FORMAT_DATE_YMD);
         }
-        adapter = new ListAdapterReservations(this, residenceTitle, startDate, endDate);
+        adapter = new ListAdapterReservations(this, user, residenceTitle, startDate, endDate);
         reservationsList = (ListView)findViewById(R.id.reservationsList);
         reservationsList.setAdapter(adapter);
         registerForContextMenu(reservationsList);
@@ -110,8 +116,12 @@ public class HistoryReservationsActivity extends AppCompatActivity {
         menu.setHeaderTitle("Reservation Options");
 
         menu.add(0, info.position, 0, VIEW_RESIDENCE_ACTION);
-        menu.add(0, info.position, 1, CONTACT_HOST_ACTION);
-        menu.add(0, info.position, 2, CANCEL_RESERVATION_ACTION);
+        if (buser.containsKey("residenceId")) {
+            menu.add(0, info.position, 1, CONTACT_USER_ACTION);
+        } else {
+            menu.add(0, info.position, 1, CONTACT_HOST_ACTION);
+            menu.add(0, info.position, 2, CANCEL_RESERVATION_ACTION);
+        }
     }
 
     @Override
@@ -160,6 +170,22 @@ public class HistoryReservationsActivity extends AppCompatActivity {
             bmessage.putBoolean("type", user);
             bmessage.putInt("currentUserId", loggedinUser.getId());
             bmessage.putInt("toUserId", userReservations.get(item.getItemId()).getResidenceId().getHostId().getId());
+            bmessage.putString("msgSubject", residenceTitle[item.getItemId()]);
+            bmessage.putInt("residenceId", residenceId[item.getItemId()]);
+            messageIntent.putExtras(bmessage);
+            try {
+                startActivity(messageIntent);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                Log.e("",e.getMessage());
+            }
+        } else if (item.getTitle().equals(CONTACT_USER_ACTION)) {
+            Intent messageIntent = new Intent(HistoryReservationsActivity.this, MessageActivity.class);
+
+            Bundle bmessage = new Bundle();
+            bmessage.putBoolean("type", user);
+            bmessage.putInt("currentUserId", loggedinUser.getId());
+            bmessage.putInt("toUserId", userReservations.get(item.getItemId()).getTenantId().getId());
             bmessage.putString("msgSubject", residenceTitle[item.getItemId()]);
             bmessage.putInt("residenceId", residenceId[item.getItemId()]);
             messageIntent.putExtras(bmessage);

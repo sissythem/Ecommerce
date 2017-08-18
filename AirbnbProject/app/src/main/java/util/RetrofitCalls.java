@@ -1105,13 +1105,13 @@ public class RetrofitCalls {
         return reservationsList;
     }
 
-    private class getReservationsByResidenceIdHttpRequestTask extends AsyncTask<String, String, ArrayList<Reservations>> {
+    private class getReservationsByResidenceIdHttpRequestTask extends AsyncTask<Object, Object, ArrayList<Reservations>> {
         @Override
-        protected ArrayList<Reservations> doInBackground(String... params)
+        protected ArrayList<Reservations> doInBackground(Object... params)
         {
             reservationsList = new ArrayList<>();
-            RestAPI restAPI = RestClient.getClient(params[0]).create(RestAPI.class);
-            Call<List<Reservations>> call = restAPI.getReservationsByResidenceId(params[1]);
+            RestAPI restAPI = RestClient.getClient((String)params[0]).create(RestAPI.class);
+            Call<List<Reservations>> call = restAPI.getReservationsByResidenceId((Integer)params[1]);
             try
             {
                 Response<List<Reservations>> resp = call.execute();
@@ -1124,7 +1124,7 @@ public class RetrofitCalls {
         }
     }
 
-    public ArrayList<Reservations> getReservationsByResidenceId (String token, String residenceId) {
+    public ArrayList<Reservations> getReservationsByResidenceId (String token, Integer residenceId) {
         getReservationsByResidenceIdHttpRequestTask reservationsByResidenceId = new getReservationsByResidenceIdHttpRequestTask();
         reservationsByResidenceId.execute(token, residenceId);
         try {

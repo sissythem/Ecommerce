@@ -141,7 +141,7 @@ public interface RestAPI {
     Call<List<Reservations>> getReservationsByTenantId(@Query("tenantId") String tenantId);
 
     @GET("reservations/residence")
-    Call<List<Reservations>> getReservationsByResidenceId(@Query("residenceId") String residenceId);
+    Call<List<Reservations>> getReservationsByResidenceId(@Query("residenceId") Integer residenceId);
 
     @DELETE("reservations/delete/{residenceId}")
     Call<Void> deleteReservationsByResidence(@Path("residenceId") String residenceId);

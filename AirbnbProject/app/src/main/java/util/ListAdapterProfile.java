@@ -32,4 +32,9 @@ public class ListAdapterProfile extends ArrayAdapter<String> {
         }
         return rowView;
     }
+
+    @Override
+    public boolean isEnabled(int position) {
+        return false;
+    }
 }

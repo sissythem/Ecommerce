@@ -69,6 +69,7 @@ public class Utils {
     public static final String RESERVATIONS_ACTION          = "Reservations";
     public static final String VIEW_RESIDENCE_ACTION        = "View Residence";
     public static final String CONTACT_HOST_ACTION          = "Contact Host";
+    public static final String CONTACT_USER_ACTION          = "Contact User";
     public static final String CANCEL_RESERVATION_ACTION    = "Cancel Reservation";
 
     public static Date ConvertStringToDate(String date, String format)
@@ -511,5 +512,4 @@ public class Utils {
         NotificationManager nm = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         nm.notify(uniqueID, notification.build());
     }
-
 }

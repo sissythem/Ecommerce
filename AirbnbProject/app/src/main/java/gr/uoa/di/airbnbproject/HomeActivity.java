@@ -1,5 +1,6 @@
 package gr.uoa.di.airbnbproject;
 
+import android.app.ActionBar;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,6 +14,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Layout;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -20,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,6 +46,7 @@ import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
 
+import static util.Utils.VIEW_RESIDENCE_ACTION;
 import static util.Utils.getSessionData;
 
 public class HomeActivity extends AppCompatActivity {
@@ -70,6 +74,13 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_home);
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
 
         Session sessionData = getSessionData(HomeActivity.this);
         if (!sessionData.getUserLoggedInState()) {
@@ -88,11 +99,16 @@ public class HomeActivity extends AppCompatActivity {
         new Worker().execute();
 
         //getPermissions();
-        token = sessionData.getToken();
-        username = sessionData.getUsername();
-        setContentView(R.layout.activity_home);
+        token       = sessionData.getToken();
+        username    = sessionData.getUsername();
+
+        //resetActivity();
         user = true;
-        c = this;
+
+        /** TODO check if data are updated with adapter, I have read that it is better to load comments in onResume rather than in onCreate **/
+        /** TODO: notifyDataSetChanged has to go on the adapter list items that have click actions. HomeActivity doesnt need it **/
+//        adapter.notifyDataSetChanged();
+
         if (Utils.isTokenExpired(token)) {
             Toast.makeText(c, "Session is expired", Toast.LENGTH_SHORT).show();
             Utils.logout(this);
@@ -105,42 +121,56 @@ public class HomeActivity extends AppCompatActivity {
         setupSearchView();
 
         /** RECOMMENDATIONS **/
-        ArrayList<Residences> Recommendations = popularRecommendations();
-        title                  = new String[Recommendations.size()];
-        representativePhoto    = new String[Recommendations.size()];
-        city                   = new String[Recommendations.size()];
-        price                  = new Double[Recommendations.size()];
-        rating                 = new float[Recommendations.size()];
-        residenceId            = new int[Recommendations.size()];
-
-        for(int i=0; i<Recommendations.size();i++) {
-            title[i]                = Recommendations.get(i).getTitle();
-            representativePhoto[i]  = Recommendations.get(i).getPhotos();
-            city[i]                 = Recommendations.get(i).getCity();
-            price[i]                = Recommendations.get(i).getMinPrice();
-            rating[i]               = (float)Recommendations.get(i).getAverageRating();
-            residenceId[i]          = Recommendations.get(i).getId();
-        }
-        adapter = new ListAdapterResidences(this, title, representativePhoto, city, price, rating);
         list = (ListView) findViewById(R.id.list);
-        list.setAdapter(adapter);
+        try{
+            ArrayList<Residences> Recommendations = popularRecommendations();
+            if (Recommendations.size() > 0) {
+                title                  = new String[Recommendations.size()];
+                representativePhoto    = new String[Recommendations.size()];
+                city                   = new String[Recommendations.size()];
+                price                  = new Double[Recommendations.size()];
+                rating                 = new float[Recommendations.size()];
+                residenceId            = new int[Recommendations.size()];
 
-        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent showResidenceIntent = new Intent(HomeActivity.this, ResidenceActivity.class);
-                Bundle btype = new Bundle();
-                btype.putBoolean("type", user);
-                btype.putInt("residenceId", residenceId[position]);
-                showResidenceIntent.putExtras(btype);
-                try {
-                    startActivity(showResidenceIntent);
-                } catch (Exception ex) {
-                    System.out.println(ex.getMessage());
-                    ex.printStackTrace();
+                for(int i=0; i<Recommendations.size();i++) {
+                    title[i]                = Recommendations.get(i).getTitle();
+                    representativePhoto[i]  = Recommendations.get(i).getPhotos();
+                    city[i]                 = Recommendations.get(i).getCity();
+                    price[i]                = Recommendations.get(i).getMinPrice();
+                    rating[i]               = (float)Recommendations.get(i).getAverageRating();
+                    residenceId[i]          = Recommendations.get(i).getId();
                 }
+                adapter = new ListAdapterResidences(this, title, representativePhoto, city, price, rating);
+                list.setAdapter(adapter);
+
+                list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Intent showResidenceIntent = new Intent(HomeActivity.this, ResidenceActivity.class);
+                        Bundle btype = new Bundle();
+                        btype.putBoolean("type", user);
+                        btype.putInt("residenceId", residenceId[position]);
+                        showResidenceIntent.putExtras(btype);
+                        try {
+                            startActivity(showResidenceIntent);
+                        } catch (Exception ex) {
+                            System.out.println(ex.getMessage());
+                            ex.printStackTrace();
+                        }
+                    }
+                });
+            } else {
+                list.setVisibility(View.GONE);
+
+//                LinearLayout layout = (LinearLayout)findViewById(R.id.homelayout);
+//                TextView text = new TextView(this);
+//                text.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+//                text.setText("No Results");
+//                layout.addView(text);
             }
-        });
+        } catch (Exception e) {
+            Log.e("", e.getMessage());
+        }
     }
 
     public void setupSearchView() {
@@ -252,6 +282,7 @@ public class HomeActivity extends AppCompatActivity {
         loggedInUser = Users.get(0);
 
         ArrayList<Residences> reviewedResidences = new ArrayList<>();
+        ArrayList<Residences> residences = new ArrayList<>();
         ArrayList<Reviews> reviewsByResidence;
         int residenceId;
 
@@ -262,7 +293,7 @@ public class HomeActivity extends AppCompatActivity {
             relevantCities.add(searchedCities.get(i).getCity());
         }
 
-		/* if user has not searched anything yet, most popular residences will appear */
+		/** If user has not searched anything yet, most popular residences will appear **/
         if (relevantCities.size() == 0) {
             ArrayList<Reviews> reviews;
             reviews = retrofitCalls.getAllReviews(token);
@@ -270,7 +301,7 @@ public class HomeActivity extends AppCompatActivity {
                 reviewedResidences.add(reviews.get(i).getResidenceId());
             }
         }
-        /* if user has already searched, we will show the most popular residences in the relevant cities */
+        /** If user has already searched, we will show the most popular residences in the relevant cities **/
         else {
             for (String city : relevantCities) {
                 reviewedResidences = retrofitCalls.getResidencesByCity(token, city);
@@ -287,24 +318,21 @@ public class HomeActivity extends AppCompatActivity {
         }
 
         /** get all relevant rooms and reviews **/
-        for(int i=0; i < reviewedResidences.size(); i++){
-            residenceId = reviewedResidences.get(i).getId();
-            reviewsByResidence = retrofitCalls.getReviewsByResidenceId(token, Integer.toString(residenceId));
-            reviewedResidences.get(i).setReviewsCollection(reviewsByResidence);
+        for (int i=0; i < reviewedResidences.size(); i++) {
+            if (!reviewedResidences.get(i).getHostId().getId().equals(loggedInUser.getId())) {
+                residences.add(reviewedResidences.get(i));
+            }
         }
-        //sort the results
-        Collections.sort(reviewedResidences);
-        return reviewedResidences;
-    }
 
-    @Override
-    protected void onResume()
-    {
-        //TODO check if data are updated with adapter, I have read that it is better to load comments in onResume rather than in onCreate
-        resetActivity();
-        user = true;
-        adapter.notifyDataSetChanged();
-        super.onResume();
+        for (int i=0; i < residences.size(); i++) {
+            residenceId = residences.get(i).getId();
+            reviewsByResidence = retrofitCalls.getReviewsByResidenceId(token, Integer.toString(residenceId));
+            residences.get(i).setReviewsCollection(reviewsByResidence);
+        }
+
+        /** Sort the results **/
+        Collections.sort(residences);
+        return residences;
     }
 
 

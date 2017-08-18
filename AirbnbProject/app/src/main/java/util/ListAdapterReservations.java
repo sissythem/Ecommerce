@@ -11,16 +11,19 @@ import gr.uoa.di.airbnbproject.R;
 
 public class ListAdapterReservations extends ArrayAdapter<String> {
     private final Activity context;
+    private final Boolean fromResidence;
     private final String[] residenceTitle;
     private final String[] startDate;
     private final String[] endDate;
 
-    public ListAdapterReservations(Activity context, String[] residenceTitle, String[] startDate, String[] endDate) {
+    public ListAdapterReservations(Activity context, Boolean fromResidence,  String[] residenceTitle, String[] startDate, String[] endDate) {
         super(context, R.layout.list_reservations_history, residenceTitle);
-        this.context=context;
-        this.residenceTitle=residenceTitle;
-        this.startDate=startDate;
-        this.endDate=endDate;
+
+        this.context        = context;
+        this.fromResidence  = fromResidence;
+        this.residenceTitle = residenceTitle;
+        this.startDate      = startDate;
+        this.endDate        = endDate;
     }
 
     public View getView(final int position, View view, ViewGroup parent) {

@@ -132,7 +132,6 @@ public class HistoryReviewsActivity extends AppCompatActivity {
         } else if (item.getTitle().equals(VIEW_RESIDENCE_ACTION)) {
             Intent showResidenceIntent = new Intent(HistoryReviewsActivity.this, ResidenceActivity.class);
             Bundle btype = new Bundle();
-
             btype.putBoolean("type", user);
             btype.putInt("residenceId", userReviews.get(item.getItemId()).getResidenceId().getId());
             showResidenceIntent.putExtras(btype);

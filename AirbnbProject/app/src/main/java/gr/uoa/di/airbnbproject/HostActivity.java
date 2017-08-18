@@ -163,7 +163,8 @@ public class HostActivity extends AppCompatActivity {
             goToActivity(this, EditResidenceActivity.class, btype);
         }
         else if (item.getTitle().equals(RESERVATIONS_ACTION)) {
-            Toast.makeText(this, item.getTitle(), Toast.LENGTH_LONG).show();
+            btype.putInt("residenceId", residenceId[item.getItemId()]);
+            goToActivity(this, HistoryReservationsActivity.class, btype);
         }
         else if (item.getTitle().equals(DELETE_ACTION)) {
             new AlertDialog.Builder(this)
