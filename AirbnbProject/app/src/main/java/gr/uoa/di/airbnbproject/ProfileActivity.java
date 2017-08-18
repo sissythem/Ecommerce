@@ -54,12 +54,6 @@ public class ProfileActivity extends AppCompatActivity {
         token = sessionData.getToken();
         username = sessionData.getUsername();
         c = this;
-
-        if(Utils.isTokenExpired(token)) {
-            Utils.logout(this);
-            finish();
-        }
-
         setContentView(R.layout.activity_profile);
 
         Bundle buser = getIntent().getExtras();

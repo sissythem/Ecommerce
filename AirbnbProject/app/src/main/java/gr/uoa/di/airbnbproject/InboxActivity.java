@@ -62,10 +62,6 @@ public class InboxActivity extends AppCompatActivity {
         }
         token = sessionData.getToken();
         c=this;
-        if(Utils.isTokenExpired(token)) {
-            Utils.logout(this);
-            finish();
-        }
 
         Bundle buser = getIntent().getExtras();
         user = buser.getBoolean("type");

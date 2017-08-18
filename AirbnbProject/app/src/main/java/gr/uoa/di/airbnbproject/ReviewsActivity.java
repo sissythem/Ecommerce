@@ -63,11 +63,8 @@ public class ReviewsActivity extends AppCompatActivity {
         }
         token = sessionData.getToken();
         c = this;
-        if(Utils.isTokenExpired(token)) {
-            Utils.logout(this);
-            finish();
-        }
         setContentView(R.layout.activity_reviews);
+
         Bundle buser = getIntent().getExtras();
         user        = buser.getBoolean("type");
         residenceId = buser.getInt("residenceId");

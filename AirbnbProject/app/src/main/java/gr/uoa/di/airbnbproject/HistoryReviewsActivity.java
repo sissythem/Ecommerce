@@ -54,11 +54,7 @@ public class HistoryReviewsActivity extends AppCompatActivity {
             return;
         }
         token = sessionData.getToken();
-        if(Utils.isTokenExpired(token))
-        {
-            Utils.logout(this);
-            finish();
-        }
+
         setContentView(R.layout.activity_history_reviews);
         c = this;
 

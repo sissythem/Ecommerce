@@ -1,12 +1,6 @@
 package services;
 
 import domain.Images;
-import domain.Residences;
-import java.awt.Desktop;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-
-import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

@@ -56,11 +56,7 @@ public class ViewHostProfileActivity extends AppCompatActivity {
         token = sessionData.getToken();
 
         c = this;
-        if(Utils.isTokenExpired(token))
-        {
-            Utils.logout(this);
-            finish();
-        }
+
         setContentView(R.layout.activity_view_host_profile);
 
         Toolbar backToolbar = (Toolbar) findViewById(R.id.backToolbar);

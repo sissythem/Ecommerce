@@ -77,7 +77,12 @@ public class HomeActivity extends AppCompatActivity {
     {
         super.onResume();
 
-        Session sessionData = getSessionData(HomeActivity.this);
+        Session sessionData = Utils.getSessionData(HomeActivity.this);
+
+        username=sessionData.getUsername();
+        user = true;
+        token = sessionData.getToken();
+        c=this;
 
         if (!sessionData.getUserLoggedInState()) {
             Utils.logout(this);
@@ -87,17 +92,13 @@ public class HomeActivity extends AppCompatActivity {
             finish();
             return;
         }
-        //getPermissions();
-        username    = sessionData.getUsername();
-        //resetActivity();
-        user = true;
-        token = sessionData.getToken();
-        c=this;
-        if (Utils.isTokenExpired(token)) {
+        if(token.equals("expired")){
             Toast.makeText(c, "Session is expired", Toast.LENGTH_SHORT).show();
             Utils.logout(this);
         }
 
+        //getPermissions();
+        //resetActivity();
         /** Start Worker for Notifications **/
         new Worker().execute();
         /** TODO check if data are updated with adapter, I have read that it is better to load comments in onResume rather than in onCreate **/

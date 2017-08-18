@@ -62,10 +62,6 @@ public class HostActivity extends AppCompatActivity {
             return;
         }
 
-        if(Utils.isTokenExpired(token)) {
-            Utils.logout(this);
-            finish();
-        }
         setContentView(R.layout.activity_host);
 
         baddResidence = (ImageButton)findViewById(R.id.addResidence);

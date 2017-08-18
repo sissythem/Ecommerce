@@ -69,11 +69,7 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
 
         c = this;
         user = false;
-        if(Utils.isTokenExpired(token))
-        {
-            Utils.logout(this);
-            finish();
-        }
+
         userInputLayout();
 
         RetrofitCalls retrofitCalls = new RetrofitCalls();

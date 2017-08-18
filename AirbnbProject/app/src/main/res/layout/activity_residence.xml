@@ -21,40 +21,40 @@
             android:id="@+id/ibBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="11dp"
-            android:layout_marginStart="11dp"
             android:background="@color/colorPrimary"
             app:srcCompat="@drawable/ic_back"
-            android:layout_alignBottom="@+id/tvResidenceView"
+            android:layout_alignTop="@+id/tvResidenceView"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
-
-        <TextView
-            android:id="@+id/tvResidenceView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="View Residence"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textSize="18sp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginStart="30dp"
-            android:layout_toRightOf="@+id/ibBack"
-            android:layout_toEndOf="@+id/ibBack" />
 
         <ImageButton
             android:id="@+id/btnMenu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginEnd="13dp"
-            android:layout_marginRight="13dp"
-            android:layout_marginTop="11dp"
             android:background="@color/colorPrimary"
-            app:srcCompat="@drawable/ic_menu" />
+            app:srcCompat="@drawable/ic_menu"
+            android:layout_marginRight="25dp"
+            android:layout_marginEnd="25dp"
+            android:layout_marginTop="11dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+
+        <TextView
+            android:id="@+id/tvResidenceView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="84dp"
+            android:layout_marginStart="84dp"
+            android:text="View Residence"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textSize="18sp"
+            android:layout_alignTop="@+id/btnMenu"
+            android:layout_toRightOf="@+id/ibBack"
+            android:layout_toEndOf="@+id/ibBack" />
 
     </android.support.v7.widget.Toolbar>
+
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
@@ -428,6 +428,5 @@
                 android:text="Book now" />
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
-
 
 </RelativeLayout>

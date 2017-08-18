@@ -73,10 +73,6 @@ public class MessageActivity extends AppCompatActivity {
             return;
         }
         token = sessionData.getToken();
-        if(Utils.isTokenExpired(token)) {
-            Utils.logout(this);
-            finish();
-        }
         setContentView(R.layout.activity_message);
 
         Bundle bextras  = getIntent().getExtras();

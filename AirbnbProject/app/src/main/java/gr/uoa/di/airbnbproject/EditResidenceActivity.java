@@ -89,11 +89,7 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         }
 
         c = this;
-        if(Utils.isTokenExpired(token))
-        {
-            Utils.logout(this);
-            finish();
-        }
+
         setContentView(R.layout.layout_residence_editfields);
 
 

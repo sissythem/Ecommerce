@@ -54,11 +54,6 @@ public class SearchResultsActivity extends AppCompatActivity {
         token = sessionData.getToken();
         c=this;
 
-        if(Utils.isTokenExpired(token)) {
-            Utils.logout(this);
-            finish();
-        }
-
         setContentView(R.layout.activity_search_results);
 
         Bundle buser    = getIntent().getExtras();

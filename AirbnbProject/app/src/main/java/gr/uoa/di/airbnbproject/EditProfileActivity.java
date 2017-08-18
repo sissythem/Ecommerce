@@ -82,11 +82,7 @@ public class EditProfileActivity extends AppCompatActivity {
         token = sessionData.getToken();
         username = sessionData.getUsername();
         c = this;
-        if(Utils.isTokenExpired(token))
-        {
-            Utils.logout(this);
-            finish();
-        }
+
         setContentView(R.layout.activity_edit_profile);
 
         Toolbar footerToolbar = (Toolbar) findViewById(R.id.footerToolbar);

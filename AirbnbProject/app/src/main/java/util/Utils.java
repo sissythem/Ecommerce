@@ -19,10 +19,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -32,16 +30,12 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import fromRESTful.Conversations;
-import fromRESTful.Reservations;
 import gr.uoa.di.airbnbproject.GreetingActivity;
 import gr.uoa.di.airbnbproject.HomeActivity;
 import gr.uoa.di.airbnbproject.HostActivity;
 import gr.uoa.di.airbnbproject.InboxActivity;
-import gr.uoa.di.airbnbproject.MessageActivity;
 import gr.uoa.di.airbnbproject.ProfileActivity;
 import gr.uoa.di.airbnbproject.R;
-import gr.uoa.di.airbnbproject.ResidenceActivity;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 import static util.RestClient.BASE_URL;
@@ -342,6 +336,11 @@ public class Utils {
         sessionData.setToken(sharedPrefs.getString("token", ""));
         sessionData.setUsername(sharedPrefs.getString("username", "")); //currentLoggedInUser
         sessionData.setUserLoggedInState(sharedPrefs.getBoolean("userLoggedInState", false));
+
+        if (isTokenExpired(sessionData.getToken())) {
+            SharedPreferences.Editor editor = sharedPrefs.edit();
+            editor.putString("token", "expired");
+        }
         return sessionData;
     }
 

@@ -60,11 +60,7 @@ public class HistoryReservationsActivity extends AppCompatActivity {
             return;
         }
         token = sessionData.getToken();
-        if(Utils.isTokenExpired(token))
-        {
-            Utils.logout(this);
-            finish();
-        }
+
         c = this;
         setContentView(R.layout.activity_history_reservations);
         buser = getIntent().getExtras();
