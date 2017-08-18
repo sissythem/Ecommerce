@@ -49,6 +49,9 @@ public class HistoryReservationsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         Session sessionData = Utils.getSessionData(HistoryReservationsActivity.this);
+        token = sessionData.getToken();
+        c = this;
+
         if (!sessionData.getUserLoggedInState()) {
             Utils.logout(this);
             finish();
@@ -59,9 +62,14 @@ public class HistoryReservationsActivity extends AppCompatActivity {
             finish();
             return;
         }
-        token = sessionData.getToken();
 
-        c = this;
+        if(Utils.isTokenExpired(sessionData.getToken())){
+            Toast.makeText(c, "Session is expired", Toast.LENGTH_SHORT).show();
+            Utils.logout(this);
+            finish();
+            return;
+        }
+
         setContentView(R.layout.activity_history_reservations);
         buser = getIntent().getExtras();
         user = buser.getBoolean("type");

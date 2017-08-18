@@ -56,6 +56,8 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
 
         Session sessionData = Utils.getSessionData(AddResidenceActivity.this);
         token = sessionData.getToken();
+        c = this;
+        user = false;
         if (!sessionData.getUserLoggedInState()) {
             Utils.logout(this);
             finish();
@@ -67,8 +69,12 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
             return;
         }
 
-        c = this;
-        user = false;
+        if(Utils.isTokenExpired(sessionData.getToken())){
+            Toast.makeText(c, "Session is expired", Toast.LENGTH_SHORT).show();
+            Utils.logout(this);
+            finish();
+            return;
+        }
 
         userInputLayout();
 

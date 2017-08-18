@@ -77,6 +77,7 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
 
         Session sessionData = Utils.getSessionData(EditResidenceActivity.this);
         token = sessionData.getToken();
+        c= this;
         if (!sessionData.getUserLoggedInState()) {
             Utils.logout(this);
             finish();
@@ -88,11 +89,14 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
             return;
         }
 
-        c = this;
+        if(Utils.isTokenExpired(sessionData.getToken())){
+            Toast.makeText(c, "Session is expired", Toast.LENGTH_SHORT).show();
+            Utils.logout(this);
+            finish();
+            return;
+        }
 
         setContentView(R.layout.layout_residence_editfields);
-
-
         Bundle buser = getIntent().getExtras();
         user = buser.getBoolean("type");
         user = false;

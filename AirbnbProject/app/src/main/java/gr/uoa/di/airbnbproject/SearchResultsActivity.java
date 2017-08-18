@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -41,6 +42,8 @@ public class SearchResultsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         Session sessionData = getSessionData(SearchResultsActivity.this);
+        token = sessionData.getToken();
+        c=this;
         if (!sessionData.getUserLoggedInState()) {
             Utils.logout(this);
             finish();
@@ -51,8 +54,13 @@ public class SearchResultsActivity extends AppCompatActivity {
             finish();
             return;
         }
-        token = sessionData.getToken();
-        c=this;
+
+        if(Utils.isTokenExpired(sessionData.getToken())){
+            Toast.makeText(c, "Session is expired", Toast.LENGTH_SHORT).show();
+            Utils.logout(this);
+            finish();
+            return;
+        }
 
         setContentView(R.layout.activity_search_results);
 

@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -43,6 +44,8 @@ public class ViewHostProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         Session sessionData = getSessionData(ViewHostProfileActivity.this);
+        token = sessionData.getToken();
+        c = this;
         if (!sessionData.getUserLoggedInState()) {
             Utils.logout(this);
             finish();
@@ -53,9 +56,13 @@ public class ViewHostProfileActivity extends AppCompatActivity {
             finish();
             return;
         }
-        token = sessionData.getToken();
 
-        c = this;
+        if(Utils.isTokenExpired(sessionData.getToken())){
+            Toast.makeText(c, "Session is expired", Toast.LENGTH_SHORT).show();
+            Utils.logout(this);
+            finish();
+            return;
+        }
 
         setContentView(R.layout.activity_view_host_profile);
 

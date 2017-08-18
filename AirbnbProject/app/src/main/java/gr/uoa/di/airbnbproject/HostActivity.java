@@ -62,6 +62,13 @@ public class HostActivity extends AppCompatActivity {
             return;
         }
 
+        if(Utils.isTokenExpired(sessionData.getToken())){
+            Toast.makeText(c, "Session is expired", Toast.LENGTH_SHORT).show();
+            Utils.logout(this);
+            finish();
+            return;
+        }
+
         setContentView(R.layout.activity_host);
 
         baddResidence = (ImageButton)findViewById(R.id.addResidence);

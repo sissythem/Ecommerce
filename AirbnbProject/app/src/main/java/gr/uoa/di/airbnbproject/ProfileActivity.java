@@ -41,6 +41,9 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         Session sessionData = getSessionData(ProfileActivity.this);
+        token = sessionData.getToken();
+        username = sessionData.getUsername();
+        c = this;
         if (!sessionData.getUserLoggedInState()) {
             Utils.logout(this);
             finish();
@@ -51,9 +54,14 @@ public class ProfileActivity extends AppCompatActivity {
             finish();
             return;
         }
-        token = sessionData.getToken();
-        username = sessionData.getUsername();
-        c = this;
+
+        if(Utils.isTokenExpired(sessionData.getToken())){
+            Toast.makeText(c, "Session is expired", Toast.LENGTH_SHORT).show();
+            Utils.logout(this);
+            finish();
+            return;
+        }
+
         setContentView(R.layout.activity_profile);
 
         Bundle buser = getIntent().getExtras();

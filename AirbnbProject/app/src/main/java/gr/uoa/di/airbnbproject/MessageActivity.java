@@ -62,6 +62,7 @@ public class MessageActivity extends AppCompatActivity {
         c = this;
 
         Session sessionData = Utils.getSessionData(MessageActivity.this);
+        token = sessionData.getToken();
         if (!sessionData.getUserLoggedInState()) {
             Utils.logout(this);
             finish();
@@ -72,7 +73,13 @@ public class MessageActivity extends AppCompatActivity {
             finish();
             return;
         }
-        token = sessionData.getToken();
+        if(Utils.isTokenExpired(sessionData.getToken())){
+            Toast.makeText(c, "Session is expired", Toast.LENGTH_SHORT).show();
+            Utils.logout(this);
+            finish();
+            return;
+        }
+
         setContentView(R.layout.activity_message);
 
         Bundle bextras  = getIntent().getExtras();

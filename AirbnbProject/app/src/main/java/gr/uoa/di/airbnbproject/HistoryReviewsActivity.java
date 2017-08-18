@@ -43,6 +43,8 @@ public class HistoryReviewsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         Session sessionData = Utils.getSessionData(HistoryReviewsActivity.this);
+        c = this;
+        token = sessionData.getToken();
         if (!sessionData.getUserLoggedInState()) {
             Utils.logout(this);
             finish();
@@ -53,11 +55,15 @@ public class HistoryReviewsActivity extends AppCompatActivity {
             finish();
             return;
         }
-        token = sessionData.getToken();
+
+        if(Utils.isTokenExpired(sessionData.getToken())){
+            Toast.makeText(c, "Session is expired", Toast.LENGTH_SHORT).show();
+            Utils.logout(this);
+            finish();
+            return;
+        }
 
         setContentView(R.layout.activity_history_reviews);
-        c = this;
-
         Bundle buser = getIntent().getExtras();
         user = buser.getBoolean("type");
 

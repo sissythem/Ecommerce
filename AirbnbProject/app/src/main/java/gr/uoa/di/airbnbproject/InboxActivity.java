@@ -50,6 +50,8 @@ public class InboxActivity extends AppCompatActivity {
         setContentView(R.layout.activity_inbox);
 
         Session sessionData = getSessionData(InboxActivity.this);
+        token = sessionData.getToken();
+        c=this;
         if (!sessionData.getUserLoggedInState()) {
             Utils.logout(this);
             finish();
@@ -60,8 +62,13 @@ public class InboxActivity extends AppCompatActivity {
             finish();
             return;
         }
-        token = sessionData.getToken();
-        c=this;
+
+        if(Utils.isTokenExpired(sessionData.getToken())){
+            Toast.makeText(c, "Session is expired", Toast.LENGTH_SHORT).show();
+            Utils.logout(this);
+            finish();
+            return;
+        }
 
         Bundle buser = getIntent().getExtras();
         user = buser.getBoolean("type");

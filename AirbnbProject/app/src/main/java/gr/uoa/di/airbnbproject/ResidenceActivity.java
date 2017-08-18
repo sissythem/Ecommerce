@@ -94,9 +94,11 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
             return;
         }
 
-        if(Utils.isTokenExpired(token)) {
+        if(Utils.isTokenExpired(sessionData.getToken())){
+            Toast.makeText(c, "Session is expired", Toast.LENGTH_SHORT).show();
             Utils.logout(this);
             finish();
+            return;
         }
         setContentView(R.layout.activity_residence);
 
