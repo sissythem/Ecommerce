@@ -20,7 +20,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import fromRESTful.Residences;
@@ -58,8 +57,7 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
         Session sessionData = Utils.getSessionData(AddResidenceActivity.this);
         token = sessionData.getToken();
         if (!sessionData.getUserLoggedInState()) {
-            Intent intent = new Intent(this, GreetingActivity.class);
-            startActivity(intent);
+            Utils.logout(this);
             finish();
             return;
         }
@@ -68,18 +66,18 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
             finish();
             return;
         }
-        setContentView(R.layout.layout_residence_editfields);
+
         c = this;
-
         user = false;
-        userInputLayout();
-
-        RetrofitCalls retrofitCalls = new RetrofitCalls();
         if(Utils.isTokenExpired(token))
         {
             Utils.logout(this);
             finish();
         }
+        userInputLayout();
+
+        RetrofitCalls retrofitCalls = new RetrofitCalls();
+        setContentView(R.layout.layout_residence_editfields);
         List<Users> userData = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
 
         host = userData.get(0);

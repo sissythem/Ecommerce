@@ -44,8 +44,7 @@ public class HistoryReviewsActivity extends AppCompatActivity {
 
         Session sessionData = Utils.getSessionData(HistoryReviewsActivity.this);
         if (!sessionData.getUserLoggedInState()) {
-            Intent intent = new Intent(this, GreetingActivity.class);
-            startActivity(intent);
+            Utils.logout(this);
             finish();
             return;
         }
@@ -55,6 +54,11 @@ public class HistoryReviewsActivity extends AppCompatActivity {
             return;
         }
         token = sessionData.getToken();
+        if(Utils.isTokenExpired(token))
+        {
+            Utils.logout(this);
+            finish();
+        }
         setContentView(R.layout.activity_history_reviews);
         c = this;
 
@@ -62,11 +66,7 @@ public class HistoryReviewsActivity extends AppCompatActivity {
         user = buser.getBoolean("type");
 
         RetrofitCalls retrofitCalls = new RetrofitCalls();
-        if(Utils.isTokenExpired(token))
-        {
-            Utils.logout(this);
-            finish();
-        }
+
         ArrayList<Users> getUserByUsername = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
         loggedinUser = getUserByUsername.get(0);
 

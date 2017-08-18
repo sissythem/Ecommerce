@@ -63,8 +63,7 @@ public class MessageActivity extends AppCompatActivity {
 
         Session sessionData = Utils.getSessionData(MessageActivity.this);
         if (!sessionData.getUserLoggedInState()) {
-            Intent intent = new Intent(this, GreetingActivity.class);
-            startActivity(intent);
+            Utils.logout(this);
             finish();
             return;
         }
@@ -74,6 +73,10 @@ public class MessageActivity extends AppCompatActivity {
             return;
         }
         token = sessionData.getToken();
+        if(Utils.isTokenExpired(token)) {
+            Utils.logout(this);
+            finish();
+        }
         setContentView(R.layout.activity_message);
 
         Bundle bextras  = getIntent().getExtras();
@@ -87,11 +90,6 @@ public class MessageActivity extends AppCompatActivity {
         body = (EditText) findViewById(R.id.body);
 
         RetrofitCalls retrofitCalls = new RetrofitCalls();
-
-        if(Utils.isTokenExpired(token)) {
-            Utils.logout(this);
-            finish();
-        }
 
         if (bextras.containsKey("conversationId")) {
             isNewMessage = false;

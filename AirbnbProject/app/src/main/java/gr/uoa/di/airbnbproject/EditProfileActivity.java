@@ -70,8 +70,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
         sessionData = Utils.getSessionData(EditProfileActivity.this);
         if (!sessionData.getUserLoggedInState()) {
-            Intent intent = new Intent(this, GreetingActivity.class);
-            startActivity(intent);
+            Utils.logout(this);
             finish();
             return;
         }
@@ -82,8 +81,13 @@ public class EditProfileActivity extends AppCompatActivity {
         }
         token = sessionData.getToken();
         username = sessionData.getUsername();
-        setContentView(R.layout.activity_edit_profile);
         c = this;
+        if(Utils.isTokenExpired(token))
+        {
+            Utils.logout(this);
+            finish();
+        }
+        setContentView(R.layout.activity_edit_profile);
 
         Toolbar footerToolbar = (Toolbar) findViewById(R.id.footerToolbar);
         setSupportActionBar(footerToolbar);
@@ -92,11 +96,6 @@ public class EditProfileActivity extends AppCompatActivity {
         user = buser.getBoolean("type");
 
         retrofitCalls = new RetrofitCalls();
-        if(Utils.isTokenExpired(token))
-        {
-            Utils.logout(this);
-            finish();
-        }
         ArrayList<Users> getUsersByUsername = retrofitCalls.getUserbyUsername(token, username);
         loggedinUser  = getUsersByUsername.get(0);
 

@@ -1,6 +1,5 @@
 package gr.uoa.di.airbnbproject;
 
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -52,8 +51,7 @@ public class InboxActivity extends AppCompatActivity {
 
         Session sessionData = getSessionData(InboxActivity.this);
         if (!sessionData.getUserLoggedInState()) {
-            Intent intent = new Intent(this, GreetingActivity.class);
-            startActivity(intent);
+            Utils.logout(this);
             finish();
             return;
         }
@@ -64,16 +62,15 @@ public class InboxActivity extends AppCompatActivity {
         }
         token = sessionData.getToken();
         c=this;
+        if(Utils.isTokenExpired(token)) {
+            Utils.logout(this);
+            finish();
+        }
 
         Bundle buser = getIntent().getExtras();
         user = buser.getBoolean("type");
 
         RetrofitCalls retrofitCalls = new RetrofitCalls();
-
-        if(Utils.isTokenExpired(token)) {
-            Utils.logout(this);
-            finish();
-        }
         ArrayList<Users> getUsersByUsername = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
         currentUserId = getUsersByUsername.get(0).getId();
 

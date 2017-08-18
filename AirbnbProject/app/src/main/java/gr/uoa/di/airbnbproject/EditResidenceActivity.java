@@ -78,8 +78,7 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         Session sessionData = Utils.getSessionData(EditResidenceActivity.this);
         token = sessionData.getToken();
         if (!sessionData.getUserLoggedInState()) {
-            Intent intent = new Intent(this, GreetingActivity.class);
-            startActivity(intent);
+            Utils.logout(this);
             finish();
             return;
         }
@@ -88,8 +87,15 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
             finish();
             return;
         }
-        setContentView(R.layout.layout_residence_editfields);
+
         c = this;
+        if(Utils.isTokenExpired(token))
+        {
+            Utils.logout(this);
+            finish();
+        }
+        setContentView(R.layout.layout_residence_editfields);
+
 
         Bundle buser = getIntent().getExtras();
         user = buser.getBoolean("type");
@@ -97,11 +103,6 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         residenceId = buser.getInt("residenceId");
 
         retrofitCalls = new RetrofitCalls();
-        if(Utils.isTokenExpired(token))
-        {
-            Utils.logout(this);
-            finish();
-        }
         selectedResidence = retrofitCalls.getResidenceById(token, Integer.toString(residenceId));
 
         userInputLayout();

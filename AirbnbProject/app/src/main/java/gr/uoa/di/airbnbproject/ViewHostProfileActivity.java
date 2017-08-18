@@ -44,8 +44,7 @@ public class ViewHostProfileActivity extends AppCompatActivity {
 
         Session sessionData = getSessionData(ViewHostProfileActivity.this);
         if (!sessionData.getUserLoggedInState()) {
-            Intent intent = new Intent(this, GreetingActivity.class);
-            startActivity(intent);
+            Utils.logout(this);
             finish();
             return;
         }

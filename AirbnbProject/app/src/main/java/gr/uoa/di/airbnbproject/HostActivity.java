@@ -50,10 +50,11 @@ public class HostActivity extends AppCompatActivity {
 
         Session sessionData = Utils.getSessionData(HostActivity.this);
         token = sessionData.getToken();
+        user=false;
+        c=this;
 
         if (!sessionData.getUserLoggedInState()) {
-            Intent intent = new Intent(this, GreetingActivity.class);
-            startActivity(intent);
+            Utils.logout(this);
             return;
         }
         if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
@@ -61,9 +62,11 @@ public class HostActivity extends AppCompatActivity {
             return;
         }
 
+        if(Utils.isTokenExpired(token)) {
+            Utils.logout(this);
+            finish();
+        }
         setContentView(R.layout.activity_host);
-        user=false;
-        c=this;
 
         baddResidence = (ImageButton)findViewById(R.id.addResidence);
         baddResidence.setOnClickListener(new View.OnClickListener()
@@ -83,11 +86,6 @@ public class HostActivity extends AppCompatActivity {
             }
         });
         RetrofitCalls retrofitCalls = new RetrofitCalls();
-
-        if(Utils.isTokenExpired(token)) {
-            Utils.logout(this);
-            finish();
-        }
         ArrayList<Users> hostUsers = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
         host = hostUsers.get(0);
 

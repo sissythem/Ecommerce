@@ -42,8 +42,7 @@ public class SearchResultsActivity extends AppCompatActivity {
 
         Session sessionData = getSessionData(SearchResultsActivity.this);
         if (!sessionData.getUserLoggedInState()) {
-            Intent intent = new Intent(this, GreetingActivity.class);
-            startActivity(intent);
+            Utils.logout(this);
             finish();
             return;
         }
@@ -53,6 +52,12 @@ public class SearchResultsActivity extends AppCompatActivity {
             return;
         }
         token = sessionData.getToken();
+        c=this;
+
+        if(Utils.isTokenExpired(token)) {
+            Utils.logout(this);
+            finish();
+        }
 
         setContentView(R.layout.activity_search_results);
 
@@ -63,12 +68,7 @@ public class SearchResultsActivity extends AppCompatActivity {
         endDate         = buser.getString("endDate");
         user            = buser.getBoolean("type");
         user=true;
-        c=this;
 
-        if(Utils.isTokenExpired(token)) {
-            Utils.logout(this);
-            finish();
-        }
         if (guests <= 0) guests = 1;
 
         if (isEmpty(startDate) || !Utils.isThisDateValid(startDate, FORMAT_DATE_YMD)) startDate = Utils.getCurrentDate(FORMAT_DATE_YMD);

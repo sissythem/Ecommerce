@@ -80,12 +80,11 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        c = this;
         Session sessionData = Utils.getSessionData(ResidenceActivity.this);
         token = sessionData.getToken();
         if (!sessionData.getUserLoggedInState()) {
-            Intent intent = new Intent(this, GreetingActivity.class);
-            startActivity(intent);
+            Utils.logout(this);
             finish();
             return;
         }
@@ -94,8 +93,12 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
             finish();
             return;
         }
+
+        if(Utils.isTokenExpired(token)) {
+            Utils.logout(this);
+            finish();
+        }
         setContentView(R.layout.activity_residence);
-        c = this;
 
         Bundle buser        = getIntent().getExtras();
         user                = buser.getBoolean("type");
@@ -109,10 +112,6 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         if (buser.containsKey("guests")) guests = buser.getString("guests");
 
         retrofitCalls = new RetrofitCalls();
-        if(Utils.isTokenExpired(token)) {
-            Utils.logout(this);
-            finish();
-        }
         loggedinUser = retrofitCalls.getUserbyUsername(token, sessionData.getUsername()).get(0);
         selectedResidence   = retrofitCalls.getResidenceById(token, Integer.toString(residenceId));
 

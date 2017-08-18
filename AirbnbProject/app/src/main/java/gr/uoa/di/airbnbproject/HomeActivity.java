@@ -1,6 +1,5 @@
 package gr.uoa.di.airbnbproject;
 
-import android.app.ActionBar;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,7 +13,6 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Layout;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -22,7 +20,6 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import fromRESTful.Conversations;
 import fromRESTful.Residences;
 import fromRESTful.Reviews;
 import fromRESTful.Searches;
@@ -46,7 +42,6 @@ import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
 
-import static util.Utils.VIEW_RESIDENCE_ACTION;
 import static util.Utils.getSessionData;
 
 public class HomeActivity extends AppCompatActivity {
@@ -83,36 +78,32 @@ public class HomeActivity extends AppCompatActivity {
         super.onResume();
 
         Session sessionData = getSessionData(HomeActivity.this);
+
         if (!sessionData.getUserLoggedInState()) {
-            Intent intent = new Intent(this, GreetingActivity.class);
-            startActivity(intent);
-            finish();
+            Utils.logout(this);
             return;
         }
-
         if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
             finish();
             return;
         }
-
-        /** Start Worker for Notifications **/
-        new Worker().execute();
-
         //getPermissions();
-        token       = sessionData.getToken();
         username    = sessionData.getUsername();
-
         //resetActivity();
         user = true;
-
-        /** TODO check if data are updated with adapter, I have read that it is better to load comments in onResume rather than in onCreate **/
-        /** TODO: notifyDataSetChanged has to go on the adapter list items that have click actions. HomeActivity doesnt need it **/
-//        adapter.notifyDataSetChanged();
-
+        token = sessionData.getToken();
+        c=this;
         if (Utils.isTokenExpired(token)) {
             Toast.makeText(c, "Session is expired", Toast.LENGTH_SHORT).show();
             Utils.logout(this);
         }
+
+        /** Start Worker for Notifications **/
+        new Worker().execute();
+        /** TODO check if data are updated with adapter, I have read that it is better to load comments in onResume rather than in onCreate **/
+        /** TODO: notifyDataSetChanged has to go on the adapter list items that have click actions. HomeActivity doesnt need it **/
+//        adapter.notifyDataSetChanged();
+
 
         /** FOOTER TOOLBAR **/
         Utils.manageFooter(HomeActivity.this, true);
@@ -487,7 +478,7 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.i("SomeTag", System.currentTimeMillis() / 1000L + "  onDestory()");
+        Log.i("SomeTag", System.currentTimeMillis() / 1000L + "  onDestroy()");
     }
 
     private class Worker extends AsyncTask<Void, Void, String> {

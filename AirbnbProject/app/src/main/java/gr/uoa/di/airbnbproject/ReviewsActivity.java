@@ -52,8 +52,7 @@ public class ReviewsActivity extends AppCompatActivity {
 
         Session sessionData = getSessionData(ReviewsActivity.this);
         if (!sessionData.getUserLoggedInState()) {
-            Intent intent = new Intent(this, GreetingActivity.class);
-            startActivity(intent);
+            Utils.logout(this);
             finish();
             return;
         }
@@ -63,19 +62,16 @@ public class ReviewsActivity extends AppCompatActivity {
             return;
         }
         token = sessionData.getToken();
-
-        setContentView(R.layout.activity_reviews);
-
         c = this;
-        Bundle buser = getIntent().getExtras();
-        user        = buser.getBoolean("type");
-        residenceId = buser.getInt("residenceId");
-        RetrofitCalls retrofitCalls = new RetrofitCalls();
-
         if(Utils.isTokenExpired(token)) {
             Utils.logout(this);
             finish();
         }
+        setContentView(R.layout.activity_reviews);
+        Bundle buser = getIntent().getExtras();
+        user        = buser.getBoolean("type");
+        residenceId = buser.getInt("residenceId");
+        RetrofitCalls retrofitCalls = new RetrofitCalls();
         ArrayList<Users> getUserByUsername = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
         loggedinUser        = getUserByUsername.get(0);
         selectedResidence   = retrofitCalls.getResidenceById(token, Integer.toString(residenceId));

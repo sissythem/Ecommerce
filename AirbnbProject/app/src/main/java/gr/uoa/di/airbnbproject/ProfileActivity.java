@@ -42,8 +42,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         Session sessionData = getSessionData(ProfileActivity.this);
         if (!sessionData.getUserLoggedInState()) {
-            Intent intent = new Intent(this, GreetingActivity.class);
-            startActivity(intent);
+            Utils.logout(this);
             finish();
             return;
         }
@@ -54,8 +53,12 @@ public class ProfileActivity extends AppCompatActivity {
         }
         token = sessionData.getToken();
         username = sessionData.getUsername();
-
         c = this;
+
+        if(Utils.isTokenExpired(token)) {
+            Utils.logout(this);
+            finish();
+        }
 
         setContentView(R.layout.activity_profile);
 
@@ -66,10 +69,6 @@ public class ProfileActivity extends AppCompatActivity {
         userdetails = new String[9];
         manageToolbarButtons();
         retrofitCalls = new RetrofitCalls();
-        if(Utils.isTokenExpired(token)) {
-            Utils.logout(this);
-            finish();
-        }
         loggedinUser    = retrofitCalls.getUserbyUsername(token, username).get(0);
         userdetails[0]  = loggedinUser.getFirstName();
         userdetails[1]  = loggedinUser.getLastName();
@@ -80,16 +79,7 @@ public class ProfileActivity extends AppCompatActivity {
         userdetails[6]  = loggedinUser.getCountry();
         userdetails[7]  = loggedinUser.getCity();
         userdetails[8]  = loggedinUser.getAbout();
-        //Date bdate = new java.util.Date();
-//        String date="NO DATE";
-//        if(bdate != null){
-//            try {
-//                SimpleDateFormat newDateFormat = new SimpleDateFormat(Utils.APP_DATE_FORMAT);
-//                date = newDateFormat.format(bdate);
-//            } catch (Exception e){
-//                e.printStackTrace();
-//            }
-//        }
+
         adapter = new ListAdapterProfile(this, userdetails);
         list = (ListView)findViewById(R.id.profilelist);
         list.setAdapter(adapter);
