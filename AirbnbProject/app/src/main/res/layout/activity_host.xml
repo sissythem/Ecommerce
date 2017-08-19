@@ -23,8 +23,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/addResidence">
         <include layout="@layout/recycler_main"
-            android:layout_width="384dp"
-            android:layout_height="404dp" />
+            android:layout_width="383dp"
+            android:layout_height="match_parent" />
     </LinearLayout>
     <include layout="@layout/footer"/>
 
