@@ -55,7 +55,8 @@ import util.Utils;
 import static util.Utils.FORMAT_DATE_YMD;
 import static util.Utils.convertTimestampToDate;
 
-public class ResidenceActivity extends FragmentActivity implements OnMapReadyCallback, AppCompatCallback {
+public class ResidenceActivity extends FragmentActivity implements OnMapReadyCallback, AppCompatCallback
+{
     Boolean user;
     String username, date_start, date_end, guests, token;
 
