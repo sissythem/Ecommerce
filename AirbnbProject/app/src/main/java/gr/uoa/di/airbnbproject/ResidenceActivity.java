@@ -184,31 +184,6 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         tvCity.setText(selectedResidence.getCity());
         tvCountry.setText(selectedResidence.getCountry());
         tvHostName.setText(host.getFirstName() +" " + host.getLastName());
-        tvHostName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final Intent profileIntent;
-                if (user){
-                    profileIntent = new Intent(ResidenceActivity.this, ViewHostProfileActivity.class);
-                }
-                else{
-                    profileIntent = new Intent(ResidenceActivity.this, ProfileActivity.class);
-                }
-                Bundle buser = new Bundle();
-                buser.putBoolean("type", user);
-                buser.putInt("host", host.getId());
-                buser.putInt("residenceId", residenceId);
-                profileIntent.putExtras(buser);
-                try{
-                    startActivity(profileIntent);
-                }
-                catch (Exception e){
-                    System.out.println(e.getMessage());
-                    Log.e("",e.getMessage());
-                }
-            }
-        });
-
         tvAbout.setText(selectedResidence.getAbout());
         tvAmenities.setText(selectedResidence.getAmenities());
         tvCancellationPolicy.setText(selectedResidence.getCancellationPolicy());
@@ -498,14 +473,24 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
             // action with ID action_settings was selected
                 //TODO: invisible when user is navigating as host and this is his residence
             case R.id.contact:
-                Intent contactIntent = new Intent(ResidenceActivity.this, MessageActivity.class);
-                buser.putInt("currentUserId", loggedinUser.getId());
-                buser.putInt("toUserId", host.getId());
-                buser.putString("msgSubject", tvTitle.getText().toString());
+                final Intent profileIntent;
+                if (user){
+                    profileIntent = new Intent(ResidenceActivity.this, ViewHostProfileActivity.class);
+                }
+                else{
+                    profileIntent = new Intent(ResidenceActivity.this, ProfileActivity.class);
+                }
+
+                buser.putInt("host", host.getId());
                 buser.putInt("residenceId", residenceId);
-                contactIntent.putExtras(buser);
-                startActivity(contactIntent);
-                finish();
+                profileIntent.putExtras(buser);
+                try{
+                    startActivity(profileIntent);
+                }
+                catch (Exception e){
+                    System.out.println(e.getMessage());
+                    Log.e("",e.getMessage());
+                }
                 break;
         }
         return true;
