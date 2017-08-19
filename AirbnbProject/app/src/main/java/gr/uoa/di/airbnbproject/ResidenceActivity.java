@@ -52,11 +52,10 @@ import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
 
-<<<<<<< HEAD
+
 import static gr.uoa.di.airbnbproject.R.id.reservations;
-=======
+
 import static gr.uoa.di.airbnbproject.R.id.calendar;
->>>>>>> fc38a1d9ab345ee71d3a09f1277823d2f7ee7a7b
 import static gr.uoa.di.airbnbproject.R.id.reviews;
 import static util.Utils.FORMAT_DATE_YMD;
 import static util.Utils.convertTimestampToDate;
