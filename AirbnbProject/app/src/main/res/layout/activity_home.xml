@@ -7,37 +7,41 @@
     tools:context="gr.uoa.di.airbnbproject.HomeActivity">
     <!--android:fitsSystemWindows="true"-->
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/appbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <!--app:expanded="false"-->
+    <!--<android.support.design.widget.AppBarLayout-->
+        <!--android:id="@+id/appbar"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content">-->
+        <!--&lt;!&ndash;app:expanded="false"&ndash;&gt;-->
         <!--android:fitsSystemWindows="true"-->
 
         <!--<include layout="@layout/search_list" />-->
-        <include layout="@layout/layout_search" />
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:focusableInTouchMode="true"
-        android:layout_below="@+id/appbar"
+        android:layout_below="@+id/search"
         xmlns:android="http://schemas.android.com/apk/res/android">
+        <include layout="@layout/layout_search"
+            android:id="@+id/search"/>
 
         <LinearLayout
             android:id="@+id/recyclerlayout"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/search">
             <include layout="@layout/recycler_main"
                 android:layout_width="382dp"
-                android:layout_height="wrap_content" />
+                android:layout_height="match_parent" />
         </LinearLayout>
+        <include
+            android:id="@+id/includefooter"
+            layout="@layout/footer" />
     </RelativeLayout>
-    </android.support.design.widget.AppBarLayout>
 
-    <include
-        android:id="@+id/includefooter"
-        layout="@layout/footer" />
+    <!--</android.support.design.widget.AppBarLayout>-->
+
+
+
     <!--<android.support.design.widget.CollapsingToolbarLayout-->
         <!--android:id="@+id/toolbar"-->
         <!--android:layout_width="match_parent"-->
