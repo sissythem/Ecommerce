@@ -143,13 +143,16 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO: check when user enters the activity from history reviews
                 if(!(buser.getString("source") == null) && buser.getString("source").equals("reviews"))
                 {
                     Utils.manageBackButton(ResidenceActivity.this, HistoryReviewsActivity.class, user);
                 }
                 else if(!(buser.getString("source") == null) && buser.getString("source").equals("reservations")){
                     Utils.manageBackButton(ResidenceActivity.this, HistoryReservationsActivity.class, user);
+                }
+                else if(!(buser.getString("source") == null) && buser.getString("source").equals("hostprofile"))
+                {
+                    Utils.manageBackButton(ResidenceActivity.this, ViewHostProfileActivity.class, user);
                 }
                 else
                 {
