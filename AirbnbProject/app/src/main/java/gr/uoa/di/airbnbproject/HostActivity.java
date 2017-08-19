@@ -133,6 +133,7 @@ public class HostActivity extends AppCompatActivity {
         menu.add(0, info.position, 3, DELETE_ACTION);
     }
 
+    //TODO click for edit etc does not work
     @Override
     public boolean onContextItemSelected(final MenuItem item) {
         super.onContextItemSelected(item);

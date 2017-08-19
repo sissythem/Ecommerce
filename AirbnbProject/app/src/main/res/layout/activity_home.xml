@@ -17,7 +17,29 @@
         <!--<include layout="@layout/search_list" />-->
         <include layout="@layout/layout_search" />
 
-        <!--<android.support.design.widget.CollapsingToolbarLayout-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:focusableInTouchMode="true"
+        android:layout_below="@+id/appbar"
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <LinearLayout
+            android:id="@+id/recyclerlayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/includefooter">
+            <include layout="@layout/recycler_main"
+                android:layout_width="382dp"
+                android:layout_height="450dp" />
+        </LinearLayout>
+    </RelativeLayout>
+    </android.support.design.widget.AppBarLayout>
+
+    <include
+        android:id="@+id/includefooter"
+        layout="@layout/footer" />
+    <!--<android.support.design.widget.CollapsingToolbarLayout-->
         <!--android:id="@+id/toolbar"-->
         <!--android:layout_width="match_parent"-->
         <!--android:layout_height="match_parent"-->
@@ -33,9 +55,7 @@
         <!--<include layout="@layout/search_list" />-->
         <!--</android.support.design.widget.CollapsingToolbarLayout>-->
 
-    </android.support.design.widget.AppBarLayout>
 
-    <android.support.v7.widget.RecyclerView android:layout_width="match_parent" android:layout_height="match_parent" android:id="@+id/recyclerView" />
 
     <!--<android.support.v4.widget.NestedScrollView-->
     <!--android:layout_width="match_parent"-->
@@ -121,5 +141,4 @@
     <!--&lt;!&ndash;</ScrollView>&ndash;&gt;-->
     <!--&lt;!&ndash;</RelativeLayout>&ndash;&gt;-->
     <!--</android.support.v4.widget.NestedScrollView>-->
-    <include layout="@layout/footer" />
 </android.support.design.widget.CoordinatorLayout>

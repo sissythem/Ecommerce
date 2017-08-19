@@ -7,14 +7,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import fromRESTful.Residences;
 import util.RecyclerAdapterResidences;
@@ -99,7 +96,7 @@ public class SearchResultsActivity extends AppCompatActivity {
         long end_timestamp = convertDateToMillisSec(endDate, FORMAT_DATE_YMD);
 
         Recommendations = retrofitCalls.getRecommendations(token, sessionData.getUsername(), city, start_timestamp, end_timestamp, guests);
-        residencesRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        residencesRecyclerView = (RecyclerView) findViewById(R.id.recycler);
         residencesLayoutManager = new GridLayoutManager(this, 1);
         residencesRecyclerView.setLayoutManager(residencesLayoutManager);
         residencesRecyclerView.setHasFixedSize(true);

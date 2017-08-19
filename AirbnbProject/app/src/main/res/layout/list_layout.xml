@@ -41,52 +41,60 @@
 
 <!--</LinearLayout>-->
 <!--</LinearLayout>-->
-
-<android.support.v7.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rCardView"
     style="@style/AppTheme.Card.Margins"
     android:layout_width="match_parent"
-    android:layout_height="200dp"
-    android:elevation="3dp"
-    app:cardCornerRadius="6dp"
-    android:id="@+id/rCardView">
-
-    <RelativeLayout
+    android:layout_height="wrap_content">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/card_content">
-
+        android:layout_height="match_parent">
         <ImageView
             android:id="@+id/representativePhoto"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:scaleType="fitXY"
-            android:padding="6dp" />
-
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|start" />
         <LinearLayout
+            android:id="@+id/layout_partner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:gravity="end">
+            android:paddingBottom="@dimen/margin_normal">
 
             <TextView
                 android:id="@+id/title"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize = "20sp"/>
+                android:layout_marginBottom="@dimen/margin_small"
+                android:paddingBottom="@dimen/margin_normal"
+                android:paddingLeft="@dimen/margin_large"
+                android:paddingRight="@dimen/margin_large"
+                android:paddingTop="@dimen/margin_large"
+                android:textSize="@dimen/text_size_large"
+                android:textColor="#555555"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/city"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize = "20sp"/>
+                android:paddingLeft="@dimen/margin_large"
+                android:paddingRight="@dimen/margin_large"
+                android:textSize="@dimen/text_size_normal"
+                android:textStyle="italic" />
 
             <TextView
                 android:id="@+id/price"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize = "20sp"/>
+                android:layout_marginBottom="@dimen/margin_small"
+                android:maxLines="2"
+                android:paddingBottom="@dimen/margin_normal"
+                android:paddingLeft="@dimen/margin_large"
+                android:paddingRight="@dimen/margin_large"
+                android:paddingTop="@dimen/margin_small"
+                android:textSize="@dimen/text_size_normal" />
 
             <RatingBar
                 android:id="@+id/rating"
@@ -100,5 +108,6 @@
                 style="?android:attr/ratingBarStyleSmall" />
 
         </LinearLayout>
-    </RelativeLayout>
+
+    </LinearLayout>
 </android.support.v7.widget.CardView>

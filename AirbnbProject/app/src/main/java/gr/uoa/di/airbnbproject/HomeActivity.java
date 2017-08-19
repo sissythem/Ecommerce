@@ -70,7 +70,7 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        residencesRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        residencesRecyclerView = (RecyclerView) findViewById(R.id.recycler);
         residencesLayoutManager = new GridLayoutManager(this, 1);
         residencesRecyclerView.setLayoutManager(residencesLayoutManager);
         residencesRecyclerView.setHasFixedSize(true);
