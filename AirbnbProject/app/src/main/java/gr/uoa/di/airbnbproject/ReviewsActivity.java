@@ -98,7 +98,10 @@ public class ReviewsActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Utils.manageBackButton(ReviewsActivity.this, ResidenceActivity.class, user);
+                Bundle btores = new Bundle();
+                btores.putBoolean("type", user);
+                btores.putInt("residenceId", residenceId);
+                Utils.goToActivity(ReviewsActivity.this, ResidenceActivity.class, btores);
             }
         });
 

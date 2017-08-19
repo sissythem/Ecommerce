@@ -1,106 +1,121 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:focusable="true"
-    android:focusableInTouchMode="true"
-    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <EditText
-        android:id="@+id/field_city"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="1dp"
-        android:background="@color/colorPrimary"
-        android:drawableLeft="@android:drawable/ic_menu_mylocation"
-        android:ems="10"
-        android:gravity="center_vertical"
-        android:hint="Anywhere"
-        android:inputType="text"
-        android:padding="15dp"
-        android:textColor="@android:color/white"
-        android:textColorHint="#cccccc" />
+<android.support.design.widget.CollapsingToolbarLayout android:id="@+id/toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_scrollFlags="scroll|exitUntilCollapsed"
+    android:fitsSystemWindows="true"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:expandedTitleTextAppearance="@style/TextAppearance.Design.CollapsingToolbar.Expanded"
+    app:expandedTitleMarginBottom="64dp"
+    app:expandedTitleMarginStart="16dp"
+    app:contentScrim="?attr/colorPrimary">
+    <!--|enterAlways|enterAlwaysCollapsed-->
 
     <LinearLayout
-        android:id="@+id/page_buttons"
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal">
+        android:orientation="vertical"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        xmlns:android="http://schemas.android.com/apk/res/android">
 
-        <Button
-            android:id="@+id/btn_start_date"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:drawableLeft="@android:drawable/ic_menu_recent_history"
-            android:background="@color/colorPrimary"
-            android:padding="15dp"
-            android:layout_marginTop="1dp"
-            android:textColor="@android:color/white" />
-
-        <TextView
-            android:id="@+id/start_date"
-            android:layout_width="fill_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
+        <EditText
+            android:id="@+id/field_city"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="1dp"
             android:background="@color/colorPrimary"
+            android:drawableLeft="@android:drawable/ic_menu_mylocation"
             android:ems="10"
             android:gravity="center_vertical"
-            android:text="Start Date"
+            android:hint="@string/anywhere"
+            android:inputType="text"
             android:padding="15dp"
             android:textColor="@android:color/white"
             android:textColorHint="#cccccc" />
 
-        <Button
-            android:id="@+id/btn_end_date"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:drawableLeft="@android:drawable/ic_menu_recent_history"
+        <LinearLayout
+            android:id="@+id/page_buttons"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal">
+
+            <Button
+                android:id="@+id/btn_start_date"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:drawableLeft="@android:drawable/ic_menu_recent_history"
+                android:background="@color/colorPrimary"
+                android:padding="15dp"
+                android:layout_marginTop="1dp"
+                android:textColor="@android:color/white" />
+
+            <TextView
+                android:id="@+id/start_date"
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginTop="1dp"
+                android:background="@color/colorPrimary"
+                android:ems="10"
+                android:gravity="center_vertical"
+                android:text="@string/start_date"
+                android:padding="15dp"
+                android:textColor="@android:color/white"
+                android:textColorHint="#cccccc" />
+
+            <Button
+                android:id="@+id/btn_end_date"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:drawableLeft="@android:drawable/ic_menu_recent_history"
+                android:background="@color/colorPrimary"
+                android:padding="15dp"
+                android:layout_marginTop="1dp"
+                android:textColor="@android:color/white" />
+
+            <TextView
+                android:id="@+id/end_date"
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginTop="1dp"
+                android:background="@color/colorPrimary"
+                android:ems="10"
+                android:gravity="center_vertical"
+                android:text="@string/end_date"
+                android:padding="15dp"
+                android:textColor="@android:color/white"
+                android:textColorHint="#cccccc" />
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/field_guests"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@android:drawable/ic_menu_myplaces"
+            android:ems="10"
+            android:inputType="number"
+            android:hint="@string/one_guest"
             android:background="@color/colorPrimary"
             android:padding="15dp"
             android:layout_marginTop="1dp"
-            android:textColor="@android:color/white" />
-
-        <TextView
-            android:id="@+id/end_date"
-            android:layout_width="fill_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:layout_marginTop="1dp"
-            android:background="@color/colorPrimary"
-            android:ems="10"
+            android:textColor="@android:color/white"
             android:gravity="center_vertical"
-            android:text="End Date"
+            android:textColorHint="#cccccc" />
+
+        <Button
+            android:id="@+id/field_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
             android:padding="15dp"
             android:textColor="@android:color/white"
-            android:textColorHint="#cccccc" />
+            android:gravity="center_vertical"
+            android:textAlignment="center"
+            android:text="@string/search" />
     </LinearLayout>
-
-    <EditText
-        android:id="@+id/field_guests"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:drawableLeft="@android:drawable/ic_menu_myplaces"
-        android:ems="10"
-        android:inputType="number"
-        android:hint="One guest"
-        android:background="@color/colorPrimary"
-        android:padding="15dp"
-        android:layout_marginTop="1dp"
-        android:textColor="@android:color/white"
-        android:gravity="center_vertical"
-        android:textColorHint="#cccccc" />
-
-    <Button
-        android:id="@+id/field_search"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        android:padding="15dp"
-        android:textColor="@android:color/white"
-        android:gravity="center_vertical"
-        android:textAlignment="center"
-        android:text="Search" />
-</LinearLayout>
+</android.support.design.widget.CollapsingToolbarLayout>

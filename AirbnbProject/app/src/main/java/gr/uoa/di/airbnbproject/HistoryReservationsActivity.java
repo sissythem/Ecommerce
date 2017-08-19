@@ -92,7 +92,14 @@ public class HistoryReservationsActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Utils.manageBackButton(HistoryReservationsActivity.this, ProfileActivity.class, user);
+                if (buser.containsKey("residenceId")) {
+                    Bundle btores = new Bundle();
+                    btores.putBoolean("type", user);
+                    btores.putInt("residenceId", buser.getInt("residenceId"));
+                    Utils.goToActivity(HistoryReservationsActivity.this, ResidenceActivity.class, btores);
+                } else {
+                    Utils.manageBackButton(HistoryReservationsActivity.this, ProfileActivity.class, user);
+                }
             }
         });
 
@@ -102,7 +109,6 @@ public class HistoryReservationsActivity extends AppCompatActivity {
 
         if (buser.containsKey("residenceId")) {
             toolbar.setTitle("Reservations made by users");
-            System.out.println(buser.getInt("residenceId"));
             userReservations = retrofitCalls.getReservationsByResidenceId(token, buser.getInt("residenceId"));
         } else {
             userReservations = retrofitCalls.getReservationsByTenantId(token, loggedinUser.getId().toString());

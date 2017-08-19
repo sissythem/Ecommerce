@@ -8,3 +8,5 @@ ecommerce_rest/build/
 /ecommerce_rest/dist/
 .directory
 AddFilesToGit.txt
+AirbnbProject/local.properties
+AirbnbProject/app/app.iml

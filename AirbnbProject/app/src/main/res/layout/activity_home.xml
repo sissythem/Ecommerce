@@ -1,82 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="gr.uoa.di.airbnbproject.HomeActivity">
+    <!--android:fitsSystemWindows="true"-->
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        app:expanded="false">
+        android:layout_height="wrap_content">
+        <!--app:expanded="false"-->
+        <!--android:fitsSystemWindows="true"-->
 
-        <android.support.design.widget.CollapsingToolbarLayout
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fitsSystemWindows="true"
-            app:expandedTitleTextAppearance="@style/TextAppearance.Design.CollapsingToolbar.Expanded"
-            app:expandedTitleMarginBottom="64dp"
-            app:expandedTitleMarginStart="16dp"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:contentScrim="?attr/colorPrimary"> <!-- |enterAlways|enterAlwaysCollapsed -->
+        <!--<include layout="@layout/search_list" />-->
+        <include layout="@layout/layout_search" />
 
-            <include layout="@layout/search_list" />
-        </android.support.design.widget.CollapsingToolbarLayout>
+        <!--<android.support.design.widget.CollapsingToolbarLayout-->
+        <!--android:id="@+id/toolbar"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--app:layout_scrollFlags="scroll|exitUntilCollapsed"-->
+        <!--android:fitsSystemWindows="true"-->
+        <!--&gt;-->
+        <!--&lt;!&ndash;app:expandedTitleTextAppearance="@style/TextAppearance.Design.CollapsingToolbar.Expanded"&ndash;&gt;-->
+        <!--&lt;!&ndash;app:expandedTitleMarginBottom="64dp"&ndash;&gt;-->
+        <!--&lt;!&ndash;app:expandedTitleMarginStart="16dp"&ndash;&gt;-->
+        <!--&lt;!&ndash;app:contentScrim="?attr/colorPrimary"&ndash;&gt;-->
+        <!--&lt;!&ndash; |enterAlways|enterAlwaysCollapsed &ndash;&gt;-->
+
+        <!--<include layout="@layout/search_list" />-->
+        <!--</android.support.design.widget.CollapsingToolbarLayout>-->
 
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.v4.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="android.support.design.widget.AppBarLayout$ScrollingViewBehavior">
+    <android.support.v7.widget.RecyclerView android:layout_width="match_parent" android:layout_height="match_parent" android:id="@+id/recyclerView" />
 
-        <RelativeLayout android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_gravity="fill_horizontal"
-            android:layout_height="wrap_content"
-            xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--<android.support.v4.widget.NestedScrollView-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:layout_gravity="fill_vertical"-->
+    <!--app:layout_behavior="@string/appbar_scrolling_view_behavior">-->
+    <!--&lt;!&ndash;app:layout_behavior="android.support.design.widget.AppBarLayout$ScrollingViewBehavior"&ndash;&gt;-->
 
-            <ScrollView
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:id="@+id/scrollView"
-                android:fillViewport="true">
+    <!--<LinearLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:orientation="vertical"-->
+    <!--android:paddingTop="24dp">-->
 
-                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                    android:layout_width="fill_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/homelayout"
-                    android:orientation="vertical">
+    <!--<android.support.v7.widget.CardView-->
+    <!--android:layout_marginLeft="10dp"-->
+    <!--android:layout_marginRight="10dp"-->
+    <!--android:layout_marginTop="10dp"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content">-->
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/searchlist"
-                        android:drawableLeft="@android:drawable/ic_menu_search"
-                        android:hint="Anywhere  - Anytime - One guest"
-                        android:textSize="20dp"
-                        android:gravity="center_vertical"
-                        android:minHeight="?attr/actionBarSize"
-                        android:fitsSystemWindows="true"
-                        android:textColor="@android:color/white"
-                        android:background="@color/colorPrimary"
-                        android:layout_alignParentTop="true"
-                        android:animateLayoutChanges="true"
-                        android:weightSum="1"
-                        android:clickable="true" />
+    <!--<LinearLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:orientation="vertical">-->
 
-                    <ListView
-                        android:id="@+id/list"
-                        android:layout_width="fill_parent"
-                        android:layout_height="500dp"
-                        android:divider="#b5b5b5"
-                        android:dividerHeight="1dp"
-                        android:listSelector="@drawable/list_selector" />
-                </LinearLayout>
-            </ScrollView>
-        </RelativeLayout>
-    </android.support.v4.widget.NestedScrollView>
+    <!--<ListView-->
+    <!--android:id="@+id/list"-->
+    <!--android:layout_width="fill_parent"-->
+    <!--android:layout_height="500dp"-->
+    <!--android:divider="#b5b5b5"-->
+    <!--android:dividerHeight="1dp"-->
+    <!--android:listSelector="@drawable/list_selector" />-->
+
+    <!--</LinearLayout>-->
+
+    <!--</android.support.v7.widget.CardView>-->
+    <!--</LinearLayout>-->
+
+    <!--&lt;!&ndash;<RelativeLayout android:orientation="vertical"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:layout_gravity="fill_horizontal"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+    <!--&lt;!&ndash;xmlns:android="http://schemas.android.com/apk/res/android">&ndash;&gt;-->
+
+    <!--&lt;!&ndash;<ScrollView&ndash;&gt;-->
+    <!--&lt;!&ndash;android:layout_width="fill_parent"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:layout_height="fill_parent"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:id="@+id/scrollView"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:fillViewport="true">&ndash;&gt;-->
+
+    <!--&lt;!&ndash;<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:layout_width="fill_parent"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:layout_height="match_parent"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:id="@+id/homelayout"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:orientation="vertical">&ndash;&gt;-->
+
+    <!--&lt;!&ndash;<TextView&ndash;&gt;-->
+    <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:id="@+id/searchlist"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:drawableLeft="@android:drawable/ic_menu_search"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:hint="Anywhere  - Anytime - One guest"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:textSize="20dp"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:gravity="center_vertical"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:minHeight="?attr/actionBarSize"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:fitsSystemWindows="true"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:textColor="@android:color/white"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:background="@color/colorPrimary"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:layout_alignParentTop="true"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:animateLayoutChanges="true"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:weightSum="1"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:clickable="true" />&ndash;&gt;-->
+
+    <!--&lt;!&ndash;<ListView&ndash;&gt;-->
+    <!--&lt;!&ndash;android:id="@+id/list"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:layout_width="fill_parent"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:layout_height="500dp"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:divider="#b5b5b5"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:dividerHeight="1dp"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:listSelector="@drawable/list_selector" />&ndash;&gt;-->
+    <!--&lt;!&ndash;</LinearLayout>&ndash;&gt;-->
+    <!--&lt;!&ndash;</ScrollView>&ndash;&gt;-->
+    <!--&lt;!&ndash;</RelativeLayout>&ndash;&gt;-->
+    <!--</android.support.v4.widget.NestedScrollView>-->
     <include layout="@layout/footer" />
 </android.support.design.widget.CoordinatorLayout>

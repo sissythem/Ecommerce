@@ -39,8 +39,8 @@
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/ivResidencePhotos"
                 android:layout_marginTop="12dp"
-                android:text="Title"
-                android:textSize="20dp"
+                android:text="@string/residence_title"
+                android:textSize="20sp"
                 android:textAppearance="@style/sectionHeader"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true" />
@@ -61,8 +61,8 @@
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/line"
                 android:layout_marginTop="12dp"
-                android:text="Type"
-                android:textSize="15dp" />
+                android:text="@string/residence_type"
+                android:textSize="15sp" />
 
             <TextView
                 android:id="@+id/tvAddress"
@@ -73,8 +73,8 @@
                 android:layout_below="@+id/tvType"
                 android:layout_toLeftOf="@+id/tvCity"
                 android:layout_toStartOf="@+id/tvCity"
-                android:text="Address"
-                android:textSize="15dp" />
+                android:text="@string/residence_address"
+                android:textSize="15sp" />
 
             <TextView
                 android:id="@+id/tvCity"
@@ -83,8 +83,8 @@
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:layout_below="@+id/tvType"
-                android:text="Residence City"
-                android:textSize="15dp"
+                android:text="@string/residence_city"
+                android:textSize="15sp"
                 android:layout_toRightOf="@+id/tvMapTitle"
                 android:layout_toEndOf="@+id/tvMapTitle" />
 
@@ -95,15 +95,15 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/tvCity"
-                android:text="Residence Country"
-                android:textSize="15dp" />
+                android:text="@string/residence_country"
+                android:textSize="15sp" />
 
             <TextView
                 android:id="@+id/tvHostName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="HostName"
-                android:textSize="15dp"
+                android:text="@string/residence_host"
+                android:textSize="15sp"
                 android:layout_below="@+id/ivHostPic"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true" />
@@ -123,8 +123,8 @@
                 android:id="@+id/tvAboutTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="About this Residence"
-                android:textSize="17dp"
+                android:text="@string/residence_about_this_residence"
+                android:textSize="17sp"
                 android:textAppearance="@style/sectionHeader"
                 android:layout_below="@+id/tvHostName"
                 android:layout_alignParentLeft="true"
@@ -148,8 +148,8 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/line1"
-                android:text="About"
-                android:textSize="15dp" />
+                android:text="@string/about"
+                android:textSize="15sp" />
 
             <TextView
                 android:id="@+id/tvAmenitiesTitle"
@@ -159,8 +159,8 @@
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/tvAboutText"
                 android:textAppearance="@style/sectionHeader"
-                android:text="What we will provide"
-                android:textSize="17dp" />
+                android:text="@string/residence_provide_amenities"
+                android:textSize="17sp" />
 
             <View
                 android:layout_width="fill_parent"
@@ -178,8 +178,8 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/line2"
-                android:text="Amenities"
-                android:textSize="15dp" />
+                android:text="@string/residence_amenities"
+                android:textSize="15sp" />
 
             <TextView
                 android:id="@+id/tvCancellationPolicyTitle"
@@ -191,8 +191,8 @@
                 android:layout_alignParentEnd="true"
                 android:layout_below="@+id/tvAmenities"
                 android:textAppearance="@style/sectionHeader"
-                android:text="Our Cancellation Policy"
-                android:textSize="17dp"/>
+                android:text="@string/residence_our_cancellation_policy"
+                android:textSize="17sp"/>
 
             <View
                 android:layout_width="fill_parent"
@@ -205,8 +205,8 @@
                 android:id="@+id/tvCancellationPolicy"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Cancellation Policy"
-                android:textSize="15dp"
+                android:text="@string/cancellation_policy"
+                android:textSize="15sp"
                 android:layout_below="@+id/line3"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
@@ -223,8 +223,8 @@
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/tvCancellationPolicy"
                 android:textAppearance="@style/sectionHeader"
-                android:text="Guest requirements"
-                android:textSize="17dp" />
+                android:text="@string/residence_guest_requirements"
+                android:textSize="17sp" />
 
             <View
                 android:layout_width="fill_parent"
@@ -242,8 +242,8 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/line4"
-                android:text="Rules"
-                android:textSize="15dp" />
+                android:text="@string/rules"
+                android:textSize="15sp" />
 
             <TextView
                 android:id="@+id/tvHostTitle"
@@ -253,8 +253,8 @@
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/tvRules"
                 android:textAppearance="@style/sectionHeader"
-                android:text="About your host"
-                android:textSize="17dp" />
+                android:text="@string/residence_about_your_host"
+                android:textSize="17sp" />
 
             <View
                 android:layout_width="fill_parent"
@@ -267,8 +267,8 @@
                 android:id="@+id/tvHostAbout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="About host"
-                android:textSize="15dp"
+                android:text="@string/residence_about_host"
+                android:textSize="15sp"
                 android:layout_below="@+id/line5"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true" />
@@ -281,8 +281,8 @@
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/tvHostAbout"
                 android:textAppearance="@style/sectionHeader"
-                android:text="Where you will find us"
-                android:textSize="17dp" />
+                android:text="@string/residence_where"
+                android:textSize="17sp" />
 
             <View
                 android:layout_width="fill_parent"
@@ -307,7 +307,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/mapResidence"
                 android:ems="10"
-                android:hint="Number of guests"
+                android:hint="@string/residence_guests_number"
                 android:inputType="number" />
 
             <TextView
@@ -318,8 +318,8 @@
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/etGuests"
                 android:textAppearance="@style/sectionHeader"
-                android:text="Availability"
-                android:textSize="17dp" />
+                android:text="@string/residence_availability"
+                android:textSize="17sp" />
 
             <View
                 android:layout_width="fill_parent"
@@ -359,7 +359,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/rating"
-                android:text="Price"/>
+                android:text="@string/residence_price"/>
             <RatingBar
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -382,7 +382,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="23dp"
                 android:layout_marginRight="23dp"
-                android:text="Book now" />
+                android:text="@string/residence_book_now" />
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
 

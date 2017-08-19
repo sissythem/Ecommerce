@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -13,14 +15,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import fromRESTful.Residences;
 import fromRESTful.Users;
-import util.ListAdapterHostResidences;
+import util.RecyclerAdapterHostResidences;
 import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
@@ -38,13 +39,14 @@ public class HostActivity extends AppCompatActivity {
     Toolbar toolbar;
 
     Button baddResidence;
-
-    ListAdapterHostResidences adapter;
-    ListView residencesList;
     int[] residenceId;
 
     Boolean user;
     Context c;
+
+    RecyclerView residencesRecyclerView;
+    RecyclerView.Adapter residencesAdapter;
+    RecyclerView.LayoutManager residencesLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +55,7 @@ public class HostActivity extends AppCompatActivity {
         Session sessionData = Utils.getSessionData(HostActivity.this);
         token = sessionData.getToken();
         user=false;
-        c=this;
+        //c=this;
 
         if (!sessionData.getUserLoggedInState()) {
             Utils.logout(this);
@@ -97,45 +99,22 @@ public class HostActivity extends AppCompatActivity {
         ArrayList<Users> hostUsers = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
         host = hostUsers.get(0);
 
+        residencesRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewHost);
+        residencesLayoutManager = new GridLayoutManager(this, 1);
+        residencesRecyclerView.setLayoutManager(residencesLayoutManager);
+        residencesRecyclerView.setHasFixedSize(true);
+
         ArrayList<Residences> storedResidences = retrofitCalls.getResidencesByHost(token, host.getId().toString());
 
-        String[] representativePhoto    = new String [storedResidences.size()];
-        String[] title                  = new String[storedResidences.size()];
-        String[] city                   = new String[storedResidences.size()];
-        Double[] price                  = new Double[storedResidences.size()];
-        float[] rating                  = new float[storedResidences.size()];
-        residenceId                     = new int[storedResidences.size()];
-
-        for(int i=0; i<storedResidences.size();i++){
-            representativePhoto[i]  = storedResidences.get(i).getPhotos();
-            title[i]                = storedResidences.get(i).getTitle();
-            city[i]                 = storedResidences.get(i).getCity();
-            price[i]                = storedResidences.get(i).getMinPrice();
-            rating[i]               = (float)storedResidences.get(i).getAverageRating();
-            residenceId[i]          = storedResidences.get(i).getId();
-        }
-
-        adapter = new ListAdapterHostResidences(this, representativePhoto, title, city, price, rating, residenceId);
-        residencesList = (ListView)findViewById(R.id.residenceList);
-        residencesList.setAdapter(adapter);
-        registerForContextMenu(residencesList);
-
-        residencesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent showResidenceIntent = new Intent(HostActivity.this, ResidenceActivity.class);
-                Bundle btype = new Bundle();
-                btype.putBoolean("type",user);
-                btype.putInt("residenceId", residenceId[position]);
-                showResidenceIntent.putExtras(btype);
-                try {
-                    startActivity(showResidenceIntent);
-                } catch (Exception ex) {
-                    System.out.println(ex.getMessage());
-                    ex.printStackTrace();
-                }
+        try {
+            if (storedResidences.size() > 0) {
+                System.out.println(storedResidences);
+                residencesAdapter = new RecyclerAdapterHostResidences(this, user, storedResidences);
+                residencesRecyclerView.setAdapter(residencesAdapter);
             }
-        });
+        } catch (Exception e) {
+            Log.e("", e.getMessage());
+        }
 
         /** FOOTER TOOLBAR **/
         Utils.manageFooter(HostActivity.this, user);
