@@ -52,6 +52,7 @@ import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
 
+import static gr.uoa.di.airbnbproject.R.id.calendar;
 import static gr.uoa.di.airbnbproject.R.id.reviews;
 import static util.Utils.FORMAT_DATE_YMD;
 import static util.Utils.convertTimestampToDate;
@@ -274,19 +275,29 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         });
     }
 
-    public void setCalendar () {
-        caldroidFragment = new CaldroidFragment();
-
-        FragmentTransaction t = getSupportFragmentManager().beginTransaction();
-        t.replace(R.id.calendar, caldroidFragment);
-        t.commit();
-
+    public void setCalendar ()
+    {
         /** Get available dates from host **/
         long available_date_start = selectedResidence.getAvailableDateStart();
         long available_date_end = selectedResidence.getAvailableDateEnd();
+        reservedDates = new ArrayList<>();
 
         Date startDate = convertTimestampToDate(available_date_start, FORMAT_DATE_YMD);
         Date endDate = convertTimestampToDate(available_date_end, FORMAT_DATE_YMD);
+
+        if(startDate == null || endDate == null)
+        {
+            Toast.makeText(c, "There are no available dates", Toast.LENGTH_SHORT).show();
+            TextView tvNoAvailability = new TextView(c);
+            tvNoAvailability.setText("There are no available dates");
+            return;
+        }
+
+        caldroidFragment = new CaldroidFragment();
+
+        FragmentTransaction t = getSupportFragmentManager().beginTransaction();
+        t.replace(calendar, caldroidFragment);
+        t.commit();
 
         ColorDrawable blue = new ColorDrawable(Color.BLUE);
         caldroidFragment.setMinDate(startDate);
@@ -296,7 +307,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         calendar.setTime(startDate);
 
         NumGuestsPerDay = new HashMap<>();
-        Date current = new Date();
+        Date current = calendar.getTime();
 
         /** Initialize guest sum **/
         while (!current.after(endDate)) {
@@ -310,15 +321,16 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
 
         //get the max guests for this residence
         maxGuests = selectedResidence.getGuests();
-
-        reservedDates = new ArrayList<>();
         Date dateStart, dateEnd;
         int guestsFromDatabase;
         for(int i=0;i<allReservationsByResidence.size();i++) {
             /** Gt for each reservation the start and the end date, and the number of guests **/
             dateStart = Utils.convertTimestampToDate(allReservationsByResidence.get(i).getStartDate(), FORMAT_DATE_YMD);
             dateEnd = Utils.convertTimestampToDate(allReservationsByResidence.get(i).getEndDate(), FORMAT_DATE_YMD);
-
+            if(dateStart.before(startDate) || dateStart.after(endDate) || dateEnd.before(startDate) || dateEnd.after(endDate))
+            {
+                continue;
+            }
             guestsFromDatabase = allReservationsByResidence.get(i).getGuests();
 
             Date currentDate = dateStart;
@@ -326,7 +338,12 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
             cal.setTime(dateStart);
 
             while (!currentDate.after(dateEnd)) {
-                int sum = NumGuestsPerDay.get(currentDate)+guestsFromDatabase;
+                int sum = 0;
+                try {
+                    sum = NumGuestsPerDay.get(currentDate)+guestsFromDatabase;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 NumGuestsPerDay.put(currentDate, sum);
                 cal.add(Calendar.DAY_OF_MONTH,1);
                 currentDate = cal.getTime();
