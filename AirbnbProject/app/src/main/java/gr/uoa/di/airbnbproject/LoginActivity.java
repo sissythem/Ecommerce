@@ -3,10 +3,8 @@ package gr.uoa.di.airbnbproject;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,7 +13,6 @@ import android.widget.Toast;
 
 import util.RetrofitCalls;
 import util.Session;
-import util.Utils;
 
 import static util.Utils.USER_LOGIN_PREFERENCES;
 import static util.Utils.updateSessionData;
@@ -59,8 +56,11 @@ public class LoginActivity extends AppCompatActivity {
         blogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String Username = etUsername.getText().toString();
-                final String password = etPassword.getText().toString();
+//                final String Username = etUsername.getText().toString();
+//                final String password = etPassword.getText().toString();
+
+                final String Username = "nikpit";
+                final String password = "nikpit";
 
                 if(Username.length() == 0 || password.length() == 0) {
                     //if something is not filled in, user must fill again the form

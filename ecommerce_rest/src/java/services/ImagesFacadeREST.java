@@ -180,9 +180,11 @@ public class ImagesFacadeREST extends AbstractFacade<Images> {
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces("image/*")
     public Response getUserImage(@HeaderParam("Authorization")String token, @PathParam("name")String name) {
-        File f = new File("/home/sissy/Documents/Professional/University/UOA/graduate/Semester2/Ecommerce/Project/ecommerce_rest/images/" + name);
+        String impath = "/home/sissy/Documents/Professional/University/UOA/graduate/Semester2/Ecommerce/Project/ecommerce_rest/images/" + name;
+        File f = new File(impath);
         if (!f.exists()) {
-            throw new WebApplicationException(404);
+            Logger.getAnonymousLogger().severe("Image at path " + impath + " not found!");
+//            throw new WebApplicationException(404);
         }
         String mt = new MimetypesFileTypeMap().getContentType(f);
         System.out.println(Response.ok(f, mt).build());

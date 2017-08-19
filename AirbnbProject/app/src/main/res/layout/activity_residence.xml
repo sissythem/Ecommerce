@@ -4,6 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_gravity="fill_horizontal"
+    android:id="@+id/relativelayout"
     android:layout_height="wrap_content">
 
     <android.support.v7.widget.Toolbar
@@ -22,17 +23,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
-            android:layout_marginLeft="0dp"
             app:srcCompat="@drawable/ic_back" />
-
-        <TextView
-            android:id="@+id/tvResidenceView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="0dp"
-            android:layout_marginEnd="0dp"
-            android:text="View Residence"
-            android:textSize="18sp" />
 
     </android.support.v7.widget.Toolbar>
 
@@ -409,18 +400,5 @@
                 android:text="Book now" />
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
-
-    <ImageButton
-        android:id="@+id/btnMenu"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginEnd="21dp"
-        android:layout_marginRight="21dp"
-        android:layout_marginTop="10dp"
-        android:background="@color/colorPrimary"
-        app:srcCompat="@drawable/ic_menu" />
 
 </RelativeLayout>

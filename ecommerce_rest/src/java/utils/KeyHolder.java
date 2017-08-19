@@ -5,7 +5,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import java.security.Key;
 import io.jsonwebtoken.impl.crypto.MacProvider;
 import java.util.Date;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class KeyHolder 
@@ -26,6 +25,8 @@ public class KeyHolder
                         .signWith(SignatureAlgorithm.HS512, key)
                         .setExpiration(exp)
                         .compact();
+            System.out.println("User [" + keyname + "] , encrypted with key: " + key.toString());
+            System.out.println("Now: " + now + " issued new token ["+jws+"] with expiration: " + exp);
         } else {
             jws = null;
         }
@@ -34,6 +35,8 @@ public class KeyHolder
     
     public static Boolean checkToken(String token, String entityName) 
     {
+        Logger.getAnonymousLogger().info("Checktoken entname : " + entityName);
+        Logger.getAnonymousLogger().info("Validating token: [" + token.toString() + "]");
         try 
         {
             AuthenticationFilter.filter(token);
@@ -42,7 +45,7 @@ public class KeyHolder
         catch(Exception ex) 
         {
 //            Logger.getLogger(entityName).log(Level.SEVERE, null, ex);
-            Logger.getLogger(entityName).info("Token [" + token.toString() + "] is expired");
+            Logger.getAnonymousLogger().info("Token [" + token.toString() + "] failed to validate");
             return false;
         }
         

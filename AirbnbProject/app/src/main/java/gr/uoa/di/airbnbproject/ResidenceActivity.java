@@ -6,13 +6,20 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatCallback;
+import android.support.v7.app.AppCompatDelegate;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.PopupMenu;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -20,6 +27,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,10 +56,9 @@ import util.Session;
 import util.Utils;
 
 import static util.Utils.FORMAT_DATE_YMD;
-import static util.Utils.convertDateToMillisSec;
 import static util.Utils.convertTimestampToDate;
 
-public class ResidenceActivity extends FragmentActivity implements OnMapReadyCallback {
+public class ResidenceActivity extends FragmentActivity implements OnMapReadyCallback, AppCompatCallback {
     Boolean user;
     String username, date_start, date_end, guests, token;
 
@@ -59,7 +66,6 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
     Context c;
 
     TextView tvTitle, tvType, tvAddress, tvCity, tvCountry, tvHostName, tvAbout, tvAmenities, tvCancellationPolicy, tvHostAbout, tvRules, tvPrice;
-    ImageButton bback, btnMenu;
     Button bBook;
     RatingBar rating;
     EditText etGuests;
@@ -74,56 +80,72 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
     Map<Date, Integer> NumGuestsPerDay;
     ArrayList <Date> reservedDates, datesDisabled_byGuestCount;
     PopupMenu popup;
+    Toolbar toolbar;
+    private AppCompatDelegate delegate;
 
     RetrofitCalls retrofitCalls;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        c = this;
-        Session sessionData = Utils.getSessionData(ResidenceActivity.this);
-        token = sessionData.getToken();
-        if (!sessionData.getUserLoggedInState()) {
-            Utils.logout(this);
-            finish();
-            return;
-        }
+    protected void onCreate(Bundle savedInstanceState)
+    {
+        try {
+            super.onCreate(savedInstanceState);
+            c = this;
+            Session sessionData = Utils.getSessionData(ResidenceActivity.this);
+            token = sessionData.getToken();
+            if (!sessionData.getUserLoggedInState()) {
+                Utils.logout(this);
+                finish();
+                return;
+            }
 
-        if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
-            finish();
-            return;
-        }
+            if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
+                finish();
+                return;
+            }
 
-        if(Utils.isTokenExpired(sessionData.getToken())){
-            Toast.makeText(c, "Session is expired", Toast.LENGTH_SHORT).show();
-            Utils.logout(this);
-            finish();
-            return;
-        }
-        setContentView(R.layout.activity_residence);
+            if(Utils.isTokenExpired(sessionData.getToken())){
+                Toast.makeText(c, "Session is expired", Toast.LENGTH_SHORT).show();
+                Utils.logout(this);
+                finish();
+                return;
+            }
+            //this should be created only in onCreate Method!
+            //this activity extends FragmentActivity, but in order to set up the toolbar we should extend AppCompactActivity
+            //Delegate is used in order to overcome this problem, since only one class can be extended
+            delegate = AppCompatDelegate.create(this, this);
+            delegate.onCreate(savedInstanceState);
+            delegate.setContentView(R.layout.activity_residence);
+//        setContentView(R.layout.activity_residence);
 
-        Bundle buser        = getIntent().getExtras();
-        user                = buser.getBoolean("type");
-        residenceId         = buser.getInt("residenceId");
+            Bundle buser        = getIntent().getExtras();
+            user                = buser.getBoolean("type");
+            residenceId         = buser.getInt("residenceId");
 
 //        date_start          = buser.getString("startDate");
 //        date_end            = buser.getString("endDate");
 //        guests              = buser.getString("guests");
-        if (buser.containsKey("startDate")) date_start = buser.getString("startDate");
-        if (buser.containsKey("endDate")) date_end = buser.getString("endDate");
-        if (buser.containsKey("guests")) guests = buser.getString("guests");
+            if (buser.containsKey("startDate")) date_start = buser.getString("startDate");
+            if (buser.containsKey("endDate")) date_end = buser.getString("endDate");
+            if (buser.containsKey("guests")) guests = buser.getString("guests");
 
-        retrofitCalls = new RetrofitCalls();
-        loggedinUser = retrofitCalls.getUserbyUsername(token, sessionData.getUsername()).get(0);
-        selectedResidence   = retrofitCalls.getResidenceById(token, Integer.toString(residenceId));
+            retrofitCalls = new RetrofitCalls();
+            loggedinUser = retrofitCalls.getUserbyUsername(token, sessionData.getUsername()).get(0);
+            selectedResidence   = retrofitCalls.getResidenceById(token, Integer.toString(residenceId));
 
-        setUpResidenceView();
+            toolbar = (Toolbar) findViewById(R.id.backToolbar);
+            toolbar.setTitle("View Residence");
+            delegate.setSupportActionBar(toolbar);
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapResidence);
-        mapFragment.getMapAsync(this);
+            ImageButton ibBack = (ImageButton)findViewById(R.id.ibBack);
+            ibBack.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.ALIGN_PARENT_TOP));
+            setUpResidenceView();
 
-        /** BACK BUTTON **/
-        Utils.manageBackButton(this, (user)?HomeActivity.class:HostActivity.class, user);
+            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapResidence);
+            mapFragment.getMapAsync(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void setUpResidenceView () {
@@ -147,12 +169,9 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
 
         rating                  = (RatingBar)findViewById(R.id.rating);
         bBook                   = (Button)findViewById(R.id.btnReservation);
-        btnMenu                 = (ImageButton)findViewById(R.id.btnMenu);
 
         etGuests                = (EditText)findViewById(R.id.etGuests);
         etGuests.setSelected(false);
-
-        bback                   = (ImageButton)findViewById(R.id.ibBack);
 
         tvTitle.setText(selectedResidence.getTitle());
         tvType.setText(selectedResidence.getType());
@@ -194,7 +213,6 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
             bBook.setVisibility(View.GONE);
         }
         setBookResidence();
-        setUpMenu();
     }
 
     public void setBookResidence()
@@ -235,8 +253,8 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
                             public void onClick(DialogInterface dialog, int whichButton) {
 
                                 /** User makes a reservation and goes back to home activity **/
-                                long date_start = convertDateToMillisSec(selectedStartDate, FORMAT_DATE_YMD);
-                                long date_end = convertDateToMillisSec(selectedEndDate, FORMAT_DATE_YMD);
+                                long date_start = Utils.convertDateToMillisSec(selectedStartDate, FORMAT_DATE_YMD);
+                                long date_end = Utils.convertDateToMillisSec(selectedEndDate, FORMAT_DATE_YMD);
 
                                 Reservations reservationParameters = new Reservations(loggedinUser, selectedResidence, date_start, date_end, guestsInt);
                                 RetrofitCalls retrofitCalls = new RetrofitCalls();
@@ -258,41 +276,6 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
                             }
                         }).setNegativeButton(android.R.string.no, null).show();
                 }
-            }
-        });
-    }
-
-    public void setUpMenu()
-    {
-        btnMenu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                popup = new PopupMenu(ResidenceActivity.this, btnMenu);
-                popup.getMenuInflater().inflate(R.menu.menu_residence, popup.getMenu());
-                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    public boolean onMenuItemClick(MenuItem item) {
-                        Bundle buser = new Bundle();
-                        buser.putBoolean("type", user);
-                        if(user == false){popup.getMenu().findItem(R.id.contact).setVisible(false);}
-                        if (item.getItemId() == R.id.reviews) {
-                            Intent historyReviewsIntent = new Intent(ResidenceActivity.this, ReviewsActivity.class);
-                            buser.putInt("residenceId", residenceId);
-                            historyReviewsIntent.putExtras(buser);
-                            startActivity(historyReviewsIntent);
-                        } else if (item.getItemId() == R.id.contact)
-                        {
-                            Intent contactIntent = new Intent(ResidenceActivity.this, MessageActivity.class);
-                            buser.putInt("currentUserId", loggedinUser.getId());
-                            buser.putInt("toUserId", host.getId());
-                            buser.putString("msgSubject", tvTitle.getText().toString());
-                            buser.putInt("residenceId", residenceId);
-                            contactIntent.putExtras(buser);
-                            startActivity(contactIntent);
-                        }
-                        return true;
-                    }
-                });
-                popup.show();
             }
         });
     }
@@ -339,8 +322,8 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         int guestsFromDatabase;
         for(int i=0;i<allReservationsByResidence.size();i++) {
             /** Gt for each reservation the start and the end date, and the number of guests **/
-            dateStart = convertTimestampToDate(allReservationsByResidence.get(i).getStartDate(), FORMAT_DATE_YMD);
-            dateEnd = convertTimestampToDate(allReservationsByResidence.get(i).getEndDate(), FORMAT_DATE_YMD);
+            dateStart = Utils.convertTimestampToDate(allReservationsByResidence.get(i).getStartDate(), FORMAT_DATE_YMD);
+            dateEnd = Utils.convertTimestampToDate(allReservationsByResidence.get(i).getEndDate(), FORMAT_DATE_YMD);
 
             guestsFromDatabase = allReservationsByResidence.get(i).getGuests();
 
@@ -477,5 +460,59 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         mMap.moveCamera(center);
         mMap.animateCamera(zoom);
         //mMap.moveCamera(CameraUpdateFactory.newLatLng(address));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_residence, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Bundle buser = new Bundle();
+        buser.putBoolean("type", user);
+        switch (item.getItemId()) {
+            // action with ID action_refresh was selected
+            case R.id.reviews:
+                if (item.getItemId() == R.id.reviews) {
+                    Intent historyReviewsIntent = new Intent(ResidenceActivity.this, ReviewsActivity.class);
+                    buser.putInt("residenceId", residenceId);
+                    historyReviewsIntent.putExtras(buser);
+                    startActivity(historyReviewsIntent);
+                    finish();
+                    break;
+                }
+            // action with ID action_settings was selected
+            case R.id.contact:
+                Intent contactIntent = new Intent(ResidenceActivity.this, MessageActivity.class);
+                buser.putInt("currentUserId", loggedinUser.getId());
+                buser.putInt("toUserId", host.getId());
+                buser.putString("msgSubject", tvTitle.getText().toString());
+                buser.putInt("residenceId", residenceId);
+                contactIntent.putExtras(buser);
+                startActivity(contactIntent);
+                finish();
+                break;
+        }
+
+        return true;
+    }
+
+    @Override
+    public void onSupportActionModeStarted(ActionMode mode) {
+
+    }
+
+    @Override
+    public void onSupportActionModeFinished(ActionMode mode) {
+
+    }
+
+    @Nullable
+    @Override
+    public ActionMode onWindowStartingSupportActionMode(ActionMode.Callback callback) {
+        return null;
     }
 }

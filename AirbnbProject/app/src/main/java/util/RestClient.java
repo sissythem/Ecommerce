@@ -35,6 +35,10 @@ public class RestClient {
     private static Retrofit retrofit = null;
     private static Retrofit stringRetrofit = null;
 
+    public static void resetClient()
+    {
+        retrofit = null;
+    }
     public static Retrofit getClient(String token) {
         if (retrofit==null) {
             Gson gson = new GsonBuilder()

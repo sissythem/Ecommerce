@@ -94,7 +94,8 @@ public class HomeActivity extends AppCompatActivity {
             finish();
             return;
         }
-        if(Utils.isTokenExpired(sessionData.getToken())){
+        Log.e("a tag","Checking token for validity : " + token);
+        if(Utils.isTokenExpired(token)){
             Toast.makeText(c, "Session is expired", Toast.LENGTH_SHORT).show();
             Utils.logout(this);
             finish();
@@ -167,8 +168,6 @@ public class HomeActivity extends AppCompatActivity {
         } catch (Exception e) {
             Log.e("", e.getMessage());
         }
-
-
     }
 
     public void setupSearchView() {

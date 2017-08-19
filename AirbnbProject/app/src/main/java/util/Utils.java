@@ -290,6 +290,10 @@ public class Utils {
         editor.clear();
         editor.commit();
 
+        // reset the retrofit client - the current one's key has to be deleted
+        // since the getClient initialization was done only if retrofit was null, we set it to null.
+        RestClient.resetClient();
+
         Intent greetingintent = new Intent(context, GreetingActivity.class);
         greetingintent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         context.startActivity(greetingintent);
