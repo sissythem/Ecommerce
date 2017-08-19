@@ -22,12 +22,13 @@
             android:layout_alignParentStart="true"
             android:layout_below="@+id/include">
 
+
             <TextView
                 android:id="@+id/name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
-                android:text="Viral Android"
+                android:text="Name"
                 android:textColor="#fff"
                 android:textSize="24sp"
                 android:textStyle="bold"
@@ -41,7 +42,7 @@
                 android:layout_below="@+id/name"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="12dp"
-                android:text="Android free tutorials and example"
+                android:text="About"
                 android:textColor="#fff"
                 android:textSize="14sp" />
 

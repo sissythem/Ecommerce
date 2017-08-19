@@ -52,10 +52,8 @@ import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
 
-
-import static gr.uoa.di.airbnbproject.R.id.reservations;
-
 import static gr.uoa.di.airbnbproject.R.id.calendar;
+import static gr.uoa.di.airbnbproject.R.id.reservations;
 import static gr.uoa.di.airbnbproject.R.id.reviews;
 import static util.Utils.FORMAT_DATE_YMD;
 import static util.Utils.convertTimestampToDate;
@@ -69,7 +67,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
     int residenceId, maxGuests, guestsInt;
     Context c;
 
-    TextView tvTitle, tvType, tvAddress, tvCity, tvCountry, tvHostName, tvAbout, tvAmenities, tvCancellationPolicy, tvHostAbout, tvRules, tvPrice;
+    TextView tvTitle, tvDetails, tvHostName, tvAbout, tvHostAbout, tvPrice;
     Button bBook;
     RatingBar rating;
     EditText etGuests;
@@ -177,18 +175,11 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         Utils.loadResidenceImage(this, resPhoto, selectedResidence.getPhotos());
 
         tvTitle                 = (TextView)findViewById(R.id.tvTitle);
-        tvType                  = (TextView)findViewById(R.id.tvType);
-        tvAddress               = (TextView)findViewById(R.id.tvAddress);
-        tvCity                  = (TextView)findViewById(R.id.tvCity);
-        tvCountry               = (TextView)findViewById(R.id.tvCountry);
+        tvDetails               = (TextView)findViewById(R.id.tvDetails);
         tvHostName              = (TextView)findViewById(R.id.tvHostName);
-        tvAbout                 = (TextView)findViewById(R.id.tvAboutText);
-        tvAmenities             = (TextView)findViewById(R.id.tvAmenities);
-        tvCancellationPolicy    = (TextView)findViewById(R.id.tvCancellationPolicy);
         tvHostAbout             = (TextView)findViewById(R.id.tvHostAbout);
-        tvRules                 = (TextView)findViewById(R.id.tvRules);
+        tvAbout                 = (TextView)findViewById(R.id.tvAboutText);
         tvPrice                 = (TextView)findViewById(R.id.price);
-
         rating                  = (RatingBar)findViewById(R.id.rating);
         bBook                   = (Button)findViewById(R.id.btnReservation);
 
@@ -196,16 +187,12 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         etGuests.setSelected(false);
 
         tvTitle.setText(selectedResidence.getTitle());
-        tvType.setText(selectedResidence.getType());
-        tvAddress.setText(selectedResidence.getAddress());
-        tvCity.setText(selectedResidence.getCity());
-        tvCountry.setText(selectedResidence.getCountry());
+        tvDetails.setText(selectedResidence.getType() + " \n"+ selectedResidence.getAddress()+ " \n"+ selectedResidence.getCity() +", " + selectedResidence.getCountry());
         tvHostName.setText(host.getFirstName() +" " + host.getLastName());
-        tvAbout.setText(selectedResidence.getAbout());
-        tvAmenities.setText(selectedResidence.getAmenities());
-        tvCancellationPolicy.setText(selectedResidence.getCancellationPolicy());
         tvHostAbout.setText(host.getAbout());
-        tvRules.setText(selectedResidence.getRules());
+        tvAbout.setText(selectedResidence.getAbout() + "\n\n" + "What we will provide you:".toUpperCase() + "\n\n" + selectedResidence.getAmenities() + "\n\n" +
+                "Our Cancelation Policy:".toUpperCase() + "\n\n" + selectedResidence.getCancellationPolicy() + "\n\n" + "Guest requirements:".toUpperCase()
+                + "\n\n" + selectedResidence.getRules());
         tvPrice.setText(Double.toString(selectedResidence.getMinPrice()));
         rating.setRating((float)selectedResidence.getAverageRating());
 

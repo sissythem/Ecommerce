@@ -1,389 +1,190 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    android:focusable="true"
-    android:focusableInTouchMode="true"
     android:layout_width="match_parent"
-    android:layout_gravity="fill_horizontal"
-    android:layout_height="wrap_content">
-
+    android:layout_height="match_parent">
     <include layout="@layout/back_toolbar"
         android:id="@+id/include"/>
-
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/include">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:layout_gravity="fill_horizontal">
+
+        <ImageView
+            android:id="@+id/ivResidencePhotos"
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            app:srcCompat="@android:drawable/ic_menu_camera"
+            android:scaleType="centerCrop"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true" />
+
+        <ImageButton
+            android:id="@+id/ivHostPic"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:background="@drawable/profile_circular_border_imageview"
+            android:elevation="5dp"
+            android:padding="20dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_profile"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="27dp" />
         <RelativeLayout
+            android:id="@+id/profile_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:id="@+id/ivResidencePhotos"
-                android:layout_width="wrap_content"
-                android:layout_height="100dp"
-                app:srcCompat="@android:drawable/ic_menu_camera"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true" />
-
-            <TextView
-                android:id="@+id/tvTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/ivResidencePhotos"
-                android:layout_marginTop="12dp"
-                android:text="@string/residence_title"
-                android:textSize="20sp"
-                android:textAppearance="@style/sectionHeader"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true" />
-            <View
-                android:layout_width="fill_parent"
-                android:layout_height="2dp"
-                android:background="#c0c0c0"
-                android:id="@+id/line"
-                android:layout_below="@+id/tvTitle"/>
-
-            <TextView
-                android:id="@+id/tvType"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/line"
-                android:layout_marginTop="12dp"
-                android:text="@string/residence_type"
-                android:textSize="15sp" />
-
-            <TextView
-                android:id="@+id/tvAddress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/tvType"
-                android:layout_toLeftOf="@+id/tvCity"
-                android:layout_toStartOf="@+id/tvCity"
-                android:text="@string/residence_address"
-                android:textSize="15sp" />
-
-            <TextView
-                android:id="@+id/tvCity"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_below="@+id/tvType"
-                android:text="@string/residence_city"
-                android:textSize="15sp"
-                android:layout_toRightOf="@+id/tvMapTitle"
-                android:layout_toEndOf="@+id/tvMapTitle" />
-
-            <TextView
-                android:id="@+id/tvCountry"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/tvCity"
-                android:text="@string/residence_country"
-                android:textSize="15sp" />
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ivResidencePhotos"
+            android:background="@color/airbnb"
+            android:elevation="4dp"
+            android:paddingBottom="24dp">
 
             <TextView
                 android:id="@+id/tvHostName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/residence_host"
-                android:textSize="15sp"
-                android:layout_below="@+id/ivHostPic"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
-
-            <ImageView
-                android:id="@+id/ivHostPic"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_profile"
-                android:layout_below="@+id/tvCountry"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_alignRight="@+id/tvAvailabilityTitle"
-                android:layout_alignEnd="@+id/tvAvailabilityTitle" />
-
-            <TextView
-                android:id="@+id/tvAboutTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/residence_about_this_residence"
-                android:textSize="17sp"
-                android:textAppearance="@style/sectionHeader"
-                android:layout_below="@+id/tvHostName"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true" />
-
-            <View
-                android:layout_width="fill_parent"
-                android:layout_height="2dp"
-                android:background="#c0c0c0"
-                android:id="@+id/line1"
-                android:layout_below="@+id/tvAboutTitle"/>
-
-            <TextView
-                android:id="@+id/tvAboutText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/line1"
-                android:text="@string/about"
-                android:textSize="15sp" />
-
-            <TextView
-                android:id="@+id/tvAmenitiesTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/tvAboutText"
-                android:textAppearance="@style/sectionHeader"
-                android:text="@string/residence_provide_amenities"
-                android:textSize="17sp" />
-
-            <View
-                android:layout_width="fill_parent"
-                android:layout_height="2dp"
-                android:background="#c0c0c0"
-                android:id="@+id/line2"
-                android:layout_below="@+id/tvAmenitiesTitle"/>
-
-            <TextView
-                android:id="@+id/tvAmenities"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/line2"
-                android:text="@string/residence_amenities"
-                android:textSize="15sp" />
-
-            <TextView
-                android:id="@+id/tvCancellationPolicyTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                android:layout_below="@+id/tvAmenities"
-                android:textAppearance="@style/sectionHeader"
-                android:text="@string/residence_our_cancellation_policy"
-                android:textSize="17sp"/>
-
-            <View
-                android:layout_width="fill_parent"
-                android:layout_height="2dp"
-                android:background="#c0c0c0"
-                android:id="@+id/line3"
-                android:layout_below="@+id/tvCancellationPolicyTitle"/>
-
-            <TextView
-                android:id="@+id/tvCancellationPolicy"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/cancellation_policy"
-                android:textSize="15sp"
-                android:layout_below="@+id/line3"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true" />
-
-            <TextView
-                android:id="@+id/tvRulesTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/tvCancellationPolicy"
-                android:textAppearance="@style/sectionHeader"
-                android:text="@string/residence_guest_requirements"
-                android:textSize="17sp" />
-
-            <View
-                android:layout_width="fill_parent"
-                android:layout_height="2dp"
-                android:background="#c0c0c0"
-                android:id="@+id/line4"
-                android:layout_below="@+id/tvRulesTitle"/>
-
-            <TextView
-                android:id="@+id/tvRules"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/line4"
-                android:text="@string/rules"
-                android:textSize="15sp" />
-
-            <TextView
-                android:id="@+id/tvHostTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/tvRules"
-                android:textAppearance="@style/sectionHeader"
-                android:text="@string/residence_about_your_host"
-                android:textSize="17sp" />
-
-            <View
-                android:layout_width="fill_parent"
-                android:layout_height="2dp"
-                android:background="#c0c0c0"
-                android:id="@+id/line5"
-                android:layout_below="@+id/tvHostTitle"/>
+                android:text="Name"
+                android:textColor="#fff"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="48dp" />
 
             <TextView
                 android:id="@+id/tvHostAbout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/residence_about_host"
-                android:textSize="15sp"
-                android:layout_below="@+id/line5"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/tvHostName"
+                android:text="About"
+                android:textAlignment="center"
+                android:textColor="#fff"
+                android:textSize="18sp" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/profilell"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/profile_layout"
+            android:layout_marginTop="5dp"
+            android:orientation="vertical">
 
             <TextView
-                android:id="@+id/tvMapTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/tvHostAbout"
-                android:textAppearance="@style/sectionHeader"
-                android:text="@string/residence_where"
-                android:textSize="17sp" />
-
-            <View
+                android:id="@+id/tvTitle"
                 android:layout_width="fill_parent"
-                android:layout_height="2dp"
-                android:background="#c0c0c0"
-                android:id="@+id/line6"
-                android:layout_below="@+id/tvMapTitle"/>
-
-            <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="wrap_content"
-                android:layout_height="500dp"
-                android:layout_below="@+id/line6"
-                android:id="@+id/mapResidence"
-                tools:context=".MapsActivity"
-                android:name="com.google.android.gms.maps.SupportMapFragment"
-                tools:layout="@layout/fragment_map" />
-
-            <EditText
-                android:id="@+id/etGuests"
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/mapResidence"
-                android:ems="10"
-                android:hint="@string/residence_guests_number"
-                android:inputType="number" />
+                android:layout_margin="5dp"
+                android:background="#fff"
+                android:clickable="true"
+                android:elevation="4dp"
+                android:padding="20dp"
+                android:text="@string/residence_title"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/tvDetails"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_marginBottom="3dp"
+                android:layout_marginTop="3dp"
+                android:background="#fff"
+                android:clickable="true"
+                android:elevation="4dp"
+                android:padding="20dp"
+                android:text="Details" />
 
             <TextView
-                android:id="@+id/tvAvailabilityTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/etGuests"
-                android:textAppearance="@style/sectionHeader"
-                android:text="@string/residence_availability"
-                android:textSize="17sp" />
-
-            <View
+                android:id="@+id/tvAboutTitle"
                 android:layout_width="fill_parent"
-                android:layout_height="2dp"
-                android:background="#c0c0c0"
-                android:id="@+id/line7"
-                android:layout_below="@+id/tvAvailabilityTitle"/>
-
-            <LinearLayout
-                android:id="@+id/calendar"
-                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_below="@+id/line7">
-            </LinearLayout>
+                android:layout_margin="5dp"
+                android:background="#fff"
+                android:clickable="true"
+                android:elevation="4dp"
+                android:padding="20dp"
+                android:text="@string/residence_about_this_residence"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
+            <TextView
+                android:id="@+id/tvAboutText"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_marginBottom="3dp"
+                android:layout_marginTop="3dp"
+                android:background="#fff"
+                android:clickable="true"
+                android:elevation="4dp"
+                android:padding="20dp"
+                android:text="@string/about"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvMapTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/profilell"
+            android:textAppearance="@style/sectionHeader"
+            android:text="@string/residence_where"
+            android:textSize="17sp" />
+
+
+        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="wrap_content"
+            android:layout_height="500dp"
+            android:layout_below="@+id/tvMapTitle"
+            android:id="@+id/mapResidence"
+            tools:context=".MapsActivity"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            tools:layout="@layout/fragment_map" />
+
+        <EditText
+            android:id="@+id/etGuests"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/mapResidence"
+            android:ems="10"
+            android:hint="@string/residence_guests_number"
+            android:inputType="number" />
+
+        <TextView
+            android:id="@+id/tvAvailabilityTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/etGuests"
+            android:textAppearance="@style/sectionHeader"
+            android:text="@string/residence_availability"
+            android:textSize="17sp" />
+
+        <LinearLayout
+            android:id="@+id/calendar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_below="@+id/tvAvailabilityTitle">
+        </LinearLayout>
         </RelativeLayout>
     </ScrollView>
-
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/footerToolbar"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="@color/colorPrimary"
-        android:fitsSystemWindows="true"
-        android:minHeight="?attr/actionBarSize"
-        android:titleTextColor="@android:color/white">
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true">
-
-            <TextView
-                android:id="@+id/price"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/rating"
-                android:text="@string/residence_price"/>
-            <RatingBar
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:isIndicator="true"
-                android:numStars="5"
-                android:stepSize="1"
-                android:rating="5"
-                android:id="@+id/rating"
-                style="?android:attr/ratingBarStyleSmall"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
-
-            <Button
-                android:id="@+id/btnReservation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="23dp"
-                android:layout_marginRight="23dp"
-                android:text="@string/residence_book_now" />
-        </RelativeLayout>
-    </android.support.v7.widget.Toolbar>
-
+    <include layout="@layout/toolbar_residence" />
 </RelativeLayout>
