@@ -56,11 +56,8 @@ public class LoginActivity extends AppCompatActivity {
         blogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                final String Username = etUsername.getText().toString();
-//                final String password = etPassword.getText().toString();
-
-                final String Username = "nikpit";
-                final String password = "nikpit";
+                final String Username = etUsername.getText().toString();
+                final String password = etPassword.getText().toString();
 
                 if(Username.length() == 0 || password.length() == 0) {
                     //if something is not filled in, user must fill again the form
