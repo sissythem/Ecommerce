@@ -17,8 +17,6 @@ import fromRESTful.Residences;
 import gr.uoa.di.airbnbproject.R;
 import gr.uoa.di.airbnbproject.ResidenceActivity;
 
-import static util.Utils.goToActivity;
-
 public class RecyclerAdapterResidences extends RecyclerView.Adapter<RecyclerAdapterResidences.ResidencesCardHolder> {
     Context context;
     Boolean user;
@@ -43,16 +41,13 @@ public class RecyclerAdapterResidences extends RecyclerView.Adapter<RecyclerAdap
         holder.rPrice.setText(Double.toString(residences.get(position).getMinPrice()));
         holder.rRatingBar.setRating((float)residences.get(position).getAverageRating());
 
-        holder.rCardView.setOnClickListener(new View.OnClickListener() {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /** Implement onClick **/
-                System.out.println("Clicked");
-
-                Bundle btype = new Bundle();
+                final Bundle btype = new Bundle();
                 btype.putBoolean("type", user);
                 btype.putInt("residenceId", residences.get(position).getId());
-                goToActivity(context, ResidenceActivity.class, btype);
+                Utils.goToActivity(context, ResidenceActivity.class, btype);
             }
         });
     }

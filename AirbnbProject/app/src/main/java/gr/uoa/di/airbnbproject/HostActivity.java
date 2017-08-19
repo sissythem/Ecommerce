@@ -10,10 +10,8 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -103,6 +101,7 @@ public class HostActivity extends AppCompatActivity {
         residencesLayoutManager = new GridLayoutManager(this, 1);
         residencesRecyclerView.setLayoutManager(residencesLayoutManager);
         residencesRecyclerView.setHasFixedSize(true);
+        registerForContextMenu(residencesRecyclerView);
 
         ArrayList<Residences> storedResidences = retrofitCalls.getResidencesByHost(token, host.getId().toString());
 
@@ -120,20 +119,19 @@ public class HostActivity extends AppCompatActivity {
         Utils.manageFooter(HostActivity.this, user);
     }
 
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
+//    @Override
+//    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+//        super.onCreateContextMenu(menu, v, menuInfo);
+//
+//        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+//        menu.setHeaderTitle("Reservations - Host Options");
+//
+//        menu.add(0, info.position, 0, VIEW_RESIDENCE_ACTION);
+//        menu.add(0, info.position, 1, EDIT_ACTION);
+//        menu.add(0, info.position, 2, RESERVATIONS_ACTION);
+//        menu.add(0, info.position, 3, DELETE_ACTION);
+//    }
 
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
-        menu.setHeaderTitle("Reservations - Host Options");
-
-        menu.add(0, info.position, 0, VIEW_RESIDENCE_ACTION);
-        menu.add(0, info.position, 1, EDIT_ACTION);
-        menu.add(0, info.position, 2, RESERVATIONS_ACTION);
-        menu.add(0, info.position, 3, DELETE_ACTION);
-    }
-
-    //TODO click for edit etc does not work
     @Override
     public boolean onContextItemSelected(final MenuItem item) {
         super.onContextItemSelected(item);

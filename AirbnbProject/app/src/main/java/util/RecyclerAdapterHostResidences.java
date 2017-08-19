@@ -4,9 +4,11 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -17,9 +19,12 @@ import fromRESTful.Residences;
 import gr.uoa.di.airbnbproject.R;
 import gr.uoa.di.airbnbproject.ResidenceActivity;
 
-import static util.Utils.goToActivity;
+import static util.Utils.DELETE_ACTION;
+import static util.Utils.EDIT_ACTION;
+import static util.Utils.RESERVATIONS_ACTION;
+import static util.Utils.VIEW_RESIDENCE_ACTION;
 
-public class RecyclerAdapterHostResidences extends RecyclerView.Adapter<RecyclerAdapterHostResidences.ResidencesCardHolder> {
+public class RecyclerAdapterHostResidences extends RecyclerView.Adapter<RecyclerAdapterHostResidences.ResidencesCardHolder> implements View.OnCreateContextMenuListener{
     Context context;
     Boolean user;
     ArrayList<Residences> residences = new ArrayList<>();
@@ -36,23 +41,29 @@ public class RecyclerAdapterHostResidences extends RecyclerView.Adapter<Recycler
     }
 
     @Override
-    public void onBindViewHolder(ResidencesCardHolder holder, final int position) {
+    public void onBindViewHolder(final ResidencesCardHolder holder, final int position) {
         Utils.loadResidenceImage(context, holder.rPhoto, residences.get(position).getPhotos());
         holder.rTitle.setText(residences.get(position).getTitle());
         holder.rCity.setText(residences.get(position).getCity());
         holder.rPrice.setText(Double.toString(residences.get(position).getMinPrice()));
         holder.rRatingBar.setRating((float)residences.get(position).getAverageRating());
 
-        holder.rCardView.setOnClickListener(new View.OnClickListener() {
+        //TODO: fix menu
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                setPosition(position);
+                return false;
+            }
+        });
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /** Implement onClick **/
-                System.out.println("Clicked");
-
-                Bundle btype = new Bundle();
+                final Bundle btype = new Bundle();
                 btype.putBoolean("type", user);
                 btype.putInt("residenceId", residences.get(position).getId());
-                goToActivity(context, ResidenceActivity.class, btype);
+                Utils.goToActivity(context, ResidenceActivity.class, btype);
             }
         });
     }
@@ -61,6 +72,29 @@ public class RecyclerAdapterHostResidences extends RecyclerView.Adapter<Recycler
     public int getItemCount() {
         return residences.size();
     }
+
+    private int position;
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        //menuInfo is null
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+        menu.setHeaderTitle("Reservations - Host Options");
+
+        menu.add(0, info.position, 0, VIEW_RESIDENCE_ACTION);
+        menu.add(0, info.position, 1, EDIT_ACTION);
+        menu.add(0, info.position, 2, RESERVATIONS_ACTION);
+        menu.add(0, info.position, 3, DELETE_ACTION);
+    }
+
 
     public static class ResidencesCardHolder extends RecyclerView.ViewHolder {
         CardView rCardView;
