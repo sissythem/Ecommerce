@@ -13,10 +13,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import fromRESTful.Users;
-import util.ListAdapterProfile;
 import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
@@ -30,9 +30,7 @@ public class ProfileActivity extends AppCompatActivity {
     Context c;
     Toolbar toolbar;
     ImageView userImage;
-
-    ListAdapterProfile adapter;
-    String[] userdetails;
+    TextView tvName, tvAbout, tvUsername, tvEmail, tvPhoneNumber, tvCity, tvCountry, tvBirthDate;
     Boolean user;
     RetrofitCalls retrofitCalls;
 
@@ -85,28 +83,40 @@ public class ProfileActivity extends AppCompatActivity {
 
         Bundle buser = getIntent().getExtras();
         user = buser.getBoolean("type");
-        userdetails = new String[9];
         retrofitCalls = new RetrofitCalls();
         loggedinUser    = retrofitCalls.getUserbyUsername(token, username).get(0);
-        userdetails[0]  = loggedinUser.getFirstName();
-        userdetails[1]  = loggedinUser.getLastName();
-        userdetails[2]  = loggedinUser.getUsername();
-        userdetails[3]  = loggedinUser.getEmail();
-        userdetails[4]  = loggedinUser.getPhoneNumber();
-        userdetails[5]  = loggedinUser.getBirthDate();
-        userdetails[6]  = loggedinUser.getCountry();
-        userdetails[7]  = loggedinUser.getCity();
-        userdetails[8]  = loggedinUser.getAbout();
-
-        adapter = new ListAdapterProfile(this, userdetails);
-        list = (ListView)findViewById(R.id.profilelist);
-        list.setAdapter(adapter);
-
+        setUpProfile();
         userImage = (ImageView) findViewById(R.id.userImage);
         Utils.loadProfileImage(ProfileActivity.this, userImage, loggedinUser.getPhoto());
+    }
 
-        /** FOOTER TOOLBAR **/
-        Utils.manageFooter(ProfileActivity.this, user);
+    public void setUpProfile()
+    {
+        tvName = (TextView)findViewById(R.id.name);
+        tvAbout = (TextView)findViewById(R.id.about);
+        tvUsername = (TextView)findViewById(R.id.about);
+        tvEmail = (TextView)findViewById(R.id.email);
+        tvPhoneNumber = (TextView)findViewById(R.id.phonenumber);
+        tvCity = (TextView)findViewById(R.id.city);
+        tvCountry = (TextView)findViewById(R.id.country);
+        tvBirthDate = (TextView)findViewById(R.id.birthDate);
+
+        tvName.setText(loggedinUser.getFirstName() + " " + loggedinUser.getLastName());
+        if(loggedinUser.getAbout() != null)
+        {
+            tvAbout.setText(loggedinUser.getAbout());
+        }
+        else {
+            tvAbout.setText("About this user");
+        }
+        tvUsername.setText(loggedinUser.getUsername());
+        tvEmail.setText(loggedinUser.getEmail());
+        tvPhoneNumber.setText(loggedinUser.getPhoneNumber());
+        if(loggedinUser.getCity() != null)
+            tvCity.setText(loggedinUser.getCity());
+        if(loggedinUser.getCountry() !=null)
+            tvCountry.setText(loggedinUser.getCountry());
+        tvBirthDate.setText(loggedinUser.getBirthDate());
     }
 
     @Override

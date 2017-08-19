@@ -512,7 +512,6 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
                 Utils.goToActivity(ResidenceActivity.this, HistoryReservationsActivity.class, buser);
                 break;
             // action with ID action_settings was selected
-                //TODO: invisible when user is navigating as host and this is his residence
             case R.id.contact:
                 if (user) {
                     buser.putInt("host", host.getId());
