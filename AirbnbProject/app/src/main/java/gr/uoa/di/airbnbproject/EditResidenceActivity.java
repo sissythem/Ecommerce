@@ -108,11 +108,20 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         toolbar.setTitle("Edit Residence");
         setSupportActionBar(toolbar);
 
+        /** BACK BUTTON **/
         // add back arrow to toolbar
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
+
+        toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_back, getTheme()));
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.manageBackButton(EditResidenceActivity.this, HostActivity.class, user);
+            }
+        });
 
         retrofitCalls = new RetrofitCalls();
         selectedResidence = retrofitCalls.getResidenceById(token, Integer.toString(residenceId));
@@ -129,9 +138,6 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         });
 
         saveResidence();
-
-        /** BACK BUTTON **/
-//        Utils.manageBackButton(this, HostActivity.class, user);
     }
 
     @Override

@@ -79,14 +79,22 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
         }
         setContentView(R.layout.layout_residence_editfields);
         toolbar = (Toolbar) findViewById(R.id.backToolbar);
-        toolbar.setTitle("Add Residence");
+        toolbar.setTitle("Add new Residence");
         setSupportActionBar(toolbar);
 
+        /** BACK BUTTON **/
         // add back arrow to toolbar
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
+        toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_back, getTheme()));
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.manageBackButton(AddResidenceActivity.this, HostActivity.class, user);
+            }
+        });
 
         userInputLayout();
         RetrofitCalls retrofitCalls = new RetrofitCalls();
@@ -94,9 +102,6 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
 
         host = userData.get(0);
         saveResidence();
-
-//        /** BACK BUTTON **/
-//        Utils.manageBackButton(this, HostActivity.class, user);
     }
 
     public void userInputLayout ()

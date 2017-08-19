@@ -83,21 +83,30 @@ public class MessageActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_message);
 
+        Bundle bextras  = getIntent().getExtras();
+        user            = bextras.getBoolean("type");
+        currentUserId   = bextras.getInt("currentUserId");
+        toUserId        = bextras.getInt("toUserId");
+        msgSubject      = bextras.getString("msgSubject");
+
         toolbar = (Toolbar) findViewById(R.id.backToolbar);
         toolbar.setTitle("Send a message");
         setSupportActionBar(toolbar);
 
+        /** BACK BUTTON **/
         // add back arrow to toolbar
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
-        Bundle bextras  = getIntent().getExtras();
-        user            = bextras.getBoolean("type");
-        currentUserId   = bextras.getInt("currentUserId");
-        toUserId        = bextras.getInt("toUserId");
-        msgSubject      = bextras.getString("msgSubject");
+        toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_back, getTheme()));
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO: how we will handle back button
+           }
+        });
 
         subject = (TextView) findViewById(R.id.subject);
         subject.setText(msgSubject);

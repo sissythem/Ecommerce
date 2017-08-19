@@ -131,15 +131,19 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         toolbar.setSubtitle(selectedResidence.getTitle());
         delegate.setSupportActionBar(toolbar);
 
+        /** BACK BUTTON **/
+        // add back arrow to toolbar
         if (delegate.getSupportActionBar() != null){
             delegate.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             delegate.getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
+        toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_back, getTheme()));
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Utils.manageBackButton(ResidenceActivity.this, (user)?HomeActivity.class:HostActivity.class, user);
+                //TODO: check when user enters the activity from history reviews
+                Utils.manageBackButton(ResidenceActivity.this, (user)?HomeActivity.class:HostActivity.class, user);
             }
         });
 

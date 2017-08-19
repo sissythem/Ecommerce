@@ -91,20 +91,28 @@ public class EditProfileActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_edit_profile);
+        Bundle buser = getIntent().getExtras();
+        user = buser.getBoolean("type");
 
         toolbar = (Toolbar) findViewById(R.id.backToolbar);
         toolbar.setTitle("Edit Your Profile");
         toolbar.setSubtitle("Welcome " + username);
         setSupportActionBar(toolbar);
 
+        /** BACK BUTTON **/
         // add back arrow to toolbar
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
-        Bundle buser = getIntent().getExtras();
-        user = buser.getBoolean("type");
+        toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_back, getTheme()));
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.manageBackButton(EditProfileActivity.this, ProfileActivity.class, user);
+            }
+        });
 
         retrofitCalls = new RetrofitCalls();
         ArrayList<Users> getUsersByUsername = retrofitCalls.getUserbyUsername(token, username);
@@ -172,9 +180,6 @@ public class EditProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) { saveUserProfile(); }
         });
-
-//        /** BACK BUTTON **/
-//        Utils.manageBackButton(EditProfileActivity.this, ProfileActivity.class, user);
     }
 
     @Override

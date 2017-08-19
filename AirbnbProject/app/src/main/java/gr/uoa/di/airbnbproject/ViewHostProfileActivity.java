@@ -89,11 +89,20 @@ public class ViewHostProfileActivity extends AppCompatActivity {
         toolbar.setSubtitle(host.getFirstName() + " " + host.getLastName());
         setSupportActionBar(toolbar);
 
+        /** BACK BUTTON **/
         // add back arrow to toolbar
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
+
+        toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_back, getTheme()));
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.manageBackButton(ViewHostProfileActivity.this, ResidenceActivity.class, user);
+            }
+        });
 
         userdetails = new String[9];
 
@@ -150,23 +159,4 @@ public class ViewHostProfileActivity extends AppCompatActivity {
         list = (ListView)findViewById(R.id.profilelist);
         list.setAdapter(adapter);
     }
-
-//    public void manageBackToolbar(){
-//        bback.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent backintent = new Intent(ViewHostProfileActivity.this, ResidenceActivity.class);
-//                Bundle buser = new Bundle();
-//                buser.putBoolean("type",user);
-//                backintent.putExtras(buser);
-//                try {
-//                    startActivity(backintent);
-//                } catch (Exception ex) {
-//                    System.out.println(ex.getMessage());
-//                    ex.printStackTrace();
-//                }
-//
-//            }
-//        });
-//    }
 }

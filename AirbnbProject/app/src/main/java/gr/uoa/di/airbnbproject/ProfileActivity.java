@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -67,16 +68,24 @@ public class ProfileActivity extends AppCompatActivity {
         toolbar.setSubtitle("Welcome " + username);
         setSupportActionBar(toolbar);
 
+        /** BACK BUTTON **/
         // add back arrow to toolbar
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
+        toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_back, getTheme()));
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.manageBackButton(ProfileActivity.this, (user)?HomeActivity.class:HostActivity.class, user);
+            }
+        });
+
         Bundle buser = getIntent().getExtras();
         user = buser.getBoolean("type");
         userdetails = new String[9];
-//        manageToolbarButtons();
         retrofitCalls = new RetrofitCalls();
         loggedinUser    = retrofitCalls.getUserbyUsername(token, username).get(0);
         userdetails[0]  = loggedinUser.getFirstName();
@@ -98,9 +107,6 @@ public class ProfileActivity extends AppCompatActivity {
 
         /** FOOTER TOOLBAR **/
         Utils.manageFooter(ProfileActivity.this, user);
-
-//        /** BACK BUTTON **/
-//        Utils.manageBackButton(this, (user)?HomeActivity.class:HostActivity.class, user);
     }
 
     @Override
@@ -151,50 +157,4 @@ public class ProfileActivity extends AppCompatActivity {
         }
         return true;
     }
-
-//    public void manageToolbarButtons() {
-//        btnMenu.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                PopupMenu popup = new PopupMenu(ProfileActivity.this, btnMenu);
-//                popup.getMenuInflater().inflate(R.menu.menu_popup, popup.getMenu());
-//
-//                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-//                    public boolean onMenuItemClick(MenuItem item) {
-//                        Bundle buser = new Bundle();
-//                        buser.putBoolean("type", user);
-//                        if (item.getItemId() == R.id.reviews) {
-//                            Intent historyReviewsIntent = new Intent(ProfileActivity.this, HistoryReviewsActivity.class);
-//                            historyReviewsIntent.putExtras(buser);
-//                            startActivity(historyReviewsIntent);
-//                        } else if (item.getItemId() == R.id.reservations) {
-//                            Intent historyReservationsIntent = new Intent(ProfileActivity.this, HistoryReservationsActivity.class);
-//                            historyReservationsIntent.putExtras(buser);
-//                            startActivity(historyReservationsIntent);
-//                        } else if (item.getItemId() == R.id.editprofile) {
-//                            Intent editIntent = new Intent(ProfileActivity.this, EditProfileActivity.class);
-//                            editIntent.putExtras(buser);
-//                            startActivity(editIntent);
-//                        } else if (item.getItemId() == R.id.deleteProfile) {
-//                            new AlertDialog.Builder(ProfileActivity.this)
-//                                .setTitle("Delete Account").setMessage("Do you really want to delete your account?").setIcon(android.R.drawable.ic_dialog_alert)
-//                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-//                                    public void onClick(DialogInterface dialog, int whichButton) {
-//                                        if (retrofitCalls.deleteUserById(token, loggedinUser.getId().toString()) == null) {
-//                                            Toast.makeText(c, "Account deleted!", Toast.LENGTH_SHORT).show();
-//                                            Utils.logout(ProfileActivity.this);
-//                                        } else {
-//                                            Toast.makeText(c, "Something went wrong, account is not deleted. Please try again!", Toast.LENGTH_SHORT).show();
-//                                        }
-//                                    }
-//                                })
-//                                .setNegativeButton(android.R.string.no, null).show();
-//                        }
-//                        return true;
-//                    }
-//                });
-//                popup.show();
-//            }
-//        });
-//    }
 }

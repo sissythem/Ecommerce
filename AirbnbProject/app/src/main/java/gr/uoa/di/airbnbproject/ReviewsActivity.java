@@ -87,11 +87,20 @@ public class ReviewsActivity extends AppCompatActivity {
         toolbar.setSubtitle("Residence " + selectedResidence.getTitle());
         setSupportActionBar(toolbar);
 
+        /** BACK BUTTON **/
         // add back arrow to toolbar
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
+
+        toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_back, getTheme()));
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.manageBackButton(ReviewsActivity.this, ResidenceActivity.class, user);
+            }
+        });
 
         ArrayList<Reviews> reviewsForSelectedResidence = retrofitCalls.getReviewsByResidenceId(token, Integer.toString(residenceId));
         String[] representativePhoto    = new String [reviewsForSelectedResidence.size()];
@@ -110,30 +119,6 @@ public class ReviewsActivity extends AppCompatActivity {
 
         /** FOOTER TOOLBAR **/
         Utils.manageFooter(ReviewsActivity.this, user);
-
-//        /** BACK BUTTON **/
-//
-//        ImageButton bback = (ImageButton) findViewById(R.id.ibBack);
-//        bback.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent backintent = new Intent(ReviewsActivity.this, ResidenceActivity.class);
-//                Bundle bextras = new Bundle();
-//                bextras.putBoolean("type", user);
-//                bextras.putInt("residenceId", residenceId);
-//                backintent.putExtras(bextras);
-//
-//                try {
-//                    startActivity(backintent);
-//                    finish();
-//                } catch (Exception ex) {
-//                    System.out.println(ex.getMessage());
-//                    ex.printStackTrace();
-//                }
-//            }
-//        });
-//
-//        Utils.manageBackButton(this, (user)?HomeActivity.class:HostActivity.class, user);
 
         etcomment = (EditText)findViewById(R.id.writeComment);
         btnreview = (Button)findViewById(R.id.btnreview);

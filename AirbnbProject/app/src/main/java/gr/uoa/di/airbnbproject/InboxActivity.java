@@ -71,18 +71,27 @@ public class InboxActivity extends AppCompatActivity {
             return;
         }
 
+        Bundle buser = getIntent().getExtras();
+        user = buser.getBoolean("type");
+
         toolbar = (Toolbar) findViewById(R.id.backToolbar);
         toolbar.setTitle("Inbox");
         setSupportActionBar(toolbar);
 
+        /** BACK BUTTON **/
         // add back arrow to toolbar
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
-        Bundle buser = getIntent().getExtras();
-        user = buser.getBoolean("type");
+        toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_back, getTheme()));
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.manageBackButton(InboxActivity.this, (user)?HomeActivity.class:HostActivity.class, user);
+            }
+        });
 
         RetrofitCalls retrofitCalls = new RetrofitCalls();
         ArrayList<Users> getUsersByUsername = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
@@ -125,9 +134,6 @@ public class InboxActivity extends AppCompatActivity {
                 }
             }
         });
-
-//        /** BACK BUTTON **/
-//        Utils.manageBackButton(this, (user)?HomeActivity.class:HostActivity.class, user);
 
         /** FOOTER TOOLBAR **/
         Utils.manageFooter(InboxActivity.this, user);

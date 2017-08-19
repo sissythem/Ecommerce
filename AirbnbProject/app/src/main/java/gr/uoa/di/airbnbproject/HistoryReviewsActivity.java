@@ -65,17 +65,28 @@ public class HistoryReviewsActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_history_reviews);
+
+        Bundle buser = getIntent().getExtras();
+        user = buser.getBoolean("type");
+
         toolbar = (Toolbar) findViewById(R.id.backToolbar);
         toolbar.setTitle("My Reviews");
         setSupportActionBar(toolbar);
 
+        /** BACK BUTTON **/
         // add back arrow to toolbar
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
-        Bundle buser = getIntent().getExtras();
-        user = buser.getBoolean("type");
+
+        toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_back, getTheme()));
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.manageBackButton(HistoryReviewsActivity.this, ProfileActivity.class, user);
+            }
+        });
 
         RetrofitCalls retrofitCalls = new RetrofitCalls();
 
@@ -101,9 +112,7 @@ public class HistoryReviewsActivity extends AppCompatActivity {
 
         /** FOOTER TOOLBAR **/
         Utils.manageFooter(HistoryReviewsActivity.this, user);
-//        /** BACK BUTTON **/
-//        Utils.manageBackButton(this, ProfileActivity.class, user);
-    }
+}
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {

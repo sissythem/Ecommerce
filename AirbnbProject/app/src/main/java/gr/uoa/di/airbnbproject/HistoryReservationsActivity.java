@@ -73,19 +73,27 @@ public class HistoryReservationsActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_history_reservations);
+        buser = getIntent().getExtras();
+        user = buser.getBoolean("type");
 
         toolbar = (Toolbar) findViewById(R.id.backToolbar);
         toolbar.setTitle("My Reservations");
         setSupportActionBar(toolbar);
 
+        /** BACK BUTTON **/
         // add back arrow to toolbar
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
-        buser = getIntent().getExtras();
-        user = buser.getBoolean("type");
+        toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_back, getTheme()));
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.manageBackButton(HistoryReservationsActivity.this, ProfileActivity.class, user);
+            }
+        });
 
         RetrofitCalls retrofitCalls = new RetrofitCalls();
         ArrayList<Users> getUserByUsername = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
@@ -118,8 +126,6 @@ public class HistoryReservationsActivity extends AppCompatActivity {
 
         /** FOOTER TOOLBAR **/
         Utils.manageFooter(HistoryReservationsActivity.this, user);
-//        /** BACK BUTTON **/
-//        Utils.manageBackButton(this, ProfileActivity.class, user);
     }
 
     @Override
