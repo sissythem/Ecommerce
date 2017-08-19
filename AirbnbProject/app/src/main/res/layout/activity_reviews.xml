@@ -38,7 +38,7 @@
         android:layout_marginTop="17dp"
         android:layout_toEndOf="@+id/rating"
         android:layout_toRightOf="@+id/rating"
-        android:text="Rate the Residence" />
+        android:text="@string/reviews_rate_residence" />
 
     <EditText
         android:id="@+id/writeComment"
@@ -50,7 +50,7 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/rating"
         android:ems="10"
-        android:hint="Write your review"
+        android:hint="@string/reviews_write"
         android:inputType="textMultiLine" />
 
     <Button
@@ -58,13 +58,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/writeComment"
-        android:text="SEND"
+        android:text="@string/reviews_send"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
     <include layout="@layout/footer" />
-
-
 </RelativeLayout>

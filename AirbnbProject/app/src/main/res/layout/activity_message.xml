@@ -24,7 +24,7 @@
             android:id="@+id/subject"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Subject"
+            android:text="@string/message_subject"
             android:textAlignment="center"
             android:layout_marginBottom="20dp"
             android:textColor="#db0036"
@@ -52,14 +52,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textMultiLine"
-                android:hint="Write your message here"
+                android:hint="@string/message_write"
                 android:textAlignment="center"  />
 
             <Button
                 android:id="@+id/message_send_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Send message" />
+                android:text="@string/message_send" />
 
         </LinearLayout>
 

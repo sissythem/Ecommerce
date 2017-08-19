@@ -20,7 +20,7 @@
         android:layout_alignBottom="@+id/profilepic"
         android:layout_toEndOf="@+id/profilepic"
         android:layout_toRightOf="@+id/profilepic"
-        android:text="username" />
+        android:text="@string/username" />
 
     <TextView
         android:id="@+id/comment"
@@ -32,5 +32,5 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/profilepic"
         android:layout_marginTop="22dp"
-        android:text="Comment" />
+        android:text="@string/reviews_comment" />
 </RelativeLayout>

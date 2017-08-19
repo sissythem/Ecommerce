@@ -52,10 +52,14 @@ import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
 
+
+import static gr.uoa.di.airbnbproject.R.id.reservations;
+
 import static gr.uoa.di.airbnbproject.R.id.calendar;
 import static gr.uoa.di.airbnbproject.R.id.reviews;
 import static util.Utils.FORMAT_DATE_YMD;
 import static util.Utils.convertTimestampToDate;
+import static util.Utils.goToActivity;
 
 public class ResidenceActivity extends FragmentActivity implements OnMapReadyCallback, AppCompatCallback
 {
@@ -479,7 +483,12 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_residence, menu);
+
+        if (user) {
+            inflater.inflate(R.menu.menu_residence_host, menu);
+        } else {
+            inflater.inflate(R.menu.menu_residence_user, menu);
+        }
         return true;
     }
 
@@ -498,26 +507,19 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
                     finish();
                     break;
                 }
+            case reservations:
+                buser.putInt("residenceId", residenceId);
+                Utils.goToActivity(ResidenceActivity.this, HistoryReservationsActivity.class, buser);
+                break;
             // action with ID action_settings was selected
                 //TODO: invisible when user is navigating as host and this is his residence
             case R.id.contact:
-                final Intent profileIntent;
-                if (user){
-                    profileIntent = new Intent(ResidenceActivity.this, ViewHostProfileActivity.class);
-                }
-                else{
-                    profileIntent = new Intent(ResidenceActivity.this, ProfileActivity.class);
-                }
-
-                buser.putInt("host", host.getId());
-                buser.putInt("residenceId", residenceId);
-                profileIntent.putExtras(buser);
-                try{
-                    startActivity(profileIntent);
-                }
-                catch (Exception e){
-                    System.out.println(e.getMessage());
-                    Log.e("",e.getMessage());
+                if (user) {
+                    buser.putInt("host", host.getId());
+                    buser.putInt("residenceId", residenceId);
+                    goToActivity(ResidenceActivity.this, ViewHostProfileActivity.class, buser);
+                } else {
+                    goToActivity(ResidenceActivity.this, ProfileActivity.class, buser);
                 }
                 break;
         }

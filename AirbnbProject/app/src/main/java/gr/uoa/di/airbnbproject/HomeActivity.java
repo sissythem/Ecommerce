@@ -1,6 +1,5 @@
 package gr.uoa.di.airbnbproject;
 
-import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -9,24 +8,19 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,7 +32,7 @@ import fromRESTful.Residences;
 import fromRESTful.Reviews;
 import fromRESTful.Searches;
 import fromRESTful.Users;
-import util.ListAdapterResidences;
+import util.RecyclerAdapterResidences;
 import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
@@ -48,8 +42,6 @@ import static util.Utils.getSessionData;
 
 public class HomeActivity extends AppCompatActivity {
     final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
-
-    ListAdapterResidences adapter;
 
     EditText field_city, field_guests;
     TextView startDate, endDate;
@@ -68,10 +60,20 @@ public class HomeActivity extends AppCompatActivity {
     Double[]price;
     float[] rating;
 
+    RecyclerView residencesRecyclerView;
+    RecyclerView.Adapter residencesAdapter;
+    RecyclerView.LayoutManager residencesLayoutManager;
+    ArrayList<Residences> residencesList = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        residencesRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        residencesLayoutManager = new GridLayoutManager(this, 1);
+        residencesRecyclerView.setLayoutManager(residencesLayoutManager);
+        residencesRecyclerView.setHasFixedSize(true);
     }
 
     @Override
@@ -110,60 +112,20 @@ public class HomeActivity extends AppCompatActivity {
         /** TODO: notifyDataSetChanged has to go on the adapter list items that have click actions. HomeActivity doesnt need it **/
 //        adapter.notifyDataSetChanged();
 
-
         /** FOOTER TOOLBAR **/
         Utils.manageFooter(HomeActivity.this, true);
 
         /**SEARCH VIEW EXPANDABLE START **/
-        setupSearchView();
+        //setupSearchView();
 
         /** RECOMMENDATIONS **/
-        list = (ListView) findViewById(R.id.list);
-        try{
-            ArrayList<Residences> Recommendations = popularRecommendations();
+        ArrayList<Residences> Recommendations = popularRecommendations();
+//        list = (ListView) findViewById(R.id.list);
+        try {
             if (Recommendations.size() > 0) {
-                title                  = new String[Recommendations.size()];
-                representativePhoto    = new String[Recommendations.size()];
-                city                   = new String[Recommendations.size()];
-                price                  = new Double[Recommendations.size()];
-                rating                 = new float[Recommendations.size()];
-                residenceId            = new int[Recommendations.size()];
-
-                for(int i=0; i<Recommendations.size();i++) {
-                    title[i]                = Recommendations.get(i).getTitle();
-                    representativePhoto[i]  = Recommendations.get(i).getPhotos();
-                    city[i]                 = Recommendations.get(i).getCity();
-                    price[i]                = Recommendations.get(i).getMinPrice();
-                    rating[i]               = (float)Recommendations.get(i).getAverageRating();
-                    residenceId[i]          = Recommendations.get(i).getId();
-                }
-                adapter = new ListAdapterResidences(this, title, representativePhoto, city, price, rating);
-                list.setAdapter(adapter);
-
-                list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        Intent showResidenceIntent = new Intent(HomeActivity.this, ResidenceActivity.class);
-                        Bundle btype = new Bundle();
-                        btype.putBoolean("type", user);
-                        btype.putInt("residenceId", residenceId[position]);
-                        showResidenceIntent.putExtras(btype);
-                        try {
-                            startActivity(showResidenceIntent);
-                        } catch (Exception ex) {
-                            System.out.println(ex.getMessage());
-                            ex.printStackTrace();
-                        }
-                    }
-                });
-            } else {
-//                list.setVisibility(View.GONE);
-
-                LinearLayout layout = (LinearLayout)findViewById(R.id.homelayout);
-                TextView text = new TextView(this);
-                text.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                text.setText("No Results");
-                layout.addView(text);
+                System.out.println(Recommendations);
+                residencesAdapter = new RecyclerAdapterResidences(this, user, Recommendations);
+                residencesRecyclerView.setAdapter(residencesAdapter);
             }
         } catch (Exception e) {
             Log.e("", e.getMessage());
@@ -171,103 +133,103 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void setupSearchView() {
-        final TextView searchlist = (TextView) findViewById(R.id.searchlist);
-        searchlist.setVisibility(View.GONE);
-        final CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar);
-        AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
-        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-            boolean isShow = false;
-            int scrollRange = -1;
-            @Override
-            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                if (scrollRange == -1) {
-                    scrollRange = appBarLayout.getTotalScrollRange();
-                    searchlist.setVisibility(View.GONE);
-                }
-                if (scrollRange + verticalOffset == 0) {
-                    collapsingToolbarLayout.setTitle("Title");
-                    isShow = true;
-                    searchlist.setVisibility(View.VISIBLE);
-                } else if(isShow) {
-                    collapsingToolbarLayout.setTitle(" ");//carefull there should a space between double quote otherwise it wont work
-                    isShow = false;
-                    searchlist.setVisibility(View.GONE);
-                }
-            }
-        });
-
-        field_city = (EditText) findViewById(R.id.field_city);
-        field_guests = (EditText) findViewById(R.id.field_guests);
-
-        /**** Dates Selector ****/
-        btnStartDatePicker = (Button)findViewById(R.id.btn_start_date);
-        startDate = (TextView)findViewById(R.id.start_date);
-
-        btnEndDatePicker = (Button)findViewById(R.id.btn_end_date);
-        endDate = (TextView)findViewById(R.id.end_date);
-
-        btnStartDatePicker.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (v == btnStartDatePicker) {
-                    // Get Current Date
-                    final Calendar c = Calendar.getInstance();
-                    mStartYear = c.get(Calendar.YEAR);
-                    mStartMonth = c.get(Calendar.MONTH);
-                    mStartDay = c.get(Calendar.DAY_OF_MONTH);
-
-                    date_start = "";
-                    DatePickerDialog datePickerDialog = new DatePickerDialog(HomeActivity.this, new DatePickerDialog.OnDateSetListener() {
-                        @Override
-                        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                            startDate.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
-                            date_start = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
-                        }
-                    }, mStartYear, mStartMonth, mStartDay);
-                    datePickerDialog.show();
-                }
-            }
-        });
-
-        btnEndDatePicker.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (v == btnEndDatePicker) {
-                    // Get Current Date
-                    final Calendar c = Calendar.getInstance();
-                    mEndYear = c.get(Calendar.YEAR);
-                    mEndMonth = c.get(Calendar.MONTH);
-                    mEndDay = c.get(Calendar.DAY_OF_MONTH);
-
-                    date_end = "";
-                    DatePickerDialog datePickerDialog = new DatePickerDialog(HomeActivity.this, new DatePickerDialog.OnDateSetListener() {
-                        @Override
-                        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                            endDate.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
-                            date_end = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
-                        }
-                    }, mEndYear, mEndMonth, mEndDay);
-                    datePickerDialog.show();
-                }
-            }
-        });
-
-        field_search = (Button) findViewById(R.id.field_search);
-        field_search.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent searchintent = new Intent(HomeActivity.this, SearchResultsActivity.class);
-                Bundle bsearch = new Bundle();
-
-                bsearch.putString("city", field_city.getText().toString());
-                bsearch.putInt("guests", Integer.parseInt(field_guests.getText().toString()));
-                bsearch.putString("startDate", date_start);
-                bsearch.putString("endDate", date_end);
-                bsearch.putBoolean("type", user);
-                searchintent.putExtras(bsearch);
-                startActivity(searchintent);
-            }
-        });
+//        final TextView searchlist = (TextView) findViewById(R.id.searchlist);
+//        searchlist.setVisibility(View.GONE);
+//        final CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar);
+//        AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
+//        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+//            boolean isShow = false;
+//            int scrollRange = -1;
+//            @Override
+//            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+//                if (scrollRange == -1) {
+//                    scrollRange = appBarLayout.getTotalScrollRange();
+//                    searchlist.setVisibility(View.GONE);
+//                }
+//                if (scrollRange + verticalOffset == 0) {
+//                    collapsingToolbarLayout.setTitle("Title");
+//                    isShow = true;
+//                    searchlist.setVisibility(View.VISIBLE);
+//                } else if(isShow) {
+//                    collapsingToolbarLayout.setTitle(" ");//carefull there should a space between double quote otherwise it wont work
+//                    isShow = false;
+//                    searchlist.setVisibility(View.GONE);
+//                }
+//            }
+//        });
+//
+//        field_city = (EditText) findViewById(R.id.field_city);
+//        field_guests = (EditText) findViewById(R.id.field_guests);
+//
+//        /**** Dates Selector ****/
+//        btnStartDatePicker = (Button)findViewById(R.id.btn_start_date);
+//        startDate = (TextView)findViewById(R.id.start_date);
+//
+//        btnEndDatePicker = (Button)findViewById(R.id.btn_end_date);
+//        endDate = (TextView)findViewById(R.id.end_date);
+//
+//        btnStartDatePicker.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (v == btnStartDatePicker) {
+//                    // Get Current Date
+//                    final Calendar c = Calendar.getInstance();
+//                    mStartYear = c.get(Calendar.YEAR);
+//                    mStartMonth = c.get(Calendar.MONTH);
+//                    mStartDay = c.get(Calendar.DAY_OF_MONTH);
+//
+//                    date_start = "";
+//                    DatePickerDialog datePickerDialog = new DatePickerDialog(HomeActivity.this, new DatePickerDialog.OnDateSetListener() {
+//                        @Override
+//                        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+//                            startDate.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+//                            date_start = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
+//                        }
+//                    }, mStartYear, mStartMonth, mStartDay);
+//                    datePickerDialog.show();
+//                }
+//            }
+//        });
+//
+//        btnEndDatePicker.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (v == btnEndDatePicker) {
+//                    // Get Current Date
+//                    final Calendar c = Calendar.getInstance();
+//                    mEndYear = c.get(Calendar.YEAR);
+//                    mEndMonth = c.get(Calendar.MONTH);
+//                    mEndDay = c.get(Calendar.DAY_OF_MONTH);
+//
+//                    date_end = "";
+//                    DatePickerDialog datePickerDialog = new DatePickerDialog(HomeActivity.this, new DatePickerDialog.OnDateSetListener() {
+//                        @Override
+//                        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+//                            endDate.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+//                            date_end = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
+//                        }
+//                    }, mEndYear, mEndMonth, mEndDay);
+//                    datePickerDialog.show();
+//                }
+//            }
+//        });
+//
+//        field_search = (Button) findViewById(R.id.field_search);
+//        field_search.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent searchintent = new Intent(HomeActivity.this, SearchResultsActivity.class);
+//                Bundle bsearch = new Bundle();
+//
+//                bsearch.putString("city", field_city.getText().toString());
+//                bsearch.putInt("guests", Integer.parseInt(field_guests.getText().toString()));
+//                bsearch.putString("startDate", date_start);
+//                bsearch.putString("endDate", date_end);
+//                bsearch.putBoolean("type", user);
+//                searchintent.putExtras(bsearch);
+//                startActivity(searchintent);
+//            }
+//        });
     }
 
     public ArrayList<Residences> popularRecommendations()
@@ -294,7 +256,7 @@ public class HomeActivity extends AppCompatActivity {
             relevantCities.add(searchedCities.get(i).getCity());
         }
 
-		/** If user has not searched anything yet, most popular residences will appear **/
+        /** If user has not searched anything yet, most popular residences will appear **/
         if (relevantCities.size() == 0) {
             ArrayList<Reviews> reviews;
             reviews = retrofitCalls.getAllReviews(token);
@@ -341,7 +303,7 @@ public class HomeActivity extends AppCompatActivity {
     protected void onRestart() {
         resetActivity();
         user = true;
-        adapter.notifyDataSetChanged();
+        //adapter.notifyDataSetChanged();
         super.onRestart();
     }
 

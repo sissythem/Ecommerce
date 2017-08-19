@@ -83,7 +83,7 @@ public class MessageActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_message);
 
-        Bundle bextras  = getIntent().getExtras();
+        final Bundle bextras  = getIntent().getExtras();
         user            = bextras.getBoolean("type");
         currentUserId   = bextras.getInt("currentUserId");
         toUserId        = bextras.getInt("toUserId");
@@ -104,7 +104,20 @@ public class MessageActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: how we will handle back button
+                if (bextras.containsKey("residenceId"))
+                {
+                    Bundle btores = new Bundle();
+                    btores.putBoolean("type", user);
+                    btores.putInt("residenceId", residenceId);
+                    Utils.goToActivity(MessageActivity.this, ResidenceActivity.class, btores);
+                }
+                else if (bextras.containsKey("conversationId")) {
+                    Utils.manageBackButton(MessageActivity.this, InboxActivity.class, user);
+                }
+                else
+                {
+                    Utils.manageBackButton(MessageActivity.this, (user)?HomeActivity.class:HostActivity.class, user);
+                }
            }
         });
 
@@ -174,16 +187,6 @@ public class MessageActivity extends AppCompatActivity {
 
         send = (Button)findViewById(R.id.message_send_btn);
         sendMessage();
-
-//        /** BACK BUTTON **/
-//        Utils.manageBackButton(this, InboxActivity.class, user);
-//        if (bextras.containsKey("residenceId")) {
-//            System.out.println("yes");
-//            backToResidence();
-//        } else {
-//            System.out.println("no");
-//            Utils.manageBackButton(this, InboxActivity.class, user);
-//        }
     }
 
     @Override
@@ -227,32 +230,6 @@ public class MessageActivity extends AppCompatActivity {
         }
         return true;
     }
-
-//    @Override
-//    public void onBackPressed() {
-//        Utils.manageBackButton(this, InboxActivity.class, user);
-////        moveTaskToBack(true);
-//    }
-
-//    public void backToResidence() {
-//        ImageButton bback = (ImageButton) this.findViewById(R.id.ibBack);
-//        bback.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent backintent = new Intent(MessageActivity.this, ResidenceActivity.class);
-//                Bundle btores = new Bundle();
-//                btores.putBoolean("type", user);
-//                btores.putInt("residenceId", residenceId);
-//                backintent.putExtras(btores);
-//                try {
-//                    MessageActivity.this.startActivity(backintent);
-//                } catch (Exception ex) {
-//                    System.out.println(ex.getMessage());
-//                    ex.printStackTrace();
-//                }
-//            }
-//        });
-//    }
 
     public void sendMessage() {
         send.setOnClickListener(new View.OnClickListener() {

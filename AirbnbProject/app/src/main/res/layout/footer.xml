@@ -33,7 +33,7 @@
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:text="Home"
+                android:text="@string/home"
                 android:background="@color/colorPrimary"
                 app:srcCompat="@drawable/ic_home_holo_dark" />
 
@@ -42,7 +42,7 @@
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:text="Inbox"
+                android:text="@string/inbox"
                 android:background="@color/colorPrimary"
                 app:srcCompat="@drawable/ic_message_holo_dark" />
 
@@ -52,7 +52,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:background="@color/colorPrimary"
-                android:text="Profile"
+                android:text="@string/profile"
                 app:srcCompat="@drawable/ic_profile_holo_dark" />
 
             <ImageButton
@@ -61,7 +61,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:background="@color/colorPrimary"
-                android:text="Switch Role"
+                android:text="@string/switch_role"
                 app:srcCompat="@drawable/ic_switch_holo_dark"/>
 
             <ImageButton
@@ -69,11 +69,9 @@
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:text="Log Out"
+                android:text="@string/logout"
                 android:background="@color/colorPrimary"
                 app:srcCompat="@drawable/ic_logout_holo_dark"/>
         </LinearLayout>
-
-
     </android.support.v7.widget.Toolbar>
 </RelativeLayout>
