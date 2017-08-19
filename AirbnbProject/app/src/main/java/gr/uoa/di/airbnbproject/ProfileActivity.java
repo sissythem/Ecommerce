@@ -94,7 +94,7 @@ public class ProfileActivity extends AppCompatActivity {
     {
         tvName = (TextView)findViewById(R.id.name);
         tvAbout = (TextView)findViewById(R.id.about);
-        tvUsername = (TextView)findViewById(R.id.about);
+        tvUsername = (TextView)findViewById(R.id.username);
         tvEmail = (TextView)findViewById(R.id.email);
         tvPhoneNumber = (TextView)findViewById(R.id.phonenumber);
         tvCity = (TextView)findViewById(R.id.city);
