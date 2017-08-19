@@ -8,15 +8,13 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import fromRESTful.Residences;
 import fromRESTful.Users;
-import util.ListAdapterProfile;
 import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
@@ -28,14 +26,12 @@ public class ViewHostProfileActivity extends AppCompatActivity {
     Users host, loggedinUser;
     int hostId, residenceId;
     String username;
-    ListView list;
+    TextView tvName, tvAbout, tvUsername, tvEmail, tvPhoneNumber, tvCity, tvCountry, tvBirthDate;
     Context c;
     String token;
     Toolbar toolbar;
     ImageButton ibContact;
 
-    ListAdapterProfile adapter;
-    String[] userdetails;
     Boolean user;
     Residences selectedResidence;
 
@@ -104,32 +100,6 @@ public class ViewHostProfileActivity extends AppCompatActivity {
             }
         });
 
-        userdetails = new String[9];
-
-        /** FOOTER TOOLBAR **/
-        Utils.manageFooter(ViewHostProfileActivity.this, true);
-
-        userdetails[0] = host.getFirstName();
-        userdetails[1] = host.getLastName();
-        userdetails[2] = host.getUsername();
-        userdetails[3] = host.getEmail();
-        userdetails[4] = host.getPhoneNumber();
-        userdetails[5] = host.getCountry();
-        userdetails[6] = host.getCity();
-        userdetails[7] = host.getAbout();
-        String bdate = host.getBirthDate();
-        String date="NO DATE";
-        if(bdate != null){
-            try{
-                SimpleDateFormat newDateFormat = new SimpleDateFormat(Utils.FORMAT_DATE_DMY);
-                date = newDateFormat.format(bdate);
-            }
-            catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-        userdetails[8] = date;
-
         ibContact = (ImageButton) findViewById(R.id.ibContact);
         ibContact.setBackgroundColor(getResources().getColor(R.color.colorPrimary, getTheme()));
         ibContact.setOnClickListener(new View.OnClickListener()
@@ -154,9 +124,35 @@ public class ViewHostProfileActivity extends AppCompatActivity {
                 }
             }
         });
+        setUpProfile();
+    }
 
-        adapter = new ListAdapterProfile(this, userdetails);
-        list = (ListView)findViewById(R.id.profilelist);
-        list.setAdapter(adapter);
+    public void setUpProfile()
+    {
+        tvName = (TextView)findViewById(R.id.name);
+        tvAbout = (TextView)findViewById(R.id.about);
+        tvUsername = (TextView)findViewById(R.id.about);
+        tvEmail = (TextView)findViewById(R.id.email);
+        tvPhoneNumber = (TextView)findViewById(R.id.phonenumber);
+        tvCity = (TextView)findViewById(R.id.city);
+        tvCountry = (TextView)findViewById(R.id.country);
+        tvBirthDate = (TextView)findViewById(R.id.birthDate);
+
+        tvName.setText(loggedinUser.getFirstName() + " " + loggedinUser.getLastName());
+        if(loggedinUser.getAbout() != null)
+        {
+            tvAbout.setText(loggedinUser.getAbout());
+        }
+        else {
+            tvAbout.setText("About this user");
+        }
+        tvUsername.setText(loggedinUser.getUsername());
+        tvEmail.setText(loggedinUser.getEmail());
+        tvPhoneNumber.setText(loggedinUser.getPhoneNumber());
+        if(loggedinUser.getCity() != null)
+            tvCity.setText(loggedinUser.getCity());
+        if(loggedinUser.getCountry() !=null)
+            tvCountry.setText(loggedinUser.getCountry());
+        tvBirthDate.setText(loggedinUser.getBirthDate());
     }
 }
