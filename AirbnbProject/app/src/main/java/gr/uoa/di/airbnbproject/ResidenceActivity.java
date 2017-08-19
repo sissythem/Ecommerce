@@ -189,7 +189,6 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         tvCancellationPolicy.setText(selectedResidence.getCancellationPolicy());
         tvHostAbout.setText(host.getAbout());
         tvRules.setText(selectedResidence.getRules());
-
         tvPrice.setText(Double.toString(selectedResidence.getMinPrice()));
         rating.setRating((float)selectedResidence.getAverageRating());
 

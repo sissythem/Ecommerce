@@ -6,5 +6,5 @@
         android:title="Reviews"/>
     <item
         android:id="@+id/contact"
-        android:title="Contact Host"/>
+        android:title="View Host's Profile"/>
 </menu>
