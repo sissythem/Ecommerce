@@ -62,7 +62,6 @@
                 android:numStars="5"
                 android:stepSize="1"
                 android:rating="5"
-                android:layout_gravity="end"
                 style="?android:attr/ratingBarStyleSmall" />
 
         </LinearLayout>
