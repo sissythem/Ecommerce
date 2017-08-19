@@ -1,16 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_gravity="fill_horizontal"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/appbarHost"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
         <include layout="@layout/back_toolbar" android:id="@+id/include"/>
 
         <Button
@@ -24,21 +17,13 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true" />
 
-    </android.support.design.widget.AppBarLayout>
 
-    <android.support.v7.widget.RecyclerView android:layout_width="match_parent" android:layout_height="match_parent" android:id="@+id/recyclerViewHost" />
-
-    <!--<ListView-->
-        <!--android:id="@+id/residenceList"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_below="@+id/appbarHost"-->
-        <!--android:divider="#b5b5b5"-->
-        <!--android:dividerHeight="2dp"-->
-        <!--android:listSelector="@drawable/list_selector"-->
-        <!--android:layout_marginBottom="?attr/actionBarSize"-->
-        <!--app:layout_behavior="@string/appbar_scrolling_view_behavior">-->
-    <!--</ListView>-->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/addResidence">
+        <include layout="@layout/recycler_main" />
+    </LinearLayout>
     <include layout="@layout/footer"/>
 
 </RelativeLayout>

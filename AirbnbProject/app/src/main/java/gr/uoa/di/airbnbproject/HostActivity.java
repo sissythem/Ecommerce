@@ -99,7 +99,7 @@ public class HostActivity extends AppCompatActivity {
         ArrayList<Users> hostUsers = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
         host = hostUsers.get(0);
 
-        residencesRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewHost);
+        residencesRecyclerView = (RecyclerView) findViewById(R.id.recycler);
         residencesLayoutManager = new GridLayoutManager(this, 1);
         residencesRecyclerView.setLayoutManager(residencesLayoutManager);
         residencesRecyclerView.setHasFixedSize(true);
