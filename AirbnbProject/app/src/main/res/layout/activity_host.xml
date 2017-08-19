@@ -6,43 +6,25 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/backToolbar"
-        android:layout_width="match_parent"
+    <include layout="@layout/back_toolbar"
+        android:id="@+id/include"/>
+
+    <Button
+        android:id="@+id/addResidence"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:background="@color/colorPrimary"
-        android:fitsSystemWindows="true"
-        android:minHeight="?attr/actionBarSize"
-        app:titleTextColor="@android:color/white">
-
-        <TextView
-            android:id="@+id/hostHomeText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Your Residences"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textSize="18sp" />
-
-        <ImageButton
-            android:id="@+id/addResidence"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginEnd="17dp"
-            android:layout_marginRight="17dp"
-            android:layout_marginTop="12dp"
-            android:background="@color/colorPrimary"
-            app:srcCompat="@drawable/ic_add" />
-    </android.support.v7.widget.Toolbar>
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/include"
+        android:text="Add new Residence"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
     <ListView
         android:id="@+id/residenceList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/backToolbar"
+        android:layout_below="@+id/addResidence"
         android:divider="#b5b5b5"
         android:dividerHeight="2dp"
         android:listSelector="@drawable/list_selector"
@@ -50,4 +32,6 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
     </ListView>
     <include layout="@layout/footer"/>
+
+
 </RelativeLayout>

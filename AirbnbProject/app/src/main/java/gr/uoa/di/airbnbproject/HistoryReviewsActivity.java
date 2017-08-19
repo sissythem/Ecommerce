@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
@@ -32,7 +33,7 @@ public class HistoryReviewsActivity extends AppCompatActivity {
     Boolean user;
     String token;
     Users loggedinUser;
-
+    Toolbar toolbar;
     Context c;
     ListAdapterReviews adapter;
     ListView reviewsList;
@@ -64,6 +65,15 @@ public class HistoryReviewsActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_history_reviews);
+        toolbar = (Toolbar) findViewById(R.id.backToolbar);
+        toolbar.setTitle("My Reviews");
+        setSupportActionBar(toolbar);
+
+        // add back arrow to toolbar
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
         Bundle buser = getIntent().getExtras();
         user = buser.getBoolean("type");
 
@@ -91,8 +101,8 @@ public class HistoryReviewsActivity extends AppCompatActivity {
 
         /** FOOTER TOOLBAR **/
         Utils.manageFooter(HistoryReviewsActivity.this, user);
-        /** BACK BUTTON **/
-        Utils.manageBackButton(this, ProfileActivity.class, user);
+//        /** BACK BUTTON **/
+//        Utils.manageBackButton(this, ProfileActivity.class, user);
     }
 
     @Override

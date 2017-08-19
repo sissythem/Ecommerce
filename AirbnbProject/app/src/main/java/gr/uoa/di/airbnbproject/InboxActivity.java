@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
@@ -30,7 +31,7 @@ import static util.Utils.getSessionData;
 
 public class InboxActivity extends AppCompatActivity {
     String token;
-
+    Toolbar toolbar;
     ArrayList<Conversations> Conversations;
 
     ListView inboxlist;
@@ -68,6 +69,16 @@ public class InboxActivity extends AppCompatActivity {
             Utils.logout(this);
             finish();
             return;
+        }
+
+        toolbar = (Toolbar) findViewById(R.id.backToolbar);
+        toolbar.setTitle("Inbox");
+        setSupportActionBar(toolbar);
+
+        // add back arrow to toolbar
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
         Bundle buser = getIntent().getExtras();
@@ -115,8 +126,8 @@ public class InboxActivity extends AppCompatActivity {
             }
         });
 
-        /** BACK BUTTON **/
-        Utils.manageBackButton(this, (user)?HomeActivity.class:HostActivity.class, user);
+//        /** BACK BUTTON **/
+//        Utils.manageBackButton(this, (user)?HomeActivity.class:HostActivity.class, user);
 
         /** FOOTER TOOLBAR **/
         Utils.manageFooter(InboxActivity.this, user);

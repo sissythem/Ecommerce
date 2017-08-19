@@ -5,39 +5,14 @@
     android:layout_gravity="fill_horizontal"
     android:layout_height="wrap_content">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/backToolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:background="@color/colorPrimary"
-        android:fitsSystemWindows="true"
-        android:minHeight="?attr/actionBarSize"
-        android:weightSum="1"
-        app:titleTextColor="@android:color/white">
-
-        <ImageButton
-            android:id="@+id/back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
-            app:srcCompat="@drawable/ic_back" />
-
-        <TextView
-            android:id="@+id/profiletxt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Profile"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textSize="18sp" />
-
-    </android.support.v7.widget.Toolbar>
+    <include layout="@layout/back_toolbar"
+        android:id="@+id/include"/>
 
     <ImageView
         android:id="@+id/profilepic"
         android:layout_width="120dp"
         android:layout_height="85dp"
-        android:layout_below="@+id/backToolbar"
+        android:layout_below="@+id/include"
         app:srcCompat="@drawable/ic_profile"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
@@ -63,5 +38,5 @@
         android:layout_above="@+id/profilepic"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        app:srcCompat="@drawable/ic_contact" />
+        app:srcCompat="@drawable/ic_message_holo_dark" />
 </RelativeLayout>

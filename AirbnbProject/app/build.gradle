@@ -5,7 +5,7 @@ android {
     buildToolsVersion "25.0.2"
     defaultConfig {
         applicationId "gr.uoa.di.airbnbproject"
-        minSdkVersion 15
+        minSdkVersion 23
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
@@ -32,10 +32,6 @@ android {
         }
     }
 }
-
-
-
-
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])

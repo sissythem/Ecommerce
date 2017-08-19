@@ -31,8 +31,8 @@ public class ViewHostProfileActivity extends AppCompatActivity {
     ListView list;
     Context c;
     String token;
-
-    ImageButton bback, ibContact;
+    Toolbar toolbar;
+    ImageButton ibContact;
 
     ListAdapterProfile adapter;
     String[] userdetails;
@@ -45,6 +45,7 @@ public class ViewHostProfileActivity extends AppCompatActivity {
 
         Session sessionData = getSessionData(ViewHostProfileActivity.this);
         token = sessionData.getToken();
+        username = sessionData.getUsername();
         c = this;
         if (!sessionData.getUserLoggedInState()) {
             Utils.logout(this);
@@ -66,27 +67,35 @@ public class ViewHostProfileActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_view_host_profile);
 
-        Toolbar backToolbar = (Toolbar) findViewById(R.id.backToolbar);
-        setSupportActionBar(backToolbar);
-        getSupportActionBar().setTitle(null);
-
         Bundle buser = getIntent().getExtras();
         user = buser.getBoolean("type");
         hostId = buser.getInt("host");
         residenceId = buser.getInt("residenceId");
 
         RetrofitCalls retrofitCalls = new RetrofitCalls();
-        ArrayList<Users> userByUsername = retrofitCalls.getUserbyUsername(token, username);
+        ArrayList<Users> userByUsername = null;
+        try {
+            userByUsername = retrofitCalls.getUserbyUsername(token, username);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         loggedinUser = userByUsername.get(0);
         host = retrofitCalls.getUserbyId(token, Integer.toString(hostId));
 
         selectedResidence = retrofitCalls.getResidenceById(token, Integer.toString(residenceId));
 
-        bback = (ImageButton)findViewById(R.id.back);
+        toolbar = (Toolbar) findViewById(R.id.backToolbar);
+        toolbar.setTitle("Profile of Host");
+        toolbar.setSubtitle(host.getFirstName() + " " + host.getLastName());
+        setSupportActionBar(toolbar);
+
+        // add back arrow to toolbar
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
 
         userdetails = new String[9];
-
-        manageBackToolbar();
 
         /** FOOTER TOOLBAR **/
         Utils.manageFooter(ViewHostProfileActivity.this, true);
@@ -100,7 +109,6 @@ public class ViewHostProfileActivity extends AppCompatActivity {
         userdetails[6] = host.getCity();
         userdetails[7] = host.getAbout();
         String bdate = host.getBirthDate();
-        //Date bdate = new java.util.Date();
         String date="NO DATE";
         if(bdate != null){
             try{
@@ -114,6 +122,7 @@ public class ViewHostProfileActivity extends AppCompatActivity {
         userdetails[8] = date;
 
         ibContact = (ImageButton) findViewById(R.id.ibContact);
+        ibContact.setBackgroundColor(getResources().getColor(R.color.colorPrimary, getTheme()));
         ibContact.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -142,22 +151,22 @@ public class ViewHostProfileActivity extends AppCompatActivity {
         list.setAdapter(adapter);
     }
 
-    public void manageBackToolbar(){
-        bback.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent backintent = new Intent(ViewHostProfileActivity.this, ResidenceActivity.class);
-                Bundle buser = new Bundle();
-                buser.putBoolean("type",user);
-                backintent.putExtras(buser);
-                try {
-                    startActivity(backintent);
-                } catch (Exception ex) {
-                    System.out.println(ex.getMessage());
-                    ex.printStackTrace();
-                }
-
-            }
-        });
-    }
+//    public void manageBackToolbar(){
+//        bback.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent backintent = new Intent(ViewHostProfileActivity.this, ResidenceActivity.class);
+//                Bundle buser = new Bundle();
+//                buser.putBoolean("type",user);
+//                backintent.putExtras(buser);
+//                try {
+//                    startActivity(backintent);
+//                } catch (Exception ex) {
+//                    System.out.println(ex.getMessage());
+//                    ex.printStackTrace();
+//                }
+//
+//            }
+//        });
+//    }
 }

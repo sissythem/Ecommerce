@@ -6,16 +6,17 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+
 import fromRESTful.Reservations;
 import fromRESTful.Users;
 import util.ListAdapterReservations;
@@ -37,6 +38,7 @@ public class HistoryReservationsActivity extends AppCompatActivity {
     Users loggedinUser;
     int[] residenceId;
     String[] residenceTitle;
+    Toolbar toolbar;
 
     Context c;
     ListAdapterReservations adapter;
@@ -71,6 +73,17 @@ public class HistoryReservationsActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_history_reservations);
+
+        toolbar = (Toolbar) findViewById(R.id.backToolbar);
+        toolbar.setTitle("My Reservations");
+        setSupportActionBar(toolbar);
+
+        // add back arrow to toolbar
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+
         buser = getIntent().getExtras();
         user = buser.getBoolean("type");
 
@@ -79,8 +92,7 @@ public class HistoryReservationsActivity extends AppCompatActivity {
         loggedinUser = getUserByUsername.get(0);
 
         if (buser.containsKey("residenceId")) {
-            TextView reservationsTxt = (TextView) findViewById(R.id.reservationsTxt);
-            reservationsTxt.setText("Reservations made by users");
+            toolbar.setTitle("Reservations made by users");
             System.out.println(buser.getInt("residenceId"));
             userReservations = retrofitCalls.getReservationsByResidenceId(token, buser.getInt("residenceId"));
         } else {
@@ -106,8 +118,8 @@ public class HistoryReservationsActivity extends AppCompatActivity {
 
         /** FOOTER TOOLBAR **/
         Utils.manageFooter(HistoryReservationsActivity.this, user);
-        /** BACK BUTTON **/
-        Utils.manageBackButton(this, ProfileActivity.class, user);
+//        /** BACK BUTTON **/
+//        Utils.manageBackButton(this, ProfileActivity.class, user);
     }
 
     @Override

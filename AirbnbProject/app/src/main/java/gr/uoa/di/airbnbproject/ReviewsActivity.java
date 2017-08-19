@@ -4,10 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -31,7 +31,7 @@ import static util.Utils.getSessionData;
 public class ReviewsActivity extends AppCompatActivity {
     Boolean user;
     String token;
-
+    Toolbar toolbar;
     Context c;
     ListAdapterReviews adapter;
     ListView reviewsList;
@@ -82,6 +82,17 @@ public class ReviewsActivity extends AppCompatActivity {
         selectedResidence   = retrofitCalls.getResidenceById(token, Integer.toString(residenceId));
         host                = selectedResidence.getHostId();
 
+        toolbar = (Toolbar) findViewById(R.id.backToolbar);
+        toolbar.setTitle("Reviews");
+        toolbar.setSubtitle("Residence " + selectedResidence.getTitle());
+        setSupportActionBar(toolbar);
+
+        // add back arrow to toolbar
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+
         ArrayList<Reviews> reviewsForSelectedResidence = retrofitCalls.getReviewsByResidenceId(token, Integer.toString(residenceId));
         String[] representativePhoto    = new String [reviewsForSelectedResidence.size()];
         String[] username               = new String[reviewsForSelectedResidence.size()];
@@ -99,29 +110,30 @@ public class ReviewsActivity extends AppCompatActivity {
 
         /** FOOTER TOOLBAR **/
         Utils.manageFooter(ReviewsActivity.this, user);
-        /** BACK BUTTON **/
 
-        ImageButton bback = (ImageButton) findViewById(R.id.ibBack);
-        bback.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent backintent = new Intent(ReviewsActivity.this, ResidenceActivity.class);
-                Bundle bextras = new Bundle();
-                bextras.putBoolean("type", user);
-                bextras.putInt("residenceId", residenceId);
-                backintent.putExtras(bextras);
-
-                try {
-                    startActivity(backintent);
-                    finish();
-                } catch (Exception ex) {
-                    System.out.println(ex.getMessage());
-                    ex.printStackTrace();
-                }
-            }
-        });
-
-        Utils.manageBackButton(this, (user)?HomeActivity.class:HostActivity.class, user);
+//        /** BACK BUTTON **/
+//
+//        ImageButton bback = (ImageButton) findViewById(R.id.ibBack);
+//        bback.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent backintent = new Intent(ReviewsActivity.this, ResidenceActivity.class);
+//                Bundle bextras = new Bundle();
+//                bextras.putBoolean("type", user);
+//                bextras.putInt("residenceId", residenceId);
+//                backintent.putExtras(bextras);
+//
+//                try {
+//                    startActivity(backintent);
+//                    finish();
+//                } catch (Exception ex) {
+//                    System.out.println(ex.getMessage());
+//                    ex.printStackTrace();
+//                }
+//            }
+//        });
+//
+//        Utils.manageBackButton(this, (user)?HomeActivity.class:HostActivity.class, user);
 
         etcomment = (EditText)findViewById(R.id.writeComment);
         btnreview = (Button)findViewById(R.id.btnreview);

@@ -5,38 +5,14 @@
     android:layout_gravity="fill_horizontal"
     android:layout_height="wrap_content">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/backToolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:background="@color/colorPrimary"
-        android:fitsSystemWindows="true"
-        android:minHeight="?attr/actionBarSize"
-        android:weightSum="1"
-        app:titleTextColor="@android:color/white">
-
-        <ImageButton
-            android:id="@+id/ibBack"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
-            app:srcCompat="@drawable/ic_back" />
-
-        <TextView
-            android:id="@+id/reservationsTxt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="My Reservations"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textSize="18sp" />
-    </android.support.v7.widget.Toolbar>
+    <include layout="@layout/back_toolbar"
+        android:id="@+id/include"/>
 
     <ListView
         android:id="@+id/reservationsList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/backToolbar"
+        android:layout_below="@+id/include"
         android:divider="#b5b5b5"
         android:dividerHeight="1dp"
         android:listSelector="@drawable/list_selector">

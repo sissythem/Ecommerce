@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
@@ -40,7 +41,7 @@ import static util.Utils.getCurrentDate;
 public class MessageActivity extends AppCompatActivity {
     Context c;
     Integer currentUserId, toUserId;
-
+    Toolbar toolbar;
     Button send;
     String msgSubject, msgBody;
     TextView subject;
@@ -81,6 +82,16 @@ public class MessageActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_message);
+
+        toolbar = (Toolbar) findViewById(R.id.backToolbar);
+        toolbar.setTitle("Send a message");
+        setSupportActionBar(toolbar);
+
+        // add back arrow to toolbar
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
 
         Bundle bextras  = getIntent().getExtras();
         user            = bextras.getBoolean("type");
@@ -155,8 +166,8 @@ public class MessageActivity extends AppCompatActivity {
         send = (Button)findViewById(R.id.message_send_btn);
         sendMessage();
 
-        /** BACK BUTTON **/
-        Utils.manageBackButton(this, InboxActivity.class, user);
+//        /** BACK BUTTON **/
+//        Utils.manageBackButton(this, InboxActivity.class, user);
 //        if (bextras.containsKey("residenceId")) {
 //            System.out.println("yes");
 //            backToResidence();
@@ -208,11 +219,11 @@ public class MessageActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override
-    public void onBackPressed() {
-        Utils.manageBackButton(this, InboxActivity.class, user);
-//        moveTaskToBack(true);
-    }
+//    @Override
+//    public void onBackPressed() {
+//        Utils.manageBackButton(this, InboxActivity.class, user);
+////        moveTaskToBack(true);
+//    }
 
 //    public void backToResidence() {
 //        ImageButton bback = (ImageButton) this.findViewById(R.id.ibBack);

@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -53,6 +54,7 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
     String resType, token;
     Integer residenceId;
     Residences selectedResidence;
+    Toolbar toolbar;
 
     Boolean user;
 
@@ -102,15 +104,22 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         user = false;
         residenceId = buser.getInt("residenceId");
 
+        toolbar = (Toolbar) findViewById(R.id.backToolbar);
+        toolbar.setTitle("Edit Residence");
+        setSupportActionBar(toolbar);
+
+        // add back arrow to toolbar
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+
         retrofitCalls = new RetrofitCalls();
         selectedResidence = retrofitCalls.getResidenceById(token, Integer.toString(residenceId));
 
         userInputLayout();
         ArrayList<Users> getUsersByUsername = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
         host = getUsersByUsername.get(0);
-
-        TextView residencetxt = (TextView) findViewById(R.id.residencetxt);
-        residencetxt.setText("Edit Residence#" + residenceId);
 
         Button uploadImage = (Button) findViewById(R.id.uploadImage);
         uploadImage.setOnClickListener(new View.OnClickListener() {
@@ -122,7 +131,7 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         saveResidence();
 
         /** BACK BUTTON **/
-        Utils.manageBackButton(this, HostActivity.class, user);
+//        Utils.manageBackButton(this, HostActivity.class, user);
     }
 
     @Override

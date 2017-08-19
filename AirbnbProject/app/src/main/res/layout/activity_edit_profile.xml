@@ -7,49 +7,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/backToolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:background="@color/colorPrimary"
-        android:fitsSystemWindows="true"
-        android:minHeight="?attr/actionBarSize"
-        app:titleTextColor="@android:color/white">
-
-        <ImageButton
-            android:id="@+id/ibBack"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
-            app:srcCompat="@drawable/ic_back" />
-
-        <TextView
-            android:id="@+id/profiletxt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Edit Profile"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textSize="18sp" />
-
-        <TextView
-            android:id="@+id/etUsername"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textColor="#ffffff"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textAlignment="textEnd"
-            android:layout_gravity="end"
-            android:text="Welcome" />
-
-    </android.support.v7.widget.Toolbar>
+    <include layout="@layout/back_toolbar"
+        android:id="@+id/include"/>
 
     <LinearLayout
         android:id="@+id/imageContent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/backToolbar"
+        android:layout_below="@+id/include"
         android:orientation="horizontal">
 
         <ImageView

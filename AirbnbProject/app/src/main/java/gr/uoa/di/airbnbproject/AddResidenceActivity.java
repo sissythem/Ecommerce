@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -36,12 +37,13 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
 
     String token;
     Boolean user;
+    Toolbar toolbar;
 
     ImageButton bcontinue, btnStartDate, btnEndDate;
     ImageView imageToUpload;
     Spinner etType;
     String resType;
-    EditText etUpload, etAbout, etAddress, etCity, etCountry, etAmenities, etFloor, etRooms, etBaths, etView, etTitle, etSpaceArea, etGuests, etMinPrice, etAdditionalCost, etCancellationPolicy, etRules;
+    EditText etAbout, etAddress, etCity, etCountry, etAmenities, etFloor, etRooms, etBaths, etView, etTitle, etSpaceArea, etGuests, etMinPrice, etAdditionalCost, etCancellationPolicy, etRules;
     TextView tvStartDate, tvEndDate;
     CheckBox cbKitchen, cbLivingRoom;
 
@@ -75,24 +77,30 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
             finish();
             return;
         }
+        setContentView(R.layout.layout_residence_editfields);
+        toolbar = (Toolbar) findViewById(R.id.backToolbar);
+        toolbar.setTitle("Add Residence");
+        setSupportActionBar(toolbar);
+
+        // add back arrow to toolbar
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
 
         userInputLayout();
-
         RetrofitCalls retrofitCalls = new RetrofitCalls();
-        setContentView(R.layout.layout_residence_editfields);
         List<Users> userData = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
 
         host = userData.get(0);
-        TextView residencetxt = (TextView) findViewById(R.id.residencetxt);
-        residencetxt.setText("Add New Residence");
         saveResidence();
 
-        /** BACK BUTTON **/
-        Utils.manageBackButton(this, HostActivity.class, user);
+//        /** BACK BUTTON **/
+//        Utils.manageBackButton(this, HostActivity.class, user);
     }
 
-    public void userInputLayout () {
-        //etUpload             = (EditText)findViewById(R.id.etUpload);
+    public void userInputLayout ()
+    {
         etTitle              = (EditText)findViewById(R.id.etTitle);
         etAbout              = (EditText)findViewById(R.id.etAbout);
         etAddress            = (EditText)findViewById(R.id.etAddress);
@@ -119,15 +127,6 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
         cbLivingRoom        = (CheckBox)findViewById(R.id.cbLivingRoom);
 
         bcontinue = (ImageButton)findViewById(R.id.ibContinue);
-
-//        imageToUpload = (ImageView)findViewById(R.id.imageToUpload);
-//        imageToUpload.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View v) {
-//                Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//                startActivityForResult(galleryIntent, RESULT_LOAD_IMAGE);
-//            }
-//        });
 
         btnStartDate.setOnClickListener(new View.OnClickListener() {
             @Override

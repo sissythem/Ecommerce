@@ -45,7 +45,7 @@ public class EditProfileActivity extends AppCompatActivity {
     public static final int GET_FROM_GALLERY = 3;
 
     Context c;
-
+    Toolbar toolbar;
     Boolean user;
     RetrofitCalls retrofitCalls;
     Users loggedinUser;
@@ -92,8 +92,16 @@ public class EditProfileActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_edit_profile);
 
-        Toolbar footerToolbar = (Toolbar) findViewById(R.id.footerToolbar);
-        setSupportActionBar(footerToolbar);
+        toolbar = (Toolbar) findViewById(R.id.backToolbar);
+        toolbar.setTitle("Edit Your Profile");
+        toolbar.setSubtitle("Welcome " + username);
+        setSupportActionBar(toolbar);
+
+        // add back arrow to toolbar
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
 
         Bundle buser = getIntent().getExtras();
         user = buser.getBoolean("type");
@@ -107,7 +115,6 @@ public class EditProfileActivity extends AppCompatActivity {
         etLastName          = (EditText) findViewById(R.id.etLastName);
         etPhoneNumber       = (EditText) findViewById(R.id.etPhoneNumber);
         etEmail             = (EditText) findViewById(R.id.etEmail);
-        etUsername          = (TextView) findViewById(R.id.etUsername);
         etPassword          = (EditText) findViewById(R.id.etPassword);
         etCountry           = (EditText)findViewById(R.id.etCountry);
         etCity              = (EditText)findViewById(R.id.etCity);
@@ -120,7 +127,6 @@ public class EditProfileActivity extends AppCompatActivity {
         etLastName.setText(loggedinUser.getLastName());
         etPhoneNumber.setText(loggedinUser.getPhoneNumber());
         etEmail.setText(loggedinUser.getEmail());
-        etUsername.setText("Welcome " + loggedinUser.getUsername());
         etPassword.setText(loggedinUser.getPassword());
         etCountry.setText(loggedinUser.getCountry());
         etCity.setText(loggedinUser.getCity());
@@ -130,10 +136,6 @@ public class EditProfileActivity extends AppCompatActivity {
 
         String birthDate ="";
         birthDate = loggedinUser.getBirthDate();
-//        if(birthDate !=null){
-//            SimpleDateFormat newDateFormat = new SimpleDateFormat(Utils.APP_DATE_FORMAT);
-//            date = newDateFormat.format(birthDate);
-//        }
         tvBirthDate.setText(birthDate);
         etAbout.setText(loggedinUser.getAbout());
 
@@ -171,8 +173,8 @@ public class EditProfileActivity extends AppCompatActivity {
             public void onClick(View v) { saveUserProfile(); }
         });
 
-        /** BACK BUTTON **/
-        Utils.manageBackButton(EditProfileActivity.this, ProfileActivity.class, user);
+//        /** BACK BUTTON **/
+//        Utils.manageBackButton(EditProfileActivity.this, ProfileActivity.class, user);
     }
 
     @Override
@@ -229,23 +231,6 @@ public class EditProfileActivity extends AppCompatActivity {
         protected void onPostExecute(String nothing) {}
     }
 
-//    public String getPath(Uri uri) {
-//        String[] projection = { MediaStore.Images.Media.DATA };
-//
-//        Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
-//        cursor.moveToFirst();
-//
-//        //Log.d(TAG, DatabaseUtils.dumpCursorToString(cursor));
-//
-//        int columnIndex = cursor.getColumnIndex(projection[0]);
-//        String picturePath = cursor.getString(columnIndex); // returns null
-//        System.out.println(picturePath);
-//        cursor.close();
-//        System.out.println(picturePath);
-//
-//        return cursor.getString(columnIndex);
-//    }
-
     public boolean checkEmail (String Email) {
         boolean emailIsNew=false;
         //same process for email
@@ -268,7 +253,6 @@ public class EditProfileActivity extends AppCompatActivity {
         final String photo          = imagePath;
         final String about          = etAbout.getText().toString();
 
-//        Date bdate = Utils.ConvertStringToDate(birthdate, DATABASE_DATE_FORMAT);
         boolean emailIsNew;
 
         if(Username.length() == 0 || name.length() == 0 || lastName.length() == 0 || phoneNumber.length() == 0 || Email.length() == 0 || password.length() == 0) {

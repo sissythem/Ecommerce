@@ -300,38 +300,38 @@ public class Utils {
         context.finish();
     }
 
-    public static void manageBackButton(Activity context, Class newContext, boolean user) {
-        final Activity this_context = context;
-        final Class this_new_context = newContext;
-        final boolean this_user = user;
-
-        ImageButton bback = (ImageButton) this_context.findViewById(R.id.ibBack);
-        bback.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v) {
-                Intent backintent = new Intent(this_context, this_new_context);
-                Bundle buser = new Bundle();
-                buser.putBoolean("type", this_user);
-                if (this_new_context.getClass().toString().equals(HomeActivity.class.toString()))
-                {
-                    buser.putBoolean("type", true);
-                }
-                else if (this_new_context.toString().equals(HostActivity.class.toString()))
-                {
-                    buser.putBoolean("type", false);
-                }
-                backintent.putExtras(buser);
-
-                try {
-                    this_context.startActivity(backintent);
-                } catch (Exception ex) {
-                    System.out.println(ex.getMessage());
-                    ex.printStackTrace();
-                }
-            }
-        });
-    }
+//    public static void manageBackButton(Activity context, Class newContext, boolean user) {
+//        final Activity this_context = context;
+//        final Class this_new_context = newContext;
+//        final boolean this_user = user;
+//
+//        ImageButton bback = (ImageButton) this_context.findViewById(R.id.ibBack);
+//        bback.setOnClickListener(new View.OnClickListener()
+//        {
+//            @Override
+//            public void onClick(View v) {
+//                Intent backintent = new Intent(this_context, this_new_context);
+//                Bundle buser = new Bundle();
+//                buser.putBoolean("type", this_user);
+//                if (this_new_context.getClass().toString().equals(HomeActivity.class.toString()))
+//                {
+//                    buser.putBoolean("type", true);
+//                }
+//                else if (this_new_context.toString().equals(HostActivity.class.toString()))
+//                {
+//                    buser.putBoolean("type", false);
+//                }
+//                backintent.putExtras(buser);
+//
+//                try {
+//                    this_context.startActivity(backintent);
+//                } catch (Exception ex) {
+//                    System.out.println(ex.getMessage());
+//                    ex.printStackTrace();
+//                }
+//            }
+//        });
+//    }
 
     public static Session getSessionData(Activity context) {
         SharedPreferences sharedPrefs = context.getApplicationContext().getSharedPreferences(USER_LOGIN_PREFERENCES, Context.MODE_PRIVATE);

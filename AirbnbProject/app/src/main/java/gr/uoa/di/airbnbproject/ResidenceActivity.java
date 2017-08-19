@@ -13,7 +13,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatCallback;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.view.ActionMode;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -24,10 +23,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -79,7 +76,6 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
     Date selectedStartDate, selectedEndDate;
     Map<Date, Integer> NumGuestsPerDay;
     ArrayList <Date> reservedDates, datesDisabled_byGuestCount;
-    PopupMenu popup;
     Toolbar toolbar;
     private AppCompatDelegate delegate;
 
@@ -88,64 +84,68 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
-        try {
-            super.onCreate(savedInstanceState);
-            c = this;
-            Session sessionData = Utils.getSessionData(ResidenceActivity.this);
-            token = sessionData.getToken();
-            if (!sessionData.getUserLoggedInState()) {
-                Utils.logout(this);
-                finish();
-                return;
-            }
-
-            if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
-                finish();
-                return;
-            }
-
-            if(Utils.isTokenExpired(sessionData.getToken())){
-                Toast.makeText(c, "Session is expired", Toast.LENGTH_SHORT).show();
-                Utils.logout(this);
-                finish();
-                return;
-            }
-            //this should be created only in onCreate Method!
-            //this activity extends FragmentActivity, but in order to set up the toolbar we should extend AppCompactActivity
-            //Delegate is used in order to overcome this problem, since only one class can be extended
-            delegate = AppCompatDelegate.create(this, this);
-            delegate.onCreate(savedInstanceState);
-            delegate.setContentView(R.layout.activity_residence);
-//        setContentView(R.layout.activity_residence);
-
-            Bundle buser        = getIntent().getExtras();
-            user                = buser.getBoolean("type");
-            residenceId         = buser.getInt("residenceId");
-
-//        date_start          = buser.getString("startDate");
-//        date_end            = buser.getString("endDate");
-//        guests              = buser.getString("guests");
-            if (buser.containsKey("startDate")) date_start = buser.getString("startDate");
-            if (buser.containsKey("endDate")) date_end = buser.getString("endDate");
-            if (buser.containsKey("guests")) guests = buser.getString("guests");
-
-            retrofitCalls = new RetrofitCalls();
-            loggedinUser = retrofitCalls.getUserbyUsername(token, sessionData.getUsername()).get(0);
-            selectedResidence   = retrofitCalls.getResidenceById(token, Integer.toString(residenceId));
-
-            toolbar = (Toolbar) findViewById(R.id.backToolbar);
-            toolbar.setTitle("View Residence");
-            delegate.setSupportActionBar(toolbar);
-
-            ImageButton ibBack = (ImageButton)findViewById(R.id.ibBack);
-            ibBack.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.ALIGN_PARENT_TOP));
-            setUpResidenceView();
-
-            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapResidence);
-            mapFragment.getMapAsync(this);
-        } catch (Exception e) {
-            e.printStackTrace();
+        super.onCreate(savedInstanceState);
+        c = this;
+        Session sessionData = Utils.getSessionData(ResidenceActivity.this);
+        token = sessionData.getToken();
+        if (!sessionData.getUserLoggedInState()) {
+            Utils.logout(this);
+            finish();
+            return;
         }
+
+        if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
+            finish();
+            return;
+        }
+
+        if(Utils.isTokenExpired(sessionData.getToken())){
+            Toast.makeText(c, "Session is expired", Toast.LENGTH_SHORT).show();
+            Utils.logout(this);
+            finish();
+            return;
+        }
+        //this should be created only in onCreate Method!
+        //this activity extends FragmentActivity, but in order to set up the toolbar we should extend AppCompactActivity
+        //Delegate is used in order to overcome this problem, since only one class can be extended
+        delegate = AppCompatDelegate.create(this, this);
+        delegate.onCreate(savedInstanceState);
+        delegate.setContentView(R.layout.activity_residence);
+
+        Bundle buser        = getIntent().getExtras();
+        user                = buser.getBoolean("type");
+        residenceId         = buser.getInt("residenceId");
+        date_start = "";
+        date_end = "";
+        guests = "";
+        if (buser.containsKey("startDate")) date_start = buser.getString("startDate");
+        if (buser.containsKey("endDate")) date_end = buser.getString("endDate");
+        if (buser.containsKey("guests")) guests = buser.getString("guests");
+
+        retrofitCalls = new RetrofitCalls();
+        loggedinUser = retrofitCalls.getUserbyUsername(token, sessionData.getUsername()).get(0);
+        selectedResidence   = retrofitCalls.getResidenceById(token, Integer.toString(residenceId));
+
+        toolbar = (Toolbar) findViewById(R.id.backToolbar);
+        toolbar.setTitle("View Residence");
+        toolbar.setSubtitle(selectedResidence.getTitle());
+        delegate.setSupportActionBar(toolbar);
+
+        if (delegate.getSupportActionBar() != null){
+            delegate.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            delegate.getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                Utils.manageBackButton(ResidenceActivity.this, (user)?HomeActivity.class:HostActivity.class, user);
+            }
+        });
+
+        setUpResidenceView();
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapResidence);
+        mapFragment.getMapAsync(this);
     }
 
     public void setUpResidenceView () {
@@ -182,7 +182,13 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         tvHostName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent profileIntent = new Intent(ResidenceActivity.this, ViewHostProfileActivity.class);
+                final Intent profileIntent;
+                if (user){
+                    profileIntent = new Intent(ResidenceActivity.this, ViewHostProfileActivity.class);
+                }
+                else{
+                    profileIntent = new Intent(ResidenceActivity.this, ProfileActivity.class);
+                }
                 Bundle buser = new Bundle();
                 buser.putBoolean("type", user);
                 buser.putInt("host", host.getId());
@@ -485,6 +491,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
                     break;
                 }
             // action with ID action_settings was selected
+                //TODO: invisible when user is navigating as host and this is his residence
             case R.id.contact:
                 Intent contactIntent = new Intent(ResidenceActivity.this, MessageActivity.class);
                 buser.putInt("currentUserId", loggedinUser.getId());
@@ -496,7 +503,6 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
                 finish();
                 break;
         }
-
         return true;
     }
 

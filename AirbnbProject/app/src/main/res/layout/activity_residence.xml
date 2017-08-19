@@ -4,34 +4,16 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_gravity="fill_horizontal"
-    android:id="@+id/relativelayout"
     android:layout_height="wrap_content">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/backToolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:background="@color/colorPrimary"
-        android:fitsSystemWindows="true"
-        android:minHeight="?attr/actionBarSize"
-        android:weightSum="1"
-        app:titleTextColor="@android:color/white">
-
-        <ImageButton
-            android:id="@+id/ibBack"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
-            app:srcCompat="@drawable/ic_back" />
-
-    </android.support.v7.widget.Toolbar>
+    <include layout="@layout/back_toolbar"
+        android:id="@+id/include"/>
 
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/backToolbar">
+        android:layout_below="@+id/include">
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -40,11 +22,12 @@
                 android:id="@+id/ivResidencePhotos"
                 android:layout_width="wrap_content"
                 android:layout_height="100dp"
+                app:srcCompat="@android:drawable/ic_menu_camera"
+                android:layout_alignParentTop="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                app:srcCompat="@android:drawable/ic_menu_camera"/>
+                android:layout_alignParentEnd="true" />
 
             <TextView
                 android:id="@+id/tvTitle"
