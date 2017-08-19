@@ -52,6 +52,7 @@ import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
 
+import static gr.uoa.di.airbnbproject.R.id.reviews;
 import static util.Utils.FORMAT_DATE_YMD;
 import static util.Utils.convertTimestampToDate;
 
@@ -113,12 +114,10 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         delegate.onCreate(savedInstanceState);
         delegate.setContentView(R.layout.activity_residence);
 
-        Bundle buser        = getIntent().getExtras();
+        final Bundle buser        = getIntent().getExtras();
         user                = buser.getBoolean("type");
         residenceId         = buser.getInt("residenceId");
-        date_start = "";
-        date_end = "";
-        guests = "";
+
         if (buser.containsKey("startDate")) date_start = buser.getString("startDate");
         if (buser.containsKey("endDate")) date_end = buser.getString("endDate");
         if (buser.containsKey("guests")) guests = buser.getString("guests");
@@ -144,7 +143,17 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
             @Override
             public void onClick(View view) {
                 //TODO: check when user enters the activity from history reviews
-                Utils.manageBackButton(ResidenceActivity.this, (user)?HomeActivity.class:HostActivity.class, user);
+                if(!(buser.getString("source") == null) && buser.getString("source").equals("reviews"))
+                {
+                    Utils.manageBackButton(ResidenceActivity.this, HistoryReviewsActivity.class, user);
+                }
+                else if(!(buser.getString("source") == null) && buser.getString("source").equals("reservations")){
+                    Utils.manageBackButton(ResidenceActivity.this, HistoryReservationsActivity.class, user);
+                }
+                else
+                {
+                    Utils.manageBackButton(ResidenceActivity.this, (user)?HomeActivity.class:HostActivity.class, user);
+                }
             }
         });
 
@@ -460,8 +469,8 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         buser.putBoolean("type", user);
         switch (item.getItemId()) {
             // action with ID action_refresh was selected
-            case R.id.reviews:
-                if (item.getItemId() == R.id.reviews) {
+            case reviews:
+                if (item.getItemId() == reviews) {
                     Intent historyReviewsIntent = new Intent(ResidenceActivity.this, ReviewsActivity.class);
                     buser.putInt("residenceId", residenceId);
                     historyReviewsIntent.putExtras(buser);

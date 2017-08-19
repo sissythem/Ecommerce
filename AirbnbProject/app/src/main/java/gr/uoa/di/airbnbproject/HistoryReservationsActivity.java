@@ -16,6 +16,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import fromRESTful.Reservations;
 import fromRESTful.Users;
@@ -39,7 +40,7 @@ public class HistoryReservationsActivity extends AppCompatActivity {
     int[] residenceId;
     String[] residenceTitle;
     Toolbar toolbar;
-
+    String[] startDate;
     Context c;
     ListAdapterReservations adapter;
     ListView reservationsList;
@@ -109,7 +110,7 @@ public class HistoryReservationsActivity extends AppCompatActivity {
 
         residenceId             = new int [userReservations.size()];
         residenceTitle          = new String[userReservations.size()];
-        String[] startDate      = new String[userReservations.size()];
+        startDate      = new String[userReservations.size()];
         String[] endDate        = new String[userReservations.size()];
 
         for(int i=0; i<userReservations.size();i++) {
@@ -148,24 +149,34 @@ public class HistoryReservationsActivity extends AppCompatActivity {
     public boolean onContextItemSelected(final MenuItem item) {
         super.onContextItemSelected(item);
         if (item.getTitle().equals(CANCEL_RESERVATION_ACTION)) {
-            new AlertDialog.Builder(HistoryReservationsActivity.this)
-                .setTitle("Cancel Reservation").setMessage("Are you sure you want to cancel your reservation?").setIcon(R.drawable.ic_delete)
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        RetrofitCalls retrofitCalls = new RetrofitCalls();
-                        token = retrofitCalls.deleteReservation(token, userReservations.get(item.getItemId()).getId());
-                        if (!token.isEmpty() && token!=null && token!="not") {
-                            Toast.makeText(c, "Reservation was cancelled!", Toast.LENGTH_SHORT).show();
-                            reloadHistoryReservations();
-                        } else if (token.equals("not")) {
-                            Toast.makeText(c, "Failed to cancel reservation! Your session has finished, please log in again!", Toast.LENGTH_SHORT).show();
-                            Utils.logout(HistoryReservationsActivity.this);
-                            finish();
-                        } else {
-                            Toast.makeText(c, "Something went wrong, reservation was not cancelled. Please try again!", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                }).setNegativeButton(android.R.string.no, null).show();
+            String currentdate = Utils.getCurrentDate(Utils.FORMAT_DATE_DMY);
+            Date current = Utils.ConvertStringToDate(currentdate, Utils.FORMAT_DATE_DMY);
+            Date start = Utils.ConvertStringToDate(startDate[item.getItemId()], Utils.FORMAT_DATE_DMY);
+            if(current.after(start))
+            {
+                new AlertDialog.Builder(HistoryReservationsActivity.this)
+                        .setTitle("Cancel Reservation").setMessage("You cannot delete this reservation since it is in the past");
+            }
+            else {
+                new AlertDialog.Builder(HistoryReservationsActivity.this)
+                        .setTitle("Cancel Reservation").setMessage("Are you sure you want to cancel your reservation?").setIcon(R.drawable.ic_delete)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                RetrofitCalls retrofitCalls = new RetrofitCalls();
+                                token = retrofitCalls.deleteReservation(token, userReservations.get(item.getItemId()).getId());
+                                if (!token.isEmpty() && token != null && token != "not") {
+                                    Toast.makeText(c, "Reservation was cancelled!", Toast.LENGTH_SHORT).show();
+                                    reloadHistoryReservations();
+                                } else if (token.equals("not")) {
+                                    Toast.makeText(c, "Failed to cancel reservation! Your session has finished, please log in again!", Toast.LENGTH_SHORT).show();
+                                    Utils.logout(HistoryReservationsActivity.this);
+                                    finish();
+                                } else {
+                                    Toast.makeText(c, "Something went wrong, reservation was not cancelled. Please try again!", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }).setNegativeButton(android.R.string.no, null).show();
+            }
 
         } else if (item.getTitle().equals(VIEW_RESIDENCE_ACTION)) {
             Intent showResidenceIntent = new Intent(HistoryReservationsActivity.this, ResidenceActivity.class);
@@ -174,6 +185,7 @@ public class HistoryReservationsActivity extends AppCompatActivity {
             System.out.println(user);
             System.out.println(residenceId[item.getItemId()]);
             btype.putBoolean("type", user);
+            btype.putString("source", "reservations");
             btype.putInt("residenceId", residenceId[item.getItemId()]);
             showResidenceIntent.putExtras(btype);
             try {

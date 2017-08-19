@@ -92,19 +92,6 @@ public class Utils {
         return stringDate;
     }
 
-
-    public static String ConvertDateFormats (String date, String formatsrc, String formatdest){
-        try{
-            DateFormat dateFormat = new SimpleDateFormat(formatsrc);
-            Date ddate  = dateFormat.parse(date);
-            DateFormat dateFormatdest =  new SimpleDateFormat(formatdest);
-            return dateFormatdest.format(ddate);
-        } catch (Exception e){
-            Log.i("",e.getMessage());
-        }
-        return "DATE_ERROR";
-    }
-
     public static long convertDateToMillisSec(Date date, String format) {
         return convertDateToMillisSec(ConvertDateToString(date, format), format);
     }

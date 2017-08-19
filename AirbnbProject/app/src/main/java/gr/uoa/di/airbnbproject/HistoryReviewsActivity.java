@@ -154,6 +154,7 @@ public class HistoryReviewsActivity extends AppCompatActivity {
             Intent showResidenceIntent = new Intent(HistoryReviewsActivity.this, ResidenceActivity.class);
             Bundle btype = new Bundle();
             btype.putBoolean("type", user);
+            btype.putString("source", "reviews");
             btype.putInt("residenceId", userReviews.get(item.getItemId()).getResidenceId().getId());
             showResidenceIntent.putExtras(btype);
             try {
