@@ -1,5 +1,6 @@
 package gr.uoa.di.airbnbproject;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -8,19 +9,25 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -44,7 +51,9 @@ public class HomeActivity extends AppCompatActivity {
     final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
 
     EditText field_city, field_guests;
-    TextView startDate, endDate;
+    TextView startDate, endDate, searchbar;
+    CollapsingToolbarLayout collapsingToolbarLayout;
+
     ListView list;
     Button btnStartDatePicker, btnEndDatePicker, field_search;
 
@@ -64,6 +73,9 @@ public class HomeActivity extends AppCompatActivity {
     RecyclerView.Adapter residencesAdapter;
     RecyclerView.LayoutManager residencesLayoutManager;
     ArrayList<Residences> residencesList = new ArrayList<>();
+
+    boolean isShow = false;
+    int scrollRange = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,14 +128,13 @@ public class HomeActivity extends AppCompatActivity {
         Utils.manageFooter(HomeActivity.this, true);
 
         /**SEARCH VIEW EXPANDABLE START **/
-        //setupSearchView();
+        setupSearchView();
 
         /** RECOMMENDATIONS **/
         ArrayList<Residences> Recommendations = popularRecommendations();
 //        list = (ListView) findViewById(R.id.list);
         try {
             if (Recommendations.size() > 0) {
-                System.out.println(Recommendations);
                 residencesAdapter = new RecyclerAdapterResidences(this, user, Recommendations);
                 residencesRecyclerView.setAdapter(residencesAdapter);
             }
@@ -133,103 +144,115 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void setupSearchView() {
-//        final TextView searchlist = (TextView) findViewById(R.id.searchlist);
-//        searchlist.setVisibility(View.GONE);
-//        final CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar);
-//        AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
-//        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-//            boolean isShow = false;
-//            int scrollRange = -1;
-//            @Override
-//            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-//                if (scrollRange == -1) {
-//                    scrollRange = appBarLayout.getTotalScrollRange();
-//                    searchlist.setVisibility(View.GONE);
-//                }
-//                if (scrollRange + verticalOffset == 0) {
-//                    collapsingToolbarLayout.setTitle("Title");
-//                    isShow = true;
-//                    searchlist.setVisibility(View.VISIBLE);
-//                } else if(isShow) {
-//                    collapsingToolbarLayout.setTitle(" ");//carefull there should a space between double quote otherwise it wont work
-//                    isShow = false;
-//                    searchlist.setVisibility(View.GONE);
-//                }
-//            }
-//        });
-//
-//        field_city = (EditText) findViewById(R.id.field_city);
-//        field_guests = (EditText) findViewById(R.id.field_guests);
-//
-//        /**** Dates Selector ****/
-//        btnStartDatePicker = (Button)findViewById(R.id.btn_start_date);
-//        startDate = (TextView)findViewById(R.id.start_date);
-//
-//        btnEndDatePicker = (Button)findViewById(R.id.btn_end_date);
-//        endDate = (TextView)findViewById(R.id.end_date);
-//
-//        btnStartDatePicker.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (v == btnStartDatePicker) {
-//                    // Get Current Date
-//                    final Calendar c = Calendar.getInstance();
-//                    mStartYear = c.get(Calendar.YEAR);
-//                    mStartMonth = c.get(Calendar.MONTH);
-//                    mStartDay = c.get(Calendar.DAY_OF_MONTH);
-//
-//                    date_start = "";
-//                    DatePickerDialog datePickerDialog = new DatePickerDialog(HomeActivity.this, new DatePickerDialog.OnDateSetListener() {
-//                        @Override
-//                        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-//                            startDate.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
-//                            date_start = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
-//                        }
-//                    }, mStartYear, mStartMonth, mStartDay);
-//                    datePickerDialog.show();
-//                }
-//            }
-//        });
-//
-//        btnEndDatePicker.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (v == btnEndDatePicker) {
-//                    // Get Current Date
-//                    final Calendar c = Calendar.getInstance();
-//                    mEndYear = c.get(Calendar.YEAR);
-//                    mEndMonth = c.get(Calendar.MONTH);
-//                    mEndDay = c.get(Calendar.DAY_OF_MONTH);
-//
-//                    date_end = "";
-//                    DatePickerDialog datePickerDialog = new DatePickerDialog(HomeActivity.this, new DatePickerDialog.OnDateSetListener() {
-//                        @Override
-//                        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-//                            endDate.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
-//                            date_end = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
-//                        }
-//                    }, mEndYear, mEndMonth, mEndDay);
-//                    datePickerDialog.show();
-//                }
-//            }
-//        });
-//
-//        field_search = (Button) findViewById(R.id.field_search);
-//        field_search.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent searchintent = new Intent(HomeActivity.this, SearchResultsActivity.class);
-//                Bundle bsearch = new Bundle();
-//
-//                bsearch.putString("city", field_city.getText().toString());
-//                bsearch.putInt("guests", Integer.parseInt(field_guests.getText().toString()));
-//                bsearch.putString("startDate", date_start);
-//                bsearch.putString("endDate", date_end);
-//                bsearch.putBoolean("type", user);
-//                searchintent.putExtras(bsearch);
-//                startActivity(searchintent);
-//            }
-//        });
+        searchbar = (TextView) findViewById(R.id.searchbar);
+        searchbar.setVisibility(View.GONE);
+        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar);
+        final AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
+
+        searchbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                appBarLayout.setExpanded(true);
+            }
+        });
+
+        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                openSearchBar(appBarLayout, verticalOffset);
+            }
+        });
+
+        field_city = (EditText) findViewById(R.id.field_city);
+        field_guests = (EditText) findViewById(R.id.field_guests);
+
+        /**** Dates Selector ****/
+        btnStartDatePicker = (Button)findViewById(R.id.btn_start_date);
+        startDate = (TextView)findViewById(R.id.start_date);
+
+        btnEndDatePicker = (Button)findViewById(R.id.btn_end_date);
+        endDate = (TextView)findViewById(R.id.end_date);
+
+        btnStartDatePicker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (v == btnStartDatePicker) {
+                    // Get Current Date
+                    final Calendar c = Calendar.getInstance();
+                    mStartYear = c.get(Calendar.YEAR);
+                    mStartMonth = c.get(Calendar.MONTH);
+                    mStartDay = c.get(Calendar.DAY_OF_MONTH);
+
+                    date_start = "";
+                    DatePickerDialog datePickerDialog = new DatePickerDialog(HomeActivity.this, new DatePickerDialog.OnDateSetListener() {
+                        @Override
+                        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                            startDate.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+                            date_start = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
+                        }
+                    }, mStartYear, mStartMonth, mStartDay);
+                    datePickerDialog.show();
+                }
+            }
+        });
+
+        btnEndDatePicker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (v == btnEndDatePicker) {
+                    // Get Current Date
+                    final Calendar c = Calendar.getInstance();
+                    mEndYear = c.get(Calendar.YEAR);
+                    mEndMonth = c.get(Calendar.MONTH);
+                    mEndDay = c.get(Calendar.DAY_OF_MONTH);
+
+                    date_end = "";
+                    DatePickerDialog datePickerDialog = new DatePickerDialog(HomeActivity.this, new DatePickerDialog.OnDateSetListener() {
+                        @Override
+                        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                            endDate.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+                            date_end = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
+                        }
+                    }, mEndYear, mEndMonth, mEndDay);
+                    datePickerDialog.show();
+                }
+            }
+        });
+
+        field_search = (Button) findViewById(R.id.field_search);
+        field_search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent searchintent = new Intent(HomeActivity.this, SearchResultsActivity.class);
+                Bundle bsearch = new Bundle();
+
+                bsearch.putString("city", field_city.getText().toString());
+                bsearch.putInt("guests", Integer.parseInt(field_guests.getText().toString()));
+                bsearch.putString("startDate", date_start);
+                bsearch.putString("endDate", date_end);
+                bsearch.putBoolean("type", user);
+                searchintent.putExtras(bsearch);
+                startActivity(searchintent);
+            }
+        });
+    }
+
+    private void openSearchBar(AppBarLayout appBarLayout, int verticalOffset) {
+        searchbar.setVisibility(View.GONE);
+
+        if (scrollRange == -1) {
+            scrollRange = appBarLayout.getTotalScrollRange();
+            searchbar.setVisibility(View.GONE);
+        }
+        if (scrollRange + verticalOffset == 0) {
+            collapsingToolbarLayout.setTitle("Title");
+            isShow = true;
+            searchbar.setVisibility(View.VISIBLE);
+        } else if(isShow) {
+            collapsingToolbarLayout.setTitle(" ");//carefull there should a space between double quote otherwise it wont work
+            isShow = false;
+            searchbar.setVisibility(View.GONE);
+        }
     }
 
     public ArrayList<Residences> popularRecommendations()
@@ -297,7 +320,6 @@ public class HomeActivity extends AppCompatActivity {
         Collections.sort(residences);
         return residences;
     }
-
 
     @Override
     protected void onRestart() {

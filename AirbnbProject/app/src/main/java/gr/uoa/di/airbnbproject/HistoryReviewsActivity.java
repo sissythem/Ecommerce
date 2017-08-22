@@ -100,7 +100,7 @@ public class HistoryReviewsActivity extends AppCompatActivity {
         String[] comment                = new String[userReviews.size()];
 
         for(int i=0; i<userReviews.size();i++) {
-            representativePhoto[i] = userReviews.get(i).getTenantId().getPhoto();
+            representativePhoto[i] = userReviews.get(i).getResidenceId().getPhotos();
             username[i] = userReviews.get(i).getHostId().getUsername();
             comment[i] = userReviews.get(i).getComment();
         }
