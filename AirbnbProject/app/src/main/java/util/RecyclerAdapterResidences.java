@@ -46,6 +46,7 @@ public class RecyclerAdapterResidences extends RecyclerView.Adapter<RecyclerAdap
             public void onClick(View v) {
                 final Bundle btype = new Bundle();
                 btype.putBoolean("type", user);
+                btype.putString("source", "home");
                 btype.putInt("residenceId", residences.get(position).getId());
                 Utils.goToActivity(context, ResidenceActivity.class, btype);
             }

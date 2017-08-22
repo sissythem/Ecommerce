@@ -307,6 +307,7 @@ public class Utils {
 
         try {
             this_context.startActivity(backintent);
+            this_context.finish();
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
             ex.printStackTrace();

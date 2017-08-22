@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -99,15 +98,6 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //gets user input in string format
-                Log.w("","Hardcoding a registration user");
-//                final String firstName          = "test_firstname";
-//                final String lastName           = "test_lastname";
-//                final String BirthDate          = "3-7-2017";
-//                final String phoneNumber        = "123123123";
-//                final String Email              = "email@domain.com";
-//                final String Username           = "usernametest";
-//                final String Password           = "password";
-//                final String ConfirmPassword    = "password";
 
                 final String firstName          = firstname.getText().toString();
                 final String lastName           = lastname.getText().toString();
@@ -133,36 +123,6 @@ public class RegisterActivity extends AppCompatActivity {
                     Toast.makeText(c, "Passwords do not match, please try again!", Toast.LENGTH_SHORT).show();
                     return;
                 }
-
-//                Date bdate = Utils.ConvertStringToDate(BirthDate,Utils.APP_DATE_FORMAT);
-//                System.out.println(bdate);
-//
-//                //java.util.Date dt = new java.util.Date();
-//                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//                dateOfBirth = sdf.format(bdate);
-//                System.out.println(dateOfBirth);
-
-//                String cdate="Mar 10, 2016 6:30:00 PM";
-//                SimpleDateFormat formatter=new SimpleDateFormat("MMM dd, yyyy hh:mm:ss aaa");
-//                try {
-//                    Date newDate = formatter.parse(cdate);
-//                    formatter= new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-//                    cdate = formatter.format(newDate);
-//                    System.out.println(cdate);
-//                } catch (Exception e) {}
-//
-//                System.out.println(cdate);
-
-
-//                Calendar calendar = Calendar.getInstance();
-//                /* to display time*/
-//                SimpleDateFormat formatter = new SimpleDateFormat("hh:mm");
-//                /* to display date in the given format */
-//                DateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
-//                /*get the date using */
-//                Date dDate = dateFormatter.parse(yourObject.getTaskDate());
-//                /*set the date */
-//                calendar.setTime(dDate);
 
                 token = PostResult(firstName, lastName, Username, Password, Email, phoneNumber, BirthDate);
                 if(token.equals("username exists")){

@@ -76,6 +76,7 @@ public class LoginActivity extends AppCompatActivity {
                         sessionData = new Session(token, Username, true);
                         updateSessionData(LoginActivity.this, sessionData);
                         LoginActivity.this.startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+                        finish();
                     } catch (Exception ex) {
                         System.out.println(ex.getMessage());
                         ex.printStackTrace();

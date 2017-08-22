@@ -23,6 +23,7 @@ public class GreetingActivity extends AppCompatActivity {
                 //if register button is clicked RegisterActivity starts
                 Intent registerintent = new Intent(GreetingActivity.this, RegisterActivity.class);
                 GreetingActivity.this.startActivity(registerintent);
+                finish();
             }
         });
 
@@ -33,6 +34,7 @@ public class GreetingActivity extends AppCompatActivity {
                 //if log in button is clicked log in activity is launched
                 Intent loginintent = new Intent(GreetingActivity.this, LoginActivity.class);
                 GreetingActivity.this.startActivity(loginintent);
+                finish();
             }
         });
     }
