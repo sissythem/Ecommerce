@@ -21,8 +21,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,7 +44,6 @@ import util.Utils;
 
 import static util.Utils.getSessionData;
 
-
 public class HomeActivity extends AppCompatActivity {
     final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
 
@@ -54,10 +51,8 @@ public class HomeActivity extends AppCompatActivity {
     TextView startDate, endDate, searchbar;
     CollapsingToolbarLayout collapsingToolbarLayout;
 
-    ListView list;
     Button btnStartDatePicker, btnEndDatePicker, field_search;
 
-    int[] residenceId;
     private int mStartYear, mStartMonth, mStartDay, mEndYear, mEndMonth, mEndDay;
     String username, date_start, date_end, token;
 
@@ -65,14 +60,8 @@ public class HomeActivity extends AppCompatActivity {
     Users loggedInUser;
     Context c;
 
-    String[] title, representativePhoto, city;
-    Double[]price;
-    float[] rating;
-
     RecyclerView residencesRecyclerView;
-    RecyclerView.Adapter residencesAdapter;
     RecyclerView.LayoutManager residencesLayoutManager;
-    ArrayList<Residences> residencesList = new ArrayList<>();
 
     boolean isShow = false;
     int scrollRange = -1;
@@ -132,11 +121,9 @@ public class HomeActivity extends AppCompatActivity {
 
         /** RECOMMENDATIONS **/
         ArrayList<Residences> Recommendations = popularRecommendations();
-//        list = (ListView) findViewById(R.id.list);
         try {
             if (Recommendations.size() > 0) {
-                residencesAdapter = new RecyclerAdapterResidences(this, user, Recommendations);
-                residencesRecyclerView.setAdapter(residencesAdapter);
+                residencesRecyclerView.setAdapter(new RecyclerAdapterResidences(this, user, Recommendations));
             }
         } catch (Exception e) {
             Log.e("", e.getMessage());
@@ -249,7 +236,7 @@ public class HomeActivity extends AppCompatActivity {
             isShow = true;
             searchbar.setVisibility(View.VISIBLE);
         } else if(isShow) {
-            collapsingToolbarLayout.setTitle(" ");//carefull there should a space between double quote otherwise it wont work
+            collapsingToolbarLayout.setTitle(" "); /** Attention: there should a space between double quote otherwise it wont work **/
             isShow = false;
             searchbar.setVisibility(View.GONE);
         }
@@ -337,10 +324,10 @@ public class HomeActivity extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     }
 
-    @Override
-    public void onBackPressed() {
-        moveTaskToBack(true);
-    }
+//    @Override
+//    public void onBackPressed() {
+//        moveTaskToBack(true);
+//    }
 
     private void resetActivity() {
         Session sessionData = Utils.getSessionData(HomeActivity.this);

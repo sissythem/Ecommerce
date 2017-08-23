@@ -11,8 +11,8 @@
 
         <ImageView
             android:id="@+id/profilepic"
-            android:layout_width="130dp"
-            android:layout_height="wrap_content"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
             app:srcCompat="@drawable/ic_profile"
             android:layout_marginTop="15dp"
             android:layout_gravity="center_vertical|start" />
@@ -24,19 +24,33 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/username"
+                android:id="@+id/name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                android:text="@string/username" />
+                android:padding="10dp"
+                android:textSize="@dimen/text_size_normal"
+                android:text="@string/name" />
 
             <TextView
                 android:id="@+id/comment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                android:layout_marginTop="22dp"
+                android:padding="10dp"
+                android:textSize="@dimen/text_size_normal"
                 android:text="@string/reviews_comment" />
+
+            <RatingBar
+                android:id="@+id/rating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:isIndicator="true"
+                android:numStars="5"
+                android:stepSize="1"
+                android:rating="5"
+                style="?android:attr/ratingBarStyleSmall" />
 
         </LinearLayout>
 

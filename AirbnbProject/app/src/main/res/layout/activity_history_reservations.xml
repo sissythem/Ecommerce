@@ -5,18 +5,24 @@
     android:layout_gravity="fill_horizontal"
     android:layout_height="wrap_content">
 
-    <include layout="@layout/back_toolbar"
-        android:id="@+id/include"/>
+    <include layout="@layout/back_toolbar" android:id="@+id/include"/>
 
-    <ListView
-        android:id="@+id/reservationsList"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/include"
-        android:divider="#b5b5b5"
-        android:dividerHeight="1dp"
-        android:listSelector="@drawable/list_selector">
-    </ListView>
+        android:layout_below="@+id/include">
+        <include layout="@layout/recycler_main" android:layout_width="match_parent" android:layout_height="match_parent" />
+    </LinearLayout>
+
+    <!--<ListView-->
+        <!--android:id="@+id/reservationsList"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_below="@+id/include"-->
+        <!--android:divider="#b5b5b5"-->
+        <!--android:dividerHeight="1dp"-->
+        <!--android:listSelector="@drawable/list_selector">-->
+    <!--</ListView>-->
 
     <include layout="@layout/footer" />
 </RelativeLayout>

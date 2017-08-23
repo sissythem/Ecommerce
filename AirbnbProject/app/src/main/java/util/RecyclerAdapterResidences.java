@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +15,18 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import fromRESTful.Residences;
+import gr.uoa.di.airbnbproject.HomeActivity;
+import gr.uoa.di.airbnbproject.HostActivity;
 import gr.uoa.di.airbnbproject.R;
 import gr.uoa.di.airbnbproject.ResidenceActivity;
+
+import static util.Utils.CANCEL_RESERVATION_ACTION;
+import static util.Utils.CONTACT_HOST_ACTION;
+import static util.Utils.CONTACT_USER_ACTION;
+import static util.Utils.DELETE_ACTION;
+import static util.Utils.EDIT_ACTION;
+import static util.Utils.RESERVATIONS_ACTION;
+import static util.Utils.VIEW_RESIDENCE_ACTION;
 
 public class RecyclerAdapterResidences extends RecyclerView.Adapter<RecyclerAdapterResidences.ResidencesCardHolder> {
     Context context;
@@ -29,7 +40,7 @@ public class RecyclerAdapterResidences extends RecyclerView.Adapter<RecyclerAdap
 
     @Override
     public ResidencesCardHolder onCreateViewHolder (ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_layout, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_residences, parent, false);
         return new ResidencesCardHolder(view);
     }
 
@@ -40,6 +51,20 @@ public class RecyclerAdapterResidences extends RecyclerView.Adapter<RecyclerAdap
         holder.rCity.setText(residences.get(position).getCity());
         holder.rPrice.setText(Double.toString(residences.get(position).getMinPrice()));
         holder.rRatingBar.setRating((float)residences.get(position).getAverageRating());
+
+        holder.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener(){
+            @Override
+            public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+                if (context.getClass().equals(HostActivity.class)) {
+                    menu.setHeaderTitle("Reservations - Host Options");
+
+                    menu.add(0, position, 0, VIEW_RESIDENCE_ACTION);
+                    menu.add(0, position, 1, EDIT_ACTION);
+                    menu.add(0, position, 2, RESERVATIONS_ACTION);
+                    menu.add(0, position, 3, DELETE_ACTION);
+                }
+            }
+        });
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,6 +97,10 @@ public class RecyclerAdapterResidences extends RecyclerView.Adapter<RecyclerAdap
             rCity       = (TextView) itemView.findViewById(R.id.city);
             rPrice      = (TextView) itemView.findViewById(R.id.price);
             rRatingBar  = (RatingBar) itemView.findViewById(R.id.rating);
+        }
+
+        public void setOnCreateContextMenuListener(View.OnCreateContextMenuListener listener) {
+            itemView.setOnCreateContextMenuListener(listener);
         }
     }
 }

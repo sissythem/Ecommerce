@@ -17,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -511,6 +512,19 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         }
         return true;
     }
+
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            moveTaskToBack(true);
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+//    @Override
+//    public void onBackPressed() {
+//        moveTaskToBack(true);
+//    }
 
     @Override
     public void onSupportActionModeStarted(ActionMode mode) {

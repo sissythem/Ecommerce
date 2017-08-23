@@ -27,24 +27,26 @@
         <!-- Signup Button -->
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/register"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:layout_marginBottom="24dp"
-            android:background="@color/caldroid_darker_gray"
+            android:background="@color/caldroid_333"
+            android:textColor="@android:color/white"
             android:padding="12dp"
-            android:text="Register"/>
+            android:text="@string/register"/>
 
         <!--Login Button-->
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/login"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:layout_marginBottom="24dp"
-            android:background="@color/caldroid_darker_gray"
+            android:background="@color/caldroid_333"
+            android:textColor="@android:color/white"
             android:padding="12dp"
-            android:text="Login"/>
+            android:text="@string/login"/>
 
     </LinearLayout>
 </RelativeLayout>

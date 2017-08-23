@@ -7,13 +7,16 @@
     <string name="login">Login</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
-    <string name="no_account_register">You don\'t have an account? Register here</string>
+    <string name="no_account_register">No account yet? Create one</string>
     <string name="about">About</string>
     <string name="home">Home</string>
     <string name="inbox">Inbox</string>
     <string name="profile">Profile</string>
     <string name="logout">Log Out</string>
     <string name="switch_role">Switch Role</string>
+    <string name="name">Name</string>
+    <string name="period">Period</string>
+    <string name="title">Title</string>
 
     <!-- TYPES OF RESIDENCES -->
     <string-array name="residence_types_array">
@@ -43,7 +46,7 @@
 
     <!-- RESIDENCES COLUMNS -->
     <string name="residence_view">View Residence</string>
-    <string name="residence_title">Title</string>
+    <string name="residence_title">Residence Title</string>
     <string name="residence_type">Type</string>
     <string name="residence_address">Address</string>
     <string name="residence_city">Residence City</string>

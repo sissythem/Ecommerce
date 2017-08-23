@@ -6,13 +6,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -20,7 +19,7 @@ import java.util.Date;
 
 import fromRESTful.Reservations;
 import fromRESTful.Users;
-import util.ListAdapterReservations;
+import util.RecyclerAdapterReservations;
 import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
@@ -28,28 +27,27 @@ import util.Utils;
 import static util.Utils.CANCEL_RESERVATION_ACTION;
 import static util.Utils.CONTACT_HOST_ACTION;
 import static util.Utils.CONTACT_USER_ACTION;
-import static util.Utils.FORMAT_DATE_YMD;
+import static util.Utils.FORMAT_DATE_DMY;
 import static util.Utils.VIEW_RESIDENCE_ACTION;
 import static util.Utils.convertTimestampToDateStr;
+import static util.Utils.goToActivity;
 import static util.Utils.reloadActivity;
 
 public class HistoryReservationsActivity extends AppCompatActivity {
     Boolean user;
     String token;
     Users loggedinUser;
-    int[] residenceId;
-    String[] residenceTitle;
     Toolbar toolbar;
-    String[] startDate;
     Context c;
-    ListAdapterReservations adapter;
-    ListView reservationsList;
     ArrayList<Reservations> userReservations;
     Bundle buser;
+
+    RecyclerView reservationsRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_history_reservations);
 
         Session sessionData = Utils.getSessionData(HistoryReservationsActivity.this);
         token = sessionData.getToken();
@@ -73,7 +71,6 @@ public class HistoryReservationsActivity extends AppCompatActivity {
             return;
         }
 
-        setContentView(R.layout.activity_history_reservations);
         buser = getIntent().getExtras();
         user = buser.getBoolean("type");
 
@@ -114,56 +111,40 @@ public class HistoryReservationsActivity extends AppCompatActivity {
             userReservations = retrofitCalls.getReservationsByTenantId(token, loggedinUser.getId().toString());
         }
 
-        residenceId             = new int [userReservations.size()];
-        residenceTitle          = new String[userReservations.size()];
-        startDate      = new String[userReservations.size()];
-        String[] endDate        = new String[userReservations.size()];
+        reservationsRecyclerView = (RecyclerView) findViewById(R.id.recycler);
+        reservationsRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
+        reservationsRecyclerView.setHasFixedSize(true);
+        registerForContextMenu(reservationsRecyclerView);
 
-        for(int i=0; i<userReservations.size();i++) {
-            residenceId[i]      = userReservations.get(i).getResidenceId().getId();
-            residenceTitle[i]   = userReservations.get(i).getResidenceId().getTitle();
-
-            startDate[i]    = convertTimestampToDateStr(userReservations.get(i).getResidenceId().getAvailableDateStart(), FORMAT_DATE_YMD);
-            endDate[i]      = convertTimestampToDateStr(userReservations.get(i).getResidenceId().getAvailableDateEnd(), FORMAT_DATE_YMD);
+        try {
+            if (userReservations.size() > 0) {
+                reservationsRecyclerView.setAdapter(new RecyclerAdapterReservations(this, user, userReservations, buser.containsKey("residenceId")));
+            }
+        } catch (Exception e) {
+            Log.e("", e.getMessage());
         }
-        adapter = new ListAdapterReservations(this, user, residenceTitle, startDate, endDate);
-        reservationsList = (ListView)findViewById(R.id.reservationsList);
-        reservationsList.setAdapter(adapter);
-        registerForContextMenu(reservationsList);
 
         /** FOOTER TOOLBAR **/
         Utils.manageFooter(HistoryReservationsActivity.this, user);
     }
 
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
-        menu.setHeaderTitle("Reservation Options");
-
-        menu.add(0, info.position, 0, VIEW_RESIDENCE_ACTION);
-        if (buser.containsKey("residenceId")) {
-            menu.add(0, info.position, 1, CONTACT_USER_ACTION);
-        } else {
-            menu.add(0, info.position, 1, CONTACT_HOST_ACTION);
-            menu.add(0, info.position, 2, CANCEL_RESERVATION_ACTION);
-        }
-    }
-
-    @Override
     public boolean onContextItemSelected(final MenuItem item) {
         super.onContextItemSelected(item);
+
+        Integer resId = userReservations.get(item.getItemId()).getResidenceId().getId();
+        String resTitle = userReservations.get(item.getItemId()).getResidenceId().getTitle();
         if (item.getTitle().equals(CANCEL_RESERVATION_ACTION)) {
-            String currentdate = Utils.getCurrentDate(Utils.FORMAT_DATE_DMY);
-            Date current = Utils.ConvertStringToDate(currentdate, Utils.FORMAT_DATE_DMY);
-            Date start = Utils.ConvertStringToDate(startDate[item.getItemId()], Utils.FORMAT_DATE_DMY);
+            String currentdate = Utils.getCurrentDate(FORMAT_DATE_DMY);
+            Date current = Utils.ConvertStringToDate(currentdate, FORMAT_DATE_DMY);
+
+            String startDate = convertTimestampToDateStr(userReservations.get(item.getItemId()).getStartDate(), FORMAT_DATE_DMY);
+            Date start = Utils.ConvertStringToDate(startDate, FORMAT_DATE_DMY);
+
             if(current.after(start))
             {
-                new AlertDialog.Builder(HistoryReservationsActivity.this)
-                        .setTitle("Cancel Reservation").setMessage("You cannot delete this reservation since it is in the past");
-            }
-            else {
+                new AlertDialog.Builder(HistoryReservationsActivity.this).setTitle("Cancel Reservation").setMessage("You cannot delete this reservation since it is in the past").show();
+            } else {
                 new AlertDialog.Builder(HistoryReservationsActivity.this)
                         .setTitle("Cancel Reservation").setMessage("Are you sure you want to cancel your reservation?").setIcon(R.drawable.ic_delete)
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
@@ -183,56 +164,32 @@ public class HistoryReservationsActivity extends AppCompatActivity {
                             }
                         }).setNegativeButton(android.R.string.no, null).show();
             }
-
         } else if (item.getTitle().equals(VIEW_RESIDENCE_ACTION)) {
-            Intent showResidenceIntent = new Intent(HistoryReservationsActivity.this, ResidenceActivity.class);
             Bundle btype = new Bundle();
 
-            System.out.println(user);
-            System.out.println(residenceId[item.getItemId()]);
             btype.putBoolean("type", user);
             btype.putString("source", "reservations");
-            btype.putInt("residenceId", residenceId[item.getItemId()]);
-            showResidenceIntent.putExtras(btype);
-            try {
-                startActivity(showResidenceIntent);
-                finish();
-            } catch (Exception ex) {
-                System.out.println(ex.getMessage());
-                ex.printStackTrace();
-            }
-        } else if (item.getTitle().equals(CONTACT_HOST_ACTION)) {
-            Intent messageIntent = new Intent(HistoryReservationsActivity.this, MessageActivity.class);
+            btype.putInt("residenceId", resId);
 
+            goToActivity(HistoryReservationsActivity.this, ResidenceActivity.class, btype);
+        } else if (item.getTitle().equals(CONTACT_HOST_ACTION)) {
             Bundle bmessage = new Bundle();
             bmessage.putBoolean("type", user);
             bmessage.putInt("currentUserId", loggedinUser.getId());
             bmessage.putInt("toUserId", userReservations.get(item.getItemId()).getResidenceId().getHostId().getId());
-            bmessage.putString("msgSubject", residenceTitle[item.getItemId()]);
-            bmessage.putInt("residenceId", residenceId[item.getItemId()]);
-            messageIntent.putExtras(bmessage);
-            try {
-                startActivity(messageIntent);
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-                Log.e("",e.getMessage());
-            }
-        } else if (item.getTitle().equals(CONTACT_USER_ACTION)) {
-            Intent messageIntent = new Intent(HistoryReservationsActivity.this, MessageActivity.class);
+            bmessage.putString("msgSubject", resTitle);
+            bmessage.putInt("residenceId", resId);
 
+            goToActivity(HistoryReservationsActivity.this, MessageActivity.class, bmessage);
+        } else if (item.getTitle().equals(CONTACT_USER_ACTION)) {
             Bundle bmessage = new Bundle();
             bmessage.putBoolean("type", user);
             bmessage.putInt("currentUserId", loggedinUser.getId());
             bmessage.putInt("toUserId", userReservations.get(item.getItemId()).getTenantId().getId());
-            bmessage.putString("msgSubject", residenceTitle[item.getItemId()]);
-            bmessage.putInt("residenceId", residenceId[item.getItemId()]);
-            messageIntent.putExtras(bmessage);
-            try {
-                startActivity(messageIntent);
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-                Log.e("",e.getMessage());
-            }
+            bmessage.putString("msgSubject", resTitle);
+            bmessage.putInt("residenceId", resId);
+
+            goToActivity(HistoryReservationsActivity.this, MessageActivity.class, bmessage);
         } else {
             Toast.makeText(this, item.getTitle(), Toast.LENGTH_LONG).show();
         }
