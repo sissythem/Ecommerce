@@ -44,7 +44,8 @@ import util.Utils;
 
 import static util.Utils.getSessionData;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity
+{
     final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
 
     EditText field_city, field_guests;
@@ -109,8 +110,7 @@ public class HomeActivity extends AppCompatActivity {
         //resetActivity();
         /** Start Worker for Notifications **/
         new Worker().execute();
-        /** TODO check if data are updated with adapter, I have read that it is better to load comments in onResume rather than in onCreate **/
-        /** TODO: notifyDataSetChanged has to go on the adapter list items that have click actions. HomeActivity doesnt need it **/
+        //TODO: notifyDataSetChanged requires RxJava, it will not work
 //        adapter.notifyDataSetChanged();
 
         /** FOOTER TOOLBAR **/
@@ -324,10 +324,10 @@ public class HomeActivity extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     }
 
-//    @Override
-//    public void onBackPressed() {
-//        moveTaskToBack(true);
-//    }
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+    }
 
     private void resetActivity() {
         Session sessionData = Utils.getSessionData(HomeActivity.this);

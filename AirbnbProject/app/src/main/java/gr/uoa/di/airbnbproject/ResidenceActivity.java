@@ -63,7 +63,7 @@ import static util.Utils.goToActivity;
 public class ResidenceActivity extends FragmentActivity implements OnMapReadyCallback, AppCompatCallback
 {
     Boolean user;
-    String username, date_start, date_end, guests, token;
+    String date_start, date_end, guests, token;
 
     int residenceId, maxGuests, guestsInt;
     Context c;

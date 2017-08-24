@@ -35,6 +35,7 @@ public class RetrofitCalls {
 
     String unreadMessages = "0";
 
+    //TODO: checkToken --> flag is null
     private class checkTokenHttpRequestTask extends AsyncTask<String, String, Boolean> {
         @Override
         protected Boolean doInBackground(String... params) {
