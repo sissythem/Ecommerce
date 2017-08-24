@@ -21,10 +21,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RatingBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -71,8 +74,11 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
     TextView tvTitle, tvDetails, tvHostName, tvAbout, tvHostAbout, tvPrice;
     Button bBook;
     RatingBar rating;
+    ScrollView mScrollView;
+    FrameLayout mWrapperFL;
     EditText etGuests;
     GoogleMap mMap;
+    ImageView resPhoto, profilePic;
 
     Users loggedinUser, host;
     Residences selectedResidence;
@@ -159,8 +165,10 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
     {
         host = selectedResidence.getHostId();
 
-        ImageView resPhoto = (ImageView) findViewById(R.id.ivResidencePhotos);
+        resPhoto = (ImageView) findViewById(R.id.ivResidencePhotos);
+        profilePic = (ImageView)findViewById(R.id.ivHostPic);
         Utils.loadResidenceImage(this, resPhoto, selectedResidence.getPhotos());
+        Utils.loadProfileImage(this, profilePic, loggedinUser.getPhoto());
 
         tvTitle                 = (TextView)findViewById(R.id.tvTitle);
         tvDetails               = (TextView)findViewById(R.id.tvDetails);
@@ -170,7 +178,9 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         tvPrice                 = (TextView)findViewById(R.id.price);
         rating                  = (RatingBar)findViewById(R.id.rating);
         bBook                   = (Button)findViewById(R.id.btnReservation);
-
+        mScrollView             = (ScrollView)findViewById(R.id.scrollView);
+        mWrapperFL              = (FrameLayout)findViewById(R.id.frameLayout);
+        mScrollView.getViewTreeObserver().addOnScrollChangedListener(new ScrollPositionObserver());
         etGuests                = (EditText)findViewById(R.id.etGuests);
         etGuests.setSelected(false);
 
@@ -537,6 +547,26 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         else
         {
             Utils.manageBackButton(ResidenceActivity.this, (user)?HomeActivity.class:HostActivity.class, user);
+        }
+    }
+
+    private class ScrollPositionObserver implements ViewTreeObserver.OnScrollChangedListener {
+
+        private int mImageViewHeight;
+
+        public ScrollPositionObserver() {
+            mImageViewHeight = getResources().getDimensionPixelSize(R.dimen.res_images);
+        }
+
+        @Override
+        public void onScrollChanged() {
+            int scrollY = Math.min(Math.max(mScrollView.getScrollY(), 0), mImageViewHeight);
+
+            // changing position of ImageView
+            resPhoto.setTranslationY(scrollY / 2);
+
+            // alpha you could set to ActionBar background
+            float alpha = scrollY / (float) mImageViewHeight;
         }
     }
 }
