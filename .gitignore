@@ -11,3 +11,6 @@ AddFilesToGit.txt
 AirbnbProject/local.properties
 AirbnbProject/app/app.iml
 AirbnbProject/local.properties
+ecommerce_rest/src/java/services/ImagesFacadeREST.java
+AirbnbProject/local.properties
+AirbnbProject/app/src/main/java/util/RestClient.java
