@@ -62,6 +62,7 @@ public class Utils {
     public static final String COPY_ACTION                  = "Copy";
     public static final String RESERVATIONS_ACTION          = "Reservations";
     public static final String VIEW_RESIDENCE_ACTION        = "View Residence";
+    public static final String OPEN_MESSAGES_ACTION         = "Open Messages";
     public static final String CONTACT_HOST_ACTION          = "Contact Host";
     public static final String CONTACT_USER_ACTION          = "Contact User";
     public static final String CANCEL_RESERVATION_ACTION    = "Cancel Reservation";
@@ -119,11 +120,11 @@ public class Utils {
         String finaldate;
         switch (format) {
             case FORMAT_DATE_DMY:
-                finaldate = mDay + "-" + mMonth + "-" + mYear;
+                finaldate = mDay + "-" + (mMonth+1) + "-" + mYear;
                 break;
             case FORMAT_DATE_YMD:
             default:
-                finaldate = mYear + "-" + mMonth + "-" + mDay;
+                finaldate = mYear + "-" + (mMonth+1) + "-" + mDay;
                 break;
         }
         return finaldate;

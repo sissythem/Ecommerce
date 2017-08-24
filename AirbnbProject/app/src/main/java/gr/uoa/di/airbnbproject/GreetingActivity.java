@@ -2,14 +2,19 @@ package gr.uoa.di.airbnbproject;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
+import util.Session;
+
 public class GreetingActivity extends AppCompatActivity {
 
     Context c;
+    SharedPreferences sharedPrefs;
+    Session sessionData;
     //Fist screen of application. Gives user the choice either to log in or register
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,5 +42,22 @@ public class GreetingActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        //isUserLoggedIn = sharedPrefs.getBoolean("userLoggedInState", false);
+        if (sessionData.getUserLoggedInState()) {
+            Intent intent = new Intent(this, HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            super.onBackPressed();
+            return;
+        }
+        else {
+            Intent greetingIntent = new Intent(this, GreetingActivity.class);
+            startActivity(greetingIntent);
+            super.onBackPressed();
+        }
     }
 }

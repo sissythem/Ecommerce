@@ -96,16 +96,18 @@ public class HistoryReviewsActivity extends AppCompatActivity {
         userReviews = retrofitCalls.getReviewsByTenantId(token, loggedinUser.getId().toString());
 
         String[] representativePhoto    = new String [userReviews.size()];
-        String[] username               = new String[userReviews.size()];
+        String[] name                   = new String[userReviews.size()];
         String[] comment                = new String[userReviews.size()];
+        double[] rating                 = new double[userReviews.size()];
 
         for(int i=0; i<userReviews.size();i++) {
-            representativePhoto[i] = userReviews.get(i).getTenantId().getPhoto();
-            username[i] = userReviews.get(i).getHostId().getUsername();
-            comment[i] = userReviews.get(i).getComment();
+            representativePhoto[i]  = userReviews.get(i).getResidenceId().getPhotos();
+            name[i]                 = userReviews.get(i).getResidenceId().getTitle();
+            comment[i]              = userReviews.get(i).getComment();
+            rating[i]               = userReviews.get(i).getRating();
         }
 
-        adapter = new ListAdapterReviews(this, representativePhoto, username, comment);
+        adapter = new ListAdapterReviews(this, representativePhoto, name, comment, rating);
         reviewsList = (ListView)findViewById(R.id.reviewslist);
         reviewsList.setAdapter(adapter);
         registerForContextMenu(reviewsList);

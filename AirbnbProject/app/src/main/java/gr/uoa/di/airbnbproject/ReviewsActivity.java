@@ -116,9 +116,9 @@ public class ReviewsActivity extends AppCompatActivity {
             comment[i] = reviewsForSelectedResidence.get(i).getComment();
         }
 
-        adapter = new ListAdapterReviews(this, representativePhoto, username, comment);
-        reviewsList = (ListView)findViewById(R.id.reviewslist);
-        reviewsList.setAdapter(adapter);
+//        adapter = new ListAdapterReviews(this, representativePhoto, username, comment);
+//        reviewsList = (ListView)findViewById(R.id.reviewslist);
+//        reviewsList.setAdapter(adapter);
 
         /** FOOTER TOOLBAR **/
         Utils.manageFooter(ReviewsActivity.this, user);

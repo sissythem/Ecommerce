@@ -19,7 +19,7 @@ import java.util.ArrayList;
 
 import fromRESTful.Residences;
 import fromRESTful.Users;
-import util.RecyclerAdapterHostResidences;
+import util.RecyclerAdapterResidences;
 import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
@@ -32,19 +32,17 @@ import static util.Utils.goToActivity;
 import static util.Utils.reloadActivity;
 
 public class HostActivity extends AppCompatActivity {
-    String username, token;
+    String token;
     Users host;
     Toolbar toolbar;
 
     Button baddResidence;
-    int[] residenceId;
 
     Boolean user;
     Context c;
 
+    ArrayList<Residences> storedResidences;
     RecyclerView residencesRecyclerView;
-    RecyclerView.Adapter residencesAdapter;
-    RecyclerView.LayoutManager residencesLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +51,6 @@ public class HostActivity extends AppCompatActivity {
         Session sessionData = Utils.getSessionData(HostActivity.this);
         token = sessionData.getToken();
         user=false;
-        //c=this;
 
         if (!sessionData.getUserLoggedInState()) {
             Utils.logout(this);
@@ -98,18 +95,13 @@ public class HostActivity extends AppCompatActivity {
         host = hostUsers.get(0);
 
         residencesRecyclerView = (RecyclerView) findViewById(R.id.recycler);
-        residencesLayoutManager = new GridLayoutManager(this, 1);
-        residencesRecyclerView.setLayoutManager(residencesLayoutManager);
+        residencesRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
         residencesRecyclerView.setHasFixedSize(true);
-        registerForContextMenu(residencesRecyclerView);
 
-        ArrayList<Residences> storedResidences = retrofitCalls.getResidencesByHost(token, host.getId().toString());
-
+        storedResidences = retrofitCalls.getResidencesByHost(token, host.getId().toString());
         try {
             if (storedResidences.size() > 0) {
-                System.out.println(storedResidences);
-                residencesAdapter = new RecyclerAdapterHostResidences(this, user, storedResidences);
-                residencesRecyclerView.setAdapter(residencesAdapter);
+                residencesRecyclerView.setAdapter(new RecyclerAdapterResidences(this, user, storedResidences));
             }
         } catch (Exception e) {
             Log.e("", e.getMessage());
@@ -119,35 +111,24 @@ public class HostActivity extends AppCompatActivity {
         Utils.manageFooter(HostActivity.this, user);
     }
 
-//    @Override
-//    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-//        super.onCreateContextMenu(menu, v, menuInfo);
-//
-//        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
-//        menu.setHeaderTitle("Reservations - Host Options");
-//
-//        menu.add(0, info.position, 0, VIEW_RESIDENCE_ACTION);
-//        menu.add(0, info.position, 1, EDIT_ACTION);
-//        menu.add(0, info.position, 2, RESERVATIONS_ACTION);
-//        menu.add(0, info.position, 3, DELETE_ACTION);
-//    }
-
     @Override
     public boolean onContextItemSelected(final MenuItem item) {
         super.onContextItemSelected(item);
         final Bundle btype = new Bundle();
         btype.putBoolean("type", user);
 
+        final int resId = storedResidences.get(item.getItemId()).getId();
+
         if (item.getTitle().equals(VIEW_RESIDENCE_ACTION)) {
-            btype.putInt("residenceId", residenceId[item.getItemId()]);
+            btype.putInt("residenceId", resId);
             goToActivity(this, ResidenceActivity.class, btype);
         }
         else if (item.getTitle().equals(EDIT_ACTION)) {
-            btype.putInt("residenceId", residenceId[item.getItemId()]);
+            btype.putInt("residenceId", resId);
             goToActivity(this, EditResidenceActivity.class, btype);
         }
         else if (item.getTitle().equals(RESERVATIONS_ACTION)) {
-            btype.putInt("residenceId", residenceId[item.getItemId()]);
+            btype.putInt("residenceId", resId);
             goToActivity(this, HistoryReservationsActivity.class, btype);
         }
         else if (item.getTitle().equals(DELETE_ACTION)) {
@@ -156,7 +137,7 @@ public class HostActivity extends AppCompatActivity {
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         RetrofitCalls retrofitCalls = new RetrofitCalls();
-                        if (retrofitCalls.deleteResidenceById(token, Integer.toString(residenceId[item.getItemId()])) == null) {
+                        if (retrofitCalls.deleteResidenceById(token, Integer.toString(resId)) == null) {
                             Toast.makeText(HostActivity.this, "Residence was successfully deleted!", Toast.LENGTH_SHORT).show();
                             reloadActivity(HostActivity.this, btype);
                         } else {
@@ -172,12 +153,5 @@ public class HostActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
-//        Intent intent = new Intent(this, HomeActivity.class);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//        startActivity(intent);
-//        super.onBackPressed();
-//        return;
-        moveTaskToBack(true);
-    }
+    public void onBackPressed() { moveTaskToBack(true); }
 }

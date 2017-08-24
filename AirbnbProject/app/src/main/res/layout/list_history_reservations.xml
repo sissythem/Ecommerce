@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rrCardView"
+    style="@style/AppTheme.Card.Margins"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/profilepic"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_gravity="center_vertical|start" />
+
+        <LinearLayout
+            android:id="@+id/layout_partner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin_small"
+                android:textAlignment="viewEnd"
+                android:layout_gravity="end"
+                android:textSize="@dimen/text_size_large"
+                android:textColor="#555555"
+                android:textStyle="bold"
+                android:text="@string/residence_title" />
+
+            <TextView
+                android:id="@+id/place"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_normal"
+                android:textAlignment="viewEnd"
+                android:textStyle="italic"
+                android:text="Athens, Greece" />
+
+            <TextView
+                android:id="@+id/username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:textAlignment="viewEnd"
+                android:textSize="@dimen/text_size_normal"
+                android:text="Booked by Vasso" />
+
+            <TextView
+                android:id="@+id/period"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:textAlignment="viewEnd"
+                android:textSize="@dimen/text_size_normal"
+                android:text="Period" />
+
+
+
+
+
+
+
+            <!--<TextView-->
+                <!--android:id="@+id/residenceTitle"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_alignBottom="@+id/profilepic"-->
+                <!--android:layout_toEndOf="@+id/profilepic"-->
+                <!--android:layout_toRightOf="@+id/profilepic"-->
+                <!--android:text="@string/residence_title" />-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/username"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_alignBottom="@+id/profilepic"-->
+                <!--android:layout_toEndOf="@+id/profilepic"-->
+                <!--android:layout_toRightOf="@+id/profilepic"-->
+                <!--android:text="@string/username" />-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/period"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_below="@+id/profilepic"-->
+                <!--android:layout_marginTop="22dp"-->
+                <!--android:text="@string/period" />-->
+
+        </LinearLayout>
+
+    </LinearLayout>
+</android.support.v7.widget.CardView>

@@ -5,18 +5,29 @@
     android:layout_gravity="fill_horizontal"
     android:layout_height="wrap_content">
 
-    <include layout="@layout/back_toolbar"
-        android:id="@+id/include"/>
+    <include layout="@layout/back_toolbar" android:id="@+id/include"/>
 
-    <ListView
-        android:id="@+id/reviewslist"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/include"
-        android:divider="#b5b5b5"
-        android:dividerHeight="1dp"
-        android:listSelector="@drawable/list_selector">
-    </ListView>
+        android:layout_marginTop="5dp"
+        android:orientation="vertical"
+        android:layout_below="@+id/include">
 
+        <ListView
+            android:id="@+id/reviewslist"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:divider="#b5b5b5"
+            android:dividerHeight="5dp"
+            android:elevation="4dp"
+            android:clickable="false"
+            android:background="#fff"
+            android:listSelector="@drawable/list_selector">
+        </ListView>
+
+    </LinearLayout>
     <include layout="@layout/footer" />
+
 </RelativeLayout>
