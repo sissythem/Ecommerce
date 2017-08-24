@@ -56,7 +56,7 @@ public class EditProfileActivity extends AppCompatActivity {
     Button bsave;
 
     EditText etName, etLastName, etPhoneNumber, etEmail, etPassword, etCountry, etCity, etAbout;
-    TextView etUsername, tvBirthDate;
+    TextView tvBirthDate;
     String username, token;
     Integer userId;
     private int mYear, mMonth, mDay;
@@ -142,7 +142,7 @@ public class EditProfileActivity extends AppCompatActivity {
         /** Load Profile Image **/
         Utils.loadProfileImage(EditProfileActivity.this, mImageView, loggedinUser.getPhoto());
 
-        String birthDate ="";
+        String birthDate;
         birthDate = loggedinUser.getBirthDate();
         tvBirthDate.setText(birthDate);
         etAbout.setText(loggedinUser.getAbout());
@@ -192,7 +192,7 @@ public class EditProfileActivity extends AppCompatActivity {
             mImageView = (ImageView) findViewById(R.id.userImage);
             mImageView.setImageBitmap(BitmapFactory.decodeFile(selectedImage.toString()));
 
-            Bitmap bitmap = null;
+            Bitmap bitmap;
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
                 mImageView.setImageBitmap(bitmap);
@@ -201,6 +201,9 @@ public class EditProfileActivity extends AppCompatActivity {
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
+                e.printStackTrace();
+            }
+            catch (Exception e){
                 e.printStackTrace();
             }
         }
@@ -245,7 +248,8 @@ public class EditProfileActivity extends AppCompatActivity {
         return  emailIsNew;
     }
 
-    public void saveUserProfile () {
+    public void saveUserProfile ()
+    {
         final String name           = etName.getText().toString();
         final String lastName       = etLastName.getText().toString();
         final String phoneNumber    = etPhoneNumber.getText().toString();
