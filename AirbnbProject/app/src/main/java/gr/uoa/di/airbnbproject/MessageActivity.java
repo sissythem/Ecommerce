@@ -40,6 +40,7 @@ import static util.Utils.getCurrentDate;
 
 public class MessageActivity extends AppCompatActivity {
     Context c;
+    Bundle bextras;
     Integer currentUserId, toUserId;
     Toolbar toolbar;
     Button send;
@@ -83,7 +84,7 @@ public class MessageActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_message);
 
-        final Bundle bextras  = getIntent().getExtras();
+        bextras  = getIntent().getExtras();
         user            = bextras.getBoolean("type");
         currentUserId   = bextras.getInt("currentUserId");
         toUserId        = bextras.getInt("toUserId");
@@ -104,20 +105,7 @@ public class MessageActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (bextras.containsKey("residenceId"))
-                {
-                    Bundle btores = new Bundle();
-                    btores.putBoolean("type", user);
-                    btores.putInt("residenceId", residenceId);
-                    Utils.goToActivity(MessageActivity.this, ResidenceActivity.class, btores);
-                }
-                else if (bextras.containsKey("conversationId")) {
-                    Utils.manageBackButton(MessageActivity.this, InboxActivity.class, user);
-                }
-                else
-                {
-                    Utils.manageBackButton(MessageActivity.this, (user)?HomeActivity.class:HostActivity.class, user);
-                }
+                handleBackAction();
            }
         });
 
@@ -311,5 +299,27 @@ public class MessageActivity extends AppCompatActivity {
         RetrofitCalls retrofitCalls = new RetrofitCalls();
         token = retrofitCalls.sendMessage(token, MessagesParams);
         return token;
+    }
+
+    public void handleBackAction(){
+        if (bextras.containsKey("residenceId"))
+        {
+            Bundle btores = new Bundle();
+            btores.putBoolean("type", user);
+            btores.putInt("residenceId", residenceId);
+            Utils.goToActivity(MessageActivity.this, ResidenceActivity.class, btores);
+        }
+        else if (bextras.containsKey("conversationId")) {
+            Utils.manageBackButton(MessageActivity.this, InboxActivity.class, user);
+        }
+        else
+        {
+            Utils.manageBackButton(MessageActivity.this, (user)?HomeActivity.class:HostActivity.class, user);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        handleBackAction();
     }
 }

@@ -110,8 +110,6 @@ public class HomeActivity extends AppCompatActivity
         //resetActivity();
         /** Start Worker for Notifications **/
         new Worker().execute();
-        //TODO: notifyDataSetChanged requires RxJava, it will not work
-//        adapter.notifyDataSetChanged();
 
         /** FOOTER TOOLBAR **/
         Utils.manageFooter(HomeActivity.this, true);

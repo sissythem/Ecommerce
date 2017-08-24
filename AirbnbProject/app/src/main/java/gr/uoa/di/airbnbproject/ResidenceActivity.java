@@ -17,7 +17,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -62,6 +61,7 @@ import static util.Utils.goToActivity;
 
 public class ResidenceActivity extends FragmentActivity implements OnMapReadyCallback, AppCompatCallback
 {
+    Bundle buser;
     Boolean user;
     String date_start, date_end, guests, token;
 
@@ -118,7 +118,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         delegate.onCreate(savedInstanceState);
         delegate.setContentView(R.layout.activity_residence);
 
-        final Bundle buser        = getIntent().getExtras();
+        buser        = getIntent().getExtras();
         user                = buser.getBoolean("type");
         residenceId         = buser.getInt("residenceId");
 
@@ -146,21 +146,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!(buser.getString("source") == null) && buser.getString("source").equals("reviews"))
-                {
-                    Utils.manageBackButton(ResidenceActivity.this, HistoryReviewsActivity.class, user);
-                }
-                else if(!(buser.getString("source") == null) && buser.getString("source").equals("reservations")){
-                    Utils.manageBackButton(ResidenceActivity.this, HistoryReservationsActivity.class, user);
-                }
-                else if(!(buser.getString("source") == null) && buser.getString("source").equals("hostprofile"))
-                {
-                    Utils.manageBackButton(ResidenceActivity.this, ViewHostProfileActivity.class, user);
-                }
-                else
-                {
-                    Utils.manageBackButton(ResidenceActivity.this, (user)?HomeActivity.class:HostActivity.class, user);
-                }
+                handleBackAction();
             }
         });
 
@@ -169,7 +155,8 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         mapFragment.getMapAsync(this);
     }
 
-    public void setUpResidenceView () {
+    public void setUpResidenceView ()
+    {
         host = selectedResidence.getHostId();
 
         ImageView resPhoto = (ImageView) findViewById(R.id.ivResidencePhotos);
@@ -513,18 +500,10 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         return true;
     }
 
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            moveTaskToBack(true);
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
+    @Override
+    public void onBackPressed() {
+        handleBackAction();
     }
-
-//    @Override
-//    public void onBackPressed() {
-//        moveTaskToBack(true);
-//    }
 
     @Override
     public void onSupportActionModeStarted(ActionMode mode) {
@@ -540,5 +519,24 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
     @Override
     public ActionMode onWindowStartingSupportActionMode(ActionMode.Callback callback) {
         return null;
+    }
+
+    public void handleBackAction()
+    {
+        if(!(buser.getString("source") == null) && buser.getString("source").equals("reviews"))
+        {
+            Utils.manageBackButton(ResidenceActivity.this, HistoryReviewsActivity.class, user);
+        }
+        else if(!(buser.getString("source") == null) && buser.getString("source").equals("reservations")){
+            Utils.manageBackButton(ResidenceActivity.this, HistoryReservationsActivity.class, user);
+        }
+        else if(!(buser.getString("source") == null) && buser.getString("source").equals("hostprofile"))
+        {
+            Utils.manageBackButton(ResidenceActivity.this, ViewHostProfileActivity.class, user);
+        }
+        else
+        {
+            Utils.manageBackButton(ResidenceActivity.this, (user)?HomeActivity.class:HostActivity.class, user);
+        }
     }
 }
