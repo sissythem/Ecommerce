@@ -3,7 +3,6 @@ package util;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,9 +15,6 @@ import fromRESTful.Residences;
 import fromRESTful.Reviews;
 import fromRESTful.Searches;
 import fromRESTful.Users;
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Response;
 

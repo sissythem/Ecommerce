@@ -4,7 +4,6 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -68,8 +67,6 @@ public class HomeActivity extends AppCompatActivity
     boolean isShow = false;
     int scrollRange = -1;
 
-    boolean workerStarted = false;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,12 +85,11 @@ public class HomeActivity extends AppCompatActivity
         /** Get session data in order to check if user is logged in and if token is expired */
         Session sessionData = getSessionData(HomeActivity.this);
 
-        username    = sessionData.getUsername();
-        user        = true;
-        token       = sessionData.getToken();
-        c           = this;
-
-        /** Check if user is logged in **/
+        username=sessionData.getUsername();
+        user = true;
+        token = sessionData.getToken();
+        c=this;
+        //check if user is logged in
         if (!sessionData.getUserLoggedInState()) {
             Utils.logout(this);
             return;
@@ -112,28 +108,8 @@ public class HomeActivity extends AppCompatActivity
 
         getPermissions();
         resetActivity();
-
         /** Start Worker for Notifications **/
-//        String worker_prefs = "workerPrefs";
-//        SharedPreferences workerPrefs = getApplicationContext().getSharedPreferences(worker_prefs, Context.MODE_PRIVATE);
-//
-//        System.out.println(username);
-//
-//        Boolean workst = workerPrefs.getBoolean("worker_status", false);
-//        System.out.println(workst);
-//        if (username != null) {// && (!workerPrefs.contains("worker_status") || !workerPrefs.getBoolean("worker_status", false))
-//            SharedPreferences.Editor workerPrefsEdit = workerPrefs.edit();
-//            workerPrefsEdit.putBoolean("worker_status", true);
-//            workerPrefsEdit.commit();
-//
-//            Boolean workstu = workerPrefs.getBoolean("worker_status", false);
-//            System.out.println(workstu);
-//
-//        }
         new Worker().execute();
-
-        //getPermissions();
-        //resetActivity();
 
         /** FOOTER TOOLBAR **/
         Utils.manageFooter(HomeActivity.this, true);
@@ -306,6 +282,14 @@ public class HomeActivity extends AppCompatActivity
             for (String city : relevantCities) {
                 reviewedResidences = retrofitCalls.getResidencesByCity(token, city);
             }
+            /** In case that there are not relevant residences for user's searches, he will see the most popular recommendations **/
+            if(reviewedResidences.size() == 0){
+                ArrayList<Reviews> reviews;
+                reviews = retrofitCalls.getAllReviews(token);
+                for (int i=0;i<reviews.size();i++) {
+                    reviewedResidences.add(reviews.get(i).getResidenceId());
+                }
+            }
         }
 
         /** check for duplicates **/
@@ -327,14 +311,14 @@ public class HomeActivity extends AppCompatActivity
             residenceId = residences.get(i).getId();
             reviewsByResidence = retrofitCalls.getReviewsByResidenceId(token, Integer.toString(residenceId));
             residences.get(i).setReviewsCollection(reviewsByResidence);
-            /** Exclude residences*/
-            if(residences.get(i).getReviewsCollection().isEmpty())
+            /** Exclude residences with no reviews */
+            if(residences.get(i).getReviewsCollection() == null)
             {
                 residences.remove(i);
             }
         }
         /** In case that no residence has reviews we just present a list of the residences */
-        if(reviewedResidences.size() ==0) {
+        if(residences.size() ==0) {
             residences = retrofitCalls.getAllResidences(token);
         }
 
@@ -375,7 +359,7 @@ public class HomeActivity extends AppCompatActivity
         }
     }
 
-    /** ΑddPermission method, used below for Runtime Permissions. Checks if permission is already approved by the user **/
+    //addPermission method, used below for Runtime Permissions. Checks if permission is already approved by the user
     @RequiresApi(api = Build.VERSION_CODES.M)
     private boolean addPermission(List<String> permissionsList, String permission)
     {
@@ -400,7 +384,7 @@ public class HomeActivity extends AppCompatActivity
                 .show();
     }
 
-    /** Below method is used when multiple permission are asked, in this case was not necessary to use this method **/
+    //Below method is used when multiple permission are asked, in this case was not necessary to use this method
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults)
@@ -446,7 +430,7 @@ public class HomeActivity extends AppCompatActivity
 
     public void getPermissions()
     {
-        /** Runtime permissions **/
+        //Runtime permissions
         if (Build.VERSION.SDK_INT >= 23)
         {
             // Marshmallow+

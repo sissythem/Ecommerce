@@ -174,18 +174,13 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         protected String doInBackground(String... params) {
             File file = new File(params[0]);
 
-            String gg = file.getName();
-            System.out.println(gg);
-
-//            RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpg"), file);
-            RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+            RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpg"), file);
             /** MultipartBody.Part is used to send also the actual file name **/
             MultipartBody.Part body = MultipartBody.Part.createFormData("picture", file.getName(), requestFile);
             /** add another part within the multipart request **/
-            RequestBody description = RequestBody.create(okhttp3.MultipartBody.FORM, "Residence Image");
+            RequestBody description = RequestBody.create(okhttp3.MultipartBody.FORM, "User Image");
 
             RestAPI restAPI = RestClient.getClient(token).create(RestAPI.class);
-            System.out.println(residenceId);
             Call<String> call = restAPI.uploadResidenceImg(residenceId, description, body);
             try {
                 Response<String> resp = call.execute();

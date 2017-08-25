@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-    <include layout="@layout/back_toolbar" android:id="@+id/include"/>
+        <include layout="@layout/back_toolbar" android:id="@+id/include"/>
 
     <ImageButton
         android:id="@+id/addResidence"

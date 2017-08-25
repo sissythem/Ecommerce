@@ -12,7 +12,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -78,7 +77,6 @@ public class HostActivity extends AppCompatActivity {
 
         /** User can upload a new residence */
         baddResidence = (ImageButton) findViewById(R.id.addResidence);
-
         baddResidence.setOnClickListener(new View.OnClickListener()
         {
             @Override

@@ -85,11 +85,9 @@ public class ProfileActivity extends AppCompatActivity {
 
         Bundle buser = getIntent().getExtras();
         user = buser.getBoolean("type");
-
-        /** Get the user **/
         retrofitCalls = new RetrofitCalls();
+        //Get the user
         loggedinUser    = retrofitCalls.getUserbyUsername(token, username).get(0);
-
         setUpProfile();
         userImage = (ImageView) findViewById(R.id.userImage);
         Utils.loadProfileImage(ProfileActivity.this, userImage, loggedinUser.getPhoto());
@@ -101,18 +99,16 @@ public class ProfileActivity extends AppCompatActivity {
     public void setUpProfile()
     {
         /** Show info about the user **/
-        tvName          = (TextView)findViewById(R.id.name);
-        tvAbout         = (TextView)findViewById(R.id.about);
-        tvUsername      = (TextView)findViewById(R.id.username);
-        tvEmail         = (TextView)findViewById(R.id.email);
-        tvPhoneNumber   = (TextView)findViewById(R.id.phonenumber);
-        tvCity          = (TextView)findViewById(R.id.city);
-        tvCountry       = (TextView)findViewById(R.id.country);
-        tvBirthDate     = (TextView)findViewById(R.id.birthDate);
+        tvName = (TextView)findViewById(R.id.name);
+        tvAbout = (TextView)findViewById(R.id.about);
+        tvUsername = (TextView)findViewById(R.id.username);
+        tvEmail = (TextView)findViewById(R.id.email);
+        tvPhoneNumber = (TextView)findViewById(R.id.phonenumber);
+        tvCity = (TextView)findViewById(R.id.city);
+        tvCountry = (TextView)findViewById(R.id.country);
+        tvBirthDate = (TextView)findViewById(R.id.birthDate);
 
         tvName.setText(loggedinUser.getFirstName() + " " + loggedinUser.getLastName());
-        String abb = loggedinUser.getAbout();
-        System.out.println(abb);
         if(loggedinUser.getAbout() != null)
         {
             tvAbout.setText(loggedinUser.getAbout());
@@ -123,8 +119,10 @@ public class ProfileActivity extends AppCompatActivity {
         tvUsername.setText(loggedinUser.getUsername());
         tvEmail.setText(loggedinUser.getEmail());
         tvPhoneNumber.setText(loggedinUser.getPhoneNumber());
-        if(loggedinUser.getCity() != null) tvCity.setText(loggedinUser.getCity());
-        if(loggedinUser.getCountry() !=null) tvCountry.setText(loggedinUser.getCountry());
+        if(loggedinUser.getCity() != null)
+            tvCity.setText(loggedinUser.getCity());
+        if(loggedinUser.getCountry() !=null)
+            tvCountry.setText(loggedinUser.getCountry());
         tvBirthDate.setText(loggedinUser.getBirthDate());
     }
 

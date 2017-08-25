@@ -1,14 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
-=======
-=======
->>>>>>> origin/master
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="match_parent"
     android:layout_width="match_parent">
@@ -18,28 +8,13 @@
     android:layout_height="match_parent"
     android:layout_below="@+id/include"
     android:layout_marginBottom="@dimen/height_of_footer">
-<<<<<<< HEAD
->>>>>>> 5fedcaaadcb2aa4e50a1fabee84f8e4ccd279bd7
-=======
->>>>>>> origin/master
 
-    <include layout="@layout/back_toolbar" android:id="@+id/include"/>
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="0px"
-        android:layout_weight="1">
+        android:layout_height="match_parent"
+        android:id="@+id/imageContent"
+        android:orientation="horizontal">
 
-        <LinearLayout
-            android:id="@+id/profilelist"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-=======
-=======
->>>>>>> origin/master
         <RelativeLayout
             android:id="@+id/profile_layout"
             android:layout_width="match_parent"
@@ -48,59 +23,44 @@
             android:elevation="4dp"
             android:paddingBottom="24dp"
             android:layout_alignParentStart="true">
-<<<<<<< HEAD
->>>>>>> 5fedcaaadcb2aa4e50a1fabee84f8e4ccd279bd7
-=======
->>>>>>> origin/master
 
-            <RelativeLayout
-                android:id="@+id/profile_layout"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/airbnb"
-                android:elevation="4dp"
-                android:paddingBottom="24dp"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/include">
+                android:layout_marginTop="30dp"
+                android:text="Name"
+                android:textColor="#fff"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:layout_below="@+id/userImage"
+                android:layout_centerHorizontal="true" />
 
-                <ImageView
-                    android:id="@+id/userImage"
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true"
-                    android:background="@drawable/profile_circular_border_imageview"
-                    android:elevation="5dp"
-                    android:padding="20dp"
-                    android:scaleType="centerCrop"
-                    android:layout_weight="1"
-                    android:src="@drawable/ic_profile" />
+            <TextView
+                android:id="@+id/about"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/name"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="12dp"
+                android:text="About"
+                android:textColor="#fff"
+                android:textSize="14sp" />
 
-                <TextView
-                    android:id="@+id/name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
-                    android:text="Name"
-                    android:textColor="#fff"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
-                    android:layout_below="@+id/userImage"
-                    android:layout_centerHorizontal="true" />
+            <ImageView
+                android:id="@+id/userImage"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/profile_circular_border_imageview"
+                android:elevation="5dp"
+                android:padding="20dp"
+                android:scaleType="centerCrop"
+                android:layout_weight="1"
+                android:src="@drawable/ic_profile" />
+        </RelativeLayout>
 
-<<<<<<< HEAD
-                <TextView
-                    android:id="@+id/about"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/name"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="12dp"
-                    android:text="About"
-                    android:textColor="#fff"
-                    android:textSize="14sp" />
-            </RelativeLayout>
-=======
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -108,18 +68,17 @@
             android:layout_below="@+id/profile_layout"
             android:layout_marginTop="5dp"
             android:orientation="vertical">
->>>>>>> 5fedcaaadcb2aa4e50a1fabee84f8e4ccd279bd7
 
             <TextView
-            android:id="@+id/username"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:background="#fff"
-            android:clickable="true"
-            android:elevation="4dp"
-            android:padding="20dp"
-            android:text="Username" />
+                android:id="@+id/username"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="#fff"
+                android:clickable="true"
+                android:elevation="4dp"
+                android:padding="20dp"
+                android:text="Username" />
 
             <TextView
                 android:id="@+id/email"
@@ -179,25 +138,8 @@
                 android:padding="20dp"
                 android:hint="Country" />
         </LinearLayout>
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-    </ScrollView>
-
-    <LinearLayout android:layout_width="match_parent" android:layout_height="60dp" android:layout_below="@+id/profilelist">
-        <include layout="@layout/footer" />
-    </LinearLayout>
-</LinearLayout>
-=======
-=======
->>>>>>> origin/master
     </RelativeLayout>
 </ScrollView>
 <include layout="@layout/footer"
     android:id="@+id/includeFooter"/>
-<<<<<<< HEAD
 </RelativeLayout>
->>>>>>> 5fedcaaadcb2aa4e50a1fabee84f8e4ccd279bd7
-=======
-</RelativeLayout>
->>>>>>> origin/master

@@ -29,13 +29,14 @@ public class LoginActivity extends AppCompatActivity {
     {
         super.onCreate(savedInstanceState);
 
-        /** Set View to activity_login.xml **/
+        // Set View to activity_login.xml
         setContentView(R.layout.activity_login);
 
-        c = this;
+        c=this;
+
         sharedPrefs = getApplicationContext().getSharedPreferences(USER_LOGIN_PREFERENCES, Context.MODE_PRIVATE);
 
-        /** Edit fields to be filled in by user in order to login to the app **/
+        //Edit fields to be filled in by user in order to login to the app
         final EditText etUsername   = (EditText) findViewById(R.id.etUsername);
         final EditText etPassword   = (EditText) findViewById(R.id.etPassword);
         final Button blogin         = (Button) findViewById(R.id.login);
@@ -44,7 +45,7 @@ public class LoginActivity extends AppCompatActivity {
         etUsername.setSelected(false);
         etPassword.setSelected(false);
 
-        /** if user does not have an account, presses on the Register Here and the Register Screen appears **/
+        //if user does not have an account, presses on the Register Here and the Register Screen appears
         registerlink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -60,12 +61,12 @@ public class LoginActivity extends AppCompatActivity {
                 final String password = etPassword.getText().toString();
 
                 if(Username.length() == 0 || password.length() == 0) {
-                    /** If something is not filled in, user must fill again the form **/
+                    //if something is not filled in, user must fill again the form
                     Toast.makeText(c, "Please fill in all fields!", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                /** Check if the user is correct **/
+                //check if the user is correct
                 RetrofitCalls retrofitCalls = new RetrofitCalls();
                 token = retrofitCalls.getLoginUser(Username, password);
                 if(token.equals("not")) {

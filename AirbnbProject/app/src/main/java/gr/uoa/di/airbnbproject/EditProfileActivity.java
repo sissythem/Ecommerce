@@ -62,7 +62,7 @@ public class EditProfileActivity extends AppCompatActivity {
     private int mYear, mMonth, mDay;
 
     Session sessionData;
-    String imageName;
+    String imagePath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -185,9 +185,6 @@ public class EditProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) { saveUserProfile(); }
         });
-
-        /** FOOTER TOOLBAR **/
-        Utils.manageFooter(EditProfileActivity.this, user);
     }
 
     @Override
@@ -195,9 +192,8 @@ public class EditProfileActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         //Detects request codes
-        if (requestCode == GET_FROM_GALLERY && resultCode == RESULT_OK) {
+        if(requestCode == GET_FROM_GALLERY && resultCode == RESULT_OK) {
             Uri selectedImage = data.getData();
-            System.out.println(selectedImage);
             mImageView = (ImageView) findViewById(R.id.userImage);
             mImageView.setImageBitmap(BitmapFactory.decodeFile(selectedImage.toString()));
 
@@ -221,7 +217,9 @@ public class EditProfileActivity extends AppCompatActivity {
     private class SendImageTask extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
+            System.out.println(params[0]);
             File file = new File(params[0]);
+            System.out.println(file);
 
             RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpg"), file);
 //            RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
@@ -234,13 +232,16 @@ public class EditProfileActivity extends AppCompatActivity {
             Call<String> call = restAPI.uploadProfileImg(userId, description, body);
             try {
                 Response<String> resp = call.execute();
-                //token = resp.body();
-                imageName = resp.body();
+                System.out.println(resp.body());
+                token = resp.body();
             } catch(IOException e){
                 Log.i("",e.getMessage());
             }
             return token;
         }
+
+        @Override
+        protected void onPostExecute(String nothing) {}
     }
 
     public boolean checkEmail (String Email) {
@@ -264,7 +265,7 @@ public class EditProfileActivity extends AppCompatActivity {
         final String country        = etCountry.getText().toString();
         final String city           = etCity.getText().toString();
         final String birthdate      = tvBirthDate.getText().toString();
-        final String photo          = imageName;
+        final String photo          = imagePath;
         final String about          = etAbout.getText().toString();
 
         boolean emailIsNew;

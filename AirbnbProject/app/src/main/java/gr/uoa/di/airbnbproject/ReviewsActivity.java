@@ -34,6 +34,8 @@ public class ReviewsActivity extends AppCompatActivity
     String token;
     Toolbar toolbar;
     Context c;
+    ListAdapterReviews adapter;
+    ListView reviewsList;
 
     Users loggedinUser, host;
     Residences selectedResidence;
@@ -44,10 +46,6 @@ public class ReviewsActivity extends AppCompatActivity
     Button btnreview;
     RatingBar ratingBar;
     TextView txtrating;
-
-    ListAdapterReviews adapter;
-    ListView reviewsList;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -6,6 +6,7 @@ public class Session {
     private String username;
     private Boolean userLoggedInState;
 
+
     public Session() {}
 
     public Session(String token, String username, Boolean userLoggedInState) {
