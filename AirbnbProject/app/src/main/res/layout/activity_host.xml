@@ -11,12 +11,11 @@
         android:id="@+id/addResidence"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/linearLayout"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_toLeftOf="@+id/include"
+        android:background="@color/colorPrimary"
         android:text="@string/residence_add_new"
-        app:srcCompat="@mipmap/ic_add" />
+        app:srcCompat="@mipmap/ic_add"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -26,6 +25,8 @@
         android:id="@+id/linearLayout">
         <include layout="@layout/recycler_main" android:layout_width="match_parent" android:layout_height="match_parent" />
     </LinearLayout>
-    <include layout="@layout/footer"/>
+    <include layout="@layout/footer"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>
