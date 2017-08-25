@@ -68,10 +68,12 @@ public class EditProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        /** Get session data in order to check if user is logged in and if token is expired */
         sessionData = Utils.getSessionData(EditProfileActivity.this);
         token = sessionData.getToken();
         username = sessionData.getUsername();
         c = this;
+        //check if user is logged in
         if (!sessionData.getUserLoggedInState()) {
             Utils.logout(this);
             finish();
@@ -82,7 +84,7 @@ public class EditProfileActivity extends AppCompatActivity {
             finish();
             return;
         }
-
+        //check if token is expired
         if(Utils.isTokenExpired(sessionData.getToken())){
             Toast.makeText(c, "Session is expired", Toast.LENGTH_SHORT).show();
             Utils.logout(this);
@@ -94,6 +96,7 @@ public class EditProfileActivity extends AppCompatActivity {
         Bundle buser = getIntent().getExtras();
         user = buser.getBoolean("type");
 
+        //set up the upper toolbar
         toolbar = (Toolbar) findViewById(R.id.backToolbar);
         toolbar.setTitle("Edit Your Profile");
         toolbar.setSubtitle("Welcome " + username);
@@ -107,6 +110,7 @@ public class EditProfileActivity extends AppCompatActivity {
         }
 
         toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_back, getTheme()));
+        //handle the back action
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -115,6 +119,7 @@ public class EditProfileActivity extends AppCompatActivity {
         });
 
         retrofitCalls = new RetrofitCalls();
+        /** Get the user and present all his personal info*/
         ArrayList<Users> getUsersByUsername = retrofitCalls.getUserbyUsername(token, username);
         loggedinUser  = getUsersByUsername.get(0);
 
@@ -250,6 +255,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
     public void saveUserProfile ()
     {
+        /** Get user input and send it back to the database */
         final String name           = etName.getText().toString();
         final String lastName       = etLastName.getText().toString();
         final String phoneNumber    = etPhoneNumber.getText().toString();
@@ -264,24 +270,28 @@ public class EditProfileActivity extends AppCompatActivity {
 
         boolean emailIsNew;
 
+        //check if all fields are completed
         if(Username.length() == 0 || name.length() == 0 || lastName.length() == 0 || phoneNumber.length() == 0 || Email.length() == 0 || password.length() == 0) {
             //if something is not filled in, user must fill again the form
             Toast.makeText(c, "Please fill in obligatory fields!", Toast.LENGTH_SHORT).show();
             return;
         }
-
+        //user is not allowed to change his username
         if(!username.equals(Username)){
             Toast.makeText(c, "You cannot change your username", Toast.LENGTH_SHORT).show();
             return;
         }
+        //Variable emailIsNew is used in order to check if user has changed his email and the new email is the same with another user's email
+        //emailIsNew is true if the email is unique or if email has not been changed
         emailIsNew = checkEmail(Email);
         if(loggedinUser.getEmail().equals(Email)){
             emailIsNew=true;
         }
 
-        if(emailIsNew) {
+        if(emailIsNew)
+        {
+            //send user input to the database in order to update the specific user
             token = PutResult(loggedinUser.getId(), name, lastName, Username, password, Email, phoneNumber, country, city, photo, about, birthdate);
-            //if (!token.isEmpty() && token!=null && token!="not") {
             if (!token.isEmpty() && token!=null && token!="not") {
                 sessionData.setToken(token);
                 sessionData.setUsername(username);
@@ -290,7 +300,7 @@ public class EditProfileActivity extends AppCompatActivity {
                 //if data are stored successfully in the data base, the user is now logged in and the home activity starts
                 sessionData = updateSessionData(EditProfileActivity.this, sessionData);
 
-                //user can continue to the Home Screen
+                //In case of success user is redirected to the ProfileActivity
                 Intent profileintent = new Intent(EditProfileActivity.this, ProfileActivity.class);
                 Bundle buser = new Bundle();
                 buser.putBoolean("type", user);

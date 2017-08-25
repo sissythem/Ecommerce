@@ -48,7 +48,8 @@ import static util.Utils.FORMAT_DATE_DMY;
 import static util.Utils.convertDateToMillisSec;
 import static util.Utils.convertTimestampToDateStr;
 
-public class EditResidenceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class EditResidenceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener
+{
     public static final int GET_FROM_GALLERY = 3;
 
     String resType, token;
@@ -76,10 +77,11 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        /** Get session data in order to check if user is logged in and if token is expired */
         Session sessionData = Utils.getSessionData(EditResidenceActivity.this);
         token = sessionData.getToken();
         c= this;
+        //check if user is logged in
         if (!sessionData.getUserLoggedInState()) {
             Utils.logout(this);
             finish();
@@ -90,7 +92,7 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
             finish();
             return;
         }
-
+        //check if token is expired
         if(Utils.isTokenExpired(sessionData.getToken())){
             Toast.makeText(c, "Session is expired", Toast.LENGTH_SHORT).show();
             Utils.logout(this);
@@ -103,7 +105,7 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         user = buser.getBoolean("type");
         user = false;
         residenceId = buser.getInt("residenceId");
-
+        //set up the upper toolbar
         toolbar = (Toolbar) findViewById(R.id.backToolbar);
         toolbar.setTitle("Edit Residence");
         setSupportActionBar(toolbar);
@@ -116,6 +118,7 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         }
 
         toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_back, getTheme()));
+        //handle the back action
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -124,6 +127,7 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         });
 
         retrofitCalls = new RetrofitCalls();
+        //get the residence selected by user for update
         selectedResidence = retrofitCalls.getResidenceById(token, Integer.toString(residenceId));
 
         userInputLayout();
@@ -151,7 +155,7 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
             photo = selectedImage.toString();
             mImageView.setImageBitmap(BitmapFactory.decodeFile(selectedImage.toString()));
 
-            Bitmap bitmap = null;
+            Bitmap bitmap;
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
                 mImageView.setImageBitmap(bitmap);
@@ -191,7 +195,9 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         protected void onPostExecute(String nothing) {}
     }
 
-    public void userInputLayout () {
+    public void userInputLayout ()
+    {
+        /** Present all the details of the selected residence */
         etTitle              = (EditText)findViewById(R.id.etTitle);
         etAbout              = (EditText)findViewById(R.id.etAbout);
         etAddress            = (EditText)findViewById(R.id.etAddress);
@@ -301,7 +307,9 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
     /** Another interface callback **/
     public void onNothingSelected(AdapterView<?> parent) {}
 
-    public void saveResidence () {
+    public void saveResidence ()
+    {
+        /** Get user input and send the updates back to the database with a PUT request */
         bcontinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -367,6 +375,7 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
                     RetrofitCalls retrofitCalls = new RetrofitCalls();
                     token = retrofitCalls.editResidence(token, residenceId, ResidenceParameters);
 
+                    //if the PUT request is successful user can go back to HostActivity
                     if (!token.isEmpty() && token!=null && token!="not") {
                         Intent hostIntent = new Intent(EditResidenceActivity.this, HostActivity.class);
                         Bundle bhost = new Bundle();
@@ -388,13 +397,4 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
             }
         });
     }
-
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if(requestCode == RESULT_LOAD_IMAGE && requestCode == RESULT_OK && data != null) {
-//            Uri selectedImage = data.getData();
-//            imageToUpload.setImageURI(selectedImage);
-//        }
-//    }
 }

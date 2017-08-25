@@ -25,17 +25,18 @@ public class LoginActivity extends AppCompatActivity {
     Session sessionData;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
-        // Set View to activity_login.xml
 
+        // Set View to activity_login.xml
         setContentView(R.layout.activity_login);
 
         c=this;
 
         sharedPrefs = getApplicationContext().getSharedPreferences(USER_LOGIN_PREFERENCES, Context.MODE_PRIVATE);
 
-        //get user input
+        //Edit fields to be filled in by user in order to login to the app
         final EditText etUsername   = (EditText) findViewById(R.id.etUsername);
         final EditText etPassword   = (EditText) findViewById(R.id.etPassword);
         final Button blogin         = (Button) findViewById(R.id.login);
@@ -86,9 +87,10 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    /** If user is not logged in cannot go back to the home activity **/
+    //example: if user presses the logout back, he is no longer logged in and he should not be able to return to the home activity
     @Override
     public void onBackPressed() {
-        //isUserLoggedIn = sharedPrefs.getBoolean("userLoggedInState", false);
         if (sessionData.getUserLoggedInState()) {
             Intent intent = new Intent(this, HomeActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

@@ -42,8 +42,8 @@ public class GreetingActivity extends AppCompatActivity
         });
     }
 
-    //check if user is logged in.
-    //Does not allow user to go to home activity if he is not logged in
+    /** If user is not logged in cannot go back to the home activity **/
+    //example: if user presses the logout back, he is no longer logged in and he should not be able to return to the home activity
     @Override
     public void onBackPressed() {
         //isUserLoggedIn = sharedPrefs.getBoolean("userLoggedInState", false);

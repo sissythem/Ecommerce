@@ -82,14 +82,14 @@ public class HomeActivity extends AppCompatActivity
     protected void onResume()
     {
         super.onResume();
-
+        /** Get session data in order to check if user is logged in and if token is expired */
         Session sessionData = getSessionData(HomeActivity.this);
 
         username=sessionData.getUsername();
         user = true;
         token = sessionData.getToken();
         c=this;
-
+        //check if user is logged in
         if (!sessionData.getUserLoggedInState()) {
             Utils.logout(this);
             return;
@@ -98,7 +98,7 @@ public class HomeActivity extends AppCompatActivity
             finish();
             return;
         }
-        Log.e("a tag","Checking token for validity : " + token);
+        //check if token is expired
         if(Utils.isTokenExpired(token)){
             Toast.makeText(c, "Session is expired", Toast.LENGTH_SHORT).show();
             Utils.logout(this);
@@ -106,8 +106,8 @@ public class HomeActivity extends AppCompatActivity
             return;
         }
 
-        //getPermissions();
-        //resetActivity();
+        getPermissions();
+        resetActivity();
         /** Start Worker for Notifications **/
         new Worker().execute();
 
@@ -119,6 +119,7 @@ public class HomeActivity extends AppCompatActivity
 
         /** RECOMMENDATIONS **/
         ArrayList<Residences> Recommendations = popularRecommendations();
+        /** RecyclerView for displaying the recommendations */
         try {
             if (Recommendations.size() > 0) {
                 residencesRecyclerView.setAdapter(new RecyclerAdapterResidences(this, user, Recommendations));
@@ -244,7 +245,9 @@ public class HomeActivity extends AppCompatActivity
     {
         ArrayList<Users> Users;
         RetrofitCalls retrofitCalls = new RetrofitCalls();
+        //Get the user as Users object
         Users = retrofitCalls.getUserbyUsername(token, username);
+        //If user is not found or if something went wrong
         if(Users.isEmpty())
         {
             Toast.makeText(this,"Failed to get users from database.", Toast.LENGTH_LONG).show();
@@ -258,9 +261,11 @@ public class HomeActivity extends AppCompatActivity
         int residenceId;
 
         ArrayList<Searches> searchedCities;
+        /** Get all searches for cities that user has performed */
         searchedCities = retrofitCalls.getSearchedCities(token, loggedInUser.getId().toString());
         Set<String> relevantCities = new HashSet<>();
         for(int i = 0;i<searchedCities.size();i++){
+            //add the cities to a HashSet in order to include each city ones
             relevantCities.add(searchedCities.get(i).getCity());
         }
 
@@ -284,27 +289,29 @@ public class HomeActivity extends AppCompatActivity
         hs.addAll(reviewedResidences);
         reviewedResidences.clear();
         reviewedResidences.addAll(hs);
-        if(reviewedResidences.size() ==0) {
-            reviewedResidences = retrofitCalls.getAllResidences(token);
-        }
 
         /** get all relevant reviews **/
         for (int i=0; i < reviewedResidences.size(); i++) {
+            /** exclude all residences that are uploaded by the user who is logged in **/
             if (!reviewedResidences.get(i).getHostId().getId().equals(loggedInUser.getId())) {
                 residences.add(reviewedResidences.get(i));
             }
         }
-
+        /** Set up the reviews collection in order to sort the residences */
+        /** In class Residences: getAverageRating computes the rating based on the reviews collection */
         for (int i=0; i < residences.size(); i++) {
             residenceId = residences.get(i).getId();
             reviewsByResidence = retrofitCalls.getReviewsByResidenceId(token, Integer.toString(residenceId));
             residences.get(i).setReviewsCollection(reviewsByResidence);
-        }
-
-        for(int i=0;i<residences.size(); i++){
-            if(residences.get(i).getReviewsCollection().isEmpty()){
+            /** Exclude residences*/
+            if(residences.get(i).getReviewsCollection().isEmpty())
+            {
                 residences.remove(i);
             }
+        }
+        /** In case that no residence has reviews we just present a list of the residences */
+        if(reviewedResidences.size() ==0) {
+            residences = retrofitCalls.getAllResidences(token);
         }
 
         /** Sort the results **/
@@ -320,6 +327,7 @@ public class HomeActivity extends AppCompatActivity
         super.onRestart();
     }
 
+    /** When the app is minimized and then reused, user can continue from where he left the app */
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             moveTaskToBack(true);

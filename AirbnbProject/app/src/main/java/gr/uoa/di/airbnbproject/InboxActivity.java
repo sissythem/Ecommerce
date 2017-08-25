@@ -31,7 +31,8 @@ import static util.Utils.VIEW_RESIDENCE_ACTION;
 import static util.Utils.getSessionData;
 import static util.Utils.goToActivity;
 
-public class InboxActivity extends AppCompatActivity {
+public class InboxActivity extends AppCompatActivity
+{
     String token;
     Toolbar toolbar;
     ArrayList<Conversations> Conversations;
@@ -48,10 +49,11 @@ public class InboxActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inbox);
-
+        /** Get session data in order to check if user is logged in and if token is expired */
         Session sessionData = getSessionData(InboxActivity.this);
         token = sessionData.getToken();
         c=this;
+        //check if user is logged in
         if (!sessionData.getUserLoggedInState()) {
             Utils.logout(this);
             finish();
@@ -62,7 +64,7 @@ public class InboxActivity extends AppCompatActivity {
             finish();
             return;
         }
-
+        //check if token is expired
         if(Utils.isTokenExpired(sessionData.getToken())){
             Toast.makeText(c, "Session is expired", Toast.LENGTH_SHORT).show();
             Utils.logout(this);
@@ -72,7 +74,7 @@ public class InboxActivity extends AppCompatActivity {
 
         Bundle buser = getIntent().getExtras();
         user = buser.getBoolean("type");
-
+        //set up the upper toolbar
         toolbar = (Toolbar) findViewById(R.id.backToolbar);
         toolbar.setTitle("Inbox");
         setSupportActionBar(toolbar);
@@ -85,6 +87,7 @@ public class InboxActivity extends AppCompatActivity {
         }
 
         toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_back, getTheme()));
+        //handle the back action
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,6 +95,7 @@ public class InboxActivity extends AppCompatActivity {
             }
         });
 
+        /** RecyclerView for presenting all conversations **/
         inboxRecyclerView = (RecyclerView) findViewById(R.id.recycler);
         inboxRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
         inboxRecyclerView.setHasFixedSize(true);
@@ -107,7 +111,8 @@ public class InboxActivity extends AppCompatActivity {
         Utils.manageFooter(InboxActivity.this, user);
     }
 
-    protected void loadConversations() {
+    protected void loadConversations()
+    {
         System.out.println(user);
         System.out.println(currentUserId);
         try {
@@ -119,9 +124,11 @@ public class InboxActivity extends AppCompatActivity {
         }
     }
 
+    /** Menu options for each item **/
     @Override
     public boolean onContextItemSelected(final MenuItem item) {
         super.onContextItemSelected(item);
+        /** User can delete a conversation */
         if (item.getTitle().equals(DELETE_ACTION)) {
             new AlertDialog.Builder(InboxActivity.this)
                 .setTitle("Delete Conversation").setMessage("Do you really want to delete this conversation?").setIcon(R.drawable.ic_delete)
@@ -147,11 +154,13 @@ public class InboxActivity extends AppCompatActivity {
                         }
                     }
                 }).setNegativeButton(android.R.string.no, null).show();
+            /** User can view the related residence **/
         } else if (item.getTitle().equals(VIEW_RESIDENCE_ACTION)) {
             final Bundle btype = new Bundle();
             btype.putBoolean("type", user);
             btype.putInt("residenceId", Conversations.get(item.getItemId()).getResidenceId().getId());
             goToActivity(this, ResidenceActivity.class, btype);
+            /** User can open this conversation to read all messages **/
         } else if (item.getTitle().equals(OPEN_MESSAGES_ACTION)) {
             openMessages(item.getItemId());
         } else {

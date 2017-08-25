@@ -42,10 +42,11 @@ public class HistoryReviewsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        /** Get session data in order to check if user is logged in and if token is expired */
         Session sessionData = Utils.getSessionData(HistoryReviewsActivity.this);
         c = this;
         token = sessionData.getToken();
+        //check if user is logged in
         if (!sessionData.getUserLoggedInState()) {
             Utils.logout(this);
             finish();
@@ -56,7 +57,7 @@ public class HistoryReviewsActivity extends AppCompatActivity {
             finish();
             return;
         }
-
+        //check if token is expired
         if(Utils.isTokenExpired(sessionData.getToken())){
             Toast.makeText(c, "Session is expired", Toast.LENGTH_SHORT).show();
             Utils.logout(this);
@@ -68,7 +69,7 @@ public class HistoryReviewsActivity extends AppCompatActivity {
 
         Bundle buser = getIntent().getExtras();
         user = buser.getBoolean("type");
-
+        //set up the upper toolbar
         toolbar = (Toolbar) findViewById(R.id.backToolbar);
         toolbar.setTitle("My Reviews");
         setSupportActionBar(toolbar);
@@ -81,6 +82,7 @@ public class HistoryReviewsActivity extends AppCompatActivity {
         }
 
         toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_back, getTheme()));
+        //handle back action
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,10 +91,10 @@ public class HistoryReviewsActivity extends AppCompatActivity {
         });
 
         RetrofitCalls retrofitCalls = new RetrofitCalls();
-
+        //Get the user
         ArrayList<Users> getUserByUsername = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
         loggedinUser = getUserByUsername.get(0);
-
+        /** Get all reviews uploaded by the user */
         userReviews = retrofitCalls.getReviewsByTenantId(token, loggedinUser.getId().toString());
 
         String[] representativePhoto    = new String [userReviews.size()];
@@ -106,7 +108,7 @@ public class HistoryReviewsActivity extends AppCompatActivity {
             comment[i]              = userReviews.get(i).getComment();
             rating[i]               = userReviews.get(i).getRating();
         }
-
+        /** List adapter for displaying the reviews. For each review we show user's photo, his name, the comment and the rating */
         adapter = new ListAdapterReviews(this, representativePhoto, name, comment, rating);
         reviewsList = (ListView)findViewById(R.id.reviewslist);
         reviewsList.setAdapter(adapter);
@@ -115,7 +117,7 @@ public class HistoryReviewsActivity extends AppCompatActivity {
         /** FOOTER TOOLBAR **/
         Utils.manageFooter(HistoryReviewsActivity.this, user);
 }
-
+    /** Menu which appears for each selected list item */
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
@@ -131,6 +133,7 @@ public class HistoryReviewsActivity extends AppCompatActivity {
     @Override
     public boolean onContextItemSelected(final MenuItem item) {
         super.onContextItemSelected(item);
+        /** User can delete the selected review */
         if (item.getTitle().equals(DELETE_ACTION)) {
 
             new AlertDialog.Builder(HistoryReviewsActivity.this)
@@ -152,6 +155,8 @@ public class HistoryReviewsActivity extends AppCompatActivity {
                     }
                 })
                 .setNegativeButton(android.R.string.no, null).show();
+
+            /** User can view respective residence */
         } else if (item.getTitle().equals(VIEW_RESIDENCE_ACTION)) {
             Intent showResidenceIntent = new Intent(HistoryReviewsActivity.this, ResidenceActivity.class);
             Bundle btype = new Bundle();
@@ -166,6 +171,7 @@ public class HistoryReviewsActivity extends AppCompatActivity {
                 System.out.println(ex.getMessage());
                 ex.printStackTrace();
             }
+            /** User can contact the host of this residence */
         } else if (item.getTitle().equals(CONTACT_HOST_ACTION)) {
             Intent messageIntent = new Intent(HistoryReviewsActivity.this, MessageActivity.class);
 
