@@ -1,57 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
-=======
-=======
->>>>>>> origin/master
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="match_parent"
     android:layout_width="match_parent">
     <include layout="@layout/back_toolbar" android:id="@+id/include"/>
-<ScrollView
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_below="@+id/include"
-    android:layout_marginBottom="@dimen/height_of_footer">
-<<<<<<< HEAD
->>>>>>> 5fedcaaadcb2aa4e50a1fabee84f8e4ccd279bd7
-=======
->>>>>>> origin/master
-
-    <include layout="@layout/back_toolbar" android:id="@+id/include"/>
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="0px"
-        android:layout_weight="1">
+        android:layout_height="match_parent"
+        android:layout_below="@+id/include"
+        android:layout_marginBottom="@dimen/height_of_footer">
 
-        <LinearLayout
-            android:id="@+id/profilelist"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-=======
-=======
->>>>>>> origin/master
         <RelativeLayout
-            android:id="@+id/profile_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/airbnb"
-            android:elevation="4dp"
-            android:paddingBottom="24dp"
-            android:layout_alignParentStart="true">
-<<<<<<< HEAD
->>>>>>> 5fedcaaadcb2aa4e50a1fabee84f8e4ccd279bd7
-=======
->>>>>>> origin/master
+            android:layout_height="match_parent"
+            android:id="@+id/imageContent"
+            android:orientation="horizontal">
 
             <RelativeLayout
                 android:id="@+id/profile_layout"
@@ -60,21 +22,7 @@
                 android:background="@color/airbnb"
                 android:elevation="4dp"
                 android:paddingBottom="24dp"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/include">
-
-                <ImageView
-                    android:id="@+id/userImage"
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true"
-                    android:background="@drawable/profile_circular_border_imageview"
-                    android:elevation="5dp"
-                    android:padding="20dp"
-                    android:scaleType="centerCrop"
-                    android:layout_weight="1"
-                    android:src="@drawable/ic_profile" />
+                android:layout_alignParentStart="true">
 
                 <TextView
                     android:id="@+id/name"
@@ -88,7 +36,6 @@
                     android:layout_below="@+id/userImage"
                     android:layout_centerHorizontal="true" />
 
-<<<<<<< HEAD
                 <TextView
                     android:id="@+id/about"
                     android:layout_width="wrap_content"
@@ -99,105 +46,100 @@
                     android:text="About"
                     android:textColor="#fff"
                     android:textSize="14sp" />
+
+                <ImageView
+                    android:id="@+id/userImage"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:background="@drawable/profile_circular_border_imageview"
+                    android:elevation="5dp"
+                    android:padding="20dp"
+                    android:scaleType="centerCrop"
+                    android:layout_weight="1"
+                    android:src="@drawable/ic_profile" />
             </RelativeLayout>
-=======
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/linearLayout"
-            android:layout_below="@+id/profile_layout"
-            android:layout_marginTop="5dp"
-            android:orientation="vertical">
->>>>>>> 5fedcaaadcb2aa4e50a1fabee84f8e4ccd279bd7
 
-            <TextView
-            android:id="@+id/username"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:background="#fff"
-            android:clickable="true"
-            android:elevation="4dp"
-            android:padding="20dp"
-            android:text="Username" />
-
-            <TextView
-                android:id="@+id/email"
+            <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:layout_marginBottom="3dp"
-                android:layout_marginTop="3dp"
-                android:background="#fff"
-                android:clickable="true"
-                android:elevation="4dp"
-                android:padding="20dp"
-                android:text="Email" />
+                android:id="@+id/linearLayout"
+                android:layout_below="@+id/profile_layout"
+                android:layout_marginTop="5dp"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/phonenumber"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:background="#fff"
-                android:clickable="true"
-                android:elevation="4dp"
-                android:padding="20dp"
-                android:text="Mobile Number" />
+                <TextView
+                    android:id="@+id/username"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:background="#fff"
+                    android:clickable="true"
+                    android:elevation="4dp"
+                    android:padding="20dp"
+                    android:text="Username" />
 
-            <TextView
-                android:id="@+id/birthDate"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:layout_marginBottom="3dp"
-                android:layout_marginTop="3dp"
-                android:background="#fff"
-                android:clickable="true"
-                android:elevation="4dp"
-                android:padding="20dp"
-                android:text="Birth Date" />
+                <TextView
+                    android:id="@+id/email"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_marginBottom="3dp"
+                    android:layout_marginTop="3dp"
+                    android:background="#fff"
+                    android:clickable="true"
+                    android:elevation="4dp"
+                    android:padding="20dp"
+                    android:text="Email" />
 
-            <TextView
-                android:id="@+id/city"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:background="#fff"
-                android:clickable="true"
-                android:elevation="4dp"
-                android:padding="20dp"
-                android:hint="City" />
-            <TextView
-                android:id="@+id/country"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:background="#fff"
-                android:clickable="true"
-                android:elevation="4dp"
-                android:padding="20dp"
-                android:hint="Country" />
-        </LinearLayout>
-<<<<<<< HEAD
-<<<<<<< HEAD
+                <TextView
+                    android:id="@+id/phonenumber"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:background="#fff"
+                    android:clickable="true"
+                    android:elevation="4dp"
+                    android:padding="20dp"
+                    android:text="Mobile Number" />
 
+                <TextView
+                    android:id="@+id/birthDate"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_marginBottom="3dp"
+                    android:layout_marginTop="3dp"
+                    android:background="#fff"
+                    android:clickable="true"
+                    android:elevation="4dp"
+                    android:padding="20dp"
+                    android:text="Birth Date" />
+
+                <TextView
+                    android:id="@+id/city"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:background="#fff"
+                    android:clickable="true"
+                    android:elevation="4dp"
+                    android:padding="20dp"
+                    android:hint="City" />
+                <TextView
+                    android:id="@+id/country"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:background="#fff"
+                    android:clickable="true"
+                    android:elevation="4dp"
+                    android:padding="20dp"
+                    android:hint="Country" />
+            </LinearLayout>
+        </RelativeLayout>
     </ScrollView>
-
-    <LinearLayout android:layout_width="match_parent" android:layout_height="60dp" android:layout_below="@+id/profilelist">
-        <include layout="@layout/footer" />
-    </LinearLayout>
-</LinearLayout>
-=======
-=======
->>>>>>> origin/master
-    </RelativeLayout>
-</ScrollView>
-<include layout="@layout/footer"
-    android:id="@+id/includeFooter"/>
-<<<<<<< HEAD
+    <include layout="@layout/footer"
+        android:id="@+id/includeFooter"/>
 </RelativeLayout>
->>>>>>> 5fedcaaadcb2aa4e50a1fabee84f8e4ccd279bd7
-=======
-</RelativeLayout>
->>>>>>> origin/master
