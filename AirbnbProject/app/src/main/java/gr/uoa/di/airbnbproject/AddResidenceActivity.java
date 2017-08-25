@@ -73,7 +73,7 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
             finish();
             return;
         }
-
+        //check if token is expired
         if(Utils.isTokenExpired(sessionData.getToken())){
             Toast.makeText(c, "Session is expired", Toast.LENGTH_SHORT).show();
             Utils.logout(this);

@@ -38,11 +38,12 @@ public class ViewHostProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        /** Get session data in order to check if user is logged in and if token is expired */
         Session sessionData = getSessionData(ViewHostProfileActivity.this);
         token = sessionData.getToken();
         username = sessionData.getUsername();
         c = this;
+        //check if user is logged in
         if (!sessionData.getUserLoggedInState()) {
             Utils.logout(this);
             finish();
@@ -53,7 +54,7 @@ public class ViewHostProfileActivity extends AppCompatActivity {
             finish();
             return;
         }
-
+        //check if token is expired
         if(Utils.isTokenExpired(sessionData.getToken())){
             Toast.makeText(c, "Session is expired", Toast.LENGTH_SHORT).show();
             Utils.logout(this);
@@ -79,7 +80,7 @@ public class ViewHostProfileActivity extends AppCompatActivity {
         host = retrofitCalls.getUserbyId(token, Integer.toString(hostId));
 
         selectedResidence = retrofitCalls.getResidenceById(token, Integer.toString(residenceId));
-
+        //set up the toolbar
         toolbar = (Toolbar) findViewById(R.id.backToolbar);
         toolbar.setTitle("Profile of Host");
         toolbar.setSubtitle(host.getFirstName() + " " + host.getLastName());
@@ -91,7 +92,7 @@ public class ViewHostProfileActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
-
+        //handle the back button of the toolbar
         toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_back, getTheme()));
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,6 +107,7 @@ public class ViewHostProfileActivity extends AppCompatActivity {
             }
         });
 
+        /** Contact the host **/
         ibContact = (ImageButton) findViewById(R.id.ibContact);
         ibContact.setBackgroundColor(getResources().getColor(R.color.colorPrimary, getTheme()));
         ibContact.setOnClickListener(new View.OnClickListener()
@@ -138,6 +140,7 @@ public class ViewHostProfileActivity extends AppCompatActivity {
 
     public void setUpProfile()
     {
+        /** Display info about the host **/
         tvName = (TextView)findViewById(R.id.name);
         tvAbout = (TextView)findViewById(R.id.about);
         tvUsername = (TextView)findViewById(R.id.about);
@@ -165,6 +168,7 @@ public class ViewHostProfileActivity extends AppCompatActivity {
         tvBirthDate.setText(loggedinUser.getBirthDate());
     }
 
+    //handle the back action from the phone
     @Override
     public void onBackPressed(){
         Intent residenceIntent = new Intent(ViewHostProfileActivity.this, ResidenceActivity.class);

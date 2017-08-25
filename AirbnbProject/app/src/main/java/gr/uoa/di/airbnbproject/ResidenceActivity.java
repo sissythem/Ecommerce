@@ -509,7 +509,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         Bundle buser = new Bundle();
         buser.putBoolean("type", user);
         switch (item.getItemId()) {
-            // action with ID action_refresh was selected
+            /** User can view the reviews for this residence **/
             case reviews:
                 if (item.getItemId() == reviews) {
                     Intent historyReviewsIntent = new Intent(ResidenceActivity.this, ReviewsActivity.class);
@@ -519,11 +519,12 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
                     finish();
                     break;
                 }
+                /** User can see the reservations for this residence **/
             case reservations:
                 buser.putInt("residenceId", residenceId);
                 Utils.goToActivity(ResidenceActivity.this, HistoryReservationsActivity.class, buser);
                 break;
-            // action with ID action_settings was selected
+            /** If user navigates as tenant can view the host's profile and contact him, otherwise he can see his own profile **/
             case R.id.contact:
                 if (user) {
                     buser.putInt("host", host.getId());
@@ -536,7 +537,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         }
         return true;
     }
-
+    //handle the back action from phone
     @Override
     public void onBackPressed() {
         handleBackAction();
@@ -558,6 +559,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         return null;
     }
 
+    /** Check previous activity in order to go back correctly **/
     public void handleBackAction()
     {
         if(!(buser.getString("source") == null) && buser.getString("source").equals("reviews"))
