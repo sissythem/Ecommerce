@@ -111,14 +111,8 @@ public class InboxActivity extends AppCompatActivity
         Utils.manageFooter(InboxActivity.this, user);
     }
 
-<<<<<<< HEAD
-    protected void loadConversations() {
-=======
     protected void loadConversations()
     {
-        System.out.println(user);
-        System.out.println(currentUserId);
->>>>>>> 5fedcaaadcb2aa4e50a1fabee84f8e4ccd279bd7
         try {
             if (Conversations.size() > 0) {
                 inboxRecyclerView.setAdapter(new RecyclerAdapterInbox(this, user, Conversations, currentUserId));

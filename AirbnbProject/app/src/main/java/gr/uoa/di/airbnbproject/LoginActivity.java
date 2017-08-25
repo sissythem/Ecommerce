@@ -29,21 +29,13 @@ public class LoginActivity extends AppCompatActivity {
     {
         super.onCreate(savedInstanceState);
 
-<<<<<<< HEAD
         /** Set View to activity_login.xml **/
-=======
-        // Set View to activity_login.xml
->>>>>>> 5fedcaaadcb2aa4e50a1fabee84f8e4ccd279bd7
         setContentView(R.layout.activity_login);
 
         c = this;
         sharedPrefs = getApplicationContext().getSharedPreferences(USER_LOGIN_PREFERENCES, Context.MODE_PRIVATE);
 
-<<<<<<< HEAD
-        /** Get user input **/
-=======
-        //Edit fields to be filled in by user in order to login to the app
->>>>>>> 5fedcaaadcb2aa4e50a1fabee84f8e4ccd279bd7
+        /** Edit fields to be filled in by user in order to login to the app **/
         final EditText etUsername   = (EditText) findViewById(R.id.etUsername);
         final EditText etPassword   = (EditText) findViewById(R.id.etPassword);
         final Button blogin         = (Button) findViewById(R.id.login);

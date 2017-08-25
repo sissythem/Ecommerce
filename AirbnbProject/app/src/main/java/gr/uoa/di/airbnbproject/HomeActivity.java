@@ -88,19 +88,12 @@ public class HomeActivity extends AppCompatActivity
         /** Get session data in order to check if user is logged in and if token is expired */
         Session sessionData = getSessionData(HomeActivity.this);
 
-<<<<<<< HEAD
         username    = sessionData.getUsername();
         user        = true;
         token       = sessionData.getToken();
         c           = this;
 
-=======
-        username=sessionData.getUsername();
-        user = true;
-        token = sessionData.getToken();
-        c=this;
-        //check if user is logged in
->>>>>>> 5fedcaaadcb2aa4e50a1fabee84f8e4ccd279bd7
+        /** Check if user is logged in **/
         if (!sessionData.getUserLoggedInState()) {
             Utils.logout(this);
             return;
@@ -117,11 +110,9 @@ public class HomeActivity extends AppCompatActivity
             return;
         }
 
-<<<<<<< HEAD
-=======
         getPermissions();
         resetActivity();
->>>>>>> 5fedcaaadcb2aa4e50a1fabee84f8e4ccd279bd7
+
         /** Start Worker for Notifications **/
 //        String worker_prefs = "workerPrefs";
 //        SharedPreferences workerPrefs = getApplicationContext().getSharedPreferences(worker_prefs, Context.MODE_PRIVATE);

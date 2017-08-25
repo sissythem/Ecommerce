@@ -12,10 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-<<<<<<< HEAD
-import android.widget.Button;
-=======
->>>>>>> 5fedcaaadcb2aa4e50a1fabee84f8e4ccd279bd7
+
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -79,12 +76,9 @@ public class HostActivity extends AppCompatActivity {
         toolbar.setTitle("Your Residences");
         setSupportActionBar(toolbar);
 
-<<<<<<< HEAD
-        baddResidence = (ImageButton)findViewById(R.id.addResidence);
-=======
         /** User can upload a new residence */
         baddResidence = (ImageButton) findViewById(R.id.addResidence);
->>>>>>> 5fedcaaadcb2aa4e50a1fabee84f8e4ccd279bd7
+
         baddResidence.setOnClickListener(new View.OnClickListener()
         {
             @Override

@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,6 +21,7 @@ import fromRESTful.Reservations;
 import fromRESTful.Residences;
 import fromRESTful.Reviews;
 import fromRESTful.Users;
+import util.ListAdapterReviews;
 import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
@@ -36,12 +38,16 @@ public class ReviewsActivity extends AppCompatActivity
     Users loggedinUser, host;
     Residences selectedResidence;
     int residenceId;
-    double rating;
+    double ratingNew;
 
     EditText etcomment;
     Button btnreview;
     RatingBar ratingBar;
     TextView txtrating;
+
+    ListAdapterReviews adapter;
+    ListView reviewsList;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,16 +116,18 @@ public class ReviewsActivity extends AppCompatActivity
         String[] representativePhoto    = new String [reviewsForSelectedResidence.size()];
         String[] username               = new String[reviewsForSelectedResidence.size()];
         String[] comment                = new String[reviewsForSelectedResidence.size()];
+        double[] rating                 = new double[reviewsForSelectedResidence.size()];
 
         for(int i=0; i<reviewsForSelectedResidence.size();i++) {
             representativePhoto[i] = reviewsForSelectedResidence.get(i).getHostId().getPhoto();
             username[i] = reviewsForSelectedResidence.get(i).getTenantId().getUsername();
             comment[i] = reviewsForSelectedResidence.get(i).getComment();
+            rating [i] = reviewsForSelectedResidence.get(i).getRating();
         }
 
-//        adapter = new ListAdapterReviews(this, representativePhoto, username, comment);
-//        reviewsList = (ListView)findViewById(R.id.reviewslist);
-//        reviewsList.setAdapter(adapter);
+        adapter = new ListAdapterReviews(this, representativePhoto, username, comment, rating);
+        reviewsList = (ListView)findViewById(R.id.reviewslist);
+        reviewsList.setAdapter(adapter);
 
         /** FOOTER TOOLBAR **/
         Utils.manageFooter(ReviewsActivity.this, user);
@@ -133,7 +141,7 @@ public class ReviewsActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 RatingBar bar = (RatingBar) v;
-                rating = bar.getRating();
+                ratingNew = bar.getRating();
             }
         });
 

@@ -85,13 +85,11 @@ public class ProfileActivity extends AppCompatActivity {
 
         Bundle buser = getIntent().getExtras();
         user = buser.getBoolean("type");
-<<<<<<< HEAD
-        retrofitCalls   = new RetrofitCalls();
-=======
+
+        /** Get the user **/
         retrofitCalls = new RetrofitCalls();
-        //Get the user
->>>>>>> 5fedcaaadcb2aa4e50a1fabee84f8e4ccd279bd7
         loggedinUser    = retrofitCalls.getUserbyUsername(token, username).get(0);
+
         setUpProfile();
         userImage = (ImageView) findViewById(R.id.userImage);
         Utils.loadProfileImage(ProfileActivity.this, userImage, loggedinUser.getPhoto());
@@ -102,7 +100,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     public void setUpProfile()
     {
-<<<<<<< HEAD
+        /** Show info about the user **/
         tvName          = (TextView)findViewById(R.id.name);
         tvAbout         = (TextView)findViewById(R.id.about);
         tvUsername      = (TextView)findViewById(R.id.username);
@@ -111,17 +109,6 @@ public class ProfileActivity extends AppCompatActivity {
         tvCity          = (TextView)findViewById(R.id.city);
         tvCountry       = (TextView)findViewById(R.id.country);
         tvBirthDate     = (TextView)findViewById(R.id.birthDate);
-=======
-        /** Show info about the user **/
-        tvName = (TextView)findViewById(R.id.name);
-        tvAbout = (TextView)findViewById(R.id.about);
-        tvUsername = (TextView)findViewById(R.id.username);
-        tvEmail = (TextView)findViewById(R.id.email);
-        tvPhoneNumber = (TextView)findViewById(R.id.phonenumber);
-        tvCity = (TextView)findViewById(R.id.city);
-        tvCountry = (TextView)findViewById(R.id.country);
-        tvBirthDate = (TextView)findViewById(R.id.birthDate);
->>>>>>> 5fedcaaadcb2aa4e50a1fabee84f8e4ccd279bd7
 
         tvName.setText(loggedinUser.getFirstName() + " " + loggedinUser.getLastName());
         String abb = loggedinUser.getAbout();

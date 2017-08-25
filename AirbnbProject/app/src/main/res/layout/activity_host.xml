@@ -5,33 +5,17 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-        <include layout="@layout/back_toolbar" android:id="@+id/include"/>
+    <include layout="@layout/back_toolbar" android:id="@+id/include"/>
 
     <ImageButton
         android:id="@+id/addResidence"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-<<<<<<< HEAD
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_toLeftOf="@+id/include"
-        android:src="@drawable/ic_add" />
-
-        <!--<Button-->
-            <!--android:id="@+id/addResidence"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_toLeftOf="@+id/include"-->
-            <!--android:text="@string/residence_add_new"-->
-            <!--android:layout_alignParentRight="true"-->
-            <!--android:layout_alignParentEnd="true" />-->
-=======
         android:background="@color/colorPrimary"
         android:text="@string/residence_add_new"
         app:srcCompat="@mipmap/ic_add"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true" />
->>>>>>> 5fedcaaadcb2aa4e50a1fabee84f8e4ccd279bd7
 
     <LinearLayout
         android:layout_width="match_parent"
