@@ -317,8 +317,7 @@ public class Utils {
 
     public static Session getSessionData(Activity context) {
         SharedPreferences sharedPrefs = context.getApplicationContext().getSharedPreferences(USER_LOGIN_PREFERENCES, Context.MODE_PRIVATE);
-        Session sessionData = new Session(sharedPrefs.getString("token", ""), sharedPrefs.getString("username", ""),
-                sharedPrefs.getBoolean("userLoggedInState", false));
+        Session sessionData = new Session(sharedPrefs.getString("token", ""), sharedPrefs.getString("username", ""), sharedPrefs.getBoolean("userLoggedInState", false));
         return sessionData;
     }
 
@@ -462,11 +461,11 @@ public class Utils {
                 });
             }
         };
-        timer.schedule(doAsynchronousTask, 0, 300000); //execute in every 300000ms (5 minutes)
+        timer.schedule(doAsynchronousTask, 0, 5000); //execute in every 300000ms (5 minutes)//300000
     }
 
+    /** Build the notification **/
     public static void buckysButtonClicked(Context context, Class newContextClass, Class newIntentClass, String ticker, String title, String text){
-        //Build the notification
         notification.setSmallIcon(R.mipmap.ic_launcher);
         notification.setTicker(ticker);
         notification.setWhen(System.currentTimeMillis());
@@ -482,7 +481,7 @@ public class Utils {
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, newIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         notification.setContentIntent(pendingIntent);
 
-        //Builds notification and issues it
+        /** Builds notification and issues it **/
         NotificationManager nm = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         nm.notify(uniqueID, notification.build());
     }

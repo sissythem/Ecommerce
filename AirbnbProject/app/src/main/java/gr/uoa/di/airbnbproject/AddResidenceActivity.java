@@ -32,7 +32,8 @@ import util.Utils;
 import static util.Utils.FORMAT_DATE_DMY;
 import static util.Utils.convertDateToMillisSec;
 
-public class AddResidenceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class AddResidenceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener
+{
     private static final int RESULT_LOAD_IMAGE =1;
 
     String token;
@@ -56,10 +57,12 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        /** Get session data in order to check if user is logged in and if token is expired */
         Session sessionData = Utils.getSessionData(AddResidenceActivity.this);
         token = sessionData.getToken();
         c = this;
         user = false;
+        //check if user is logged in
         if (!sessionData.getUserLoggedInState()) {
             Utils.logout(this);
             finish();
@@ -70,7 +73,7 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
             finish();
             return;
         }
-
+        //check if token is expired
         if(Utils.isTokenExpired(sessionData.getToken())){
             Toast.makeText(c, "Session is expired", Toast.LENGTH_SHORT).show();
             Utils.logout(this);
@@ -78,6 +81,7 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
             return;
         }
         setContentView(R.layout.layout_residence_editfields);
+        //set up the upper toolbar
         toolbar = (Toolbar) findViewById(R.id.backToolbar);
         toolbar.setTitle("Add new Residence");
         setSupportActionBar(toolbar);
@@ -89,6 +93,7 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
         toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_back, getTheme()));
+        //handle the back action
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -98,14 +103,16 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
 
         userInputLayout();
         RetrofitCalls retrofitCalls = new RetrofitCalls();
-        List<Users> userData = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
 
+        //get all user data as Users object based on the username used to login
+        List<Users> userData = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
         host = userData.get(0);
         saveResidence();
     }
 
     public void userInputLayout ()
     {
+        /** Necessary fields to be completed in order to upload a new residence*/
         etTitle              = (EditText)findViewById(R.id.etTitle);
         etAbout              = (EditText)findViewById(R.id.etAbout);
         etAddress            = (EditText)findViewById(R.id.etAddress);
@@ -133,6 +140,7 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
 
         bcontinue = (ImageButton)findViewById(R.id.ibContinue);
 
+        /** When user clicks on the button, a calendar appears in order to pick up a date*/
         btnStartDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -175,6 +183,7 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
             }
         });
 
+        //select residence type from a dropdown list
         etType = (Spinner) findViewById(R.id.etType);
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> spinneradapter = ArrayAdapter.createFromResource(this, R.array.residence_types_array, android.R.layout.simple_spinner_item);
@@ -192,8 +201,11 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
     /** Another interface callback **/
     public void onNothingSelected(AdapterView<?> parent) { resType = "Residence Title"; }
 
-    public void saveResidence () {
-        bcontinue.setOnClickListener(new View.OnClickListener() {
+    public void saveResidence ()
+    {
+        bcontinue.setOnClickListener(new View.OnClickListener()
+        {
+            /** Get user input*/
             @Override
             public void onClick(View v) {
                 //Log.w("","SETTING HARDCODED RESIDENCE VALUES FOR DEBUGGING!");
@@ -224,6 +236,7 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
                 long startDate = convertDateToMillisSec(availableStartDate, FORMAT_DATE_DMY);
                 long endDate = convertDateToMillisSec(availableEndDate, FORMAT_DATE_DMY);
 
+                /** Check if all fields are completed by the user */
                 if (title.length() == 0 || type.length() == 0 || about.length() == 0 || address.length() == 0 || city.length() == 0 || country.length() == 0 || amenities.length() == 0 || floor.length() == 0
                         || rooms.length() == 0 || baths.length() == 0 || view.length() == 0 || spaceArea.length() == 0 || guests.length() == 0 || minPrice.length() == 0
                         || additionalCostPerPerson.length() == 0 || cancellationPolicy.length() == 0 || rules.length() == 0
@@ -260,9 +273,11 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
                     );
 
                     RetrofitCalls retrofitCalls = new RetrofitCalls();
+                    /** Send user input to be booked as a new residence in the database */
                     token = retrofitCalls.postResidence(token, ResidenceParameters);
-
-                    if (!token.isEmpty() && token!=null && token != "not") {
+                    /** If posting was successful, user is redirected to the HostActivity */
+                    if (!token.isEmpty() && token!=null && token != "not")
+                    {
                         Intent hostIntent = new Intent(AddResidenceActivity.this, HostActivity.class);
                         Bundle bhost = new Bundle();
                         bhost.putBoolean("type", user);

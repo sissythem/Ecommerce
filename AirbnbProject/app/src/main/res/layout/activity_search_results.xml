@@ -8,6 +8,7 @@
     <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:layout_marginBottom="@dimen/height_of_footer"
         android:id="@+id/scrollView"
         android:fillViewport="true">
 

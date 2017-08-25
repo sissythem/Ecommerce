@@ -62,9 +62,10 @@ public class MessageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         c = this;
-
+        /** Get session data in order to check if user is logged in and if token is expired */
         Session sessionData = Utils.getSessionData(MessageActivity.this);
         token = sessionData.getToken();
+        //check if user is logged in
         if (!sessionData.getUserLoggedInState()) {
             Utils.logout(this);
             finish();
@@ -75,6 +76,7 @@ public class MessageActivity extends AppCompatActivity {
             finish();
             return;
         }
+        //check if token is expired
         if(Utils.isTokenExpired(sessionData.getToken())){
             Toast.makeText(c, "Session is expired", Toast.LENGTH_SHORT).show();
             Utils.logout(this);
@@ -89,7 +91,7 @@ public class MessageActivity extends AppCompatActivity {
         currentUserId   = bextras.getInt("currentUserId");
         toUserId        = bextras.getInt("toUserId");
         msgSubject      = bextras.getString("msgSubject");
-
+        //set up the upper toolbar
         toolbar = (Toolbar) findViewById(R.id.backToolbar);
         toolbar.setTitle("Send a message");
         setSupportActionBar(toolbar);
@@ -102,6 +104,7 @@ public class MessageActivity extends AppCompatActivity {
         }
 
         toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_back, getTheme()));
+        //handle the back button of the toolbar
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -301,6 +304,7 @@ public class MessageActivity extends AppCompatActivity {
         return token;
     }
 
+    /** Check the previous activity in order to correctly handle the back action **/
     public void handleBackAction(){
         if (bextras.containsKey("residenceId"))
         {
@@ -318,6 +322,7 @@ public class MessageActivity extends AppCompatActivity {
         }
     }
 
+    /** Back action by pressing the back button of the smartphone **/
     @Override
     public void onBackPressed() {
         handleBackAction();

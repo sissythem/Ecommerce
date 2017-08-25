@@ -12,7 +12,11 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+<<<<<<< HEAD
 import android.widget.Button;
+=======
+>>>>>>> 5fedcaaadcb2aa4e50a1fabee84f8e4ccd279bd7
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -36,7 +40,7 @@ public class HostActivity extends AppCompatActivity {
     Users host;
     Toolbar toolbar;
 
-    Button baddResidence;
+    ImageButton baddResidence;
 
     Boolean user;
     Context c;
@@ -47,11 +51,11 @@ public class HostActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        /** Get session data in order to check if user is logged in and if token is expired */
         Session sessionData = Utils.getSessionData(HostActivity.this);
         token = sessionData.getToken();
         user=false;
-
+        //check if user is logged in
         if (!sessionData.getUserLoggedInState()) {
             Utils.logout(this);
             return;
@@ -60,7 +64,7 @@ public class HostActivity extends AppCompatActivity {
             finish();
             return;
         }
-
+        //check if token is expired
         if(Utils.isTokenExpired(sessionData.getToken())){
             Toast.makeText(c, "Session is expired", Toast.LENGTH_SHORT).show();
             Utils.logout(this);
@@ -69,15 +73,23 @@ public class HostActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_host);
+        //set up the upper toolbar
+
         toolbar = (Toolbar) findViewById(R.id.backToolbar);
         toolbar.setTitle("Your Residences");
         setSupportActionBar(toolbar);
 
-        baddResidence = (Button)findViewById(R.id.addResidence);
+<<<<<<< HEAD
+        baddResidence = (ImageButton)findViewById(R.id.addResidence);
+=======
+        /** User can upload a new residence */
+        baddResidence = (ImageButton) findViewById(R.id.addResidence);
+>>>>>>> 5fedcaaadcb2aa4e50a1fabee84f8e4ccd279bd7
         baddResidence.setOnClickListener(new View.OnClickListener()
         {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 Intent addResidenceIntent = new Intent(HostActivity.this, AddResidenceActivity.class);
                 Bundle buser = new Bundle();
                 buser.putBoolean("type", user);
@@ -91,9 +103,10 @@ public class HostActivity extends AppCompatActivity {
             }
         });
         RetrofitCalls retrofitCalls = new RetrofitCalls();
+        //Get the host
         ArrayList<Users> hostUsers = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
         host = hostUsers.get(0);
-
+        /** RecyclerView for displaying all uploaded residences by this host */
         residencesRecyclerView = (RecyclerView) findViewById(R.id.recycler);
         residencesRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
         residencesRecyclerView.setHasFixedSize(true);
@@ -112,25 +125,31 @@ public class HostActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onContextItemSelected(final MenuItem item) {
+    public boolean onContextItemSelected(final MenuItem item)
+    {
+        /** By selecting an item a menu appears */
         super.onContextItemSelected(item);
         final Bundle btype = new Bundle();
         btype.putBoolean("type", user);
 
         final int resId = storedResidences.get(item.getItemId()).getId();
 
+        /** Host can view his residence */
         if (item.getTitle().equals(VIEW_RESIDENCE_ACTION)) {
             btype.putInt("residenceId", resId);
             goToActivity(this, ResidenceActivity.class, btype);
         }
+        /** Host can edit his residence **/
         else if (item.getTitle().equals(EDIT_ACTION)) {
             btype.putInt("residenceId", resId);
             goToActivity(this, EditResidenceActivity.class, btype);
         }
+        /** Host can view all reservations made for the selected residence **/
         else if (item.getTitle().equals(RESERVATIONS_ACTION)) {
             btype.putInt("residenceId", resId);
             goToActivity(this, HistoryReservationsActivity.class, btype);
         }
+        /** Host can delete his residence **/
         else if (item.getTitle().equals(DELETE_ACTION)) {
             new AlertDialog.Builder(this)
                 .setTitle("Delete Residence").setMessage("Do you really want to delete this residence?").setIcon(android.R.drawable.ic_dialog_alert)
@@ -152,6 +171,7 @@ public class HostActivity extends AppCompatActivity {
         return true;
     }
 
+    /** When app is minimized and then reused, user can continue from where he left the app **/
     @Override
     public void onBackPressed() { moveTaskToBack(true); }
 }

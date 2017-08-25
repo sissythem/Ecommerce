@@ -48,11 +48,11 @@ public class HistoryReservationsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history_reservations);
-
+        /** Get session data in order to check if user is logged in and if token is expired */
         Session sessionData = Utils.getSessionData(HistoryReservationsActivity.this);
         token = sessionData.getToken();
         c = this;
-
+        //check if user is logged in
         if (!sessionData.getUserLoggedInState()) {
             Utils.logout(this);
             finish();
@@ -63,7 +63,7 @@ public class HistoryReservationsActivity extends AppCompatActivity {
             finish();
             return;
         }
-
+        //check if token is expired
         if(Utils.isTokenExpired(sessionData.getToken())){
             Toast.makeText(c, "Session is expired", Toast.LENGTH_SHORT).show();
             Utils.logout(this);
@@ -73,7 +73,7 @@ public class HistoryReservationsActivity extends AppCompatActivity {
 
         buser = getIntent().getExtras();
         user = buser.getBoolean("type");
-
+        //set up the upper toolbar
         toolbar = (Toolbar) findViewById(R.id.backToolbar);
         toolbar.setTitle("My Reservations");
         setSupportActionBar(toolbar);
@@ -86,6 +86,7 @@ public class HistoryReservationsActivity extends AppCompatActivity {
         }
 
         toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_back, getTheme()));
+        /** Handle back action. This activity is called either from ResidenceActivity or from ProfileActivity */
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -101,16 +102,21 @@ public class HistoryReservationsActivity extends AppCompatActivity {
         });
 
         RetrofitCalls retrofitCalls = new RetrofitCalls();
+        //Get the user
         ArrayList<Users> getUserByUsername = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
         loggedinUser = getUserByUsername.get(0);
-
+        //If activity is called from ResidenceActivity, show all reservations for this residence
         if (buser.containsKey("residenceId")) {
             toolbar.setTitle("Reservations made by users");
             userReservations = retrofitCalls.getReservationsByResidenceId(token, buser.getInt("residenceId"));
-        } else {
+        }
+        //if the activity is called from ProfileActivity, show all reservations by the specific user
+        else
+        {
             userReservations = retrofitCalls.getReservationsByTenantId(token, loggedinUser.getId().toString());
         }
 
+        /** Use of RecyclerView in order to show the reservations */
         reservationsRecyclerView = (RecyclerView) findViewById(R.id.recycler);
         reservationsRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
         reservationsRecyclerView.setHasFixedSize(true);
@@ -129,11 +135,13 @@ public class HistoryReservationsActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onContextItemSelected(final MenuItem item) {
+    public boolean onContextItemSelected(final MenuItem item)
+    {
         super.onContextItemSelected(item);
-
+        /** Menu options by item*/
         Integer resId = userReservations.get(item.getItemId()).getResidenceId().getId();
         String resTitle = userReservations.get(item.getItemId()).getResidenceId().getTitle();
+        /** User can cancel his reservation only if reservation date is not in the past */
         if (item.getTitle().equals(CANCEL_RESERVATION_ACTION)) {
             String currentdate = Utils.getCurrentDate(FORMAT_DATE_DMY);
             Date current = Utils.ConvertStringToDate(currentdate, FORMAT_DATE_DMY);
@@ -164,14 +172,15 @@ public class HistoryReservationsActivity extends AppCompatActivity {
                             }
                         }).setNegativeButton(android.R.string.no, null).show();
             }
+            /** User can see the residence he has performed the specific reservation */
         } else if (item.getTitle().equals(VIEW_RESIDENCE_ACTION)) {
             Bundle btype = new Bundle();
 
             btype.putBoolean("type", user);
             btype.putString("source", "reservations");
             btype.putInt("residenceId", resId);
-
             goToActivity(HistoryReservationsActivity.this, ResidenceActivity.class, btype);
+            /** User can contact the host of the residence */
         } else if (item.getTitle().equals(CONTACT_HOST_ACTION)) {
             Bundle bmessage = new Bundle();
             bmessage.putBoolean("type", user);
@@ -179,8 +188,8 @@ public class HistoryReservationsActivity extends AppCompatActivity {
             bmessage.putInt("toUserId", userReservations.get(item.getItemId()).getResidenceId().getHostId().getId());
             bmessage.putString("msgSubject", resTitle);
             bmessage.putInt("residenceId", resId);
-
             goToActivity(HistoryReservationsActivity.this, MessageActivity.class, bmessage);
+            /** The host of this residence can contact the user who has performed the selected reservation */
         } else if (item.getTitle().equals(CONTACT_USER_ACTION)) {
             Bundle bmessage = new Bundle();
             bmessage.putBoolean("type", user);
@@ -188,7 +197,6 @@ public class HistoryReservationsActivity extends AppCompatActivity {
             bmessage.putInt("toUserId", userReservations.get(item.getItemId()).getTenantId().getId());
             bmessage.putString("msgSubject", resTitle);
             bmessage.putInt("residenceId", resId);
-
             goToActivity(HistoryReservationsActivity.this, MessageActivity.class, bmessage);
         } else {
             Toast.makeText(this, item.getTitle(), Toast.LENGTH_LONG).show();
@@ -196,7 +204,8 @@ public class HistoryReservationsActivity extends AppCompatActivity {
         return true;
     }
 
-    public void reloadHistoryReservations() {
+    public void reloadHistoryReservations()
+    {
         Bundle bupdated = new Bundle();
         bupdated.putBoolean("type", user);
         reloadActivity(c, bupdated);

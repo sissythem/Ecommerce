@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -67,6 +68,8 @@ public class HomeActivity extends AppCompatActivity
     boolean isShow = false;
     int scrollRange = -1;
 
+    boolean workerStarted = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,14 +85,22 @@ public class HomeActivity extends AppCompatActivity
     protected void onResume()
     {
         super.onResume();
-
+        /** Get session data in order to check if user is logged in and if token is expired */
         Session sessionData = getSessionData(HomeActivity.this);
 
+<<<<<<< HEAD
+        username    = sessionData.getUsername();
+        user        = true;
+        token       = sessionData.getToken();
+        c           = this;
+
+=======
         username=sessionData.getUsername();
         user = true;
         token = sessionData.getToken();
         c=this;
-
+        //check if user is logged in
+>>>>>>> 5fedcaaadcb2aa4e50a1fabee84f8e4ccd279bd7
         if (!sessionData.getUserLoggedInState()) {
             Utils.logout(this);
             return;
@@ -98,7 +109,7 @@ public class HomeActivity extends AppCompatActivity
             finish();
             return;
         }
-        Log.e("a tag","Checking token for validity : " + token);
+        //check if token is expired
         if(Utils.isTokenExpired(token)){
             Toast.makeText(c, "Session is expired", Toast.LENGTH_SHORT).show();
             Utils.logout(this);
@@ -106,10 +117,32 @@ public class HomeActivity extends AppCompatActivity
             return;
         }
 
+<<<<<<< HEAD
+=======
+        getPermissions();
+        resetActivity();
+>>>>>>> 5fedcaaadcb2aa4e50a1fabee84f8e4ccd279bd7
+        /** Start Worker for Notifications **/
+//        String worker_prefs = "workerPrefs";
+//        SharedPreferences workerPrefs = getApplicationContext().getSharedPreferences(worker_prefs, Context.MODE_PRIVATE);
+//
+//        System.out.println(username);
+//
+//        Boolean workst = workerPrefs.getBoolean("worker_status", false);
+//        System.out.println(workst);
+//        if (username != null) {// && (!workerPrefs.contains("worker_status") || !workerPrefs.getBoolean("worker_status", false))
+//            SharedPreferences.Editor workerPrefsEdit = workerPrefs.edit();
+//            workerPrefsEdit.putBoolean("worker_status", true);
+//            workerPrefsEdit.commit();
+//
+//            Boolean workstu = workerPrefs.getBoolean("worker_status", false);
+//            System.out.println(workstu);
+//
+//        }
+        new Worker().execute();
+
         //getPermissions();
         //resetActivity();
-        /** Start Worker for Notifications **/
-        new Worker().execute();
 
         /** FOOTER TOOLBAR **/
         Utils.manageFooter(HomeActivity.this, true);
@@ -119,6 +152,7 @@ public class HomeActivity extends AppCompatActivity
 
         /** RECOMMENDATIONS **/
         ArrayList<Residences> Recommendations = popularRecommendations();
+        /** RecyclerView for displaying the recommendations */
         try {
             if (Recommendations.size() > 0) {
                 residencesRecyclerView.setAdapter(new RecyclerAdapterResidences(this, user, Recommendations));
@@ -244,7 +278,9 @@ public class HomeActivity extends AppCompatActivity
     {
         ArrayList<Users> Users;
         RetrofitCalls retrofitCalls = new RetrofitCalls();
+        //Get the user as Users object
         Users = retrofitCalls.getUserbyUsername(token, username);
+        //If user is not found or if something went wrong
         if(Users.isEmpty())
         {
             Toast.makeText(this,"Failed to get users from database.", Toast.LENGTH_LONG).show();
@@ -258,9 +294,11 @@ public class HomeActivity extends AppCompatActivity
         int residenceId;
 
         ArrayList<Searches> searchedCities;
+        /** Get all searches for cities that user has performed */
         searchedCities = retrofitCalls.getSearchedCities(token, loggedInUser.getId().toString());
         Set<String> relevantCities = new HashSet<>();
         for(int i = 0;i<searchedCities.size();i++){
+            //add the cities to a HashSet in order to include each city ones
             relevantCities.add(searchedCities.get(i).getCity());
         }
 
@@ -284,21 +322,29 @@ public class HomeActivity extends AppCompatActivity
         hs.addAll(reviewedResidences);
         reviewedResidences.clear();
         reviewedResidences.addAll(hs);
-        if(reviewedResidences.size() ==0) {
-            reviewedResidences = retrofitCalls.getAllResidences(token);
-        }
 
-        /** get all relevant rooms and reviews **/
+        /** get all relevant reviews **/
         for (int i=0; i < reviewedResidences.size(); i++) {
+            /** exclude all residences that are uploaded by the user who is logged in **/
             if (!reviewedResidences.get(i).getHostId().getId().equals(loggedInUser.getId())) {
                 residences.add(reviewedResidences.get(i));
             }
         }
-
+        /** Set up the reviews collection in order to sort the residences */
+        /** In class Residences: getAverageRating computes the rating based on the reviews collection */
         for (int i=0; i < residences.size(); i++) {
             residenceId = residences.get(i).getId();
             reviewsByResidence = retrofitCalls.getReviewsByResidenceId(token, Integer.toString(residenceId));
             residences.get(i).setReviewsCollection(reviewsByResidence);
+            /** Exclude residences*/
+            if(residences.get(i).getReviewsCollection().isEmpty())
+            {
+                residences.remove(i);
+            }
+        }
+        /** In case that no residence has reviews we just present a list of the residences */
+        if(reviewedResidences.size() ==0) {
+            residences = retrofitCalls.getAllResidences(token);
         }
 
         /** Sort the results **/
@@ -314,6 +360,7 @@ public class HomeActivity extends AppCompatActivity
         super.onRestart();
     }
 
+    /** When the app is minimized and then reused, user can continue from where he left the app */
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             moveTaskToBack(true);
@@ -337,7 +384,7 @@ public class HomeActivity extends AppCompatActivity
         }
     }
 
-    //addPermission method, used below for Runtime Permissions. Checks if permission is already approved by the user
+    /** ΑddPermission method, used below for Runtime Permissions. Checks if permission is already approved by the user **/
     @RequiresApi(api = Build.VERSION_CODES.M)
     private boolean addPermission(List<String> permissionsList, String permission)
     {
@@ -362,7 +409,7 @@ public class HomeActivity extends AppCompatActivity
                 .show();
     }
 
-    //Below method is used when multiple permission are asked, in this case was not necessary to use this method
+    /** Below method is used when multiple permission are asked, in this case was not necessary to use this method **/
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults)
@@ -408,7 +455,7 @@ public class HomeActivity extends AppCompatActivity
 
     public void getPermissions()
     {
-        //Runtime permissions
+        /** Runtime permissions **/
         if (Build.VERSION.SDK_INT >= 23)
         {
             // Marshmallow+

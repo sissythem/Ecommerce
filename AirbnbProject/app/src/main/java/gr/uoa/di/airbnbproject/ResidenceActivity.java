@@ -98,8 +98,10 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
     {
         super.onCreate(savedInstanceState);
         c = this;
+        /** Get session data in order to check if user is logged in and if token is expired */
         Session sessionData = Utils.getSessionData(ResidenceActivity.this);
         token = sessionData.getToken();
+        //check if user is logged in
         if (!sessionData.getUserLoggedInState()) {
             Utils.logout(this);
             finish();
@@ -110,7 +112,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
             finish();
             return;
         }
-
+        //check if token is expired
         if(Utils.isTokenExpired(sessionData.getToken())){
             Toast.makeText(c, "Session is expired", Toast.LENGTH_SHORT).show();
             Utils.logout(this);
@@ -124,7 +126,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         delegate.onCreate(savedInstanceState);
         delegate.setContentView(R.layout.activity_residence);
 
-        buser        = getIntent().getExtras();
+        buser               = getIntent().getExtras();
         user                = buser.getBoolean("type");
         residenceId         = buser.getInt("residenceId");
 
@@ -133,9 +135,11 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         if (buser.containsKey("guests")) guests = buser.getString("guests");
 
         retrofitCalls = new RetrofitCalls();
+        //Get the user and the residence
         loggedinUser = retrofitCalls.getUserbyUsername(token, sessionData.getUsername()).get(0);
         selectedResidence   = retrofitCalls.getResidenceById(token, Integer.toString(residenceId));
 
+        //set up the upper toolbar
         toolbar = (Toolbar) findViewById(R.id.backToolbar);
         toolbar.setTitle("View Residence");
         toolbar.setSubtitle(selectedResidence.getTitle());
@@ -149,6 +153,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         }
 
         toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_back, getTheme()));
+        //handle the back button of the upper toolbar
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -163,8 +168,10 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
 
     public void setUpResidenceView ()
     {
+        /** Present all the info for this residence **/
         host = selectedResidence.getHostId();
 
+        /** Show the images of this residence **/
         resPhoto = (ImageView) findViewById(R.id.ivResidencePhotos);
         profilePic = (ImageView)findViewById(R.id.ivHostPic);
         Utils.loadResidenceImage(this, resPhoto, selectedResidence.getPhotos());
@@ -204,14 +211,17 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
 
     public void setBookResidence()
     {
+        /** User can make a reservation **/
         bBook.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                /** Gets the number of guests **/
                 guests = etGuests.getText().toString();
                 guestsInt = Integer.parseInt(guests);
 
                 /** Gets selected dates from user input **/
                 if(selectedDates[0] != null && selectedDates[1] != null) {
+                    //find the start and the end date
                     if (selectedDates[0].before(selectedDates[1])) {
                         selectedStartDate = selectedDates[0];
                         selectedEndDate = selectedDates[1];
@@ -247,8 +257,9 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
                                 RetrofitCalls retrofitCalls = new RetrofitCalls();
                                 token = retrofitCalls.postReservation(token, reservationParameters);
 
-                                if (!token.isEmpty()) {
-                                    Intent reservationsIntent = new Intent(ResidenceActivity.this, HistoryReservationsActivity.class);
+                                if (!token.isEmpty())
+                                {
+                                    Intent reservationsIntent = new Intent(ResidenceActivity.this, HomeActivity.class);
                                     user = true;
                                     Bundle buser = new Bundle();
                                     buser.putBoolean("type", user);
@@ -277,6 +288,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         Date startDate = convertTimestampToDate(available_date_start, FORMAT_DATE_YMD);
         Date endDate = convertTimestampToDate(available_date_end, FORMAT_DATE_YMD);
 
+        /** Something went wrong and did not get the available period for this residence **/
         if(startDate == null || endDate == null)
         {
             Toast.makeText(c, "There are no available dates", Toast.LENGTH_SHORT).show();
@@ -284,20 +296,22 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
             tvNoAvailability.setText("There are no available dates");
             return;
         }
-
+        /** Use of caldroid in order to show the availability and disable all dates fully booked **/
         caldroidFragment = new CaldroidFragment();
 
         FragmentTransaction t = getSupportFragmentManager().beginTransaction();
         t.replace(calendar, caldroidFragment);
         t.commit();
-
+        /** Set the color of selected dates **/
         ColorDrawable blue = new ColorDrawable(Color.BLUE);
+        /** Calendar will show only the period set by host as available **/
         caldroidFragment.setMinDate(startDate);
         caldroidFragment.setMaxDate(endDate);
 
         Calendar calendar = Calendar.getInstance();
+        /** Calendar starts from the start date of the available period **/
         calendar.setTime(startDate);
-
+        //count of guests for each date of the available period. Used to find all fully booked dates
         NumGuestsPerDay = new HashMap<>();
         Date current = calendar.getTime();
 
@@ -316,9 +330,10 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         Date dateStart, dateEnd;
         int guestsFromDatabase;
         for(int i=0;i<allReservationsByResidence.size();i++) {
-            /** Gt for each reservation the start and the end date, and the number of guests **/
+            /** Get for each reservation the start and the end date, and the number of guests **/
             dateStart = Utils.convertTimestampToDate(allReservationsByResidence.get(i).getStartDate(), FORMAT_DATE_YMD);
             dateEnd = Utils.convertTimestampToDate(allReservationsByResidence.get(i).getEndDate(), FORMAT_DATE_YMD);
+            //check if the reservation period is during the available period
             if(dateStart.before(startDate) || dateStart.after(endDate) || dateEnd.before(startDate) || dateEnd.after(endDate))
             {
                 continue;
@@ -328,7 +343,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
             Date currentDate = dateStart;
             Calendar cal = Calendar.getInstance();
             cal.setTime(dateStart);
-
+            //Count the number of guests per day
             while (!currentDate.after(dateEnd)) {
                 int sum = 0;
                 try {
@@ -351,7 +366,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         caldroidFragment.setDisableDates(reservedDates);
         datesDisabled_byGuestCount = new ArrayList<>();
 
-        /** This field is visible only if user has not already provided number of guests **/
+        /** This field is completed if user has already provided number of guests **/
         if(guests != null) {
             etGuests.setText(guests);
             filterDates();
@@ -363,16 +378,20 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
 
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count){}
+                /** Based on the number of guests the available dates are examined again **/
+                /** We exclude the remaining dates that cannot accommodate the selected number of guests **/
                 public void afterTextChanged(Editable s) {
                     filterDates();
                 }
             }
         );
 
+        //use of an array so as to store the selected dates on the calendar
         selectedDates = new Date[2];
         selectedDates[0] = null;
         selectedDates[1] = null;
 
+        //if user has already selected dates from the search field in the home or search activity, he can see his selection on the calendar
         if(date_start != null) {
             selectedDates[0] = Utils.ConvertStringToDate(date_start, FORMAT_DATE_YMD);
             caldroidFragment.setBackgroundDrawableForDate(blue, selectedDates[0]);
@@ -383,12 +402,14 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         }
         final CaldroidListener listener = new CaldroidListener() {
             View view;
+            //user can deselect a date
             void reset(int idx) {
                 selectedDates[idx] = null;
                 view.setBackgroundColor(Color.WHITE);
             }
             @Override
             public void onSelectDate(Date date, View view) {
+                //In order to select dates, user must first select a number of guests
                 if(guests == null) {
                     Toast.makeText(c, "Please select number of guests first", Toast.LENGTH_SHORT).show();
                     return;
@@ -397,6 +418,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
                 int freeIdx= -1;
                 for(int i=0;i<2;++i) {
                     if (selectedDates[i] != null) {
+                        //if user selects again the same date, means that he wants to deselect it
                         if (selectedDates[i].equals(date)) {
                             reset(i);
                             return;
@@ -418,6 +440,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         caldroidFragment.setCaldroidListener(listener);
     }
 
+    /** In case app is minimized, caldroid saves the state left **/
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -428,10 +451,12 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
 
     public void filterDates()
     {
+        /** First clear all disabled dates and then set as disabled those from setCalendar method **/
         caldroidFragment.clearDisableDates();
         caldroidFragment.setDisableDates(reservedDates);
+        //get the number of guests
         guests = etGuests.getText().toString();
-        int numberOfGuestsGiven = 0;
+        int numberOfGuestsGiven;
         try {
             numberOfGuestsGiven = Integer.parseInt(guests);
         }
@@ -441,7 +466,8 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
             caldroidFragment.setDisableDates(reservedDates);
             return;
         }
-
+        /** Check if user can perform a reservation to this period based on the number of guests given and the number of guests already booked this residence
+         * during the same period **/
         for(Date date : NumGuestsPerDay.keySet()) {
             int sum = NumGuestsPerDay.get(date)+ numberOfGuestsGiven;
             if(sum > maxGuests) {
@@ -454,6 +480,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        /** Set the map in order to show the location of the residence **/
         mMap = googleMap;
         LatLng address = RestCalls.findCoordinates(selectedResidence.getAddress(), selectedResidence.getCity(), selectedResidence.getCountry());
         mMap.addMarker(new MarkerOptions().position(address).title("Residence Address"));
@@ -468,7 +495,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-
+        /** Different popup menu based on the role user has chosen to navigate **/
         if (user) {
             inflater.inflate(R.menu.menu_residence_host, menu);
         } else {
@@ -482,7 +509,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         Bundle buser = new Bundle();
         buser.putBoolean("type", user);
         switch (item.getItemId()) {
-            // action with ID action_refresh was selected
+            /** User can view the reviews for this residence **/
             case reviews:
                 if (item.getItemId() == reviews) {
                     Intent historyReviewsIntent = new Intent(ResidenceActivity.this, ReviewsActivity.class);
@@ -492,11 +519,12 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
                     finish();
                     break;
                 }
+                /** User can see the reservations for this residence **/
             case reservations:
                 buser.putInt("residenceId", residenceId);
                 Utils.goToActivity(ResidenceActivity.this, HistoryReservationsActivity.class, buser);
                 break;
-            // action with ID action_settings was selected
+            /** If user navigates as tenant can view the host's profile and contact him, otherwise he can see his own profile **/
             case R.id.contact:
                 if (user) {
                     buser.putInt("host", host.getId());
@@ -509,7 +537,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         }
         return true;
     }
-
+    //handle the back action from phone
     @Override
     public void onBackPressed() {
         handleBackAction();
@@ -531,6 +559,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         return null;
     }
 
+    /** Check previous activity in order to go back correctly **/
     public void handleBackAction()
     {
         if(!(buser.getString("source") == null) && buser.getString("source").equals("reviews"))

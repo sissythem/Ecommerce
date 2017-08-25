@@ -14,3 +14,11 @@ AirbnbProject/local.properties
 ecommerce_rest/src/java/services/ImagesFacadeREST.java
 AirbnbProject/local.properties
 AirbnbProject/app/src/main/java/util/RestClient.java
+*.iml
+*.iml
+AirbnbProject/app/app.iml
+AirbnbProject/app/src/main/java/util/RestClient.java
+AirbnbProject/local.properties
+ecommerce_rest/nbproject/private/private.properties
+ecommerce_rest/nbproject/private/private.xml
+ecommerce_rest/nbproject/project.properties

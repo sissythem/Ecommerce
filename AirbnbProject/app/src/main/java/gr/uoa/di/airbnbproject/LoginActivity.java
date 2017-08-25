@@ -25,17 +25,25 @@ public class LoginActivity extends AppCompatActivity {
     Session sessionData;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
-        // Set View to activity_login.xml
 
+<<<<<<< HEAD
+        /** Set View to activity_login.xml **/
+=======
+        // Set View to activity_login.xml
+>>>>>>> 5fedcaaadcb2aa4e50a1fabee84f8e4ccd279bd7
         setContentView(R.layout.activity_login);
 
-        c=this;
-
+        c = this;
         sharedPrefs = getApplicationContext().getSharedPreferences(USER_LOGIN_PREFERENCES, Context.MODE_PRIVATE);
 
-        //get user input
+<<<<<<< HEAD
+        /** Get user input **/
+=======
+        //Edit fields to be filled in by user in order to login to the app
+>>>>>>> 5fedcaaadcb2aa4e50a1fabee84f8e4ccd279bd7
         final EditText etUsername   = (EditText) findViewById(R.id.etUsername);
         final EditText etPassword   = (EditText) findViewById(R.id.etPassword);
         final Button blogin         = (Button) findViewById(R.id.login);
@@ -44,7 +52,7 @@ public class LoginActivity extends AppCompatActivity {
         etUsername.setSelected(false);
         etPassword.setSelected(false);
 
-        //if user does not have an account, presses on the Register Here and the Register Screen appears
+        /** if user does not have an account, presses on the Register Here and the Register Screen appears **/
         registerlink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -60,12 +68,12 @@ public class LoginActivity extends AppCompatActivity {
                 final String password = etPassword.getText().toString();
 
                 if(Username.length() == 0 || password.length() == 0) {
-                    //if something is not filled in, user must fill again the form
+                    /** If something is not filled in, user must fill again the form **/
                     Toast.makeText(c, "Please fill in all fields!", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                //check if the user is correct
+                /** Check if the user is correct **/
                 RetrofitCalls retrofitCalls = new RetrofitCalls();
                 token = retrofitCalls.getLoginUser(Username, password);
                 if(token.equals("not")) {
@@ -86,9 +94,10 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    /** If user is not logged in cannot go back to the home activity **/
+    //example: if user presses the logout back, he is no longer logged in and he should not be able to return to the home activity
     @Override
     public void onBackPressed() {
-        //isUserLoggedIn = sharedPrefs.getBoolean("userLoggedInState", false);
         if (sessionData.getUserLoggedInState()) {
             Intent intent = new Intent(this, HomeActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

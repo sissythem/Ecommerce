@@ -3,8 +3,8 @@ package fromRESTful;
 import java.io.Serializable;
 import java.util.Collection;
 
-public class Conversations implements Serializable {
-
+public class Conversations implements Serializable
+{
     private static final long serialVersionUID = 1L;
     private Integer id;
     private String subject;

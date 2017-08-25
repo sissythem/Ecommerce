@@ -1,6 +1,8 @@
 package services;
 
 import domain.Images;
+import domain.Residences;
+import domain.Users;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -10,6 +12,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Base64;
 import services.AbstractFacade;
 import java.util.List;
@@ -106,6 +109,7 @@ public class ImagesFacadeREST extends AbstractFacade<Images> {
     
     /*** CUSTOM METHODS ***/
     private static String className = ImagesFacadeREST.class.getName();
+    private static String ImagesDirectory = "C:\\Users\\vasso\\Documents\\ecommerce\\images";
     
     @DELETE
     @Path("delete/{id}")
@@ -128,12 +132,28 @@ public class ImagesFacadeREST extends AbstractFacade<Images> {
         
         if (KeyHolder.checkToken(token, className)) {
             try {
-                File directory = new File("/home/sissy/Documents/Professional/University/UOA/graduate/Semester2/Ecommerce/Project/ecommerce_rest/images/");
-                File newFile = File.createTempFile("img", ".jpg", directory);
+                /** Delete previous profile image file **/
+                Query usrQuery = em.createNativeQuery("SELECT * FROM users WHERE id =?id", Users.class);
+                usrQuery.setParameter("id", id);
+                List<Users> usr = usrQuery.getResultList();
+                String imgName = usr.get(0).getPhoto();
+
+                try {
+                    File file = new File(ImagesDirectory + "\\" + imgName);
+
+                    if (file.exists()) file.delete();
+                } catch (Exception ex) {
+                    System.out.println("Could not delete user profile image");
+                }
+                
+                /** Add new profile image to directory and save to DB **/
+                File newFile = File.createTempFile("img", ".jpg", new File(ImagesDirectory));
                 saveToFile(uploadedInputStream, newFile);
+                
                 Query query = em.createNativeQuery("UPDATE users SET photo ='"+newFile.getName()+"' WHERE id ="+id);
                 query.executeUpdate();
-                return token;
+                //return token;
+                return imgName;
             } catch (Exception e) {
                 return "not";
             }
@@ -151,11 +171,12 @@ public class ImagesFacadeREST extends AbstractFacade<Images> {
         
         if (KeyHolder.checkToken(token, className)) {
             try {
-                File directory = new File("/home/sissy/Documents/Professional/University/UOA/graduate/Semester2/Ecommerce/Project/ecommerce_rest/images/");
+                File directory = new File(ImagesDirectory);
                 File newFile = File.createTempFile("img", ".jpg", directory);
                 saveToFile(uploadedInputStream, newFile);
                 Query query = em.createNativeQuery("UPDATE residences SET photos ='"+newFile.getName()+"' WHERE id ="+id);
                 query.executeUpdate();
+                
                 return token;
             } catch (Exception e) {
                 return "not";
@@ -180,7 +201,7 @@ public class ImagesFacadeREST extends AbstractFacade<Images> {
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces("image/*")
     public Response getUserImage(@HeaderParam("Authorization")String token, @PathParam("name")String name) {
-        String impath = "/home/sissy/Documents/Professional/University/UOA/graduate/Semester2/Ecommerce/Project/ecommerce_rest/images/" + name;
+        String impath = ImagesDirectory + "\\" + name;
         File f = new File(impath);
         if (!f.exists()) {
             Logger.getAnonymousLogger().severe("Image at path " + impath + " not found!");

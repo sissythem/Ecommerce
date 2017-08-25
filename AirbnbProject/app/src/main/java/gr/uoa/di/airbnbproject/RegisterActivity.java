@@ -33,8 +33,6 @@ public class RegisterActivity extends AppCompatActivity {
     private int mYear, mMonth, mDay;
     Session sessionData;
 
-    String dateOfBirth;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +40,7 @@ public class RegisterActivity extends AppCompatActivity {
         // Set View to activity_register.xml
         setContentView(R.layout.activity_register);
 
-        //Create variables for storing user input
+        /** Mandatory fields to be completed by user in order to register **/
         firstname        = (EditText) findViewById(R.id.firstname);
         lastname         = (EditText) findViewById(R.id.lastname);
         birthdate        = (TextView) findViewById(R.id.tvBirthDate);
@@ -123,8 +121,9 @@ public class RegisterActivity extends AppCompatActivity {
                     Toast.makeText(c, "Passwords do not match, please try again!", Toast.LENGTH_SHORT).show();
                     return;
                 }
-
+                //send user input to the database
                 token = PostResult(firstName, lastName, Username, Password, Email, phoneNumber, BirthDate);
+                /** Check if user exists already **/
                 if(token.equals("username exists")){
                     Toast.makeText(c, "Username already exists, please try again!", Toast.LENGTH_SHORT).show();
                     return;
@@ -133,6 +132,7 @@ public class RegisterActivity extends AppCompatActivity {
                     Toast.makeText(c, "Email already exists, please try again!", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                /** Successful POST request, user is redirected to the home activity and session data are stored in order user to remain logged in **/
                 if (token!=null && !token.isEmpty() &&  (!token.equals("error"))) {
                     //if data are stored successfully in the data base, the user is now logged in and the home activity starts
                     sessionData = new Session(token, Username, true);
@@ -156,6 +156,7 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
+    /** Send user input for posting in the database and create a new user **/
     public String PostResult(String firstName, String lastName, String username, String password, String email, String phoneNumber, String bdate) {
         Users UserParameters = new Users(firstName, lastName, username, password, email, phoneNumber, bdate);
         RetrofitCalls retrofitCalls = new RetrofitCalls();
@@ -163,6 +164,8 @@ public class RegisterActivity extends AppCompatActivity {
         return token;
     }
 
+    /** If user is not logged in cannot go back to the home activity **/
+    //example: if user presses the logout back, he is no longer logged in and he should not be able to return to the home activity
     @Override
     public void onBackPressed() {
         if (sessionData.getUserLoggedInState()) {

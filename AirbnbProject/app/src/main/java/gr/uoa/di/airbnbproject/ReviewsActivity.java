@@ -8,7 +8,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,20 +20,18 @@ import fromRESTful.Reservations;
 import fromRESTful.Residences;
 import fromRESTful.Reviews;
 import fromRESTful.Users;
-import util.ListAdapterReviews;
 import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
 
 import static util.Utils.getSessionData;
 
-public class ReviewsActivity extends AppCompatActivity {
+public class ReviewsActivity extends AppCompatActivity
+{
     Boolean user;
     String token;
     Toolbar toolbar;
     Context c;
-    ListAdapterReviews adapter;
-    ListView reviewsList;
 
     Users loggedinUser, host;
     Residences selectedResidence;
@@ -49,10 +46,11 @@ public class ReviewsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        /** Get session data in order to check if user is logged in and if token is expired */
         Session sessionData = getSessionData(ReviewsActivity.this);
         token = sessionData.getToken();
         c = this;
+        //check if user is logged in
         if (!sessionData.getUserLoggedInState()) {
             Utils.logout(this);
             finish();
@@ -63,7 +61,7 @@ public class ReviewsActivity extends AppCompatActivity {
             finish();
             return;
         }
-
+        //check if token is expired
         if(Utils.isTokenExpired(sessionData.getToken())){
             Toast.makeText(c, "Session is expired", Toast.LENGTH_SHORT).show();
             Utils.logout(this);
@@ -77,11 +75,13 @@ public class ReviewsActivity extends AppCompatActivity {
         user        = buser.getBoolean("type");
         residenceId = buser.getInt("residenceId");
         RetrofitCalls retrofitCalls = new RetrofitCalls();
+        //get user, host and residence as objects
         ArrayList<Users> getUserByUsername = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
         loggedinUser        = getUserByUsername.get(0);
         selectedResidence   = retrofitCalls.getResidenceById(token, Integer.toString(residenceId));
         host                = selectedResidence.getHostId();
 
+        //set up the upper toolbar
         toolbar = (Toolbar) findViewById(R.id.backToolbar);
         toolbar.setTitle("Reviews");
         toolbar.setSubtitle("Residence " + selectedResidence.getTitle());
@@ -95,6 +95,7 @@ public class ReviewsActivity extends AppCompatActivity {
         }
 
         toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_back, getTheme()));
+        //handle the back button
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -104,7 +105,7 @@ public class ReviewsActivity extends AppCompatActivity {
                 Utils.goToActivity(ReviewsActivity.this, ResidenceActivity.class, btores);
             }
         });
-
+        /** Show the reviews for this residence **/
         ArrayList<Reviews> reviewsForSelectedResidence = retrofitCalls.getReviewsByResidenceId(token, Integer.toString(residenceId));
         String[] representativePhoto    = new String [reviewsForSelectedResidence.size()];
         String[] username               = new String[reviewsForSelectedResidence.size()];

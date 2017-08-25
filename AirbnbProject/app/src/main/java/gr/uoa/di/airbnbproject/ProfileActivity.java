@@ -37,11 +37,12 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        /** Get session data in order to check if user is logged in and if token is expired */
         Session sessionData = getSessionData(ProfileActivity.this);
         token = sessionData.getToken();
         username = sessionData.getUsername();
         c = this;
+        //check if user is logged in
         if (!sessionData.getUserLoggedInState()) {
             Utils.logout(this);
             finish();
@@ -52,7 +53,7 @@ public class ProfileActivity extends AppCompatActivity {
             finish();
             return;
         }
-
+        //check if token is expired
         if(Utils.isTokenExpired(sessionData.getToken())){
             Toast.makeText(c, "Session is expired", Toast.LENGTH_SHORT).show();
             Utils.logout(this);
@@ -60,7 +61,7 @@ public class ProfileActivity extends AppCompatActivity {
             return;
         }
         setContentView(R.layout.activity_profile);
-
+        //set up the upper toolbar
         toolbar = (Toolbar) findViewById(R.id.backToolbar);
         toolbar.setTitle("Profile");
         toolbar.setSubtitle("Welcome " + username);
@@ -74,6 +75,7 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_back, getTheme()));
+        //handle the back action
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,15 +85,34 @@ public class ProfileActivity extends AppCompatActivity {
 
         Bundle buser = getIntent().getExtras();
         user = buser.getBoolean("type");
+<<<<<<< HEAD
+        retrofitCalls   = new RetrofitCalls();
+=======
         retrofitCalls = new RetrofitCalls();
+        //Get the user
+>>>>>>> 5fedcaaadcb2aa4e50a1fabee84f8e4ccd279bd7
         loggedinUser    = retrofitCalls.getUserbyUsername(token, username).get(0);
         setUpProfile();
         userImage = (ImageView) findViewById(R.id.userImage);
         Utils.loadProfileImage(ProfileActivity.this, userImage, loggedinUser.getPhoto());
+
+        /** FOOTER TOOLBAR **/
+        Utils.manageFooter(ProfileActivity.this, user);
     }
 
     public void setUpProfile()
     {
+<<<<<<< HEAD
+        tvName          = (TextView)findViewById(R.id.name);
+        tvAbout         = (TextView)findViewById(R.id.about);
+        tvUsername      = (TextView)findViewById(R.id.username);
+        tvEmail         = (TextView)findViewById(R.id.email);
+        tvPhoneNumber   = (TextView)findViewById(R.id.phonenumber);
+        tvCity          = (TextView)findViewById(R.id.city);
+        tvCountry       = (TextView)findViewById(R.id.country);
+        tvBirthDate     = (TextView)findViewById(R.id.birthDate);
+=======
+        /** Show info about the user **/
         tvName = (TextView)findViewById(R.id.name);
         tvAbout = (TextView)findViewById(R.id.about);
         tvUsername = (TextView)findViewById(R.id.username);
@@ -100,8 +121,11 @@ public class ProfileActivity extends AppCompatActivity {
         tvCity = (TextView)findViewById(R.id.city);
         tvCountry = (TextView)findViewById(R.id.country);
         tvBirthDate = (TextView)findViewById(R.id.birthDate);
+>>>>>>> 5fedcaaadcb2aa4e50a1fabee84f8e4ccd279bd7
 
         tvName.setText(loggedinUser.getFirstName() + " " + loggedinUser.getLastName());
+        String abb = loggedinUser.getAbout();
+        System.out.println(abb);
         if(loggedinUser.getAbout() != null)
         {
             tvAbout.setText(loggedinUser.getAbout());
@@ -112,10 +136,8 @@ public class ProfileActivity extends AppCompatActivity {
         tvUsername.setText(loggedinUser.getUsername());
         tvEmail.setText(loggedinUser.getEmail());
         tvPhoneNumber.setText(loggedinUser.getPhoneNumber());
-        if(loggedinUser.getCity() != null)
-            tvCity.setText(loggedinUser.getCity());
-        if(loggedinUser.getCountry() !=null)
-            tvCountry.setText(loggedinUser.getCountry());
+        if(loggedinUser.getCity() != null) tvCity.setText(loggedinUser.getCity());
+        if(loggedinUser.getCountry() !=null) tvCountry.setText(loggedinUser.getCountry());
         tvBirthDate.setText(loggedinUser.getBirthDate());
     }
 
@@ -126,12 +148,14 @@ public class ProfileActivity extends AppCompatActivity {
         return true;
     }
 
+    /** PopUp Menu in the upper toolbar **/
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         Bundle buser = new Bundle();
         buser.putBoolean("type", user);
         switch (item.getItemId()) {
-            // action with ID action_refresh was selected
+            /** User can see a history of his reviews **/
             case R.id.reviews:
                 if (item.getItemId() == R.id.reviews) {
                     Intent historyReviewsIntent = new Intent(ProfileActivity.this, HistoryReviewsActivity.class);
@@ -139,17 +163,19 @@ public class ProfileActivity extends AppCompatActivity {
                     startActivity(historyReviewsIntent);
                     break;
                 }
-                // action with ID action_settings was selected
+                /** User can see a history of his reservations **/
             case R.id.reservations:
                 Intent historyReservationsIntent = new Intent(ProfileActivity.this, HistoryReservationsActivity.class);
                 historyReservationsIntent.putExtras(buser);
                 startActivity(historyReservationsIntent);
                 break;
+            /** User can edit his profile **/
             case R.id.editprofile:
                 Intent editIntent = new Intent(ProfileActivity.this, EditProfileActivity.class);
                 editIntent.putExtras(buser);
                 startActivity(editIntent);
                 break;
+            /** User can delete his profile **/
             case R.id.deleteProfile:
                 new AlertDialog.Builder(ProfileActivity.this)
                         .setTitle("Delete Account").setMessage("Do you really want to delete your account?").setIcon(android.R.drawable.ic_dialog_alert)
