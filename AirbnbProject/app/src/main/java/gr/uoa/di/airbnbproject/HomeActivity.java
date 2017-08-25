@@ -288,7 +288,7 @@ public class HomeActivity extends AppCompatActivity
             reviewedResidences = retrofitCalls.getAllResidences(token);
         }
 
-        /** get all relevant rooms and reviews **/
+        /** get all relevant reviews **/
         for (int i=0; i < reviewedResidences.size(); i++) {
             if (!reviewedResidences.get(i).getHostId().getId().equals(loggedInUser.getId())) {
                 residences.add(reviewedResidences.get(i));
@@ -299,6 +299,12 @@ public class HomeActivity extends AppCompatActivity
             residenceId = residences.get(i).getId();
             reviewsByResidence = retrofitCalls.getReviewsByResidenceId(token, Integer.toString(residenceId));
             residences.get(i).setReviewsCollection(reviewsByResidence);
+        }
+
+        for(int i=0;i<residences.size(); i++){
+            if(residences.get(i).getReviewsCollection().isEmpty()){
+                residences.remove(i);
+            }
         }
 
         /** Sort the results **/
