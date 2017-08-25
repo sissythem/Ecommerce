@@ -12,7 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -36,7 +36,7 @@ public class HostActivity extends AppCompatActivity {
     Users host;
     Toolbar toolbar;
 
-    Button baddResidence;
+    ImageButton baddResidence;
 
     Boolean user;
     Context c;
@@ -73,7 +73,7 @@ public class HostActivity extends AppCompatActivity {
         toolbar.setTitle("Your Residences");
         setSupportActionBar(toolbar);
 
-        baddResidence = (Button)findViewById(R.id.addResidence);
+        baddResidence = (ImageButton) findViewById(R.id.addResidence);
         baddResidence.setOnClickListener(new View.OnClickListener()
         {
             @Override

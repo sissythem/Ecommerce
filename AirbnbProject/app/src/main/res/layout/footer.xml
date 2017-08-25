@@ -11,7 +11,7 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/footerToolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/height_of_footer"
         android:orientation="horizontal"
         android:layout_alignParentBottom="true"
         android:background="@color/colorPrimary"

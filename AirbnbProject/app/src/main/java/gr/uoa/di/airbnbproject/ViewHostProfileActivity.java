@@ -96,7 +96,13 @@ public class ViewHostProfileActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Utils.manageBackButton(ViewHostProfileActivity.this, ResidenceActivity.class, user);
+                Intent residenceIntent = new Intent(ViewHostProfileActivity.this, ResidenceActivity.class);
+                Bundle btype = new Bundle();
+                btype.putBoolean("type", user);
+                btype.putInt("residenceId", residenceId);
+                residenceIntent.putExtras(btype);
+                startActivity(residenceIntent);
+                finish();
             }
         });
 
@@ -125,6 +131,9 @@ public class ViewHostProfileActivity extends AppCompatActivity {
             }
         });
         setUpProfile();
+
+        /** FOOTER TOOLBAR **/
+        Utils.manageFooter(ViewHostProfileActivity.this, user);
     }
 
     public void setUpProfile()
@@ -154,5 +163,16 @@ public class ViewHostProfileActivity extends AppCompatActivity {
         if(loggedinUser.getCountry() !=null)
             tvCountry.setText(loggedinUser.getCountry());
         tvBirthDate.setText(loggedinUser.getBirthDate());
+    }
+
+    @Override
+    public void onBackPressed(){
+        Intent residenceIntent = new Intent(ViewHostProfileActivity.this, ResidenceActivity.class);
+        Bundle btype = new Bundle();
+        btype.putBoolean("type", user);
+        btype.putInt("residenceId", residenceId);
+        residenceIntent.putExtras(btype);
+        startActivity(residenceIntent);
+        finish();
     }
 }
