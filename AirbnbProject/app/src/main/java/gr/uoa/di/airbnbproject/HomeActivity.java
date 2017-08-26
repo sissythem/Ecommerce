@@ -373,6 +373,11 @@ public class HomeActivity extends AppCompatActivity
             for (int i=0;i<reviews.size();i++) {
                 reviewedResidences.add(reviews.get(i).getResidenceId());
             }
+            for (int i = 0; i < reviewedResidences.size(); i++) {
+                residenceId = reviewedResidences.get(i).getId();
+                reviewsByResidence = retrofitCalls.getReviewsByResidenceId(token, Integer.toString(residenceId));
+                reviewedResidences.get(i).setReviewsCollection(reviewsByResidence);
+            }
         }
 
         /** check for duplicates **/
