@@ -389,7 +389,7 @@ public class HomeActivity extends AppCompatActivity
             reviewsByResidence = retrofitCalls.getReviewsByResidenceId(token, Integer.toString(residenceId));
             residences.get(i).setReviewsCollection(reviewsByResidence);
             /** Exclude residences with no reviews */
-            if(residences.get(i).getReviewsCollection() == null)
+            if(residences.get(i).getReviewsCollection() == null || residences.get(i).getReviewsCollection().isEmpty())
             {
                 residences.remove(i);
             }
