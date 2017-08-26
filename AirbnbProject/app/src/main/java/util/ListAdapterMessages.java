@@ -1,6 +1,7 @@
 package util;
 
 import android.app.Activity;
+import android.graphics.Typeface;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,6 +52,7 @@ public class ListAdapterMessages extends ArrayAdapter<String> {
         TextView msg_timestamp  = (TextView) rowView.findViewById(R.id.msglist_timestamp);
 
         msg_name.setText(name[position]);
+        msg_name.setTypeface(null, Typeface.BOLD);
         msg_body.setText(body[position]);
         msg_timestamp.setText(timestamp[position]);
 
