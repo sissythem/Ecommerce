@@ -42,12 +42,16 @@ import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
 
+import static android.text.TextUtils.isEmpty;
+import static util.Utils.FORMAT_DATE_DM;
+import static util.Utils.FORMAT_DATE_YMD;
 import static util.Utils.getSessionData;
 
 public class HomeActivity extends AppCompatActivity
 {
     final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
 
+    ArrayList<Residences> Recommendations;
     EditText field_city, field_guests;
     TextView startDate, endDate, searchbar;
     CollapsingToolbarLayout collapsingToolbarLayout;
@@ -63,6 +67,7 @@ public class HomeActivity extends AppCompatActivity
 
     RecyclerView residencesRecyclerView;
     RecyclerView.LayoutManager residencesLayoutManager;
+    RecyclerAdapterResidences residencesAdapter;
 
     boolean isShow = false;
     int scrollRange = -1;
@@ -113,16 +118,17 @@ public class HomeActivity extends AppCompatActivity
 
         /** FOOTER TOOLBAR **/
         Utils.manageFooter(HomeActivity.this, true);
+        /** RECOMMENDATIONS **/
+        Recommendations = popularRecommendations();
 
         /**SEARCH VIEW EXPANDABLE START **/
         setupSearchView();
 
-        /** RECOMMENDATIONS **/
-        ArrayList<Residences> Recommendations = popularRecommendations();
         /** RecyclerView for displaying the recommendations */
         try {
             if (Recommendations.size() > 0) {
-                residencesRecyclerView.setAdapter(new RecyclerAdapterResidences(this, user, Recommendations));
+                residencesAdapter = new RecyclerAdapterResidences(this, user, Recommendations);
+                residencesRecyclerView.setAdapter(residencesAdapter);
             }
         } catch (Exception e) {
             Log.e("", e.getMessage());
@@ -211,25 +217,32 @@ public class HomeActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
+                int numGuests=0;
                 final String guests = field_guests.getText().toString();
-                final String city = field_city.getText().toString();
-                Intent searchintent = new Intent(HomeActivity.this, SearchResultsActivity.class);
-                Bundle bsearch = new Bundle();
-                if(!city.isEmpty())
-                    bsearch.putString("city", city);
-                else{
-                    bsearch.putString("city", "");
-                }
-                if(!guests.isEmpty())
-                    bsearch.putInt("guests", Integer.parseInt(guests));
+                if(guests!=null && !guests.isEmpty())
+                    numGuests = Integer.parseInt(guests);
                 else
-                    bsearch.putInt("guests", 1);
+                    numGuests=0;
+                final String city = field_city.getText().toString();
 
-                bsearch.putString("startDate", date_start);
-                bsearch.putString("endDate", date_end);
-                bsearch.putBoolean("type", user);
-                searchintent.putExtras(bsearch);
-                startActivity(searchintent);
+                if (numGuests <= 0) numGuests = 1;
+                if (isEmpty(date_start) || date_start==null || !Utils.isThisDateValid(date_start, FORMAT_DATE_YMD)) date_start = Utils.getCurrentDate(FORMAT_DATE_YMD);
+                if (isEmpty(date_end) || date_end==null || !Utils.isThisDateValid(date_end, FORMAT_DATE_YMD)) date_end = Utils.getDefaultEndDate(FORMAT_DATE_YMD);
+
+                String str_city = (!isEmpty(city)) ? Character.toUpperCase(city.charAt(0)) + city.substring(1) : "Anywhere";
+                String str_startdate = Utils.formatDate(date_start, FORMAT_DATE_DM);
+                String str_enddate = Utils.getDefaultEndDate(FORMAT_DATE_DM);
+                String str_guests = guests + " " + ((numGuests > 1) ? "guests" : "guest");
+
+                searchbar.setText(str_city + ", " + str_startdate + "-" + str_enddate + ", " + str_guests);
+                RetrofitCalls retrofitCalls = new RetrofitCalls();
+
+                long start_timestamp = Utils.convertDateToMillisSec(date_start, FORMAT_DATE_YMD);
+                long end_timestamp = Utils.convertDateToMillisSec(date_end, FORMAT_DATE_YMD);
+
+                Recommendations = retrofitCalls.getRecommendations(token, username, city, start_timestamp, end_timestamp, numGuests);
+                residencesAdapter.setSearchList(Recommendations);
+                residencesAdapter.notifyDataSetChanged();
             }
         });
     }

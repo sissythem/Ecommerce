@@ -29,6 +29,11 @@ public class RecyclerAdapterResidences extends RecyclerView.Adapter<RecyclerAdap
     Context context;
     Boolean user;
     ArrayList<Residences> residences = new ArrayList<>();
+    public void setSearchList(ArrayList<Residences> residences)
+    {
+        this.residences = residences;
+    }
+
     public RecyclerAdapterResidences(Context context, Boolean user, ArrayList<Residences> residences) {
         this.context    = context;
         this.user       = user;
