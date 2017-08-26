@@ -145,17 +145,19 @@ public class HomeActivity extends AppCompatActivity
 
     public void setupSearchView() {
         searchbar = (TextView) findViewById(R.id.searchbar);
+        /** Hide search toolbar **/
         searchbar.setVisibility(View.GONE);
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar);
         final AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
 
+        /** Show toolbar onClick **/
         searchbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 appBarLayout.setExpanded(true);
             }
         });
-
+        /** Show toolbar on scrolling **/
         appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
@@ -225,12 +227,16 @@ public class HomeActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
+                /** Change recommendations when user presses the search button
+                 * Hide the keyboard
+                 * Hide the search toolbar **/
                 progressBar.setVisibility(View.VISIBLE);
                 appBarLayout.setExpanded(false);
 
                 hideSoftKeyboard(HomeActivity.this, v);
                 int numGuests;
                 final String guests = field_guests.getText().toString();
+                /** Check user input **/
                 if(guests!=null && !guests.isEmpty())
                     numGuests = Integer.parseInt(guests);
                 else
@@ -241,6 +247,7 @@ public class HomeActivity extends AppCompatActivity
                 if (isEmpty(date_start) || date_start==null || !Utils.isThisDateValid(date_start, FORMAT_DATE_YMD)) date_start = Utils.getCurrentDate(FORMAT_DATE_YMD);
                 if (isEmpty(date_end) || date_end==null || !Utils.isThisDateValid(date_end, FORMAT_DATE_YMD)) date_end = Utils.getDefaultEndDate(FORMAT_DATE_YMD);
 
+                /** Change toolbar header based on user input **/
                 String str_city = (!isEmpty(city)) ? Character.toUpperCase(city.charAt(0)) + city.substring(1) : "Anywhere";
                 String str_startdate = Utils.formatDate(date_start, FORMAT_DATE_DM);
                 String str_enddate = Utils.getDefaultEndDate(FORMAT_DATE_DM);
@@ -252,6 +259,7 @@ public class HomeActivity extends AppCompatActivity
                 long start_timestamp = Utils.convertDateToMillisSec(date_start, FORMAT_DATE_YMD);
                 long end_timestamp = Utils.convertDateToMillisSec(date_end, FORMAT_DATE_YMD);
 
+                /** Update recommendations based on user input **/
                 Recommendations = retrofitCalls.getRecommendations(token, username, city, start_timestamp, end_timestamp, numGuests);
                 if(Recommendations.size() !=0) {
                     residencesAdapter.setSearchList(Recommendations);
@@ -262,6 +270,7 @@ public class HomeActivity extends AppCompatActivity
             }
         });
 
+        /** User can clear all search fields and view again the recommendations based on all previous searches he has performed **/
         clear = (Button)findViewById(R.id.clear);
         clear.setOnClickListener(new View.OnClickListener() {
             @Override
