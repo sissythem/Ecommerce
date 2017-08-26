@@ -3,6 +3,7 @@ package fromRESTful;
 import java.io.Serializable;
 import java.util.Date;
 
+/** Users class to map the object from RESTful services **/
 public class Users implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -53,7 +54,6 @@ public class Users implements Serializable {
         this.country        = "";
         this.city           = "";
         this.about          = "";
-        //this.registrationDate= new Date();
     }
 
     public Users(Integer id) {

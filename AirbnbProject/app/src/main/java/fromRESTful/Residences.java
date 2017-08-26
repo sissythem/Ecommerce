@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
+/** Residences class to map the object from RESTful services **/
 public class Residences implements Serializable, Comparable {
 
     private static final long serialVersionUID = 1L;

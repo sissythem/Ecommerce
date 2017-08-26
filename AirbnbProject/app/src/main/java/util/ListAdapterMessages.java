@@ -12,7 +12,7 @@ import gr.uoa.di.airbnbproject.R;
 
 import static util.Utils.USER_RECEIVER;
 import static util.Utils.USER_SENDER;
-
+/** ListAdapter for MessageActivity**/
 public class ListAdapterMessages extends ArrayAdapter<String> {
     private final Activity context;
     private final Integer currentUserId;

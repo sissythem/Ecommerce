@@ -22,7 +22,7 @@ import static util.Utils.OPEN_MESSAGES_ACTION;
 import static util.Utils.USER_RECEIVER;
 import static util.Utils.USER_SENDER;
 import static util.Utils.VIEW_RESIDENCE_ACTION;
-
+/** RecyclerView and CardView for Reservations used in InboxActivity **/
 public class RecyclerAdapterInbox extends RecyclerView.Adapter<RecyclerAdapterInbox.ConversationsCardHolder> {
     Context context;
     Boolean user;

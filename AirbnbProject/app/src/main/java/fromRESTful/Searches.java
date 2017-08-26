@@ -2,6 +2,7 @@ package fromRESTful;
 
 import java.io.Serializable;
 
+/** Searches class to map the object from RESTful services **/
 public class Searches implements Serializable {
 
     private static final long serialVersionUID = 1L;

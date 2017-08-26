@@ -1,7 +1,5 @@
 package util;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -21,17 +19,19 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
-public class RestCallManager extends AsyncTask<RestCallParameters, Integer, ArrayList<Object>> {
+/** MANAGE CALLS THAT DO NOT USE RETROFIT 2.0**/
+public class RestCallManager extends AsyncTask<RestCallParameters, Integer, ArrayList<Object>>
+{
     static final String TAG = "REST_CALL_MANAGER";
     static final int TIMEOUT_SECONDS = 1000;
     ArrayList<Object> Responses=null;
     RestCallParameters[] Params;
 
+    /** Manage the AsyncTask**/
     protected ArrayList<Object> doInBackground(RestCallParameters... parameters) {
         Responses = new ArrayList<>();
         Params = parameters;
-
+        /** Check the request type **/
         int i;
         for (i=0; i<parameters.length;i++){
             try {
@@ -72,7 +72,7 @@ public class RestCallManager extends AsyncTask<RestCallParameters, Integer, Arra
     protected void onPostExecute(ArrayList<String> result) {
         long id  = Thread.currentThread().getId();
     }
-
+    /** Get the JSONObject from the result **/
     public ArrayList<JSONObject> getSingleJSONArray() {
         ArrayList<Object> ResponsesToGet = new ArrayList<>();
         // call has not been done
@@ -112,41 +112,7 @@ public class RestCallManager extends AsyncTask<RestCallParameters, Integer, Arra
         return jsonResult;
     }
 
-    public ArrayList<Object> getRawResponse (){
-        ArrayList<Object> Response = new ArrayList<>();
-        // call has not been done
-        try {
-            Response = this.get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            Log.e("",e.getMessage());
-        } catch (ExecutionException e) {
-            Log.e("",e.getMessage());
-        } catch (TimeoutException e) {
-            Log.e("",e.getMessage());
-        }
-        Log.i(TAG, String.format("Getting raw response of size %d", Response.size()));
-
-        return Response;
-    }
-
-    public Bitmap getSingleBitmap(){
-        ArrayList<Object> Response = new ArrayList<>();
-        // call has not been done
-        try {
-            Response = this.get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            Log.e("",e.getMessage());
-        } catch (ExecutionException e) {
-            Log.e("",e.getMessage());
-        } catch (TimeoutException e) {
-            Log.e("",e.getMessage());
-        }
-
-        Bitmap bm = BitmapFactory.decodeStream((InputStream) Response.get(0));
-
-        return bm;
-    }
-
+    /** Method for GET HTTP Request **/
     public static String sendGET(String address) throws IOException {
         StringBuilder result = new StringBuilder();
         URL url = new URL(address);
@@ -170,7 +136,7 @@ public class RestCallManager extends AsyncTask<RestCallParameters, Integer, Arra
         if(conn!=null) conn.disconnect();
         return result.toString();
     }
-
+    /** Method for GET HTTP Request for stream **/
     public static InputStream sendGETStream(String address) throws IOException {
         StringBuilder result = new StringBuilder();
         URL url = new URL(address);
@@ -186,7 +152,7 @@ public class RestCallManager extends AsyncTask<RestCallParameters, Integer, Arra
         if(conn!=null) conn.disconnect();
         return null;
     }
-
+    /** Method for POST HTTP Request **/
     public static String sendPOST(String payload, String address) {
         URL url;
         HttpURLConnection connection = null;
@@ -242,7 +208,7 @@ public class RestCallManager extends AsyncTask<RestCallParameters, Integer, Arra
         }
         return resp;
     }
-
+    /** Method for PUT HTTP Request **/
     public static String sendPUT(String payload, String address) {
         URL url;
         HttpURLConnection connection = null;
@@ -302,6 +268,7 @@ public class RestCallManager extends AsyncTask<RestCallParameters, Integer, Arra
         }
         return resp;
     }
+    /** Method for DELETE HTTP Request **/
     public static String sendDELETE (String address){
         URL url = null;
         String resp = "";

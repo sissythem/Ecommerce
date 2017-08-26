@@ -15,19 +15,16 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import fromRESTful.Residences;
-import gr.uoa.di.airbnbproject.HomeActivity;
 import gr.uoa.di.airbnbproject.HostActivity;
 import gr.uoa.di.airbnbproject.R;
 import gr.uoa.di.airbnbproject.ResidenceActivity;
 
-import static util.Utils.CANCEL_RESERVATION_ACTION;
-import static util.Utils.CONTACT_HOST_ACTION;
-import static util.Utils.CONTACT_USER_ACTION;
 import static util.Utils.DELETE_ACTION;
 import static util.Utils.EDIT_ACTION;
 import static util.Utils.RESERVATIONS_ACTION;
 import static util.Utils.VIEW_RESIDENCE_ACTION;
 
+/** RecyclerView and CardView for Residences used in HomeActivity and HostActivity **/
 public class RecyclerAdapterResidences extends RecyclerView.Adapter<RecyclerAdapterResidences.ResidencesCardHolder> {
     Context context;
     Boolean user;
@@ -83,7 +80,8 @@ public class RecyclerAdapterResidences extends RecyclerView.Adapter<RecyclerAdap
         return residences.size();
     }
 
-    public static class ResidencesCardHolder extends RecyclerView.ViewHolder {
+    public static class ResidencesCardHolder extends RecyclerView.ViewHolder
+    {
         CardView rCardView;
         ImageView rPhoto;
         TextView rTitle, rCity, rPrice;

@@ -1,35 +1,27 @@
 package util;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import fromRESTful.Reservations;
-import fromRESTful.Residences;
-import gr.uoa.di.airbnbproject.HistoryReservationsActivity;
 import gr.uoa.di.airbnbproject.R;
-import gr.uoa.di.airbnbproject.ResidenceActivity;
 
 import static util.Utils.CANCEL_RESERVATION_ACTION;
 import static util.Utils.CONTACT_HOST_ACTION;
 import static util.Utils.CONTACT_USER_ACTION;
 import static util.Utils.FORMAT_DATE_DMY;
-import static util.Utils.FORMAT_DATE_YMD;
 import static util.Utils.VIEW_RESIDENCE_ACTION;
 import static util.Utils.convertTimestampToDateStr;
-
+/** RecyclerView and CardView for Reservations used in HistoryReservationsActivity **/
 public class RecyclerAdapterReservations extends RecyclerView.Adapter<RecyclerAdapterReservations.ReservationsCardHolder> {
     Context context;
     Boolean user, residenceExists;

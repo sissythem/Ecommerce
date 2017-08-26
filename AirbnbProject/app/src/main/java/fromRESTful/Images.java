@@ -2,6 +2,7 @@ package fromRESTful;
 
 import java.io.Serializable;
 
+/** Images class to map the object from RESTful services **/
 public class Images implements Serializable {
     private static final long serialVersionUID = 1L;
     private Integer id;

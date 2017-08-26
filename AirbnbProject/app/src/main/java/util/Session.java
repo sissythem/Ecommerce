@@ -1,5 +1,5 @@
 package util;
-
+/** Object containing the SharedPreferences: username, token, userLoggedinState **/
 public class Session {
 
     private String token;

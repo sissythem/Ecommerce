@@ -3,6 +3,7 @@ package fromRESTful;
 import java.io.Serializable;
 import java.util.Date;
 
+/** Messages class to map the object from RESTful services **/
 public class Messages implements Serializable {
 
     private Users userId;

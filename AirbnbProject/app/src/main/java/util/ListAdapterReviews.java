@@ -1,7 +1,6 @@
 package util;
 
 import android.app.Activity;
-import android.media.Rating;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,9 +10,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import gr.uoa.di.airbnbproject.R;
-
-import static util.RestClient.BASE_URL;
-
+/** ListAdapter for Reviews and HistoryReviews activities **/
 public class ListAdapterReviews extends ArrayAdapter<String>
 {
     private final Activity context;

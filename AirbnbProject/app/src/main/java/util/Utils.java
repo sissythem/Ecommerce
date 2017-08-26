@@ -67,8 +67,15 @@ public class Utils {
     public static final String CONTACT_USER_ACTION          = "Contact User";
     public static final String CANCEL_RESERVATION_ACTION    = "Cancel Reservation";
 
-    public static Date ConvertStringToDate(String date, String format)
-    {
+    /** When an activity starts, it is checked if token is expired in order to terminate the session **/
+    public static boolean isTokenExpired(String token) {
+        RetrofitCalls retrofitCalls = new RetrofitCalls();
+        boolean isExpired = retrofitCalls.isTokenExpired(token);
+        return isExpired;
+    }
+
+    /** Convert date format **/
+    public static Date ConvertStringToDate(String date, String format) {
         Date convertedDate= Calendar.getInstance().getTime();
         try {
             DateFormat df = new SimpleDateFormat(format);
@@ -173,6 +180,8 @@ public class Utils {
         return formatteddate;
     }
 
+    /** Navigation using the footer toolbar **/
+    /** Check the user role each time **/
     public static void manageFooter(final Activity context, Boolean user) {
         final Activity this_context = context;
         final Boolean this_user = user;
@@ -270,6 +279,7 @@ public class Utils {
     }
 
     /** MANAGE LOGOUT ACTION **/
+    /** SharedPreferences are cleared and user is redirected in the GreetingActivity **/
     public static void logout(Activity context)
     {
     /* Reset Shared Preferences */
@@ -287,7 +297,7 @@ public class Utils {
         context.startActivity(greetingintent);
         context.finish();
     }
-
+    /** MANAGE BACK TOOLBAR **/
     public static void manageBackButton(Activity context, Class newContext, boolean user) {
         final Activity this_context = context;
         final Class this_new_context = newContext;
@@ -314,14 +324,40 @@ public class Utils {
             ex.printStackTrace();
         }
     }
+    /** Methods for going back or reload and activity **/
+    public static void goToActivity(Context context, Class newIntentClass, Bundle extras) {
+        Intent newIntent = new Intent(context, newIntentClass);
+        newIntent.putExtras(extras);
+        try {
+            context.startActivity(newIntent);
+            ((Activity) context).finish();
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
 
+    public static void reloadActivity(Context context, Bundle extras) {
+        Intent currentIntent = ((Activity) context).getIntent();
+        currentIntent.putExtras(extras);
+
+        try {
+            context.startActivity(currentIntent);
+            ((Activity) context).finish();
+        } catch (Exception e) {
+            Log.e("",e.getMessage());
+        }
+    }
+
+    /** Session Data contains the username, the token and the user login state **/
+    /** Checks if user is logged in **/
     public static Session getSessionData(Activity context) {
         SharedPreferences sharedPrefs = context.getApplicationContext().getSharedPreferences(USER_LOGIN_PREFERENCES, Context.MODE_PRIVATE);
         Session sessionData = new Session(sharedPrefs.getString("token", ""), sharedPrefs.getString("username", ""),
                 sharedPrefs.getBoolean("userLoggedInState", false));
         return sessionData;
     }
-
+    /** Initialization of SharedPreferences when user selects to register or to login **/
     public static Session updateSessionData(Activity context, Session sessionData) {
         SharedPreferences sharedPrefs = context.getApplicationContext().getSharedPreferences(USER_LOGIN_PREFERENCES, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPrefs.edit();
@@ -334,6 +370,7 @@ public class Utils {
         return sessionData;
     }
 
+    /** MANAGE IMAGE UPLOAD**/
     public static String encodeParameterizedURL(ArrayList<String> paramNames, ArrayList<String> paramValues) {
         if(paramNames.size() != paramValues.size()) {
             System.err.printf("Unequal number of params + values : %d vs %d \n",paramNames.size(), paramValues.size());
@@ -354,13 +391,6 @@ public class Utils {
             }
         }
         return result;
-    }
-
-    public static boolean isTokenExpired(String token)
-    {
-        RetrofitCalls retrofitCalls = new RetrofitCalls();
-        boolean isExpired = retrofitCalls.isTokenExpired(token);
-        return isExpired;
     }
 
     public static String getRealPathFromURI(Context context, Uri contentUri) {
@@ -396,30 +426,7 @@ public class Utils {
                 .into(imgView);
     }
 
-    public static void goToActivity(Context context, Class newIntentClass, Bundle extras) {
-        Intent newIntent = new Intent(context, newIntentClass);
-        newIntent.putExtras(extras);
-        try {
-            context.startActivity(newIntent);
-            ((Activity) context).finish();
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-            ex.printStackTrace();
-        }
-    }
-
-    public static void reloadActivity(Context context, Bundle extras) {
-        Intent currentIntent = ((Activity) context).getIntent();
-        currentIntent.putExtras(extras);
-
-        try {
-            context.startActivity(currentIntent);
-            ((Activity) context).finish();
-        } catch (Exception e) {
-            Log.e("",e.getMessage());
-        }
-    }
-
+    /** MANAGE MESSAGES AND NOTIFICATIONS **/
     protected static Integer getNewMessages(String token, Integer userId) {
         RetrofitCalls retrofitCalls = new RetrofitCalls();
         Integer countMsg = retrofitCalls.countNewMessages(token, userId);
