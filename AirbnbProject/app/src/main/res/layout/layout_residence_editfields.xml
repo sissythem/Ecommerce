@@ -74,14 +74,14 @@
                 android:id="@+id/etAbout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentStart="true"
                 android:layout_below="@+id/etTitle"
                 android:ems="10"
                 android:hint="@string/about"
-                android:inputType="textPersonName"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
+                android:inputType="textMultiLine|textPersonName" />
 
             <EditText
                 android:id="@+id/etAddress"
@@ -126,14 +126,14 @@
                 android:id="@+id/etAmenities"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:ems="10"
-                android:layout_below="@+id/etCountry"
-                android:inputType="textPersonName"
-                android:hint="@string/residence_amenities"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
+                android:layout_alignParentRight="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/etCountry"
+                android:ems="10"
+                android:hint="@string/residence_amenities"
+                android:inputType="textMultiLine|textPersonName" />
 
             <EditText
                 android:id="@+id/etFloor"
@@ -205,7 +205,7 @@
                 android:layout_below="@+id/checkboxes"
                 android:ems="10"
                 android:hint="@string/view"
-                android:inputType="textPersonName" />
+                android:inputType="textMultiLine|textPersonName" />
 
             <EditText
                 android:id="@+id/etSpaceArea"
@@ -307,27 +307,27 @@
                 android:id="@+id/etCancellationPolicy"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:ems="10"
-                android:layout_below="@+id/availabilityend"
-                android:inputType="textPersonName"
-                android:hint="@string/cancellation_policy"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
+                android:layout_alignParentRight="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/availabilityend"
+                android:ems="10"
+                android:hint="@string/cancellation_policy"
+                android:inputType="textMultiLine|textPersonName" />
 
             <EditText
                 android:id="@+id/etRules"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:ems="10"
-                android:layout_below="@+id/etCancellationPolicy"
-                android:inputType="textPersonName"
-                android:hint="@string/rules"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
+                android:layout_alignParentRight="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/etCancellationPolicy"
+                android:ems="10"
+                android:hint="@string/rules"
+                android:inputType="textMultiLine|textPersonName" />
 
         </RelativeLayout>
     </ScrollView>
