@@ -277,10 +277,9 @@ public class HomeActivity extends AppCompatActivity
             public void onClick(View v)
             {
                 clearInput();
-                Bundle buser = new Bundle();
-                buser.putBoolean("type", true);
                 appBarLayout.setExpanded(false);
-                Utils.reloadActivity(HomeActivity.this, buser);
+                finish();
+                startActivity(getIntent());
             }
         });
     }
