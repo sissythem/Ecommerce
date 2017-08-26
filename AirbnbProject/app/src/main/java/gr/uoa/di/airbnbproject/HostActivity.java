@@ -139,6 +139,7 @@ public class HostActivity extends AppCompatActivity {
         /** Host can view all reservations made for the selected residence **/
         else if (item.getTitle().equals(RESERVATIONS_ACTION)) {
             btype.putInt("residenceId", resId);
+            btype.putString("source", "host");
             goToActivity(this, HistoryReservationsActivity.class, btype);
         }
         /** Host can delete his residence **/

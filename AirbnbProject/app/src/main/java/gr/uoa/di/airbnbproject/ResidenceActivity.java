@@ -522,6 +522,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
                 /** User can see the reservations for this residence **/
             case reservations:
                 buser.putInt("residenceId", residenceId);
+                buser.putString("source", "residence");
                 Utils.goToActivity(ResidenceActivity.this, HistoryReservationsActivity.class, buser);
                 break;
             /** If user navigates as tenant can view the host's profile and contact him, otherwise he can see his own profile **/
