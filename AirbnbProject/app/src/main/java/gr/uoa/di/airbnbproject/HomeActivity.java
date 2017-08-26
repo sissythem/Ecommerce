@@ -322,7 +322,7 @@ public class HomeActivity extends AppCompatActivity
     {
         ArrayList<Users> Users;
         RetrofitCalls retrofitCalls = new RetrofitCalls();
-        //Get the user as Users object
+        /**Get the user as Users object **/
         Users = retrofitCalls.getUserbyUsername(token, username);
         //If user is not found or if something went wrong
         if(Users.isEmpty())
@@ -334,7 +334,7 @@ public class HomeActivity extends AppCompatActivity
 
         ArrayList<Residences> reviewedResidences = new ArrayList<>();
         ArrayList<Residences> residences = new ArrayList<>();
-        ArrayList<Reviews> reviewsByResidence;
+        ArrayList<Reviews> reviewsByResidence, reviews;
         int residenceId;
 
         ArrayList<Searches> searchedCities;
@@ -342,61 +342,52 @@ public class HomeActivity extends AppCompatActivity
         searchedCities = retrofitCalls.getSearchedCities(token, loggedInUser.getId().toString());
         Set<String> relevantCities = new HashSet<>();
         for(int i = 0;i<searchedCities.size();i++){
-            //add the cities to a HashSet in order to include each city ones
+            /**add the cities to a HashSet in order to include each city once **/
             relevantCities.add(searchedCities.get(i).getCity());
         }
-
-        /** If user has not searched anything yet, most popular residences will appear **/
-        if (relevantCities.size() == 0) {
-            ArrayList<Reviews> reviews;
+        /** If user has already searched, we will show the most popular residences in the relevant cities **/
+        if (relevantCities.size() != 0) {
+            for (String city : relevantCities) {
+                residences.addAll(retrofitCalls.getResidencesByCity(token, city));
+            }
+            if (residences.size() != 0) {
+                /** Set up the reviews collection in order to sort the residences */
+                /** In class Residences: getAverageRating computes the rating based on the reviews collection */
+                for (int i = 0; i < residences.size(); i++) {
+                    residenceId = residences.get(i).getId();
+                    reviewsByResidence = retrofitCalls.getReviewsByResidenceId(token, Integer.toString(residenceId));
+                    /** Exclude residences with no reviews */
+                    if (reviewsByResidence != null && reviewsByResidence.size() != 0) {
+                        residences.get(i).setReviewsCollection(reviewsByResidence);
+                        reviewedResidences.add(residences.get(i));
+                    }
+                }
+            }
+        }
+        /** 1)If there are not relevant residences for user's searches, he will see the most popular recommendations **/
+        /** 2)If there are residences in the cities searched, but not reviewed **/
+        /** 3)If user has not searched anything yet, most popular residences will appear **/
+        if(reviewedResidences.size() == 0 || relevantCities.size() == 0 ||reviewedResidences == null || relevantCities ==null)
+        {
             reviews = retrofitCalls.getAllReviews(token);
             for (int i=0;i<reviews.size();i++) {
                 reviewedResidences.add(reviews.get(i).getResidenceId());
-                residences.add(reviews.get(i).getResidenceId());
-            }
-        }
-        /** If user has already searched, we will show the most popular residences in the relevant cities **/
-        else {
-            for (String city : relevantCities) {
-                reviewedResidences = retrofitCalls.getResidencesByCity(token, city);
-                residences.addAll(reviewedResidences);
-            }
-            /** In case that there are not relevant residences for user's searches, he will see the most popular recommendations **/
-            if(residences.size() == 0){
-                ArrayList<Reviews> reviews;
-                reviews = retrofitCalls.getAllReviews(token);
-                for (int i=0;i<reviews.size();i++) {
-                    residences.add(reviews.get(i).getResidenceId());
-                }
             }
         }
 
         /** check for duplicates **/
         Set<Residences> hs = new HashSet<>();
-        hs.addAll(residences);
+        hs.addAll(reviewedResidences);
         reviewedResidences.clear();
-        residences.clear();
-        residences.addAll(hs);
+        reviewedResidences.addAll(hs);
 
-        /** get all relevant reviews **/
-        for (int i=0; i < residences.size(); i++) {
-            /** exclude all residences that are uploaded by the user who is logged in **/
-            if (!residences.get(i).getHostId().getId().equals(loggedInUser.getId())) {
-                reviewedResidences.add(residences.get(i));
-            }
-        }
-        /** Set up the reviews collection in order to sort the residences */
-        /** In class Residences: getAverageRating computes the rating based on the reviews collection */
+        /** exclude all residences that are uploaded by the user who is logged in **/
         for (int i=0; i < reviewedResidences.size(); i++) {
-            residenceId = reviewedResidences.get(i).getId();
-            reviewsByResidence = retrofitCalls.getReviewsByResidenceId(token, Integer.toString(residenceId));
-            reviewedResidences.get(i).setReviewsCollection(reviewsByResidence);
-            /** Exclude residences with no reviews */
-            if(reviewedResidences.get(i).getReviewsCollection() == null || reviewedResidences.get(i).getReviewsCollection().isEmpty())
-            {
-                reviewedResidences.remove(i);
+            if (reviewedResidences.get(i).getHostId().getId().equals(loggedInUser.getId())) {
+                reviewedResidences.remove(reviewedResidences.get(i));
             }
         }
+
         /** In case that no residence has reviews we just present a list of the residences */
         if(reviewedResidences.size() ==0) {
             reviewedResidences = retrofitCalls.getAllResidences(token);
