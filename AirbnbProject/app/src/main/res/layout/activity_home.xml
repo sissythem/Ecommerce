@@ -63,7 +63,14 @@
 
         </android.support.design.widget.AppBarLayout>
 
+        <ProgressBar
+            android:id="@+id/loadingPanel"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:indeterminate="true" />
+
         <include layout="@layout/recycler_main"
+            android:id="@+id/recyclermain"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/height_of_footer"

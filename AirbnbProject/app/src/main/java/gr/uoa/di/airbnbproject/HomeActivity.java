@@ -1,5 +1,6 @@
 package gr.uoa.di.airbnbproject;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -18,9 +19,11 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,7 +59,8 @@ public class HomeActivity extends AppCompatActivity
     TextView startDate, endDate, searchbar;
     CollapsingToolbarLayout collapsingToolbarLayout;
 
-    Button btnStartDatePicker, btnEndDatePicker, field_search;
+    Button btnStartDatePicker, btnEndDatePicker, field_search, clear;
+    ProgressBar progressBar;
 
     private int mStartYear, mStartMonth, mStartDay, mEndYear, mEndMonth, mEndDay;
     String username, date_start, date_end, token;
@@ -73,11 +77,15 @@ public class HomeActivity extends AppCompatActivity
     int scrollRange = -1;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        progressBar = (ProgressBar)findViewById(R.id.loadingPanel);
+        progressBar.setVisibility(View.GONE);
 
-        residencesRecyclerView = (RecyclerView) findViewById(R.id.recycler);
+        /** Set up RecyclerView**/
+        residencesRecyclerView = (RecyclerView) findViewById(R.id.recyclermain);
         residencesLayoutManager = new GridLayoutManager(this, 1);
         residencesRecyclerView.setLayoutManager(residencesLayoutManager);
         residencesRecyclerView.setHasFixedSize(true);
@@ -217,7 +225,11 @@ public class HomeActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                int numGuests=0;
+                progressBar.setVisibility(View.VISIBLE);
+                appBarLayout.setExpanded(false);
+
+                hideSoftKeyboard(HomeActivity.this, v);
+                int numGuests;
                 final String guests = field_guests.getText().toString();
                 if(guests!=null && !guests.isEmpty())
                     numGuests = Integer.parseInt(guests);
@@ -241,8 +253,25 @@ public class HomeActivity extends AppCompatActivity
                 long end_timestamp = Utils.convertDateToMillisSec(date_end, FORMAT_DATE_YMD);
 
                 Recommendations = retrofitCalls.getRecommendations(token, username, city, start_timestamp, end_timestamp, numGuests);
-                residencesAdapter.setSearchList(Recommendations);
-                residencesAdapter.notifyDataSetChanged();
+                if(Recommendations.size() !=0) {
+                    residencesAdapter.setSearchList(Recommendations);
+                    residencesAdapter.notifyDataSetChanged();
+                }
+                progressBar.setVisibility(View.GONE);
+
+            }
+        });
+
+        clear = (Button)findViewById(R.id.clear);
+        clear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                clearInput();
+                Bundle buser = new Bundle();
+                buser.putBoolean("type", true);
+                appBarLayout.setExpanded(false);
+                Utils.reloadActivity(HomeActivity.this, buser);
             }
         });
     }
@@ -263,6 +292,21 @@ public class HomeActivity extends AppCompatActivity
             isShow = false;
             searchbar.setVisibility(View.GONE);
         }
+    }
+
+    public void clearInput(){
+        field_guests.setText("");
+        field_city.setText("");
+        startDate.setText("");
+        endDate.setText("");
+        date_start="";
+        date_end="";
+}
+
+    public static void hideSoftKeyboard (Activity activity, View view)
+    {
+        InputMethodManager imm = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getApplicationWindowToken(), 0);
     }
 
     public ArrayList<Residences> popularRecommendations()
