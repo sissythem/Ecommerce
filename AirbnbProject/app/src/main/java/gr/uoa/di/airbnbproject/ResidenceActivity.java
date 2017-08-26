@@ -519,7 +519,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
                     finish();
                     break;
                 }
-                /** User can see the reservations for this residence **/
+                /** Host can see the reservations for this residence **/
             case reservations:
                 buser.putInt("residenceId", residenceId);
                 buser.putString("source", "residence");
@@ -532,6 +532,8 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
                     buser.putInt("residenceId", residenceId);
                     goToActivity(ResidenceActivity.this, ViewHostProfileActivity.class, buser);
                 } else {
+                    buser.putString("source", "residence");
+                    buser.putInt("residenceId", residenceId);
                     goToActivity(ResidenceActivity.this, ProfileActivity.class, buser);
                 }
                 break;

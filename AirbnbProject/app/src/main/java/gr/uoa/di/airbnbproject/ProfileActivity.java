@@ -12,7 +12,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,7 +25,7 @@ import static util.Utils.getSessionData;
 public class ProfileActivity extends AppCompatActivity {
     Users loggedinUser;
     String username, token;
-    ListView list;
+    Bundle buser;
     Context c;
     Toolbar toolbar;
     ImageView userImage;
@@ -79,11 +78,11 @@ public class ProfileActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Utils.manageBackButton(ProfileActivity.this, (user)?HomeActivity.class:HostActivity.class, user);
+                handleBackAction();
             }
         });
 
-        Bundle buser = getIntent().getExtras();
+        buser = getIntent().getExtras();
         user = buser.getBoolean("type");
         retrofitCalls = new RetrofitCalls();
         //Get the user
@@ -184,5 +183,26 @@ public class ProfileActivity extends AppCompatActivity {
                         .setNegativeButton(android.R.string.no, null).show();
         }
         return true;
+    }
+
+    public void handleBackAction(){
+        if(buser.getString("source").equals("residence")){
+            Intent residenceIntent = new Intent(ProfileActivity.this, ResidenceActivity.class);
+            Bundle btype = new Bundle();
+            btype.putBoolean("type", user);
+            btype.putInt("residenceId", buser.getInt("residenceId"));
+            residenceIntent.putExtras(btype);
+            startActivity(residenceIntent);
+        }
+        else{
+            Bundle btype = new Bundle();
+            btype.putBoolean("type", user);
+            Utils.goToActivity(ProfileActivity.this, (user)?HomeActivity.class:HostActivity.class, btype);
+        }
+    }
+
+    @Override
+    public void onBackPressed(){
+        handleBackAction();
     }
 }
