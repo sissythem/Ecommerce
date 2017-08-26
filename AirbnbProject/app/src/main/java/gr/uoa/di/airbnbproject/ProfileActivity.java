@@ -116,14 +116,21 @@ public class ProfileActivity extends AppCompatActivity {
         else {
             tvAbout.setText("About this user");
         }
-        tvUsername.setText(loggedinUser.getUsername());
-        tvEmail.setText(loggedinUser.getEmail());
-        tvPhoneNumber.setText(loggedinUser.getPhoneNumber());
-        if(loggedinUser.getCity() != null)
-            tvCity.setText(loggedinUser.getCity());
-        if(loggedinUser.getCountry() !=null)
-            tvCountry.setText(loggedinUser.getCountry());
-        tvBirthDate.setText(loggedinUser.getBirthDate());
+        tvUsername.setText("Username: " + loggedinUser.getUsername());
+        tvEmail.setText("Email: " + loggedinUser.getEmail());
+        tvPhoneNumber.setText("Phone Number: " + loggedinUser.getPhoneNumber());
+        if(!loggedinUser.getCity().isEmpty())
+            tvCity.setText("City: " + loggedinUser.getCity());
+        else
+            tvCity.setHint("Add your city");
+        if(!loggedinUser.getCountry().isEmpty())
+            tvCountry.setText("Country: " + loggedinUser.getCountry());
+        else
+            tvCountry.setHint("Add your country");
+        if(!loggedinUser.getBirthDate().isEmpty())
+            tvBirthDate.setText("Birth Date: " + loggedinUser.getBirthDate());
+        else
+            tvBirthDate.setHint("Add your birth date");
     }
 
     @Override
