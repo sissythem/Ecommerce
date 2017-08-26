@@ -63,8 +63,8 @@ public class HomeActivity extends AppCompatActivity
     ProgressBar progressBar;
 
     private int mStartYear, mStartMonth, mStartDay, mEndYear, mEndMonth, mEndDay;
-    String username, date_start, date_end, token;
-
+    String username, date_start, date_end, token, city;
+    int numGuests;
     Boolean user;
     Users loggedInUser;
     Context c;
@@ -135,7 +135,7 @@ public class HomeActivity extends AppCompatActivity
         /** RecyclerView for displaying the recommendations */
         try {
             if (Recommendations.size() > 0) {
-                residencesAdapter = new RecyclerAdapterResidences(this, user, Recommendations);
+                residencesAdapter = new RecyclerAdapterResidences(this, user, Recommendations, numGuests, date_start, date_end);
                 residencesRecyclerView.setAdapter(residencesAdapter);
             }
         } catch (Exception e) {
@@ -234,14 +234,13 @@ public class HomeActivity extends AppCompatActivity
                 appBarLayout.setExpanded(false);
 
                 hideSoftKeyboard(HomeActivity.this, v);
-                int numGuests;
                 final String guests = field_guests.getText().toString();
                 /** Check user input **/
                 if(guests!=null && !guests.isEmpty())
                     numGuests = Integer.parseInt(guests);
                 else
                     numGuests=0;
-                final String city = field_city.getText().toString();
+                city = field_city.getText().toString();
 
                 if (numGuests <= 0) numGuests = 1;
                 if (isEmpty(date_start) || date_start==null || !Utils.isThisDateValid(date_start, FORMAT_DATE_YMD)) date_start = Utils.getCurrentDate(FORMAT_DATE_YMD);
@@ -263,6 +262,9 @@ public class HomeActivity extends AppCompatActivity
                 Recommendations = retrofitCalls.getRecommendations(token, username, city, start_timestamp, end_timestamp, numGuests);
                 if(Recommendations.size() !=0) {
                     residencesAdapter.setSearchList(Recommendations);
+                    residencesAdapter.setGuests(numGuests);
+                    residencesAdapter.setStartDate(date_start);
+                    residencesAdapter.setEndDate(date_end);
                     residencesAdapter.notifyDataSetChanged();
                 }
                 progressBar.setVisibility(View.GONE);

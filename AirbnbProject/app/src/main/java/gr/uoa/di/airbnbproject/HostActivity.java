@@ -106,7 +106,7 @@ public class HostActivity extends AppCompatActivity {
         storedResidences = retrofitCalls.getResidencesByHost(token, host.getId().toString());
         try {
             if (storedResidences.size() > 0) {
-                residencesRecyclerView.setAdapter(new RecyclerAdapterResidences(this, user, storedResidences));
+                residencesRecyclerView.setAdapter(new RecyclerAdapterResidences(this, user, storedResidences, 1, "", ""));
             }
         } catch (Exception e) {
             Log.e("", e.getMessage());

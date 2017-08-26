@@ -205,6 +205,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
             setCalendar();
         } else {
             bBook.setVisibility(View.GONE);
+            etGuests.setVisibility(View.GONE);
         }
         setBookResidence();
     }

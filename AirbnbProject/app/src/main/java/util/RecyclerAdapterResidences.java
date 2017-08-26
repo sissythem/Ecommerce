@@ -29,15 +29,20 @@ public class RecyclerAdapterResidences extends RecyclerView.Adapter<RecyclerAdap
     Context context;
     Boolean user;
     ArrayList<Residences> residences = new ArrayList<>();
-    public void setSearchList(ArrayList<Residences> residences)
-    {
-        this.residences = residences;
-    }
+    int guests;
+    String startDate, endDate;
+    public void setSearchList(ArrayList<Residences> residences) {this.residences = residences;}
+    public void setGuests(int guests){this.guests=guests;}
+    public void setStartDate(String startDate){this.startDate=startDate;}
+    public void setEndDate(String endDate){this.endDate=endDate;}
 
-    public RecyclerAdapterResidences(Context context, Boolean user, ArrayList<Residences> residences) {
+    public RecyclerAdapterResidences(Context context, Boolean user, ArrayList<Residences> residences, int guests, String startDate, String endDate) {
         this.context    = context;
         this.user       = user;
         this.residences = residences;
+        this.guests     = guests;
+        this.startDate  = startDate;
+        this.endDate    = endDate;
     }
 
     @Override
@@ -75,6 +80,9 @@ public class RecyclerAdapterResidences extends RecyclerView.Adapter<RecyclerAdap
                 btype.putBoolean("type", user);
                 btype.putString("source", "home");
                 btype.putInt("residenceId", residences.get(position).getId());
+                btype.putString("guests", Integer.toString(guests));
+                btype.putString("startDate", startDate);
+                btype.putString("endDate", endDate);
                 Utils.goToActivity(context, ResidenceActivity.class, btype);
             }
         });
