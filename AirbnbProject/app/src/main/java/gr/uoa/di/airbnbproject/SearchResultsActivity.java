@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,7 +26,6 @@ import static util.Utils.getSessionData;
 
 public class SearchResultsActivity extends AppCompatActivity {
     Boolean user;
-    ListView list;
     TextView searchlist;
     String token;
 
@@ -40,15 +38,15 @@ public class SearchResultsActivity extends AppCompatActivity {
     RecyclerView residencesRecyclerView;
     RecyclerView.Adapter residencesAdapter;
     RecyclerView.LayoutManager residencesLayoutManager;
-    ArrayList<Residences> residencesList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        /** Get session data in order to check if user is logged in and if token is expired */
         Session sessionData = getSessionData(SearchResultsActivity.this);
         token = sessionData.getToken();
         c=this;
+        //check if user is logged in
         if (!sessionData.getUserLoggedInState()) {
             Utils.logout(this);
             finish();
@@ -59,7 +57,7 @@ public class SearchResultsActivity extends AppCompatActivity {
             finish();
             return;
         }
-
+        //check if token is expired
         if(Utils.isTokenExpired(sessionData.getToken())){
             Toast.makeText(c, "Session is expired", Toast.LENGTH_SHORT).show();
             Utils.logout(this);
@@ -79,8 +77,8 @@ public class SearchResultsActivity extends AppCompatActivity {
 
         if (guests <= 0) guests = 1;
 
-        if (isEmpty(startDate) || !Utils.isThisDateValid(startDate, FORMAT_DATE_YMD)) startDate = Utils.getCurrentDate(FORMAT_DATE_YMD);
-        if (isEmpty(endDate) || !Utils.isThisDateValid(endDate, FORMAT_DATE_YMD)) endDate = Utils.getDefaultEndDate(FORMAT_DATE_YMD);
+        if (isEmpty(startDate) || startDate==null || !Utils.isThisDateValid(startDate, FORMAT_DATE_YMD)) startDate = Utils.getCurrentDate(FORMAT_DATE_YMD);
+        if (isEmpty(endDate) || endDate==null || !Utils.isThisDateValid(endDate, FORMAT_DATE_YMD)) endDate = Utils.getDefaultEndDate(FORMAT_DATE_YMD);
 
         String str_city = (!isEmpty(city)) ? Character.toUpperCase(city.charAt(0)) + city.substring(1) : "Anywhere";
         String str_startdate = Utils.formatDate(startDate, FORMAT_DATE_DM);

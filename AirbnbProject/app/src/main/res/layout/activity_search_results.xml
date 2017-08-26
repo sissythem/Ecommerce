@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_gravity="fill_horizontal"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <ScrollView
@@ -35,13 +36,11 @@
                 android:weightSum="1"
                 android:clickable="true" />
 
-            <ListView
-                android:id="@+id/list"
-                android:layout_width="fill_parent"
-                android:layout_height="376dp"
-                android:divider="#b5b5b5"
-                android:dividerHeight="1dp"
-                android:listSelector="@drawable/list_selector" />
+            <include layout="@layout/recycler_main"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/height_of_footer"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
         </LinearLayout>
     </ScrollView>
     <include layout="@layout/footer" />

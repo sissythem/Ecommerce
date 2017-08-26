@@ -206,14 +206,25 @@ public class HomeActivity extends AppCompatActivity
         });
 
         field_search = (Button) findViewById(R.id.field_search);
-        field_search.setOnClickListener(new View.OnClickListener() {
+        field_search.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
+                final String guests = field_guests.getText().toString();
+                final String city = field_city.getText().toString();
                 Intent searchintent = new Intent(HomeActivity.this, SearchResultsActivity.class);
                 Bundle bsearch = new Bundle();
+                if(!city.isEmpty())
+                    bsearch.putString("city", city);
+                else{
+                    bsearch.putString("city", "");
+                }
+                if(!guests.isEmpty())
+                    bsearch.putInt("guests", Integer.parseInt(guests));
+                else
+                    bsearch.putInt("guests", 1);
 
-                bsearch.putString("city", field_city.getText().toString());
-                bsearch.putInt("guests", Integer.parseInt(field_guests.getText().toString()));
                 bsearch.putString("startDate", date_start);
                 bsearch.putString("endDate", date_end);
                 bsearch.putBoolean("type", user);
