@@ -87,21 +87,10 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    /** If user is not logged in cannot go back to the home activity **/
-    //example: if user presses the logout back, he is no longer logged in and he should not be able to return to the home activity
     @Override
     public void onBackPressed() {
-        if (sessionData.getUserLoggedInState()) {
-            Intent intent = new Intent(this, HomeActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-            super.onBackPressed();
-            return;
-        }
-        else {
-            Intent greetingIntent = new Intent(this, GreetingActivity.class);
-            startActivity(greetingIntent);
-            super.onBackPressed();
-        }
+        Intent greetingIntent = new Intent(this, GreetingActivity.class);
+        startActivity(greetingIntent);
+        super.onBackPressed();
     }
 }

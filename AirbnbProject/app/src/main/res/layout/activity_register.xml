@@ -144,11 +144,12 @@
             android:id="@+id/register"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:background="@color/caldroid_darker_gray"
-            android:layout_marginTop="24dp"
             android:layout_marginBottom="24dp"
+            android:layout_marginTop="24dp"
+            android:background="@color/caldroid_333"
             android:padding="12dp"
-            android:text="Create Account"/>
+            android:text="Create Account"
+            android:textColor="@android:color/white" />
 
         <TextView android:id="@+id/loginlink"
             android:layout_width="fill_parent"
