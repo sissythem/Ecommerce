@@ -90,6 +90,14 @@ public class Messages implements Serializable {
         this.deletedFromReceiver = deletedFromReceiver;
     }
 
+    public boolean isMine(int userId){
+        if(this.getUserId().getId() == userId){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
     @Override
     public int hashCode() {
         int hash = 0;

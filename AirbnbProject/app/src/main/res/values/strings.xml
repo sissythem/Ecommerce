@@ -99,7 +99,7 @@
 
     <!-- MESSAGE COLUMNS -->
     <string name="message_write">Write your message here</string>
-    <string name="message_send">Send message</string>
+    <string name="message_send">Send</string>
     <string name="message_subject">Subject</string>
 
     <!-- REVIEWS -->

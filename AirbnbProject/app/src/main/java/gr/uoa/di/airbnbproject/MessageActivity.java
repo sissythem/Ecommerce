@@ -4,18 +4,17 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,15 +24,15 @@ import fromRESTful.Conversations;
 import fromRESTful.Messages;
 import fromRESTful.Residences;
 import fromRESTful.Users;
-import util.ListAdapterMessages;
+import util.RecyclerAdapterMessages;
 import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
 
 import static util.Utils.COPY_ACTION;
 import static util.Utils.ConvertStringToDate;
-import static util.Utils.FORMAT_DATE_YMD;
 import static util.Utils.DELETE_ACTION;
+import static util.Utils.FORMAT_DATE_YMD;
 import static util.Utils.USER_RECEIVER;
 import static util.Utils.USER_SENDER;
 import static util.Utils.getCurrentDate;
@@ -49,8 +48,8 @@ public class MessageActivity extends AppCompatActivity {
     EditText body;
     int conversationId, messagesSize, residenceId;
 
-    ListAdapterMessages msgadapter;
-    ListView messageslist;
+    RecyclerAdapterMessages mAdapter;
+    private RecyclerView mRecyclerView;
     Boolean user, isNewMessage;
 
     ArrayList<Messages> Messages;
@@ -115,6 +114,7 @@ public class MessageActivity extends AppCompatActivity {
         subject = (TextView) findViewById(R.id.subject);
         subject.setText(msgSubject);
         body = (EditText) findViewById(R.id.body);
+        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
         RetrofitCalls retrofitCalls = new RetrofitCalls();
 
@@ -153,42 +153,13 @@ public class MessageActivity extends AppCompatActivity {
             }
         }
 
-        int[] msguserid             = new int[messagesSize];
-        String[] msgname            = new String[messagesSize];
-        String[] msgbody            = new String[messagesSize];
-        String[] msgtimestamp       = new String[messagesSize];
-        short[] deletedFromSender   = new short[messagesSize];
-        short[] deletedFromReceiver = new short[messagesSize];
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        if (messagesSize > 0) {
-            for(int i=0; i < messagesSize; i++) {
-                msguserid[i]            = Messages.get(i).getUserId().getId();
-                msgname[i]              = Messages.get(i).getUserId().getUsername();
-                msgbody[i]              = Messages.get(i).getBody();
-                msgtimestamp[i]         = Messages.get(i).getTimestamp().toString();
-                deletedFromSender[i]    = Messages.get(i).getDeletedFromSender();
-                deletedFromReceiver[i]  = Messages.get(i).getDeletedFromReceiver();
-            }
-        }
-
-        messageslist = (ListView) findViewById(R.id.messageslist);
-        msgadapter = new ListAdapterMessages(this, currentUserId, userType, msguserid, msgname, msgbody, msgtimestamp, deletedFromSender, deletedFromReceiver);
-        messageslist.setAdapter(msgadapter);
-        registerForContextMenu(messageslist);
+        mAdapter = new RecyclerAdapterMessages(this, Messages, user, currentUserId);
+        mRecyclerView.setAdapter(mAdapter);
 
         send = (Button)findViewById(R.id.message_send_btn);
         sendMessage();
-    }
-
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
-        menu.setHeaderTitle("Message Options");
-
-        menu.add(0, info.position, 0, DELETE_ACTION);
-        menu.add(0, info.position, 1, COPY_ACTION);
     }
 
     @Override
