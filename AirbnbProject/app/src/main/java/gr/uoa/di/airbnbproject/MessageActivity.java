@@ -1,5 +1,6 @@
 package gr.uoa.di.airbnbproject;
 
+import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -200,7 +201,8 @@ public class MessageActivity extends AppCompatActivity {
                 }).setNegativeButton(android.R.string.no, null).show();
         } else if (item.getTitle().equals(COPY_ACTION)) {
             ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-            clipboard.setText(Messages.get(item.getItemId()).getBody());
+            ClipData clip = ClipData.newPlainText("copied text", Messages.get(item.getItemId()).getBody());
+            clipboard.setPrimaryClip(clip);
         } else {
             Toast.makeText(this, item.getTitle(), Toast.LENGTH_LONG).show();
         }
@@ -212,47 +214,47 @@ public class MessageActivity extends AppCompatActivity {
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                msgBody = body.getText().toString();
-                if (msgBody == null || msgBody == "" || msgBody.length() == 0) {
-                    Toast.makeText(c, "Please write a message!", Toast.LENGTH_SHORT).show();
-                    return;
+            msgBody = body.getText().toString();
+            if (msgBody == null || msgBody == "" || msgBody.length() == 0) {
+                Toast.makeText(c, "Please write a message!", Toast.LENGTH_SHORT).show();
+                return;
+            } else {
+                RetrofitCalls retrofitCalls = new RetrofitCalls();
+                Users senderUser = retrofitCalls.getUserbyId(token, currentUserId.toString());
+                Users receiverUser = retrofitCalls.getUserbyId(token, toUserId.toString());
+
+                if (!isNewMessage) {
+                    token = PostMessageResult(senderUser, conversation, msgBody);
                 } else {
-                    RetrofitCalls retrofitCalls = new RetrofitCalls();
-                    Users senderUser = retrofitCalls.getUserbyId(token, currentUserId.toString());
-                    Users receiverUser = retrofitCalls.getUserbyId(token, toUserId.toString());
-
-                    if (!isNewMessage) {
-                        token = PostMessageResult(senderUser, conversation, msgBody);
-                    } else {
-                        token = PostConversationResult(senderUser, receiverUser, retrofitCalls.getResidenceById(token, Integer.toString(residenceId)), msgSubject);
-                        if (!token.isEmpty() && token!=null && token!="not") {
-                            /** Last Conversation entry in dbtable **/
-                            conversation = retrofitCalls.getLastConversation(token, currentUserId, toUserId).get(0);
-                            conversationId = conversation.getId();
-
-                            token = PostMessageResult(senderUser, conversation, msgBody);
-                        } else {
-                            Toast.makeText(c, "Message failed to send! Maybe your session has finished, please log in again!", Toast.LENGTH_SHORT).show();
-                            Utils.logout(MessageActivity.this);
-                            finish();
-                        }
-                    }
-
+                    token = PostConversationResult(senderUser, receiverUser, retrofitCalls.getResidenceById(token, Integer.toString(residenceId)), msgSubject);
                     if (!token.isEmpty() && token!=null && token!="not") {
-                        String userUnreadType = "";
-                        if (currentUserId == conversation.getSenderId().getId()) {
-                            userUnreadType = USER_RECEIVER;
-                        } else if (currentUserId == conversation.getReceiverId().getId()) {
-                            userUnreadType = USER_SENDER;
-                        }
-                        token = retrofitCalls.updateConversation(token, "0", userUnreadType, Integer.toString(conversation.getId()));
-                        reloadConversation();
+                        /** Last Conversation entry in dbtable **/
+                        conversation = retrofitCalls.getLastConversation(token, currentUserId, toUserId).get(0);
+                        conversationId = conversation.getId();
+
+                        token = PostMessageResult(senderUser, conversation, msgBody);
                     } else {
                         Toast.makeText(c, "Message failed to send! Maybe your session has finished, please log in again!", Toast.LENGTH_SHORT).show();
                         Utils.logout(MessageActivity.this);
                         finish();
                     }
                 }
+
+                if (!token.isEmpty() && token!=null && token!="not") {
+                    String userUnreadType = "";
+                    if (currentUserId == conversation.getSenderId().getId()) {
+                        userUnreadType = USER_RECEIVER;
+                    } else if (currentUserId == conversation.getReceiverId().getId()) {
+                        userUnreadType = USER_SENDER;
+                    }
+                    token = retrofitCalls.updateConversation(token, "0", userUnreadType, Integer.toString(conversation.getId()));
+                    reloadConversation();
+                } else {
+                    Toast.makeText(c, "Message failed to send! Maybe your session has finished, please log in again!", Toast.LENGTH_SHORT).show();
+                    Utils.logout(MessageActivity.this);
+                    finish();
+                }
+            }
             }
         });
     }
