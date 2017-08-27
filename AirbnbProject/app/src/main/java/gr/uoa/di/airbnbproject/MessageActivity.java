@@ -183,21 +183,21 @@ public class MessageActivity extends AppCompatActivity {
                 .setTitle("Delete Message").setMessage("Do you really want to delete this message?").setIcon(R.drawable.ic_delete)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        RetrofitCalls retrofitCalls = new RetrofitCalls();
-                        token = retrofitCalls.deleteMessage(token, Messages.get(item.getItemId()).getId(), currentUserId, userType);
-                        if (!token.isEmpty() && token!=null && token!="not") {
-                            Toast.makeText(c, "Message deleted!", Toast.LENGTH_SHORT).show();
-                            Messages.remove(Messages.get(item.getItemId()));
-                            mAdapter.setmMessages(Messages);
-                            mAdapter.notifyDataSetChanged();
-                        } else if (token.equals("not")) {
-                            Toast.makeText(c, "Failed to delete message! Your session has finished, please log in again!", Toast.LENGTH_SHORT).show();
-                            Utils.logout(MessageActivity.this);
-                            finish();
-                        } else {
-                            Toast.makeText(c, "Something went wrong, message is not deleted. Please try again!", Toast.LENGTH_SHORT).show();
-                        }
+                    RetrofitCalls retrofitCalls = new RetrofitCalls();
+                    token = retrofitCalls.deleteMessage(token, Messages.get(item.getItemId()).getId(), currentUserId, userType);
+                    if (!token.isEmpty() && token!=null && token!="not") {
+                        Toast.makeText(c, "Message deleted!", Toast.LENGTH_SHORT).show();
+                        Messages.remove(Messages.get(item.getItemId()));
+                        mAdapter.setmMessages(Messages);
+                        mAdapter.notifyDataSetChanged();
+                    } else if (token.equals("not")) {
+                        Toast.makeText(c, "Failed to delete message! Your session has finished, please log in again!", Toast.LENGTH_SHORT).show();
+                        Utils.logout(MessageActivity.this);
+                        finish();
+                    } else {
+                        Toast.makeText(c, "Something went wrong, message is not deleted. Please try again!", Toast.LENGTH_SHORT).show();
                     }
+                 }
                 }).setNegativeButton(android.R.string.no, null).show();
         } else if (item.getTitle().equals(COPY_ACTION)) {
             ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);

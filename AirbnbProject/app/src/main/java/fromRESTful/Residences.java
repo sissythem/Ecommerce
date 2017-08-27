@@ -61,8 +61,7 @@ public class Residences implements Serializable, Comparable {
                       short kitchen,
                       short livingRoom,
                       long startDate,
-                      long endDate,
-                      String photo)
+                      long endDate)
     {
         this.hostId                     = host;
         this.title                      = title;
@@ -86,7 +85,6 @@ public class Residences implements Serializable, Comparable {
         this.livingRoom                 = livingRoom;
         this.availableDateStart         = startDate;
         this.availableDateEnd           = endDate;
-        this.photos                     = photo;
     }
 
     public Residences(Integer residenceId,

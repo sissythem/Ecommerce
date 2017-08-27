@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -41,6 +42,7 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
     Toolbar toolbar;
 
     ImageButton bcontinue, btnStartDate, btnEndDate;
+    Button upload;
     ImageView imageToUpload;
     Spinner etType;
     String resType;
@@ -137,9 +139,12 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
 
         cbKitchen           = (CheckBox)findViewById(R.id.cbKitchen);
         cbLivingRoom        = (CheckBox)findViewById(R.id.cbLivingRoom);
+        imageToUpload       = (ImageView)findViewById(R.id.photo);
+        upload              = (Button)findViewById(R.id.uploadImage);
+        bcontinue           = (ImageButton)findViewById(R.id.ibContinue);
 
-        bcontinue = (ImageButton)findViewById(R.id.ibContinue);
-
+        imageToUpload.setVisibility(View.GONE);
+        upload.setVisibility(View.GONE);
         /** When user clicks on the button, a calendar appears in order to pick up a date*/
         btnStartDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -207,10 +212,8 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
         {
             /** Get user input*/
             @Override
-            public void onClick(View v) {
-                //Log.w("","SETTING HARDCODED RESIDENCE VALUES FOR DEBUGGING!");
-                //final String photo                      = etUpload.getText().toString();
-                final String photo                      = "sdgdfg";
+            public void onClick(View v)
+            {
                 final String title                      = etTitle.getText().toString();
                 final String type                       = resType;
                 final String about                      = etAbout.getText().toString();
@@ -240,7 +243,7 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
                 if (title.length() == 0 || type.length() == 0 || about.length() == 0 || address.length() == 0 || city.length() == 0 || country.length() == 0 || amenities.length() == 0 || floor.length() == 0
                         || rooms.length() == 0 || baths.length() == 0 || view.length() == 0 || spaceArea.length() == 0 || guests.length() == 0 || minPrice.length() == 0
                         || additionalCostPerPerson.length() == 0 || cancellationPolicy.length() == 0 || rules.length() == 0
-                        || startDate <= 0 || endDate <= 0 || endDate <= startDate || photo.length() == 0) {
+                        || startDate <= 0 || endDate <= 0 || endDate <= startDate) {
                     Toast.makeText(c, "Please fill in all fields!", Toast.LENGTH_SHORT).show();
                     return;
                 } else {
@@ -268,8 +271,7 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
                             kitchen,
                             livingRoom,
                             startDate,
-                            endDate,
-                            photo
+                            endDate
                     );
 
                     RetrofitCalls retrofitCalls = new RetrofitCalls();
