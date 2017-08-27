@@ -30,15 +30,16 @@ public class RecyclerAdapterMessages extends RecyclerView.Adapter<RecyclerAdapte
     Boolean user;
     Integer currentUserId;
     ArrayList<Messages> mMessages = new ArrayList<>();
-    String userType;
+    String userType, token;
 
-        public RecyclerAdapterMessages(Context context, ArrayList<Messages> messages, Boolean user, Integer currentUserId, String userType)
+        public RecyclerAdapterMessages(Context context, ArrayList<Messages> messages, Boolean user, Integer currentUserId, String userType, String token)
         {
             this.mContext = context;
             this.user=user;
             this.mMessages = messages;
             this.currentUserId=currentUserId;
             this.userType=userType;
+            this.token=token;
         }
 
     @Override
@@ -77,6 +78,7 @@ public class RecyclerAdapterMessages extends RecyclerView.Adapter<RecyclerAdapte
 
         String date = Utils.ConvertDateToString(mMessages.get(position).getTimestamp(), Utils.FORMAT_DATE_DMY);
         holder.tvTime.setText("Sent: " + date);
+
         holder.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
             @Override
             public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {

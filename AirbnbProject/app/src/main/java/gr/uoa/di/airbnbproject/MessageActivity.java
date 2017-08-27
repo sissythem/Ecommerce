@@ -160,7 +160,7 @@ public class MessageActivity extends AppCompatActivity {
         registerForContextMenu(mRecyclerView);
         try {
             if (Messages.size() > 0) {
-                mAdapter = new RecyclerAdapterMessages(this, Messages, user, currentUserId, userType);
+                mAdapter = new RecyclerAdapterMessages(this, Messages, user, currentUserId, userType, token);
                 mRecyclerView.setAdapter(mAdapter);
             }
         }
