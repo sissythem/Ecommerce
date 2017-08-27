@@ -184,7 +184,9 @@ public class MessageActivity extends AppCompatActivity {
                         token = retrofitCalls.deleteMessage(token, Messages.get(item.getItemId()).getId(), currentUserId, userType);
                         if (!token.isEmpty() && token!=null && token!="not") {
                             Toast.makeText(c, "Message deleted!", Toast.LENGTH_SHORT).show();
-                            reloadConversation();
+                            Messages.remove(Messages.get(item.getItemId()));
+                            mAdapter.setmMessages(Messages);
+                            mAdapter.notifyDataSetChanged();
                         } else if (token.equals("not")) {
                             Toast.makeText(c, "Failed to delete message! Your session has finished, please log in again!", Toast.LENGTH_SHORT).show();
                             Utils.logout(MessageActivity.this);
