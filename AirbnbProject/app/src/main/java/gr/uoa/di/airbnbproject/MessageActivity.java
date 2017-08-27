@@ -13,8 +13,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,7 +42,7 @@ public class MessageActivity extends AppCompatActivity {
     Bundle bextras;
     Integer currentUserId, toUserId;
     Toolbar toolbar;
-    Button send;
+    ImageButton send;
     String msgSubject, msgBody;
     TextView subject;
     EditText body;
@@ -167,7 +167,7 @@ public class MessageActivity extends AppCompatActivity {
         catch (Exception e) {
                 Log.e("", e.getMessage());
         }
-        send = (Button)findViewById(R.id.message_send_btn);
+        send = (ImageButton) findViewById(R.id.message_send_btn);
         sendMessage();
     }
 
