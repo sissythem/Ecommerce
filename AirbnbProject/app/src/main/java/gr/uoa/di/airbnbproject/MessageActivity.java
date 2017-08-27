@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -111,10 +111,10 @@ public class MessageActivity extends AppCompatActivity {
            }
         });
 
+        /** Set up the layout **/
         subject = (TextView) findViewById(R.id.subject);
         subject.setText(msgSubject);
         body = (EditText) findViewById(R.id.body);
-        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
         RetrofitCalls retrofitCalls = new RetrofitCalls();
 
@@ -153,15 +153,25 @@ public class MessageActivity extends AppCompatActivity {
             }
         }
 
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        mAdapter = new RecyclerAdapterMessages(this, Messages, user, currentUserId);
-        mRecyclerView.setAdapter(mAdapter);
-
+        /** Set up the RecyclerView**/
+        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        mRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
+        mRecyclerView.setHasFixedSize(true);
+        registerForContextMenu(mRecyclerView);
+        try {
+            if (Messages.size() > 0) {
+                mAdapter = new RecyclerAdapterMessages(this, Messages, user, currentUserId, userType);
+                mRecyclerView.setAdapter(mAdapter);
+            }
+        }
+        catch (Exception e) {
+                Log.e("", e.getMessage());
+        }
         send = (Button)findViewById(R.id.message_send_btn);
         sendMessage();
     }
 
+    /** Menu Options (Delete/Copy) **/
     @Override
     public boolean onContextItemSelected(final MenuItem item) {
         super.onContextItemSelected(item);

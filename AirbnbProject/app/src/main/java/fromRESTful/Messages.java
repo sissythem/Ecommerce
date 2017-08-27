@@ -90,6 +90,7 @@ public class Messages implements Serializable {
         this.deletedFromReceiver = deletedFromReceiver;
     }
 
+    /** Function for checking if message's sender is the logged in user**/
     public boolean isMine(int userId){
         if(this.getUserId().getId() == userId){
             return true;
