@@ -26,6 +26,16 @@ public class RecyclerAdapterMessages extends RecyclerView.Adapter<RecyclerAdapte
     Integer currentUserId;
     ArrayList<Messages> mMessages = new ArrayList<>();
 
+    public int position;
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
     public void setmMessages(ArrayList<Messages> mMessages) {
         this.mMessages = mMessages;
     }
@@ -79,33 +89,36 @@ public class RecyclerAdapterMessages extends RecyclerView.Adapter<RecyclerAdapte
 
         String date = Utils.ConvertDateToString(mMessages.get(position).getTimestamp(), Utils.FORMAT_DATE_DMY);
         holder.tvTime.setText("Sent: " + date);
-
-        holder.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
+        holder.chatMessageView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-                menu.setHeaderTitle("Message Options");
-                menu.add(0, v.getId(), 0, Utils.DELETE_ACTION);
-                menu.add(0, v.getId(), 1, Utils.COPY_ACTION);
+            public boolean onLongClick(View v) {
+                setPosition(position);
+                return false;
             }
+
         });
     }
 
 
-    class MessageHolder extends RecyclerView.ViewHolder
+    class MessageHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener
     {
         TextView tvMessage, tvTime, tvName;
         ChatMessageView chatMessageView;
 
         public MessageHolder(View itemView) {
             super(itemView);
+            itemView.setOnCreateContextMenuListener(this);
             chatMessageView = (ChatMessageView) itemView.findViewById(R.id.chatMessageView);
             tvName = (TextView)itemView.findViewById(R.id.msglist_name);
             tvMessage = (TextView) itemView.findViewById(R.id.msglist_body);
             tvTime = (TextView) itemView.findViewById(R.id.msglist_timestamp);
         }
-
-        public void setOnCreateContextMenuListener(View.OnCreateContextMenuListener listener) {
-            itemView.setOnCreateContextMenuListener(listener);
+        @Override
+        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)
+        {
+            menu.setHeaderTitle("Message Options");
+            menu.add(0, v.getId(), 0, Utils.DELETE_ACTION);
+            menu.add(0, v.getId(), 1, Utils.COPY_ACTION);
         }
     }
 }
