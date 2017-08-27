@@ -55,12 +55,12 @@ public class RecyclerAdapterReservations extends RecyclerView.Adapter<RecyclerAd
             public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
                 menu.setHeaderTitle("Reservation Options");
 
-                menu.add(0, position, 0, VIEW_RESIDENCE_ACTION);
-                if (residenceExists) {
-                    menu.add(0, position, 1, CONTACT_USER_ACTION);
-                } else {
+                if (user) {
+                    menu.add(0, position, 0, VIEW_RESIDENCE_ACTION);
                     menu.add(0, position, 1, CONTACT_HOST_ACTION);
                     menu.add(0, position, 2, CANCEL_RESERVATION_ACTION);
+                } else {
+                    menu.add(0, position, 1, CONTACT_USER_ACTION);
                 }
             }
         });

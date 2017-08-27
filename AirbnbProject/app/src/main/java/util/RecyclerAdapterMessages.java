@@ -25,15 +25,6 @@ import static util.Utils.USER_SENDER;
 public class RecyclerAdapterMessages extends RecyclerView.Adapter<RecyclerAdapterMessages.MessageHolder>
 {
     private static final int MY_MESSAGE = 0, OTHER_MESSAGE = 1;
-    private int position;
-
-    public int getPosition() {
-        return position;
-    }
-
-    public void setPosition(int position) {
-        this.position = position;
-    }
 
     Context mContext;
     Boolean user;
@@ -92,12 +83,6 @@ public class RecyclerAdapterMessages extends RecyclerView.Adapter<RecyclerAdapte
                 menu.setHeaderTitle("Message Options");
                 menu.add(0, v.getId(), 0, DELETE_ACTION);
                 menu.add(0, v.getId(), 1, COPY_ACTION);
-            }
-        });
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-               return true;
             }
         });
     }
