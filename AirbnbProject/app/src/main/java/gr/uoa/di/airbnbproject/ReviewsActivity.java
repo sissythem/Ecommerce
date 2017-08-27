@@ -6,8 +6,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -43,7 +43,7 @@ public class ReviewsActivity extends AppCompatActivity
     double ratingNew;
 
     EditText etcomment;
-    Button btnreview;
+    ImageButton btnreview;
     RatingBar ratingBar;
     TextView txtrating;
 
@@ -131,7 +131,7 @@ public class ReviewsActivity extends AppCompatActivity
         Utils.manageFooter(ReviewsActivity.this, user);
 
         etcomment = (EditText)findViewById(R.id.writeComment);
-        btnreview = (Button)findViewById(R.id.btnreview);
+        btnreview = (ImageButton)findViewById(R.id.btnreview);
         ratingBar = (RatingBar)findViewById(R.id.rating);
         txtrating = (TextView)findViewById(R.id.txtRate);
 
@@ -177,8 +177,12 @@ public class ReviewsActivity extends AppCompatActivity
                         RetrofitCalls retrofitCalls = new RetrofitCalls();
                         token = retrofitCalls.postReview(token, reviews);
 
-                        if (!token.isEmpty()) {
+                        if (!token.isEmpty() && !(token.equals("not")) && token != null) {
                             Toast.makeText(c, "Your comment has been successfully submitted. Thank you!", Toast.LENGTH_SHORT).show();
+                            Bundle bundle = new Bundle();
+                            bundle.putBoolean("type", user);
+                            bundle.putInt("residenceId", residenceId);
+                            Utils.reloadActivity(ReviewsActivity.this, bundle);
                             return;
                         } else {
                             Toast.makeText(c, "Your session has finished, please log in again!", Toast.LENGTH_SHORT).show();
