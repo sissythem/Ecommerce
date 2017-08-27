@@ -118,6 +118,8 @@ public class MessageActivity extends AppCompatActivity {
 
         RetrofitCalls retrofitCalls = new RetrofitCalls();
 
+        /** Check if activity is called from InboxActivity or from ViewHostProfile
+         * Get conversation object and all relevant messages **/
         if (bextras.containsKey("conversationId")) {
             isNewMessage = false;
             conversationId = bextras.getInt("conversationId");
@@ -205,6 +207,7 @@ public class MessageActivity extends AppCompatActivity {
         return true;
     }
 
+    /** Send new message **/
     public void sendMessage() {
         send.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -269,6 +272,7 @@ public class MessageActivity extends AppCompatActivity {
         }
     }
 
+    /** Create Conversations object from user input if it is a new conversation **/
     public String PostConversationResult(Users senderUser, Users receiverUser, Residences residence, String subject) {
         short val_zero = 0;
         short val_one = 1;
@@ -278,6 +282,7 @@ public class MessageActivity extends AppCompatActivity {
         return token;
     }
 
+    /** Create Messages object to be sent for posting **/
     public String PostMessageResult(Users mUser, Conversations mConversation, String body) {
         short val_zero = 0;
         String currDate = getCurrentDate(FORMAT_DATE_YMD);

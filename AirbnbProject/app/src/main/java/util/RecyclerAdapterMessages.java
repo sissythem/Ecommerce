@@ -15,11 +15,6 @@ import fromRESTful.Messages;
 import gr.uoa.di.airbnbproject.R;
 import me.himanshusoni.chatmessageview.ChatMessageView;
 
-import static util.Utils.COPY_ACTION;
-import static util.Utils.DELETE_ACTION;
-import static util.Utils.USER_RECEIVER;
-import static util.Utils.USER_SENDER;
-
 /** RecyclerAdapter for MessageActivity**/
 
 public class RecyclerAdapterMessages extends RecyclerView.Adapter<RecyclerAdapterMessages.MessageHolder>
@@ -73,9 +68,11 @@ public class RecyclerAdapterMessages extends RecyclerView.Adapter<RecyclerAdapte
     @Override
     public void onBindViewHolder(final MessageHolder holder, final int position) {
         Messages chatMessage = mMessages.get(position);
-        if ((userType == USER_SENDER && mMessages.get(position).getDeletedFromSender() == 1) || (userType == USER_RECEIVER && mMessages.get(position).getDeletedFromReceiver() == 1)) {
-                        holder.itemView.setVisibility(View.GONE);
-                   }
+        if ((userType == Utils.USER_SENDER && mMessages.get(position).getDeletedFromSender() == 1) || (userType == Utils.USER_RECEIVER &&
+                mMessages.get(position).getDeletedFromReceiver() == 1))
+        {
+                holder.itemView.setVisibility(View.GONE);
+        }
         holder.tvName.setText(chatMessage.getUserId().getUsername()+":");
         holder.tvName.setTypeface(null, Typeface.BOLD);
         holder.tvMessage.setText(chatMessage.getBody());
@@ -87,8 +84,8 @@ public class RecyclerAdapterMessages extends RecyclerView.Adapter<RecyclerAdapte
             @Override
             public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
                 menu.setHeaderTitle("Message Options");
-                menu.add(0, v.getId(), 0, DELETE_ACTION);
-                menu.add(0, v.getId(), 1, COPY_ACTION);
+                menu.add(0, v.getId(), 0, Utils.DELETE_ACTION);
+                menu.add(0, v.getId(), 1, Utils.COPY_ACTION);
             }
         });
     }
