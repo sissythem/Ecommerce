@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/linearComment"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/height_of_footer"
+    android:layout_alignParentBottom="true"
+    android:layout_below="@+id/reviewslist">
+
+    <RatingBar
+        android:id="@+id/rating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignTop="@+id/txtRate"
+        android:layout_alignBottom="@+id/txtRate" />
+
+    <TextView
+        android:id="@+id/txtRate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="32dp"
+        android:text="@string/reviews_rate_residence"
+        android:textColor="@color/white"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/writeComment"
+        android:layout_width="wrap_content"
+        android:layout_height="100dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/rating"
+        android:hint="@string/reviews_write"
+        android:ems="10"
+        android:textAlignment="center"
+        android:inputType="textMultiLine"
+        android:layout_toStartOf="@+id/btnreview" />
+
+    <ImageButton
+        android:id="@+id/btnreview"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:backgroundTint="@color/caldroid_333"
+        android:text="@string/message_send"
+        android:textColor="@android:color/white"
+        app:srcCompat="@mipmap/ic_send"
+        android:layout_alignTop="@+id/writeComment" />
+</RelativeLayout>
