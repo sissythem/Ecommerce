@@ -35,16 +35,15 @@ public class RecyclerAdapterMessages extends RecyclerView.Adapter<RecyclerAdapte
         this.mMessages = mMessages;
     }
 
-    String userType, token;
+    String userType;
 
-        public RecyclerAdapterMessages(Context context, ArrayList<Messages> messages, Boolean user, Integer currentUserId, String userType, String token)
+        public RecyclerAdapterMessages(Context context, ArrayList<Messages> messages, Boolean user, Integer currentUserId, String userType)
         {
             this.mContext = context;
             this.user=user;
             this.mMessages = messages;
             this.currentUserId=currentUserId;
             this.userType=userType;
-            this.token=token;
         }
 
     @Override

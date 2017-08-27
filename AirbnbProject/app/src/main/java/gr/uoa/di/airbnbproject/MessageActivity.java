@@ -49,7 +49,7 @@ public class MessageActivity extends AppCompatActivity {
     int conversationId, messagesSize, residenceId;
 
     RecyclerAdapterMessages mAdapter;
-    private RecyclerView mRecyclerView;
+    RecyclerView mRecyclerView;
     Boolean user, isNewMessage;
 
     ArrayList<Messages> Messages;
@@ -160,7 +160,7 @@ public class MessageActivity extends AppCompatActivity {
         registerForContextMenu(mRecyclerView);
         try {
             if (Messages.size() > 0) {
-                mAdapter = new RecyclerAdapterMessages(this, Messages, user, currentUserId, userType, token);
+                mAdapter = new RecyclerAdapterMessages(this, Messages, user, currentUserId, userType);
                 mRecyclerView.setAdapter(mAdapter);
             }
         }
