@@ -363,6 +363,10 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
             if(NumGuestsPerDay.get(date)>= maxGuests) {
                 reservedDates.add(date);
             }
+            /** Disable all dates in the past **/
+            if(date.before(Utils.ConvertStringToDate(Utils.getCurrentDate(Utils.FORMAT_DATE_DMY), Utils.FORMAT_DATE_DMY))){
+                reservedDates.add(date);
+            }
         }
         caldroidFragment.setDisableDates(reservedDates);
         datesDisabled_byGuestCount = new ArrayList<>();
