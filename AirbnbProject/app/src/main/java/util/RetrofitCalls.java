@@ -3,7 +3,6 @@ package util;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,12 +16,9 @@ import fromRESTful.Residences;
 import fromRESTful.Reviews;
 import fromRESTful.Searches;
 import fromRESTful.Users;
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Response;
-
+/** All calls performed using Retrofit 2.0 and AsyncTask **/
 public class RetrofitCalls {
     ArrayList<Residences> residencesList;
     ArrayList<Reviews> reviewsList;
@@ -41,6 +37,7 @@ public class RetrofitCalls {
 
     String unreadMessages = "0";
 
+    /** Call to check if token is still valid **/
     private class checkTokenHttpRequestTask extends AsyncTask<String, String, Boolean> {
         @Override
         protected Boolean doInBackground(String... params) {
@@ -787,7 +784,7 @@ public class RetrofitCalls {
     }
 
 
-    /** Calls for Conversations**/
+    /** Calls for Conversations **/
 
     private class getConversationsHttPRequestTask extends AsyncTask<String, String, ArrayList<Conversations>> {
         @Override
@@ -1143,7 +1140,7 @@ public class RetrofitCalls {
         return token;
     }
 
-    /** Calls for Reservations**/
+    /** Calls for Reservations **/
     private class getReservationsByTenantIdHttpRequestTask extends AsyncTask<String, String, ArrayList<Reservations>> {
         @Override
         protected ArrayList<Reservations> doInBackground(String... params) {

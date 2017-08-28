@@ -11,57 +11,48 @@
     <include layout="@layout/back_toolbar"
         android:id="@+id/include"/>
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <TextView
+        android:id="@+id/subject"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:id="@+id/message_layout"
         android:layout_below="@+id/include"
-        android:layout_alignParentStart="true">
 
-        <TextView
-            android:id="@+id/subject"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/message_subject"
-            android:textAlignment="center"
-            android:layout_marginBottom="20dp"
-            android:textColor="#db0036"
-            android:background="@drawable/textlines"
-            android:textSize="25sp"/>
+        android:text="@string/message_subject"
+        android:textAlignment="center"
+        android:layout_marginBottom="20dp"
+        android:textColor="#db0036"
+        android:background="@drawable/textlines"
+        android:textSize="25sp"/>
 
-        <ListView
-            android:id="@+id/messageslist"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:divider="#b5b5b5"
-            android:dividerHeight="1dp"
-            android:layout_below="@+id/subject" />
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/height_of_footer"
+        android:layout_below="@+id/subject"
+        android:clipToPadding="false"
+        android:divider="@null"
+        android:paddingTop="8dp" />
 
-        <LinearLayout android:id="@+id/LinearLayout"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/messageslist"
-            android:gravity="bottom"
-            android:layout_alignParentBottom="true">
+    <EditText
+        android:id="@+id/body"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/height_of_footer"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:ems="10"
+        android:textAlignment="center"
+        android:inputType="textMultiLine"
+        android:layout_toStartOf="@+id/message_send_btn" />
 
-            <EditText
-                android:id="@+id/body"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textMultiLine"
-                android:hint="@string/message_write"
-                android:textAlignment="center"  />
-
-            <Button
-                android:id="@+id/message_send_btn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/message_send" />
-
-        </LinearLayout>
-
-    </RelativeLayout>
-    <!--<include layout="@layout/footer" />-->
+    <ImageButton
+        android:id="@+id/message_send_btn"
+        android:layout_width="40dp"
+        android:layout_height="@dimen/height_of_footer"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:backgroundTint="@color/caldroid_333"
+        android:text="@string/message_send"
+        android:textColor="@android:color/white"
+        app:srcCompat="@mipmap/ic_send" />
 </RelativeLayout>

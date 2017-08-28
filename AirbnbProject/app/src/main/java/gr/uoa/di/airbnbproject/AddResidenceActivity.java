@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -41,6 +42,7 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
     Toolbar toolbar;
 
     ImageButton bcontinue, btnStartDate, btnEndDate;
+    Button upload;
     ImageView imageToUpload;
     Spinner etType;
     String resType;
@@ -137,9 +139,12 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
 
         cbKitchen           = (CheckBox)findViewById(R.id.cbKitchen);
         cbLivingRoom        = (CheckBox)findViewById(R.id.cbLivingRoom);
+        imageToUpload       = (ImageView)findViewById(R.id.photo);
+        upload              = (Button)findViewById(R.id.uploadImage);
+        bcontinue           = (ImageButton)findViewById(R.id.ibContinue);
 
-        bcontinue = (ImageButton)findViewById(R.id.ibContinue);
-
+        imageToUpload.setVisibility(View.GONE);
+        upload.setVisibility(View.GONE);
         /** When user clicks on the button, a calendar appears in order to pick up a date*/
         btnStartDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -207,8 +212,8 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
         {
             /** Get user input*/
             @Override
-            public void onClick(View v) {
-                //Log.w("","SETTING HARDCODED RESIDENCE VALUES FOR DEBUGGING!");
+            public void onClick(View v)
+            {
                 final String title                      = etTitle.getText().toString();
                 final String type                       = resType;
                 final String about                      = etAbout.getText().toString();

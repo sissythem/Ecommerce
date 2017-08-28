@@ -12,7 +12,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,7 +26,7 @@ import static util.Utils.goToActivity;
 public class ProfileActivity extends AppCompatActivity {
     Users loggedinUser;
     String username, token;
-    ListView list;
+    Bundle buser;
     Context c;
     Toolbar toolbar;
     ImageView userImage;
@@ -80,17 +79,16 @@ public class ProfileActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Utils.manageBackButton(ProfileActivity.this, (user)?HomeActivity.class:HostActivity.class, user);
+                handleBackAction();
             }
         });
 
-        Bundle buser = getIntent().getExtras();
+        buser = getIntent().getExtras();
         user = buser.getBoolean("type");
+        retrofitCalls = new RetrofitCalls();
 
         /** Get the user **/
-        retrofitCalls = new RetrofitCalls();
-        loggedinUser  = retrofitCalls.getUserbyUsername(token, username).get(0);
-
+        loggedinUser    = retrofitCalls.getUserbyUsername(token, username).get(0);
         setUpProfile();
 
         userImage = (ImageView) findViewById(R.id.userImage);
@@ -103,18 +101,16 @@ public class ProfileActivity extends AppCompatActivity {
     public void setUpProfile()
     {
         /** Show info about the user **/
-        tvName          = (TextView)findViewById(R.id.name);
-        tvAbout         = (TextView)findViewById(R.id.about);
-        tvUsername      = (TextView)findViewById(R.id.username);
-        tvEmail         = (TextView)findViewById(R.id.email);
-        tvPhoneNumber   = (TextView)findViewById(R.id.phonenumber);
-        tvCity          = (TextView)findViewById(R.id.city);
-        tvCountry       = (TextView)findViewById(R.id.country);
-        tvBirthDate     = (TextView)findViewById(R.id.birthDate);
+        tvName = (TextView)findViewById(R.id.name);
+        tvAbout = (TextView)findViewById(R.id.about);
+        tvUsername = (TextView)findViewById(R.id.username);
+        tvEmail = (TextView)findViewById(R.id.email);
+        tvPhoneNumber = (TextView)findViewById(R.id.phonenumber);
+        tvCity = (TextView)findViewById(R.id.city);
+        tvCountry = (TextView)findViewById(R.id.country);
+        tvBirthDate = (TextView)findViewById(R.id.birthDate);
 
         tvName.setText(loggedinUser.getFirstName() + " " + loggedinUser.getLastName());
-        String abb = loggedinUser.getAbout();
-        System.out.println(abb);
         if(loggedinUser.getAbout() != null)
         {
             tvAbout.setText(loggedinUser.getAbout());
@@ -122,12 +118,21 @@ public class ProfileActivity extends AppCompatActivity {
         else {
             tvAbout.setText("About this user");
         }
-        tvUsername.setText(loggedinUser.getUsername());
-        tvEmail.setText(loggedinUser.getEmail());
-        tvPhoneNumber.setText(loggedinUser.getPhoneNumber());
-        if(loggedinUser.getCity() != null) tvCity.setText(loggedinUser.getCity());
-        if(loggedinUser.getCountry() !=null) tvCountry.setText(loggedinUser.getCountry());
-        tvBirthDate.setText(loggedinUser.getBirthDate());
+        tvUsername.setText("Username: " + loggedinUser.getUsername());
+        tvEmail.setText("Email: " + loggedinUser.getEmail());
+        tvPhoneNumber.setText("Phone Number: " + loggedinUser.getPhoneNumber());
+        if(!loggedinUser.getCity().isEmpty())
+            tvCity.setText("City: " + loggedinUser.getCity());
+        else
+            tvCity.setHint("Add your city");
+        if(!loggedinUser.getCountry().isEmpty())
+            tvCountry.setText("Country: " + loggedinUser.getCountry());
+        else
+            tvCountry.setHint("Add your country");
+        if(!loggedinUser.getBirthDate().isEmpty())
+            tvBirthDate.setText("Birth Date: " + loggedinUser.getBirthDate());
+        else
+            tvBirthDate.setHint("Add your birth date");
     }
 
     @Override
@@ -175,5 +180,26 @@ public class ProfileActivity extends AppCompatActivity {
                         .setNegativeButton(android.R.string.no, null).show();
         }
         return true;
+    }
+
+    public void handleBackAction(){
+        if(buser.getString("source").equals("residence")){
+            Intent residenceIntent = new Intent(ProfileActivity.this, ResidenceActivity.class);
+            Bundle btype = new Bundle();
+            btype.putBoolean("type", user);
+            btype.putInt("residenceId", buser.getInt("residenceId"));
+            residenceIntent.putExtras(btype);
+            startActivity(residenceIntent);
+        }
+        else{
+            Bundle btype = new Bundle();
+            btype.putBoolean("type", user);
+            Utils.goToActivity(ProfileActivity.this, (user)?HomeActivity.class:HostActivity.class, btype);
+        }
+    }
+
+    @Override
+    public void onBackPressed(){
+        handleBackAction();
     }
 }

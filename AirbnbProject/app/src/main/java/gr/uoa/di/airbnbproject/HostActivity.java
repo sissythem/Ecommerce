@@ -12,7 +12,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -78,7 +77,6 @@ public class HostActivity extends AppCompatActivity {
 
         /** User can upload a new residence */
         baddResidence = (ImageButton) findViewById(R.id.addResidence);
-
         baddResidence.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -108,7 +106,7 @@ public class HostActivity extends AppCompatActivity {
         storedResidences = retrofitCalls.getResidencesByHost(token, host.getId().toString());
         try {
             if (storedResidences.size() > 0) {
-                residencesRecyclerView.setAdapter(new RecyclerAdapterResidences(this, user, storedResidences));
+                residencesRecyclerView.setAdapter(new RecyclerAdapterResidences(this, user, storedResidences, 1, "", ""));
             }
         } catch (Exception e) {
             Log.e("", e.getMessage());
@@ -141,6 +139,7 @@ public class HostActivity extends AppCompatActivity {
         /** Host can view all reservations made for the selected residence **/
         else if (item.getTitle().equals(RESERVATIONS_ACTION)) {
             btype.putInt("residenceId", resId);
+            btype.putString("source", "host");
             goToActivity(this, HistoryReservationsActivity.class, btype);
         }
         /** Host can delete his residence **/

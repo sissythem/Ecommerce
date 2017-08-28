@@ -221,7 +221,7 @@ public class EditProfileActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         //Detects request codes
-        if (requestCode == GET_FROM_GALLERY && resultCode == RESULT_OK) {
+        if(requestCode == GET_FROM_GALLERY && resultCode == RESULT_OK) {
             Uri selectedImage = data.getData();
             mImageView = (ImageView) findViewById(R.id.userImage);
             mImageView.setImageBitmap(BitmapFactory.decodeFile(selectedImage.toString()));
@@ -248,7 +248,9 @@ public class EditProfileActivity extends AppCompatActivity {
     private class SendImageTask extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
+            System.out.println(params[0]);
             File file = new File(params[0]);
+            System.out.println(file);
 
             RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpg"), file);
 //            RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
@@ -268,6 +270,9 @@ public class EditProfileActivity extends AppCompatActivity {
             }
             return token;
         }
+
+        @Override
+        protected void onPostExecute(String nothing) {}
     }
 
     public boolean checkEmail (String Email) {

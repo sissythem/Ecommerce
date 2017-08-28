@@ -2,6 +2,7 @@ package fromRESTful;
 
 import java.io.Serializable;
 
+/** Reservations class to map the object from RESTful services **/
 public class Reservations implements Serializable {
 
     private static final long serialVersionUID = 1L;

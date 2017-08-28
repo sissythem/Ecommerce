@@ -3,6 +3,7 @@ package fromRESTful;
 import java.io.Serializable;
 import java.util.Collection;
 
+/** Conversations class to map the object from RESTful services **/
 public class Conversations implements Serializable
 {
     private static final long serialVersionUID = 1L;

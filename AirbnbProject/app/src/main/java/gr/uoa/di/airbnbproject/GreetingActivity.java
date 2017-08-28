@@ -55,9 +55,7 @@ public class GreetingActivity extends AppCompatActivity
             return;
         }
         else {
-            Intent greetingIntent = new Intent(this, GreetingActivity.class);
-            startActivity(greetingIntent);
-            super.onBackPressed();
+            moveTaskToBack(true);
         }
     }
 }

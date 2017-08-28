@@ -117,5 +117,13 @@
             android:gravity="center_vertical"
             android:textAlignment="center"
             android:text="@string/search" />
+
+        <Button
+            android:id="@+id/clear"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:text="Clear Input"
+            android:textColor="@android:color/white" />
     </LinearLayout>
 </android.support.design.widget.CollapsingToolbarLayout>

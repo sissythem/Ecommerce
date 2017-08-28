@@ -29,16 +29,18 @@ import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
-
+/** RestClient **/
 public class RestClient {
     public static final String BASE_URL = "http://192.168.1.102:8080/ecommerce_rest/webresources/";
+
     private static Retrofit retrofit = null;
     private static Retrofit stringRetrofit = null;
-
+    /** Token works correctly when we reset the client **/
     public static void resetClient()
     {
         retrofit = null;
     }
+    /** RestClient for HTTP GET requests, where token is provided for each call **/
     public static Retrofit getClient(String token) {
         if (retrofit==null) {
             Gson gson = new GsonBuilder()
@@ -53,7 +55,7 @@ public class RestClient {
         }
         return retrofit;
     }
-
+    /** RestClient used when user registers in the app **/
     public static Retrofit getStringClient() {
         if (stringRetrofit==null) {
             Gson gson = new GsonBuilder()
@@ -84,7 +86,7 @@ public class RestClient {
         }
         return stringRetrofit;
     }
-
+    /** OkHttp **/
     private static OkHttpClient getUnsafeOkHttpClient(final String token) {
         try {
             // Create a trust manager that does not validate certificate chains

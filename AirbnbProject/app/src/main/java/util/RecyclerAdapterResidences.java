@@ -15,27 +15,34 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import fromRESTful.Residences;
-import gr.uoa.di.airbnbproject.HomeActivity;
 import gr.uoa.di.airbnbproject.HostActivity;
 import gr.uoa.di.airbnbproject.R;
 import gr.uoa.di.airbnbproject.ResidenceActivity;
 
-import static util.Utils.CANCEL_RESERVATION_ACTION;
-import static util.Utils.CONTACT_HOST_ACTION;
-import static util.Utils.CONTACT_USER_ACTION;
 import static util.Utils.DELETE_ACTION;
 import static util.Utils.EDIT_ACTION;
 import static util.Utils.RESERVATIONS_ACTION;
 import static util.Utils.VIEW_RESIDENCE_ACTION;
 
+/** RecyclerView and CardView for Residences used in HomeActivity and HostActivity **/
 public class RecyclerAdapterResidences extends RecyclerView.Adapter<RecyclerAdapterResidences.ResidencesCardHolder> {
     Context context;
     Boolean user;
     ArrayList<Residences> residences = new ArrayList<>();
-    public RecyclerAdapterResidences(Context context, Boolean user, ArrayList<Residences> residences) {
+    int guests;
+    String startDate, endDate;
+    public void setSearchList(ArrayList<Residences> residences) {this.residences = residences;}
+    public void setGuests(int guests){this.guests=guests;}
+    public void setStartDate(String startDate){this.startDate=startDate;}
+    public void setEndDate(String endDate){this.endDate=endDate;}
+
+    public RecyclerAdapterResidences(Context context, Boolean user, ArrayList<Residences> residences, int guests, String startDate, String endDate) {
         this.context    = context;
         this.user       = user;
         this.residences = residences;
+        this.guests     = guests;
+        this.startDate  = startDate;
+        this.endDate    = endDate;
     }
 
     @Override
@@ -73,6 +80,9 @@ public class RecyclerAdapterResidences extends RecyclerView.Adapter<RecyclerAdap
                 btype.putBoolean("type", user);
                 btype.putString("source", "home");
                 btype.putInt("residenceId", residences.get(position).getId());
+                btype.putString("guests", Integer.toString(guests));
+                btype.putString("startDate", startDate);
+                btype.putString("endDate", endDate);
                 Utils.goToActivity(context, ResidenceActivity.class, btype);
             }
         });
@@ -83,7 +93,8 @@ public class RecyclerAdapterResidences extends RecyclerView.Adapter<RecyclerAdap
         return residences.size();
     }
 
-    public static class ResidencesCardHolder extends RecyclerView.ViewHolder {
+    public static class ResidencesCardHolder extends RecyclerView.ViewHolder
+    {
         CardView rCardView;
         ImageView rPhoto;
         TextView rTitle, rCity, rPrice;

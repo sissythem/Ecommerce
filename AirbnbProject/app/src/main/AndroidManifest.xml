@@ -44,7 +44,6 @@
         <activity android:name=".LoginActivity" />
         <activity android:name=".InboxActivity" />
         <activity android:name=".ProfileActivity" />
-        <activity android:name=".SearchResultsActivity" />
         <activity android:name=".HostActivity" />
         <activity android:name=".ResidenceActivity" />
         <activity android:name=".EditProfileActivity" />

@@ -2,6 +2,7 @@ package fromRESTful;
 
 import java.io.Serializable;
 
+/** Reviews class to map the object from RESTful services **/
 public class Reviews implements Serializable {
 
     private static final long serialVersionUID = 1L;

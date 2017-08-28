@@ -1,6 +1,10 @@
 package util;
 
-public class RestCallParameters {
+public class RestCallParameters
+{
+    /** For HTTP GET, PUT, POST, DELETE requests, not handled with Retrofit 2.0 **/
+    /** Create an object with the url, the return type (JSON, PLAIN_TEXT, XML), the request type (GET, PUT, POST, DELETE)
+     * and in case of POST request the fields of the object as parameters **/
     public enum DATA_TYPE {
         JSON("JSON"),TEXT("TEXT");
         String str;

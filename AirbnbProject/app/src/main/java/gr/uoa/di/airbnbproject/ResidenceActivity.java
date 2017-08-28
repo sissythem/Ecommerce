@@ -252,6 +252,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
             setCalendar();
         } else {
             bBook.setVisibility(View.GONE);
+            etGuests.setVisibility(View.GONE);
         }
         setBookResidence();
     }
@@ -407,6 +408,10 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         /** Disable all dates that are already fully booked **/
         for(Date date : NumGuestsPerDay.keySet()) {
             if(NumGuestsPerDay.get(date)>= maxGuests) {
+                reservedDates.add(date);
+            }
+            /** Disable all dates in the past **/
+            if(date.before(Utils.ConvertStringToDate(Utils.getCurrentDate(Utils.FORMAT_DATE_DMY), Utils.FORMAT_DATE_DMY))){
                 reservedDates.add(date);
             }
         }
@@ -566,9 +571,10 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
                     finish();
                     break;
                 }
-                /** User can see the reservations for this residence **/
+                /** Host can see the reservations for this residence **/
             case reservations:
                 buser.putInt("residenceId", residenceId);
+                buser.putString("source", "residence");
                 Utils.goToActivity(ResidenceActivity.this, HistoryReservationsActivity.class, buser);
                 break;
             /** If user navigates as tenant can view the host's profile and contact him, otherwise he can see his own profile **/
@@ -578,6 +584,8 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
                     buser.putInt("residenceId", residenceId);
                     goToActivity(ResidenceActivity.this, ViewHostProfileActivity.class, buser);
                 } else {
+                    buser.putString("source", "residence");
+                    buser.putInt("residenceId", residenceId);
                     goToActivity(ResidenceActivity.this, ProfileActivity.class, buser);
                 }
                 break;

@@ -3,6 +3,7 @@ package fromRESTful;
 import java.io.Serializable;
 import java.util.Date;
 
+/** Messages class to map the object from RESTful services **/
 public class Messages implements Serializable {
 
     private Users userId;
@@ -89,6 +90,15 @@ public class Messages implements Serializable {
         this.deletedFromReceiver = deletedFromReceiver;
     }
 
+    /** Function for checking if message's sender is the logged in user**/
+    public boolean isMine(int userId){
+        if(this.getUserId().getId() == userId){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
     @Override
     public int hashCode() {
         int hash = 0;

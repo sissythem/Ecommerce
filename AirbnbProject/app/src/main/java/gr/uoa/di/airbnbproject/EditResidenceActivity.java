@@ -486,4 +486,9 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
             }
         });
     }
+
+    @Override
+    public void onBackPressed(){
+        Utils.manageBackButton(EditResidenceActivity.this, HostActivity.class, user);
+    }
 }
