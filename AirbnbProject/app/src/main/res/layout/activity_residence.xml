@@ -89,7 +89,7 @@
                         android:id="@+id/tvHostAbout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignBottom="@+id/ivHostPic"
+                        android:layout_below="@+id/tvHostName"
                         android:layout_marginBottom="19dp"
                         android:text="@string/about"
                         android:textAlignment="center"

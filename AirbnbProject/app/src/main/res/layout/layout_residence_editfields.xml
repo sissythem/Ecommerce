@@ -43,51 +43,30 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:id="@+id/customultiple"
-                android:layout_below="@id/tvResults">
+                android:layout_below="@id/tvResults"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/include"
+                    android:layout_marginBottom="@dimen/height_of_footer"
+                    android:id="@+id/linearLayout">
+                    <include layout="@layout/recycler_main" android:layout_width="match_parent" android:layout_height="wrap_content" />
+                </LinearLayout>
 
                 <Button
                     android:id="@+id/btnAddPhots"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text="Add Photos"/>
-
-                <Button
-                    android:id="@+id/btnSaveImages"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text="Save"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/imageContent"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_below="@id/customultiple">
-
-                <ImageView
-                    android:id="@+id/photo"
-                    android:layout_width="100dp"
-                    android:layout_height="fill_parent"
-                    android:scaleType="fitXY"
-                    android:layout_weight="1"
-                    android:src="@drawable/ic_upload_image"
-                    android:contentDescription="@string/residence_photos" />
-
-                <Button android:id="@+id/uploadImage"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/residence_upload_photo"/>
+                    android:text="@string/add_photos"/>
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/select_type"
-                android:layout_below="@+id/imageContent"
+                android:layout_below="@+id/customultiple"
                 android:orientation="horizontal">
 
                 <TextView android:layout_width="wrap_content" android:layout_height="match_parent" android:text="@string/residence_select_type" />

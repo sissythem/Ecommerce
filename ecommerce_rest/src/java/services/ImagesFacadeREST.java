@@ -162,6 +162,30 @@ public class ImagesFacadeREST extends AbstractFacade<Images> {
         return "not";
     }
     
+    @DELETE
+    @Path("deleteimg/residence/{id}/{name}")
+    @Produces(MediaType.TEXT_XML)
+    public String deleteUserImg(@HeaderParam("Authorization")String token, @PathParam("id") Integer id, @PathParam("name") String name) {
+        if (KeyHolder.checkToken(token, className)) {
+            try {
+                
+                /** Delete saved residence image file **/
+                File file = new File(ImagesDirectory + "\\" + name);
+                if (file.exists()) {
+                    file.delete();
+                } else {
+                    System.out.println("Could not delete residence image");
+                }
+                super.remove(super.find(id));
+                
+                return token;
+            } catch (Exception e) {
+                return "not";
+            }
+        }
+        return "not";
+    }
+    
     @PUT
     @Path("profilepic/{id}")
     @Consumes({MediaType.MULTIPART_FORM_DATA})

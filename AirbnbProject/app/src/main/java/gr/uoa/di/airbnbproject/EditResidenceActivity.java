@@ -3,6 +3,7 @@ package gr.uoa.di.airbnbproject;
 import android.app.DatePickerDialog;
 import android.content.ClipData;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,9 +11,13 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -40,6 +45,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import fromRESTful.Images;
 import fromRESTful.Residences;
 import fromRESTful.Users;
 import okhttp3.MediaType;
@@ -47,15 +53,20 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Response;
+import util.RecyclerAdapterImages;
+import util.RecyclerAdapterResidences;
 import util.RestAPI;
 import util.RestClient;
 import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
 
+import static util.Utils.DELETE_ACTION;
 import static util.Utils.FORMAT_DATE_DMY;
 import static util.Utils.convertDateToMillisSec;
 import static util.Utils.convertTimestampToDateStr;
+import static util.Utils.goToActivity;
+import static util.Utils.reloadActivity;
 
 public class EditResidenceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener
 {
@@ -69,7 +80,6 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
     Boolean user;
 
     ImageButton bcontinue, btnStartDate, btnEndDate;
-    ImageView mImageView;
     EditText etTitle, etAbout, etAddress, etCity, etCountry, etAmenities, etFloor, etRooms, etBaths, etView, etSpaceArea, etGuests, etMinPrice, etAdditionalCost, etCancellationPolicy, etRules;
     TextView tvStartDate, tvEndDate;
     Spinner etType;
@@ -83,18 +93,15 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
     Users host;
     RetrofitCalls retrofitCalls;
 
-    private LinearLayout lnrImages;
-    private Button btnAddPhots;
-    private Button btnSaveImages;
-    private ArrayList<String> imagesPathList;
-    private Bitmap yourbitmap;
-    private Bitmap resized;
-    private final int PICK_IMAGE_MULTIPLE =1;
+    RecyclerView imagesRecyclerView;
 
-    ArrayList<Uri> mArrayUri;
+    private Button btnAddPhots;
+    private ArrayList<String> imagesPathList;
 
     private static final int REQUEST_CODE = 123;
     private ArrayList<String> mResults = new ArrayList<>();
+
+    ArrayList<Images> residencePhotos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,8 +109,9 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         /** Get session data in order to check if user is logged in and if token is expired */
         Session sessionData = Utils.getSessionData(EditResidenceActivity.this);
         token = sessionData.getToken();
-        c= this;
-        //check if user is logged in
+        c = this;
+
+        /** Check if user is logged in **/
         if (!sessionData.getUserLoggedInState()) {
             Utils.logout(this);
             finish();
@@ -114,7 +122,7 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
             finish();
             return;
         }
-        //check if token is expired
+        /** Check if token is expired **/
         if(Utils.isTokenExpired(sessionData.getToken())){
             Toast.makeText(c, "Session is expired", Toast.LENGTH_SHORT).show();
             Utils.logout(this);
@@ -127,20 +135,21 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         user = buser.getBoolean("type");
         user = false;
         residenceId = buser.getInt("residenceId");
-        //set up the upper toolbar
+
+        /** Set up the upper toolbar **/
         toolbar = (Toolbar) findViewById(R.id.backToolbar);
         toolbar.setTitle("Edit Residence");
         setSupportActionBar(toolbar);
 
         /** BACK BUTTON **/
-        // add back arrow to toolbar
+        /** Add back arrow to toolbar **/
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
         toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_back, getTheme()));
-        //handle the back action
+        /** Handle the back action **/
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -148,96 +157,107 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
             }
         });
 
+        /** RecyclerView for displaying all uploaded residences by this host */
+        imagesRecyclerView = (RecyclerView) findViewById(R.id.recycler);
+        imagesRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
+        imagesRecyclerView.setHasFixedSize(true);
+
+        /** Initialize RetrofitCalls Instance **/
         retrofitCalls = new RetrofitCalls();
-        //get the residence selected by user for update
+
+        /** Get images saved for this residence **/
+        residencePhotos = retrofitCalls.getResidencePhotos(token, residenceId);
+        try {
+            if (residencePhotos.size() > 0) {
+                imagesRecyclerView.setAdapter(new RecyclerAdapterImages(this, user, residencePhotos));
+            }
+        } catch (Exception e) {
+            Log.e("", e.getMessage());
+        }
+
+        /** Get the residence selected by user for update **/
         selectedResidence = retrofitCalls.getResidenceById(token, Integer.toString(residenceId));
 
         userInputLayout();
         ArrayList<Users> getUsersByUsername = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
         host = getUsersByUsername.get(0);
 
-        Button uploadImage = (Button) findViewById(R.id.uploadImage);
-        uploadImage.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), GET_FROM_GALLERY);
-            }
-        });
-
         saveResidence();
 
-        /**************************************************************************/
+        /** Initialize library for multiple selection of images **/
         Fresco.initialize(getApplicationContext());
 
-//        lnrImages = (LinearLayout)findViewById(R.id.lnrImages);
         btnAddPhots = (Button)findViewById(R.id.btnAddPhots);
-        btnSaveImages = (Button)findViewById(R.id.btnSaveImages);
-
         btnAddPhots.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                // start multiple photos selector
+                /** start multiple photos selector **/
                 Intent intent = new Intent(EditResidenceActivity.this, ImagesSelectorActivity.class);
 
-                // max number of images to be selected
+                /** max number of images to be selected **/
                 intent.putExtra(SelectorSettings.SELECTOR_MAX_IMAGE_NUMBER, 5);
 
-                // min size of image which will be shown; to filter tiny images (mainly icons)
+                /** min size of image which will be shown; to filter tiny images (mainly icons) **/
                 intent.putExtra(SelectorSettings.SELECTOR_MIN_IMAGE_SIZE, 100000);
 
-                // show camera or not
+                /** show camera or not **/
                 intent.putExtra(SelectorSettings.SELECTOR_SHOW_CAMERA, true);
 
-                // pass current selected images as the initial value
+                /** pass current selected images as the initial value **/
                 intent.putStringArrayListExtra(SelectorSettings.SELECTOR_INITIAL_SELECTED_LIST, mResults);
 
-                // start the selector
+                /** start the selector **/
                 startActivityForResult(intent, REQUEST_CODE);
             }
         });
-        /**************************************************************************/
+    }
+
+    @Override
+    public boolean onContextItemSelected(final MenuItem item)
+    {
+        /** By selecting an item a menu appears */
+        super.onContextItemSelected(item);
+        final Bundle btype = new Bundle();
+        btype.putBoolean("type", user);
+        btype.putInt("residenceId", residenceId);
+
+        final String resName    = residencePhotos.get(item.getItemId()).getName();
+        final Integer imgId     = residencePhotos.get(item.getItemId()).getId();
+        /** Host can delete an image from the residence **/
+        if (item.getTitle().equals(DELETE_ACTION)) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Delete Image").setMessage("Do you really want to delete this image?").setIcon(android.R.drawable.ic_delete)
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            RetrofitCalls retrofitCalls = new RetrofitCalls();
+
+                            /** TODO: call delete residence image method **/
+                            token = retrofitCalls.deleteResidenceImage(token, imgId, resName);
+                            if (!token.isEmpty() && token!=null && token!="not") {
+                                Toast.makeText(EditResidenceActivity.this, "Image was successfully deleted!", Toast.LENGTH_SHORT).show();
+                                goToActivity(EditResidenceActivity.this, EditResidenceActivity.class, btype);
+                            } else {
+                                Toast.makeText(EditResidenceActivity.this, "Something went wrong, image is not deleted. Please try again!", Toast.LENGTH_SHORT).show();
+                            }
+                        }})
+                    .setNegativeButton(android.R.string.no, null).show();
+
+        } else {
+            Toast.makeText(this, item.getTitle(), Toast.LENGTH_LONG).show();
+        }
+        return true;
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+        /** Get selected images from selector **/
+        if(requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
+            mResults = data.getStringArrayListExtra(SelectorSettings.SELECTOR_RESULTS);
+            assert mResults != null;
 
-//        if (resultCode == RESULT_OK) {
-//            if(requestCode == PICK_IMAGE_MULTIPLE){
-//                imagesPathList = new ArrayList<String>();
-//                String[] imagesPath = data.getStringExtra("data").split("\\|");
-//                try{
-//                    lnrImages.removeAllViews();
-//                }catch (Throwable e){
-//                    e.printStackTrace();
-//                }
-//                for (int i=0;i<imagesPath.length;i++){
-//                    imagesPathList.add(imagesPath[i]);
-//                    yourbitmap = BitmapFactory.decodeFile(imagesPath[i]);
-//                    ImageView imageView = new ImageView(this);
-//                    imageView.setImageBitmap(yourbitmap);
-//                    imageView.setAdjustViewBounds(true);
-//                    lnrImages.addView(imageView);
-//                }
-//            }
-//        }
-
-        // get selected images from selector
-        if(requestCode == REQUEST_CODE) {
-            if(resultCode == RESULT_OK) {
-                mResults = data.getStringArrayListExtra(SelectorSettings.SELECTOR_RESULTS);
-                assert mResults != null;
-
-                // show results in textview
-                StringBuffer sb = new StringBuffer();
-                sb.append(String.format("Totally %d images selected:", mResults.size())).append("\n");
-
-                imagesPathList = new ArrayList<String>();
-                for(String result : mResults) {
-                    System.out.println(result);
-                    sb.append(result).append("\n");
-
-                    imagesPathList.add(result);
-                }
+            imagesPathList = new ArrayList<>();
+            for(String result : mResults) {
+                imagesPathList.add(result);
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -251,7 +271,7 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
             for(int i=0; i<selectedFiles.size(); i++){
                 File file = new File(selectedFiles.get(i));
 
-//                RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpg"), file);
+                //RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpg"), file);
                 RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
                 /** MultipartBody.Part is used to send also the actual file name **/
                 MultipartBody.Part body = MultipartBody.Part.createFormData("picture", file.getName(), requestFile);
@@ -308,12 +328,12 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         bcontinue = (ImageButton)findViewById(R.id.ibContinue);
 
         etType = (Spinner) findViewById(R.id.etType);
-        // Create an ArrayAdapter using the string array and a default spinner layout
+        /** Create an ArrayAdapter using the string array and a default spinner layout **/
         ArrayAdapter<CharSequence> spinneradapter = ArrayAdapter.createFromResource(this, R.array.residence_types_array, android.R.layout.simple_spinner_item);
 
-        // Specify the layout to use when the list of choices appears
+        /** Specify the layout to use when the list of choices appears **/
         spinneradapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
+        /** Apply the adapter to the spinner **/
         etType.setAdapter(spinneradapter);
         etType.setOnItemSelectedListener(this);
         etType.setSelection(spinneradapter.getPosition(selectedResidence.getType()));
@@ -342,7 +362,7 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
             @Override
             public void onClick(View v) {
                 if (v == btnStartDate) {
-                    // Get Current Date
+                    /** Get Current Date **/
                     final Calendar c = Calendar.getInstance();
                     mStartYear = c.get(Calendar.YEAR);
                     mStartMonth = c.get(Calendar.MONTH);
@@ -363,7 +383,7 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
             @Override
             public void onClick(View v) {
                 if (v == btnEndDate) {
-                    // Get Current Date
+                    /** Get Current Date **/
                     final Calendar c = Calendar.getInstance();
                     mEndYear = c.get(Calendar.YEAR);
                     mEndMonth = c.get(Calendar.MONTH);
@@ -392,8 +412,6 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         bcontinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                System.out.println(mArrayUri);
                 if(imagesPathList !=null && imagesPathList.size() > 0){
                     String noofimage = (imagesPathList.size() > 1) ? " images are selected" : " image is selected";
                     Toast.makeText(EditResidenceActivity.this, imagesPathList.size() + noofimage, Toast.LENGTH_SHORT).show();
@@ -464,7 +482,7 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
                     RetrofitCalls retrofitCalls = new RetrofitCalls();
                     token = retrofitCalls.editResidence(token, residenceId, ResidenceParameters);
 
-                    //if the PUT request is successful user can go back to HostActivity
+                    /** If the PUT request is successful user can go back to HostActivity **/
                     if (!token.isEmpty() && token!=null && token!="not") {
                         Intent hostIntent = new Intent(EditResidenceActivity.this, HostActivity.class);
                         Bundle bhost = new Bundle();

@@ -94,10 +94,12 @@ public class HostActivity extends AppCompatActivity {
                 }
             }
         });
+
+        /** Get the Host **/
         RetrofitCalls retrofitCalls = new RetrofitCalls();
-        //Get the host
         ArrayList<Users> hostUsers = retrofitCalls.getUserbyUsername(token, sessionData.getUsername());
         host = hostUsers.get(0);
+
         /** RecyclerView for displaying all uploaded residences by this host */
         residencesRecyclerView = (RecyclerView) findViewById(R.id.recycler);
         residencesRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
