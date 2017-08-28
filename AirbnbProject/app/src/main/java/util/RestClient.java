@@ -31,8 +31,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 /** RestClient **/
 public class RestClient {
-    /** IP Address should change **/
     public static final String BASE_URL = "http://192.168.1.11:8080/ecommerce_rest/webresources/";
+
     private static Retrofit retrofit = null;
     private static Retrofit stringRetrofit = null;
     /** Token works correctly when we reset the client **/

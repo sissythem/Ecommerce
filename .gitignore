@@ -32,3 +32,5 @@ ecommerce_rest/nbproject/private/private.properties
 AirbnbProject/app/app.iml
 AirbnbProject/local.properties
 ecommerce_rest/nbproject/private/private.properties
+ecommerce_rest/nbproject/build-impl.xml
+ecommerce_rest/nbproject/private/private.xml

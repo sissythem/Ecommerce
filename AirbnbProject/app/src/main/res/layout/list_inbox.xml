@@ -14,7 +14,8 @@
             android:id="@+id/profilepic"
             android:layout_width="130dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|start" />
+            android:layout_gravity="center_vertical|start"
+            android:contentDescription="@string/user_image" />
 
         <LinearLayout
             android:layout_width="match_parent"

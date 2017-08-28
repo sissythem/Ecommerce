@@ -3,12 +3,14 @@
 
     <!-- General in Activities -->
     <string name="welcome">Welcome to Airbnb App!</string>
+    <string name="logo">Airbnb Logo</string>
     <string name="register">Register</string>
     <string name="login">Login</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="no_account_register">No account yet? Create one</string>
     <string name="about">About</string>
+    <string name="details">Details</string>
     <string name="home">Home</string>
     <string name="inbox">Inbox</string>
     <string name="profile">Profile</string>
@@ -47,11 +49,14 @@
     <!-- RESIDENCES COLUMNS -->
     <string name="residence_view">View Residence</string>
     <string name="residence_title">Residence Title</string>
+    <string name="residence_photos">Residence Photos</string>
+    <string name="representative_photo">Representative Photo</string>
     <string name="residence_type">Type</string>
     <string name="residence_address">Address</string>
     <string name="residence_city">Residence City</string>
     <string name="residence_country">Residence Country</string>
     <string name="residence_host">Host Name</string>
+    <string name="host_profile_image">Host Profile Image</string>
     <string name="residence_about_this_residence">About this Residence</string>
     <string name="residence_provide_amenities">What we will provide</string>
     <string name="residence_amenities">Amenities</string>
@@ -83,10 +88,12 @@
     <string name="cancellation_policy">Cancellation Policy</string>
     <string name="rules">Rules</string>
     <string name="residence_select_type">Select type of residence</string>
+    <string name="save_residence">Save Residence</string>
 
     <!-- PROFILE COLUMNS -->
     <string name="profile_edit">Edit Profile</string>
     <string name="profile_welcome">Welcome</string>
+    <string name="profile_delete_photo">Delete Profile Photo</string>
     <string name="profile_upload_photo">Upload Profile Photo</string>
     <string name="profile_first_name">First Name</string>
     <string name="profile_last_name">Last Name</string>
@@ -94,8 +101,15 @@
     <string name="profile_number">Phone Number</string>
     <string name="profile_country">Country</string>
     <string name="profile_city">City</string>
-    <string name="profile_date_of_birth">Date of Birth</string>
+    <string name="profile_date_of_birth">Birth Date</string>
     <string name="profile_save_changes">Save changes</string>
+    <string name="user_image">Profile Image</string>
+    <string name="contact_host">Contact Host</string>
+
+    <!-- REGISTER COLUMNS -->
+    <string name="already_member_login">Already a member? Login</string>
+    <string name="create_account">Create Account</string>
+    <string name="reenter_pswd">Re-enter Password</string>
 
     <!-- MESSAGE COLUMNS -->
     <string name="message_write">Write your message here</string>
@@ -110,6 +124,7 @@
 
     <!-- SEARCH -->
     <string name="anywhere">Anywhere</string>
+    <string name="anywhere_anytime_oneguest">Anywhere  - Anytime - One guest</string>
     <string name="start_date">Start Date</string>
     <string name="end_date">End Date</string>
     <string name="one_guest">One guest</string>

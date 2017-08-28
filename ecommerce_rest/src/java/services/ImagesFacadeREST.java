@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import services.AbstractFacade;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.activation.MimetypesFileTypeMap;
@@ -34,6 +35,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -122,7 +124,45 @@ public class ImagesFacadeREST extends AbstractFacade<Images> {
         return token;
     }
     
-    @POST
+    /**
+     * Private method that deletes photo from directory and updates db
+     * User Profile Photo
+     * @param id 
+     */
+    private void deleteFileByUser(Integer id) {
+        /** Delete previous profile image file **/
+            Query usrQuery = em.createNativeQuery("SELECT * FROM users WHERE id =?id", Users.class);
+            usrQuery.setParameter("id", id);
+            List<Users> usr = usrQuery.getResultList();
+            String imgName = usr.get(0).getPhoto();
+
+            File file = new File(ImagesDirectory + "\\" + imgName);
+            if (file.exists()) {
+                file.delete();
+            } else {
+                System.out.println("Could not delete user profile image");
+            }
+    }
+    
+    @PUT
+    @Path("deleteimg/profile/{id}")
+    @Produces(MediaType.TEXT_XML)
+    public String deleteUserImg(@HeaderParam("Authorization")String token, @PathParam("id") Integer id) {
+        if (KeyHolder.checkToken(token, className)) {
+            try {
+                deleteFileByUser(id);
+                
+                Query query = em.createNativeQuery("UPDATE users SET photo =NULL WHERE id ="+id);
+                query.executeUpdate();
+                return token;
+            } catch (Exception e) {
+                return "not";
+            }
+        }
+        return "not";
+    }
+    
+    @PUT
     @Path("profilepic/{id}")
     @Consumes({MediaType.MULTIPART_FORM_DATA})
     @Produces(MediaType.TEXT_PLAIN)
@@ -130,21 +170,11 @@ public class ImagesFacadeREST extends AbstractFacade<Images> {
             @PathParam("id")Integer id,
             @FormDataParam("picture") InputStream uploadedInputStream, @FormDataParam("picture") FormDataContentDisposition fileDetail) {
         
+        System.out.println("uploadeeedstream::: "+uploadedInputStream);
+        System.out.println("filedetails::: "+fileDetail);
         if (KeyHolder.checkToken(token, className)) {
             try {
-                /** Delete previous profile image file **/
-                Query usrQuery = em.createNativeQuery("SELECT * FROM users WHERE id =?id", Users.class);
-                usrQuery.setParameter("id", id);
-                List<Users> usr = usrQuery.getResultList();
-                String imgName = usr.get(0).getPhoto();
-
-                try {
-                    File file = new File(ImagesDirectory + "\\" + imgName);
-
-                    if (file.exists()) file.delete();
-                } catch (Exception ex) {
-                    System.out.println("Could not delete user profile image");
-                }
+                deleteFileByUser(id);
                 
                 /** Add new profile image to directory and save to DB **/
                 File newFile = File.createTempFile("img", ".jpg", new File(ImagesDirectory));
@@ -152,8 +182,7 @@ public class ImagesFacadeREST extends AbstractFacade<Images> {
                 
                 Query query = em.createNativeQuery("UPDATE users SET photo ='"+newFile.getName()+"' WHERE id ="+id);
                 query.executeUpdate();
-                //return token;
-                return imgName;
+                return newFile.getName();
             } catch (Exception e) {
                 return "not";
             }
@@ -171,12 +200,11 @@ public class ImagesFacadeREST extends AbstractFacade<Images> {
         
         if (KeyHolder.checkToken(token, className)) {
             try {
-                File directory = new File(ImagesDirectory);
-                File newFile = File.createTempFile("img", ".jpg", directory);
+                File newFile = File.createTempFile("img", ".jpg", new File(ImagesDirectory));
                 saveToFile(uploadedInputStream, newFile);
-                Query query = em.createNativeQuery("UPDATE residences SET photos ='"+newFile.getName()+"' WHERE id ="+id);
-                query.executeUpdate();
                 
+                Query query = em.createNativeQuery("INSERT INTO images (residence_id, name) VALUES ("+id+", '"+newFile.getName()+"')");
+                query.executeUpdate();
                 return token;
             } catch (Exception e) {
                 return "not";
@@ -192,7 +220,6 @@ public class ImagesFacadeREST extends AbstractFacade<Images> {
     */
     private void saveToFile(InputStream inStream, File target) throws IOException {
         java.nio.file.Path path = target.toPath();
-        System.out.println(path);
         Files.copy(inStream, path, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
     }
     
@@ -210,5 +237,18 @@ public class ImagesFacadeREST extends AbstractFacade<Images> {
         String mt = new MimetypesFileTypeMap().getContentType(f);
         System.out.println(Response.ok(f, mt).build());
         return Response.ok(f, mt).build();
+    }
+    
+    @GET
+    @Path("residence/{id}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<Images> getResidencePhotos(@HeaderParam("Authorization")String token, @PathParam("id")Integer id) {
+        List<Images> data = new ArrayList<Images>();
+        if (KeyHolder.checkToken(token, className)) {
+            Query query = em.createNativeQuery("SELECT * FROM images WHERE residence_id =?id", Images.class);
+            query.setParameter("id", id);
+            data = query.getResultList();
+        }
+        return data;
     }
 }

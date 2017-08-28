@@ -12,7 +12,8 @@
             android:id="@+id/representativePhoto"
             android:layout_width="130dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|start" />
+            android:layout_gravity="center_vertical|start"
+            android:contentDescription="@string/representative_photo" />
         <LinearLayout
             android:id="@+id/layout_partner"
             android:layout_width="match_parent"

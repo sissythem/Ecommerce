@@ -23,9 +23,10 @@ public class Users implements Serializable {
     private String host;
 
     public Users(){}
-    //For edit profile
+
+    /** For edit profile **/
     public Users(int userId, String firstName, String lastName, String username, String password, String email, String phoneNumber, String country, String city,
-                 String photo, String about, String birthDate)
+                 String photo, String about, String birthDate, Date registrationDate)
     {
         this.id             = userId;
         this.firstName      = firstName;
@@ -39,9 +40,10 @@ public class Users implements Serializable {
         this.photo          = photo;
         this.about          = about;
         this.birthDate      = birthDate;
+        this.registrationDate   = registrationDate;
     }
 
-    //For Register
+    /** For Register **/
     public Users(String firstName, String lastName, String username, String password, String email, String phoneNumber, String bdate)
     {
         this.firstName      = firstName;

@@ -27,10 +27,16 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.daimajia.slider.library.Animations.DescriptionAnimation;
+import com.daimajia.slider.library.SliderLayout;
+import com.daimajia.slider.library.SliderTypes.BaseSliderView;
+import com.daimajia.slider.library.SliderTypes.TextSliderView;
+import com.daimajia.slider.library.Tricks.ViewPagerEx;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -47,6 +53,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import fromRESTful.Images;
 import fromRESTful.Reservations;
 import fromRESTful.Residences;
 import fromRESTful.Users;
@@ -58,11 +65,12 @@ import util.Utils;
 import static gr.uoa.di.airbnbproject.R.id.calendar;
 import static gr.uoa.di.airbnbproject.R.id.reservations;
 import static gr.uoa.di.airbnbproject.R.id.reviews;
+import static util.RestClient.BASE_URL;
 import static util.Utils.FORMAT_DATE_YMD;
 import static util.Utils.convertTimestampToDate;
 import static util.Utils.goToActivity;
 
-public class ResidenceActivity extends FragmentActivity implements OnMapReadyCallback, AppCompatCallback
+public class ResidenceActivity extends FragmentActivity implements OnMapReadyCallback, AppCompatCallback, BaseSliderView.OnSliderClickListener, ViewPagerEx.OnPageChangeListener
 {
     Bundle buser;
     Boolean user;
@@ -91,8 +99,10 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
     Toolbar toolbar;
     private AppCompatDelegate delegate;
 
+    RelativeLayout ivResidencePhotosCont;
     RetrofitCalls retrofitCalls;
 
+    private SliderLayout mPhotosSlider;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -161,9 +171,48 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
             }
         });
 
+        resPhoto = (ImageView) findViewById(R.id.ivResidencePhotos);
+        mPhotosSlider = (SliderLayout)findViewById(R.id.residencesslider);
+
+        setUpSlider();
         setUpResidenceView();
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapResidence);
         mapFragment.getMapAsync(this);
+    }
+
+    public void setUpSlider() {
+        RetrofitCalls retrofitCalls = new RetrofitCalls();
+        ArrayList<Images> residencePhotos = retrofitCalls.getResidencePhotos(token, residenceId);
+        if (residencePhotos.size() > 0) {
+            resPhoto.setVisibility(View.GONE);
+            for(Images residenceImage : residencePhotos){
+                TextSliderView textSliderView = new TextSliderView(this);
+                // initialize a SliderLayout
+                textSliderView.image(BASE_URL + "images/img/" + residenceImage.getName())
+                        .description(residenceImage.getName())
+                        .setScaleType(BaseSliderView.ScaleType.Fit)
+                        .setOnSliderClickListener(this);
+
+                //add your extra information
+                textSliderView.bundle(new Bundle());
+                textSliderView.getBundle().putString("extra",residenceImage.getName());
+                mPhotosSlider.addSlider(textSliderView);
+            }
+            mPhotosSlider.setPresetTransformer(SliderLayout.Transformer.Accordion);
+            mPhotosSlider.setPresetIndicator(SliderLayout.PresetIndicators.Center_Bottom);
+            mPhotosSlider.setCustomAnimation(new DescriptionAnimation());
+            mPhotosSlider.setDuration(4000);
+            mPhotosSlider.addOnPageChangeListener(this);
+        } else {
+            resPhoto.setVisibility(View.VISIBLE);
+            findViewById(R.id.ivResidencePhotos).setVisibility(View.VISIBLE);
+            findViewById(R.id.ivResidencePhotos).invalidate();
+
+            mPhotosSlider.setVisibility(View.GONE);
+            findViewById(R.id.residencesslider).setVisibility(View.GONE);
+
+
+        }
     }
 
     public void setUpResidenceView ()
@@ -172,9 +221,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         host = selectedResidence.getHostId();
 
         /** Show the images of this residence **/
-        resPhoto = (ImageView) findViewById(R.id.ivResidencePhotos);
         profilePic = (ImageView)findViewById(R.id.ivHostPic);
-        Utils.loadResidenceImage(this, resPhoto, selectedResidence.getPhotos());
         Utils.loadProfileImage(this, profilePic, loggedinUser.getPhoto());
 
         tvTitle                 = (TextView)findViewById(R.id.tvTitle);
@@ -600,10 +647,34 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
             int scrollY = Math.min(Math.max(mScrollView.getScrollY(), 0), mImageViewHeight);
 
             // changing position of ImageView
-            resPhoto.setTranslationY(scrollY / 2);
+//            mPhotosSlider.setTranslationY(scrollY / 2);
 
             // alpha you could set to ActionBar background
             float alpha = scrollY / (float) mImageViewHeight;
         }
     }
+
+    /** Slider actions **/
+    @Override
+    protected void onStop() {
+        // To prevent a memory leak on rotation, make sure to call stopAutoCycle() on the slider before activity or fragment is destroyed
+        mPhotosSlider.stopAutoCycle();
+        super.onStop();
+    }
+
+    @Override
+    public void onSliderClick(BaseSliderView slider) {
+        Toast.makeText(this,slider.getBundle().get("extra") + "",Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
+
+    @Override
+    public void onPageSelected(int position) {
+        Log.d("Slider Demo", "Page Changed: " + position);
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {}
 }

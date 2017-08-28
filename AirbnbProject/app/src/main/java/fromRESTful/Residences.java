@@ -40,6 +40,7 @@ public class Residences implements Serializable, Comparable {
 
     public Residences(){}
 
+    /** Add new Residence **/
     public Residences(Users host,
                       String title,
                       String type,
@@ -87,6 +88,7 @@ public class Residences implements Serializable, Comparable {
         this.availableDateEnd           = endDate;
     }
 
+    /** Edit Residence **/
     public Residences(Integer residenceId,
                       Users host,
                       String title,

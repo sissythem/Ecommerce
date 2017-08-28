@@ -23,7 +23,8 @@
             android:layout_height="72dp"
             android:layout_marginBottom="24dp"
             android:layout_gravity="center_horizontal"
-            android:layout_weight="0.09" />
+            android:layout_weight="0.09"
+            android:contentDescription="@string/logo" />
 
         <!-- Name Label -->
         <android.support.design.widget.TextInputLayout
@@ -31,11 +32,13 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp">
+
             <EditText android:id="@+id/firstname"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPersonName"
-                android:hint="Name" />
+                android:hint="@string/profile_first_name" />
+
         </android.support.design.widget.TextInputLayout>
 
         <!-- Last Name Label -->
@@ -44,34 +47,33 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp">
+
             <EditText android:id="@+id/lastname"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPersonName"
-                android:hint="Last Name" />
+                android:hint="@string/profile_last_name" />
+
         </android.support.design.widget.TextInputLayout>
 
         <ImageButton
             android:id="@+id/btnBirthDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/lastname"
-            app:srcCompat="@drawable/ic_calendar" />
+            app:srcCompat="@drawable/ic_calendar"
+            android:contentDescription="@string/profile_date_of_birth" />
 
         <!-- Birth Date Label -->
         <android.support.design.widget.TextInputLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp">
+
             <TextView android:id="@+id/tvBirthDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:inputType="text|date"
-                android:hint="Birth Date" />
+                android:hint="@string/profile_date_of_birth" />
         </android.support.design.widget.TextInputLayout>
 
         <!-- Username Label -->
@@ -84,7 +86,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPersonName"
-                android:hint="Username" />
+                android:hint="@string/username" />
         </android.support.design.widget.TextInputLayout>
 
         <!--  Email Label -->
@@ -97,7 +99,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textEmailAddress"
-                android:hint="Email" />
+                android:hint="@string/profile_email" />
         </android.support.design.widget.TextInputLayout>
 
         <!-- mobile number -->
@@ -106,11 +108,12 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp">
+
             <EditText android:id="@+id/phonenumber"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="number"
-                android:hint="Mobile Number" />
+                android:inputType="phone"
+                android:hint="@string/profile_number" />
         </android.support.design.widget.TextInputLayout>
 
         <!-- Password Label -->
@@ -123,7 +126,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
-                android:hint="Password"/>
+                android:hint="@string/password"/>
         </android.support.design.widget.TextInputLayout>
 
         <!-- Password Re-enter Label -->
@@ -132,11 +135,12 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp">
+
             <EditText android:id="@+id/confirmpassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
-                android:hint="Re-enter Password"/>
+                android:hint="@string/reenter_pswd"/>
         </android.support.design.widget.TextInputLayout>
 
         <!-- Signup Button -->
@@ -148,16 +152,17 @@
             android:layout_marginTop="24dp"
             android:background="@color/caldroid_333"
             android:padding="12dp"
-            android:text="Create Account"
+            android:text="@string/create_account"
             android:textColor="@android:color/white" />
+>>>>>>> origin/master
 
         <TextView android:id="@+id/loginlink"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            android:text="Already a member? Login"
+            android:text="@string/already_member_login"
             android:gravity="center"
-            android:textSize="16dip"/>
+            android:textSize="16sp"/>
 
     </LinearLayout>
 </ScrollView>

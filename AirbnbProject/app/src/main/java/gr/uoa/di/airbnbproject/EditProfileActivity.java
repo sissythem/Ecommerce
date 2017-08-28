@@ -24,6 +24,7 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -39,6 +40,8 @@ import util.RetrofitCalls;
 import util.Session;
 import util.Utils;
 
+import static util.Utils.goToActivity;
+import static util.Utils.reloadActivity;
 import static util.Utils.updateSessionData;
 
 public class EditProfileActivity extends AppCompatActivity {
@@ -62,7 +65,7 @@ public class EditProfileActivity extends AppCompatActivity {
     private int mYear, mMonth, mDay;
 
     Session sessionData;
-    String imagePath;
+    String imageName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,6 +148,12 @@ public class EditProfileActivity extends AppCompatActivity {
         etCity.setText(loggedinUser.getCity());
 
         /** Load Profile Image **/
+
+        Button deleteImage = (Button) findViewById(R.id.deleteImage);
+        if (loggedinUser.getPhoto() == null) {
+            deleteImage.setVisibility(View.GONE);
+        }
+
         Utils.loadProfileImage(EditProfileActivity.this, mImageView, loggedinUser.getPhoto());
 
         String birthDate;
@@ -175,8 +184,28 @@ public class EditProfileActivity extends AppCompatActivity {
 
         Button uploadImage = (Button) findViewById(R.id.uploadImage);
         uploadImage.setOnClickListener(new View.OnClickListener() {
+            @Override
             public void onClick(View v) {
                 startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), GET_FROM_GALLERY);
+            }
+        });
+
+        deleteImage.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                token = retrofitCalls.deleteUserImage(token, userId);
+                if (!token.isEmpty() && token!=null && token!="not") {
+                    Toast.makeText(c, "Profile image was deleted", Toast.LENGTH_SHORT).show();
+
+                    Bundle bextras = new Bundle();
+                    bextras.putBoolean("type", user);
+                    reloadActivity(EditProfileActivity.this, bextras);
+                } else {
+                    Toast.makeText(c, "Your session has finished, please log in again!", Toast.LENGTH_SHORT).show();
+                    Utils.logout(EditProfileActivity.this);
+                    finish();
+                }
+
             }
         });
 
@@ -201,7 +230,9 @@ public class EditProfileActivity extends AppCompatActivity {
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
                 mImageView.setImageBitmap(bitmap);
-                new EditProfileActivity.SendImageTask().execute(Utils.getRealPathFromURI(EditProfileActivity.this, selectedImage));
+                String realpath = Utils.getRealPathFromURI(EditProfileActivity.this, selectedImage);
+                System.out.println(realpath);
+                new EditProfileActivity.SendImageTask().execute(realpath);
 
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -232,9 +263,9 @@ public class EditProfileActivity extends AppCompatActivity {
             Call<String> call = restAPI.uploadProfileImg(userId, description, body);
             try {
                 Response<String> resp = call.execute();
-                System.out.println(resp.body());
-                token = resp.body();
+                imageName = resp.body();
             } catch(IOException e){
+                Toast.makeText(c, "Uploading profile image failed.", Toast.LENGTH_SHORT).show();
                 Log.i("",e.getMessage());
             }
             return token;
@@ -249,7 +280,6 @@ public class EditProfileActivity extends AppCompatActivity {
         //same process for email
         ArrayList<Users> users = retrofitCalls.getUserbyEmail(token, Email);
         if(users.size() == 0) emailIsNew = true;
-        System.out.println(emailIsNew);
         return  emailIsNew;
     }
 
@@ -265,8 +295,9 @@ public class EditProfileActivity extends AppCompatActivity {
         final String country        = etCountry.getText().toString();
         final String city           = etCity.getText().toString();
         final String birthdate      = tvBirthDate.getText().toString();
-        final String photo          = imagePath;
+        final String photo          = imageName;
         final String about          = etAbout.getText().toString();
+        final Date registrationDate = loggedinUser.getRegistrationDate();
 
         boolean emailIsNew;
 
@@ -281,37 +312,31 @@ public class EditProfileActivity extends AppCompatActivity {
             Toast.makeText(c, "You cannot change your username", Toast.LENGTH_SHORT).show();
             return;
         }
-        //Variable emailIsNew is used in order to check if user has changed his email and the new email is the same with another user's email
-        //emailIsNew is true if the email is unique or if email has not been changed
+        /**
+         * Variable emailIsNew is used in order to check if user has changed his email and the new email is the same with another user's email
+         * EmailIsNew is true if the email is unique or if email has not been changed
+         */
         emailIsNew = checkEmail(Email);
         if(loggedinUser.getEmail().equals(Email)){
-            emailIsNew=true;
+            emailIsNew = true;
         }
 
         if(emailIsNew)
         {
             //send user input to the database in order to update the specific user
-            token = PutResult(loggedinUser.getId(), name, lastName, Username, password, Email, phoneNumber, country, city, photo, about, birthdate);
+            token = PutResult(loggedinUser.getId(), name, lastName, Username, password, Email, phoneNumber, country, city, photo, about, birthdate, registrationDate);
             if (!token.isEmpty() && token!=null && token!="not") {
                 sessionData.setToken(token);
                 sessionData.setUsername(username);
                 sessionData.setUserLoggedInState(true);
-                System.out.println(sessionData);
-                //if data are stored successfully in the data base, the user is now logged in and the home activity starts
+
+                /** If data are stored successfully in the data base, the user is now logged in and the home activity starts **/
                 sessionData = updateSessionData(EditProfileActivity.this, sessionData);
 
-                //In case of success user is redirected to the ProfileActivity
-                Intent profileintent = new Intent(EditProfileActivity.this, ProfileActivity.class);
-                Bundle buser = new Bundle();
-                buser.putBoolean("type", user);
-                profileintent.putExtras(buser);
-                try {
-                    startActivity(profileintent);
-                    finish();
-                } catch (Exception ex) {
-                    System.out.println(ex.getMessage());
-                    ex.printStackTrace();
-                }
+                /** In case of success user is redirected to the ProfileActivity **/
+                Bundle bextras = new Bundle();
+                bextras.putBoolean("type", user);
+                goToActivity(EditProfileActivity.this, ProfileActivity.class, bextras);
             } else {
                 Toast.makeText(c, "Your session has finished, please log in again!", Toast.LENGTH_SHORT).show();
                 Utils.logout(this);
@@ -324,8 +349,8 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     public String PutResult(int userId, String firstName, String lastName, String username, String password, String email, String phoneNumber, String country, String city,
-                            String photo, String about, String birthDate) {
-        Users UserParameters = new Users(userId, firstName, lastName, username, password, email, phoneNumber, country, city, photo, about, birthDate);
+                            String photo, String about, String birthDate, Date registrationDate) {
+        Users UserParameters = new Users(userId, firstName, lastName, username, password, email, phoneNumber, country, city, photo, about, birthDate, registrationDate);
         RetrofitCalls retrofitCalls = new RetrofitCalls();
         token = retrofitCalls.editUser(token, userId, UserParameters);
         return token;
