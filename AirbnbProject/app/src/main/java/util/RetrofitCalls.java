@@ -67,7 +67,6 @@ public class RetrofitCalls {
     }
 
     /** Calls for User **/
-
     private class deleteUserImageHttpRequestTask extends AsyncTask<Object, Object, String> {
         @Override
         protected String doInBackground(Object... params) {
@@ -511,6 +510,36 @@ public class RetrofitCalls {
 
 
     /***** Calls for Residences *****/
+    private class deleteResidenceImageHttpRequestTask extends AsyncTask<Object, Object, String> {
+        @Override
+        protected String doInBackground(Object... params) {
+            String token="";
+            RestAPI restAPI = RestClient.getClient((String)params[0]).create(RestAPI.class);
+            Call<String> call = restAPI.deleteResidenceImg((Integer)params[1], (String)params[2]);
+            try {
+                Response<String> resp = call.execute();
+                token = resp.body();
+            }
+            catch(IOException e){
+                Log.i("",e.getMessage());
+            }
+            return token;
+        }
+    }
+
+    public String deleteResidenceImage(String token, Integer id, String name) {
+        deleteResidenceImageHttpRequestTask deleteResidenceImage = new deleteResidenceImageHttpRequestTask();
+        deleteResidenceImage.execute(token, id, name);
+        try {
+            token = deleteResidenceImage.get();
+        } catch (InterruptedException e) {
+            Log.i("",e.getMessage());
+        } catch (ExecutionException e) {
+            Log.i("",e.getMessage());
+        }
+        return token;
+    }
+
     private class getResidencePhotosIdHttpRequestTask extends AsyncTask<Object, Object, ArrayList<Images>> {
         @Override
         protected ArrayList<Images> doInBackground(Object... params){

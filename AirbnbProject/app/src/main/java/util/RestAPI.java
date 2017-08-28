@@ -70,6 +70,9 @@ public interface RestAPI {
     @GET("images/residence/{id}")
     Call<List<Images>> getResidencePhotos(@Path("id")Integer id);
 
+    @DELETE("images/deleteimg/residence/{id}/{name}")
+    Call<String> deleteResidenceImg(@Path("id")Integer id, @Path("name")String name);
+
     /** Searches Facade Methods **/
     @GET("searches/city")
     Call<List<Searches>> getCitiesByUserId(@Query("userId") String userId);

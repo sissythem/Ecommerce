@@ -43,7 +43,6 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
 
     ImageButton bcontinue, btnStartDate, btnEndDate;
     Button upload;
-    ImageView imageToUpload;
     Spinner etType;
     String resType;
     EditText etAbout, etAddress, etCity, etCountry, etAmenities, etFloor, etRooms, etBaths, etView, etTitle, etSpaceArea, etGuests, etMinPrice, etAdditionalCost, etCancellationPolicy, etRules;
@@ -139,12 +138,9 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
 
         cbKitchen           = (CheckBox)findViewById(R.id.cbKitchen);
         cbLivingRoom        = (CheckBox)findViewById(R.id.cbLivingRoom);
-        imageToUpload       = (ImageView)findViewById(R.id.photo);
         upload              = (Button)findViewById(R.id.uploadImage);
         bcontinue           = (ImageButton)findViewById(R.id.ibContinue);
 
-        imageToUpload.setVisibility(View.GONE);
-        upload.setVisibility(View.GONE);
         /** When user clicks on the button, a calendar appears in order to pick up a date*/
         btnStartDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -305,7 +301,6 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == RESULT_LOAD_IMAGE && requestCode == RESULT_OK && data != null) {
             Uri selectedImage = data.getData();
-            imageToUpload.setImageURI(selectedImage);
         }
     }
 

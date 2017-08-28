@@ -89,6 +89,11 @@
                         android:id="@+id/tvHostAbout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+<<<<<<< HEAD
+                        android:layout_below="@+id/tvHostName"
+                        android:layout_marginBottom="19dp"
+=======
+>>>>>>> origin/master
                         android:text="@string/about"
                         android:textAlignment="center"
                         android:textColor="#fff"

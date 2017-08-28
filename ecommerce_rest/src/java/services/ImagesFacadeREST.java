@@ -111,7 +111,7 @@ public class ImagesFacadeREST extends AbstractFacade<Images> {
     
     /*** CUSTOM METHODS ***/
     private static String className = ImagesFacadeREST.class.getName();
-    private static String ImagesDirectory = "/home/sissy/Documents/Professional/University/UOA/graduate/Semester2/Ecommerce/Project/ecommerce_rest/images/";
+    private static String ImagesDirectory = "C:\\Users\\vasso\\Documents\\Github\\Ecommerce\\ecommerce_rest\\web\\images";
     
     @DELETE
     @Path("delete/{id}")
@@ -154,6 +154,30 @@ public class ImagesFacadeREST extends AbstractFacade<Images> {
                 
                 Query query = em.createNativeQuery("UPDATE users SET photo =NULL WHERE id ="+id);
                 query.executeUpdate();
+                return token;
+            } catch (Exception e) {
+                return "not";
+            }
+        }
+        return "not";
+    }
+    
+    @DELETE
+    @Path("deleteimg/residence/{id}/{name}")
+    @Produces(MediaType.TEXT_XML)
+    public String deleteUserImg(@HeaderParam("Authorization")String token, @PathParam("id") Integer id, @PathParam("name") String name) {
+        if (KeyHolder.checkToken(token, className)) {
+            try {
+                
+                /** Delete saved residence image file **/
+                File file = new File(ImagesDirectory + "\\" + name);
+                if (file.exists()) {
+                    file.delete();
+                } else {
+                    System.out.println("Could not delete residence image");
+                }
+                super.remove(super.find(id));
+                
                 return token;
             } catch (Exception e) {
                 return "not";

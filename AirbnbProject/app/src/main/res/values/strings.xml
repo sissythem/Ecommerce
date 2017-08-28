@@ -89,6 +89,7 @@
     <string name="rules">Rules</string>
     <string name="residence_select_type">Select type of residence</string>
     <string name="save_residence">Save Residence</string>
+    <string name="add_photos">Add Photos</string>
 
     <!-- PROFILE COLUMNS -->
     <string name="profile_edit">Edit Profile</string>
