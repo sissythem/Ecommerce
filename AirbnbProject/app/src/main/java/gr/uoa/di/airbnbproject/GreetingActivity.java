@@ -42,20 +42,11 @@ public class GreetingActivity extends AppCompatActivity
         });
     }
 
-    /** If user is not logged in cannot go back to the home activity **/
-    //example: if user presses the logout back, he is no longer logged in and he should not be able to return to the home activity
+    /** OnBackPressed does not let user to go back to HomeActivity and just minimizes the app **/
     @Override
-    public void onBackPressed() {
-        //isUserLoggedIn = sharedPrefs.getBoolean("userLoggedInState", false);
-        if (sessionData.getUserLoggedInState()) {
-            Intent intent = new Intent(this, HomeActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-            super.onBackPressed();
-            return;
-        }
-        else {
-            moveTaskToBack(true);
-        }
+    public void onBackPressed()
+    {
+        moveTaskToBack(true);
     }
+
 }
