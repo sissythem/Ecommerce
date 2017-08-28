@@ -350,13 +350,12 @@ public class Residences implements Serializable, Comparable {
         return averageRating;
     }
 
-    /*
     @Override
     public int hashCode() {
         int hash = 0;
         hash += (id != null ? id.hashCode() : 0);
         return hash;
-    } */
+    }
 
     @Override
     public boolean equals(Object object) {
@@ -367,6 +366,7 @@ public class Residences implements Serializable, Comparable {
             return false;
         }
         Residences other = (Residences) object;
+
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
