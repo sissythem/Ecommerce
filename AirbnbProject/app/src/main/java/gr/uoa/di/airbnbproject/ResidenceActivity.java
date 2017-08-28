@@ -247,12 +247,12 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         tvPrice.setText(Double.toString(selectedResidence.getMinPrice()));
         rating.setRating((float)selectedResidence.getAverageRating());
 
-        if (user) {
-            setCalendar();
-        } else {
+        if(!user)
+        {
             bBook.setVisibility(View.GONE);
             etGuests.setVisibility(View.GONE);
         }
+        setCalendar();
         setBookResidence();
     }
 
@@ -379,11 +379,6 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
             /** Get for each reservation the start and the end date, and the number of guests **/
             dateStart = Utils.convertTimestampToDate(allReservationsByResidence.get(i).getStartDate(), FORMAT_DATE_YMD);
             dateEnd = Utils.convertTimestampToDate(allReservationsByResidence.get(i).getEndDate(), FORMAT_DATE_YMD);
-            /** Check if the reservation period is during the available period **/
-            if(dateStart.before(startDate) || dateStart.after(endDate) || dateEnd.before(startDate) || dateEnd.after(endDate))
-            {
-                continue;
-            }
             guestsFromDatabase = allReservationsByResidence.get(i).getGuests();
 
             Date currentDate = dateStart;
