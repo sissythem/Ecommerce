@@ -31,7 +31,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 /** RestClient **/
 public class RestClient {
-    public static final String BASE_URL = "http://192.168.1.11:8080/ecommerce_rest/webresources/";
+    public static final String BASE_URL = "https://192.168.1.102:8181/ecommerce_rest/webresources/";
 
     private static Retrofit retrofit = null;
     private static Retrofit stringRetrofit = null;
@@ -89,7 +89,7 @@ public class RestClient {
     /** OkHttp **/
     private static OkHttpClient getUnsafeOkHttpClient(final String token) {
         try {
-            // Create a trust manager that does not validate certificate chains
+            /** Create a trust manager that does not validate certificate chains **/
             final TrustManager[] trustAllCerts = new TrustManager[] {
                     new X509TrustManager() {
 
