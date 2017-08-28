@@ -357,7 +357,7 @@ public class HomeActivity extends AppCompatActivity
                 for (int i = 0; i < residences.size(); i++) {
                     residenceId = residences.get(i).getId();
                     reviewsByResidence = retrofitCalls.getReviewsByResidenceId(token, Integer.toString(residenceId));
-                    /** Exclude residences with no reviews */
+                    /** Include only residences with reviews */
                     if (reviewsByResidence != null && reviewsByResidence.size() != 0) {
                         residences.get(i).setReviewsCollection(reviewsByResidence);
                         reviewedResidences.add(residences.get(i));

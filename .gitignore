@@ -41,3 +41,5 @@ ecommerce_rest/web/images/img56450701368351372.jpg
 AirbnbProject/app/app.iml
 AirbnbProject/local.properties
 ecommerce_rest/web/images/img1085664803931824014.jpg
+ecommerce_rest/src/java/services/ImagesFacadeREST.java
+AirbnbProject/app/src/main/java/util/RestClient.java

@@ -18,6 +18,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import fromRESTful.Residences;
+import fromRESTful.Reviews;
 import fromRESTful.Users;
 import util.RecyclerAdapterResidences;
 import util.RetrofitCalls;
@@ -42,6 +43,7 @@ public class HostActivity extends AppCompatActivity {
     Context c;
 
     ArrayList<Residences> storedResidences;
+    ArrayList<Reviews> reviewsByResidence;
     RecyclerView residencesRecyclerView;
 
     @Override
@@ -99,6 +101,10 @@ public class HostActivity extends AppCompatActivity {
         residencesRecyclerView.setHasFixedSize(true);
 
         storedResidences = retrofitCalls.getResidencesByHost(token, host.getId().toString());
+        for(int i=0;i<storedResidences.size();i++){
+            reviewsByResidence = retrofitCalls.getReviewsByResidenceId(token, Integer.toString(storedResidences.get(i).getId()));
+            storedResidences.get(i).setReviewsCollection(reviewsByResidence);
+        }
         try {
             if (storedResidences.size() > 0) {
                 residencesRecyclerView.setAdapter(new RecyclerAdapterResidences(this, user, storedResidences, 1, "", ""));
