@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <include layout="@layout/back_toolbar"
-        android:id="@+id/include"/>
+    <include layout="@layout/back_toolbar" android:id="@+id/include"/>
+
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
@@ -19,73 +19,86 @@
         android:focusable="true"
         android:focusableInTouchMode="true">
 
-        <ImageView
-            android:id="@+id/ivResidencePhotos"
+        <RelativeLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            xmlns:custom="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/res_images"
-            app:srcCompat="@android:drawable/ic_menu_camera"
-            android:scaleType="centerCrop"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_height="match_parent">
+
+            <com.daimajia.slider.library.SliderLayout
+                android:id="@+id/residencesslider"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                custom:auto_cycle="true"
+                custom:pager_animation_span="1100" />
+
+            <ImageView
+                android:id="@+id/ivResidencePhotos"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/res_images"
+                app:srcCompat="@android:drawable/ic_menu_camera"
+                android:scaleType="centerCrop"
+                android:contentDescription="@string/residence_photos" />
+        </RelativeLayout>
 
         <LinearLayout
             android:id="@+id/profilell"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/profile_layout"
             android:layout_marginTop="@dimen/res_images"
             android:orientation="vertical">
 
-        <RelativeLayout
-            android:id="@+id/profile_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/ivResidencePhotos"
-            android:background="@color/airbnb"
-            android:elevation="4dp"
-            android:paddingBottom="24dp">
-
-            <ImageButton
-                android:id="@+id/ivHostPic"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:id="@+id/profile_layout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_marginStart="39dp"
-                android:layout_marginTop="45dp"
-                android:background="@drawable/profile_circular_border_imageview"
-                android:elevation="5dp"
-                android:padding="20dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_profile" />
+                android:background="@color/airbnb"
+                android:elevation="4dp"
+                android:paddingBottom="24dp">
 
-            <TextView
-                android:id="@+id/tvHostName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginTop="48dp"
-                android:layout_toEndOf="@+id/ivHostPic"
-                android:text="Name"
-                android:textAlignment="center"
-                android:textColor="#fff"
-                android:textSize="24sp"
-                android:textStyle="bold" />
+                <ImageButton
+                    android:id="@+id/ivHostPic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginStart="39dp"
+                    android:layout_marginTop="45dp"
+                    android:background="@drawable/profile_circular_border_imageview"
+                    android:elevation="5dp"
+                    android:padding="20dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_profile"
+                    android:contentDescription="@string/host_profile_image" />
 
-            <TextView
-                android:id="@+id/tvHostAbout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/ivHostPic"
-                android:layout_marginBottom="19dp"
-                android:text="About"
-                android:textAlignment="center"
-                android:textColor="#fff"
-                android:textSize="18sp"
-                android:layout_alignParentEnd="true"
-                android:layout_toEndOf="@+id/ivHostPic" />
+                <TextView
+                    android:id="@+id/tvHostName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="48dp"
+                    android:layout_toEndOf="@+id/ivHostPic"
+                    android:text="@string/name"
+                    android:textAlignment="center"
+                    android:textColor="#fff"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
 
-        </RelativeLayout>
+                <TextView
+                    android:id="@+id/tvHostAbout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/ivHostPic"
+                    android:layout_marginBottom="19dp"
+                    android:text="@string/about"
+                    android:textAlignment="center"
+                    android:textColor="#fff"
+                    android:textSize="18sp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_toEndOf="@+id/ivHostPic" />
+
+            </RelativeLayout>
 
             <TextView
                 android:id="@+id/tvTitle"
@@ -111,7 +124,7 @@
                 android:clickable="true"
                 android:elevation="4dp"
                 android:padding="20dp"
-                android:text="Details" />
+                android:text="@string/details" />
 
             <TextView
                 android:id="@+id/tvAboutTitle"
@@ -145,9 +158,6 @@
             android:id="@+id/tvMapTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/tvAboutText"
             android:textAppearance="@style/sectionHeader"
             android:text="@string/residence_where"
             android:textSize="17sp" />
@@ -157,7 +167,6 @@
             xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="wrap_content"
             android:layout_height="500dp"
-            android:layout_below="@+id/tvMapTitle"
             android:id="@+id/mapResidence"
             tools:context=".MapsActivity"
             android:name="com.google.android.gms.maps.SupportMapFragment"
@@ -167,7 +176,6 @@
             android:id="@+id/etGuests"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/mapResidence"
             android:ems="10"
             android:hint="@string/residence_guests_number"
             android:inputType="number" />
@@ -176,9 +184,6 @@
             android:id="@+id/tvAvailabilityTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/etGuests"
             android:textAppearance="@style/sectionHeader"
             android:text="@string/residence_availability"
             android:textSize="17sp" />
@@ -187,8 +192,7 @@
             android:id="@+id/calendar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_below="@+id/tvAvailabilityTitle">
+            android:orientation="vertical">
         </LinearLayout>
         </LinearLayout>
         </FrameLayout>

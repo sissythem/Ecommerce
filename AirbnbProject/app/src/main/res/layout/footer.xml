@@ -35,7 +35,8 @@
                 android:layout_height="match_parent"
                 android:text="@string/home"
                 android:background="@color/colorPrimary"
-                app:srcCompat="@drawable/ic_home_holo_dark" />
+                app:srcCompat="@drawable/ic_home_holo_dark"
+                android:contentDescription="@string/home" />
 
             <ImageButton
                 android:id="@+id/inbox"
@@ -44,7 +45,8 @@
                 android:layout_height="match_parent"
                 android:text="@string/inbox"
                 android:background="@color/colorPrimary"
-                app:srcCompat="@drawable/ic_message_holo_dark" />
+                app:srcCompat="@drawable/ic_message_holo_dark"
+                android:contentDescription="@string/inbox" />
 
             <ImageButton
                 android:id="@+id/profile"
@@ -53,7 +55,8 @@
                 android:layout_height="match_parent"
                 android:background="@color/colorPrimary"
                 android:text="@string/profile"
-                app:srcCompat="@drawable/ic_profile_holo_dark" />
+                app:srcCompat="@drawable/ic_profile_holo_dark"
+                android:contentDescription="@string/profile" />
 
             <ImageButton
                 android:id="@+id/host"
@@ -62,7 +65,8 @@
                 android:layout_height="match_parent"
                 android:background="@color/colorPrimary"
                 android:text="@string/switch_role"
-                app:srcCompat="@drawable/ic_switch_holo_dark"/>
+                app:srcCompat="@drawable/ic_switch_holo_dark"
+                android:contentDescription="@string/switch_role" />
 
             <ImageButton
                 android:id="@+id/logout"
@@ -71,7 +75,8 @@
                 android:layout_height="match_parent"
                 android:text="@string/logout"
                 android:background="@color/colorPrimary"
-                app:srcCompat="@drawable/ic_logout_holo_dark"/>
+                app:srcCompat="@drawable/ic_logout_holo_dark"
+                android:contentDescription="@string/logout" />
         </LinearLayout>
     </android.support.v7.widget.Toolbar>
 </RelativeLayout>

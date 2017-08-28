@@ -14,7 +14,6 @@
         android:id="@+id/scrollView"
         android:fillViewport="true"
         android:layout_below="@+id/include"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -25,11 +24,48 @@
             android:focusable="true"
             android:focusableInTouchMode="true">
 
+            <!--<ScrollView android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/scroll1">-->
+                <!--<LinearLayout-->
+                    <!--android:id="@+id/lnrImages"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:orientation="vertical">-->
+                <!--</LinearLayout>-->
+            <!--</ScrollView>-->
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvResults"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:id="@+id/customultiple"
+                android:layout_below="@id/tvResults">
+
+                <Button
+                    android:id="@+id/btnAddPhots"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Add Photos"/>
+
+                <Button
+                    android:id="@+id/btnSaveImages"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Save"/>
+            </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/imageContent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_below="@id/customultiple">
 
                 <ImageView
                     android:id="@+id/photo"
@@ -37,7 +73,8 @@
                     android:layout_height="fill_parent"
                     android:scaleType="fitXY"
                     android:layout_weight="1"
-                    android:src="@drawable/ic_upload_image" />
+                    android:src="@drawable/ic_upload_image"
+                    android:contentDescription="@string/residence_photos" />
 
                 <Button android:id="@+id/uploadImage"
                     android:layout_width="match_parent"
@@ -63,8 +100,6 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/select_type"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentStart="true"
                 android:ems="10"
                 android:hint="@string/residence_title"
@@ -78,9 +113,7 @@
                 android:ems="10"
                 android:hint="@string/about"
                 android:inputType="textPersonName"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true" />
 
             <EditText
@@ -91,9 +124,7 @@
                 android:ems="10"
                 android:hint="@string/residence_address"
                 android:inputType="textPostalAddress"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true" />
 
             <EditText
@@ -104,9 +135,7 @@
                 android:layout_below="@+id/etAddress"
                 android:inputType="textPersonName"
                 android:hint="@string/residence_city"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true" />
 
             <EditText
@@ -117,9 +146,7 @@
                 android:layout_below="@+id/etCity"
                 android:inputType="textPersonName"
                 android:hint="@string/residence_country"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true" />
 
             <EditText
@@ -130,9 +157,7 @@
                 android:layout_below="@+id/etCountry"
                 android:inputType="textPersonName"
                 android:hint="@string/residence_amenities"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true" />
 
             <EditText
@@ -140,8 +165,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/etAmenities"
                 android:ems="10"
@@ -153,8 +176,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/etFloor"
                 android:ems="10"
@@ -166,8 +187,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/etRooms"
                 android:ems="10"
@@ -199,8 +218,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/checkboxes"
                 android:ems="10"
@@ -215,9 +232,7 @@
                 android:ems="10"
                 android:hint="@string/space_area"
                 android:inputType="numberDecimal"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true" />
 
             <EditText
@@ -225,8 +240,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/etSpaceArea"
                 android:ems="10"
@@ -241,9 +254,7 @@
                 android:ems="10"
                 android:hint="@string/minimum_price"
                 android:inputType="numberDecimal"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true" />
 
             <EditText
@@ -254,9 +265,7 @@
                 android:ems="10"
                 android:hint="@string/additional_cost"
                 android:inputType="numberDecimal"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true" />
 
             <LinearLayout
@@ -270,7 +279,8 @@
                     android:id="@+id/btnStartDate"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    app:srcCompat="@drawable/ic_calendar" />
+                    app:srcCompat="@drawable/ic_calendar"
+                    android:contentDescription="@string/available_start_date" />
 
                 <TextView
                     android:id="@+id/tvStartDate"
@@ -292,7 +302,8 @@
                     android:id="@+id/btnEndDate"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    app:srcCompat="@drawable/ic_calendar" />
+                    app:srcCompat="@drawable/ic_calendar"
+                    android:contentDescription="@string/available_end_date" />
 
                 <TextView
                     android:id="@+id/tvEndDate"
@@ -311,9 +322,7 @@
                 android:layout_below="@+id/availabilityend"
                 android:inputType="textPersonName"
                 android:hint="@string/cancellation_policy"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true" />
 
             <EditText
@@ -324,9 +333,7 @@
                 android:layout_below="@+id/etCancellationPolicy"
                 android:inputType="textPersonName"
                 android:hint="@string/rules"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true" />
 
         </RelativeLayout>
@@ -336,10 +343,10 @@
         android:id="@+id/ibContinue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="25dp"
         android:background="@color/colorPrimary"
         app:srcCompat="@mipmap/ic_save"
         android:layout_above="@+id/scrollView"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="11dp" />
+        android:layout_marginEnd="11dp"
+        android:contentDescription="@string/save_residence" />
 </RelativeLayout>

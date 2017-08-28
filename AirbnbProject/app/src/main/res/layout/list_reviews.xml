@@ -6,7 +6,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <ImageView
@@ -15,7 +15,8 @@
             android:layout_height="75dp"
             app:srcCompat="@drawable/ic_profile"
             android:layout_marginTop="15dp"
-            android:layout_gravity="center_vertical|start" />
+            android:layout_gravity="center_vertical|start"
+            android:contentDescription="@string/user_image" />
 
         <LinearLayout
             android:id="@+id/layout_partner"

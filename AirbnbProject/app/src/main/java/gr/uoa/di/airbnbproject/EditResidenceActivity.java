@@ -1,6 +1,7 @@
 package gr.uoa.di.airbnbproject;
 
 import android.app.DatePickerDialog;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -21,13 +22,21 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.zfdang.multiple_images_selector.ImagesSelectorActivity;
+import com.zfdang.multiple_images_selector.SelectorSettings;
+
+import org.w3c.dom.Text;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -73,6 +82,19 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
     Context c;
     Users host;
     RetrofitCalls retrofitCalls;
+
+    private LinearLayout lnrImages;
+    private Button btnAddPhots;
+    private Button btnSaveImages;
+    private ArrayList<String> imagesPathList;
+    private Bitmap yourbitmap;
+    private Bitmap resized;
+    private final int PICK_IMAGE_MULTIPLE =1;
+
+    ArrayList<Uri> mArrayUri;
+
+    private static final int REQUEST_CODE = 123;
+    private ArrayList<String> mResults = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,56 +164,108 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         });
 
         saveResidence();
+
+        /**************************************************************************/
+        Fresco.initialize(getApplicationContext());
+
+//        lnrImages = (LinearLayout)findViewById(R.id.lnrImages);
+        btnAddPhots = (Button)findViewById(R.id.btnAddPhots);
+        btnSaveImages = (Button)findViewById(R.id.btnSaveImages);
+
+        btnAddPhots.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                // start multiple photos selector
+                Intent intent = new Intent(EditResidenceActivity.this, ImagesSelectorActivity.class);
+
+                // max number of images to be selected
+                intent.putExtra(SelectorSettings.SELECTOR_MAX_IMAGE_NUMBER, 5);
+
+                // min size of image which will be shown; to filter tiny images (mainly icons)
+                intent.putExtra(SelectorSettings.SELECTOR_MIN_IMAGE_SIZE, 100000);
+
+                // show camera or not
+                intent.putExtra(SelectorSettings.SELECTOR_SHOW_CAMERA, true);
+
+                // pass current selected images as the initial value
+                intent.putStringArrayListExtra(SelectorSettings.SELECTOR_INITIAL_SELECTED_LIST, mResults);
+
+                // start the selector
+                startActivityForResult(intent, REQUEST_CODE);
+            }
+        });
+        /**************************************************************************/
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        //Detects request codes
-        if(requestCode == GET_FROM_GALLERY && resultCode == RESULT_OK) {
-            Uri selectedImage = data.getData();
-            mImageView = (ImageView) findViewById(R.id.photo);
-            photo = selectedImage.toString();
-            mImageView.setImageBitmap(BitmapFactory.decodeFile(selectedImage.toString()));
+//        if (resultCode == RESULT_OK) {
+//            if(requestCode == PICK_IMAGE_MULTIPLE){
+//                imagesPathList = new ArrayList<String>();
+//                String[] imagesPath = data.getStringExtra("data").split("\\|");
+//                try{
+//                    lnrImages.removeAllViews();
+//                }catch (Throwable e){
+//                    e.printStackTrace();
+//                }
+//                for (int i=0;i<imagesPath.length;i++){
+//                    imagesPathList.add(imagesPath[i]);
+//                    yourbitmap = BitmapFactory.decodeFile(imagesPath[i]);
+//                    ImageView imageView = new ImageView(this);
+//                    imageView.setImageBitmap(yourbitmap);
+//                    imageView.setAdjustViewBounds(true);
+//                    lnrImages.addView(imageView);
+//                }
+//            }
+//        }
 
-            Bitmap bitmap;
-            try {
-                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
-                mImageView.setImageBitmap(bitmap);
-                new EditResidenceActivity.SendImageTask().execute(Utils.getRealPathFromURI(EditResidenceActivity.this, selectedImage));
+        // get selected images from selector
+        if(requestCode == REQUEST_CODE) {
+            if(resultCode == RESULT_OK) {
+                mResults = data.getStringArrayListExtra(SelectorSettings.SELECTOR_RESULTS);
+                assert mResults != null;
 
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
+                // show results in textview
+                StringBuffer sb = new StringBuffer();
+                sb.append(String.format("Totally %d images selected:", mResults.size())).append("\n");
+
+                imagesPathList = new ArrayList<String>();
+                for(String result : mResults) {
+                    System.out.println(result);
+                    sb.append(result).append("\n");
+
+                    imagesPathList.add(result);
+                }
             }
         }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private class SendImageTask extends AsyncTask<String, Void, String> {
+    private class SendImageTask extends AsyncTask<Object, Object, String> {
         @Override
-        protected String doInBackground(String... params) {
-            File file = new File(params[0]);
+        protected String doInBackground(Object... params) {
+            ArrayList<String> selectedFiles = (ArrayList<String>) params[0];
 
-            String gg = file.getName();
-            System.out.println(gg);
+            for(int i=0; i<selectedFiles.size(); i++){
+                File file = new File(selectedFiles.get(i));
 
-//            RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpg"), file);
-            RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
-            /** MultipartBody.Part is used to send also the actual file name **/
-            MultipartBody.Part body = MultipartBody.Part.createFormData("picture", file.getName(), requestFile);
-            /** add another part within the multipart request **/
-            RequestBody description = RequestBody.create(okhttp3.MultipartBody.FORM, "Residence Image");
+//                RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpg"), file);
+                RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+                /** MultipartBody.Part is used to send also the actual file name **/
+                MultipartBody.Part body = MultipartBody.Part.createFormData("picture", file.getName(), requestFile);
+                /** add another part within the multipart request **/
+                RequestBody description = RequestBody.create(okhttp3.MultipartBody.FORM, "Residence Image");
 
-            RestAPI restAPI = RestClient.getClient(token).create(RestAPI.class);
-            System.out.println(residenceId);
-            Call<String> call = restAPI.uploadResidenceImg(residenceId, description, body);
-            try {
-                Response<String> resp = call.execute();
-                token = resp.body();
-            } catch(IOException e){
-                Log.i("",e.getMessage());
+                RestAPI restAPI = RestClient.getClient(token).create(RestAPI.class);
+                Call<String> call = restAPI.uploadResidenceImg(residenceId, description, body);
+                try {
+                    Response<String> resp = call.execute();
+                    token = resp.body();
+                } catch(IOException e){
+                    Log.i("",e.getMessage());
+                }
             }
             return token;
         }
@@ -318,6 +392,16 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         bcontinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                System.out.println(mArrayUri);
+                if(imagesPathList !=null && imagesPathList.size() > 0){
+                    String noofimage = (imagesPathList.size() > 1) ? " images are selected" : " image is selected";
+                    Toast.makeText(EditResidenceActivity.this, imagesPathList.size() + noofimage, Toast.LENGTH_SHORT).show();
+                    new EditResidenceActivity.SendImageTask().execute(imagesPathList);
+                } else {
+                    Toast.makeText(EditResidenceActivity.this," no images are selected", Toast.LENGTH_SHORT).show();
+                }
+
                 final String title                      = etTitle.getText().toString();
                 final String type                       = resType;
                 final String about                      = etAbout.getText().toString();

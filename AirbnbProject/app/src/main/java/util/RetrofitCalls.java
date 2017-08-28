@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import fromRESTful.Conversations;
+import fromRESTful.Images;
 import fromRESTful.Messages;
 import fromRESTful.Reservations;
 import fromRESTful.Residences;
@@ -30,6 +31,7 @@ public class RetrofitCalls {
     ArrayList<Users> usersList;
     ArrayList<Conversations> conversationsList;
     ArrayList<Messages> messagesList;
+    ArrayList<Images> photosList;
 
     Residences residence;
     Conversations conversation;
@@ -68,6 +70,37 @@ public class RetrofitCalls {
     }
 
     /** Calls for User **/
+
+    private class deleteUserImageHttpRequestTask extends AsyncTask<Object, Object, String> {
+        @Override
+        protected String doInBackground(Object... params) {
+            String token="";
+            RestAPI restAPI = RestClient.getClient((String)params[0]).create(RestAPI.class);
+            Call<String> call = restAPI.deleteUserImg((Integer)params[1]);
+            try {
+                Response<String> resp = call.execute();
+                token = resp.body();
+            }
+            catch(IOException e){
+                Log.i("",e.getMessage());
+            }
+            return token;
+        }
+    }
+
+    public String deleteUserImage(String token, Integer id) {
+        deleteUserImageHttpRequestTask deleteUserImage = new deleteUserImageHttpRequestTask();
+        deleteUserImage.execute(token, id);
+        try {
+            token = deleteUserImage.get();
+        } catch (InterruptedException e) {
+            Log.i("",e.getMessage());
+        } catch (ExecutionException e) {
+            Log.i("",e.getMessage());
+        }
+        return token;
+    }
+
     private class getUserByUsernameHttpRequestTask extends AsyncTask<String, String, ArrayList<Users>> {
         @Override
         protected ArrayList<Users> doInBackground(String... params) {
@@ -481,6 +514,37 @@ public class RetrofitCalls {
 
 
     /***** Calls for Residences *****/
+    private class getResidencePhotosIdHttpRequestTask extends AsyncTask<Object, Object, ArrayList<Images>> {
+        @Override
+        protected ArrayList<Images> doInBackground(Object... params){
+            photosList = new ArrayList<>();
+            RestAPI restAPI = RestClient.getClient((String)params[0]).create(RestAPI.class);
+            Call<List<Images>> call = restAPI.getResidencePhotos((Integer)params[1]);
+            try {
+                Response <List<Images>> resp = call.execute();
+                photosList.addAll(resp.body());
+            }
+            catch (IOException e){
+                Log.i("",e.getMessage());
+            }
+            return photosList;
+        }
+    }
+
+    public ArrayList<Images> getResidencePhotos(String token, Integer residenceId){
+        getResidencePhotosIdHttpRequestTask getResidencePhotos = new getResidencePhotosIdHttpRequestTask();
+        getResidencePhotos.execute(token, residenceId);
+        try {
+            getResidencePhotos.get();
+        } catch (InterruptedException e) {
+            Log.i("",e.getMessage());
+        } catch (ExecutionException e) {
+            Log.i("",e.getMessage());
+        }
+        return photosList;
+    }
+
+
     private class getResidencesByHostIdHttpRequestTask extends AsyncTask<String, String, ArrayList<Residences>> {
         @Override
         protected ArrayList<Residences> doInBackground(String... params){

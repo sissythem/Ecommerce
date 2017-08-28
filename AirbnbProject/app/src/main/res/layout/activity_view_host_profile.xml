@@ -7,10 +7,9 @@
         android:id="@+id/ibContact"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/profilepic"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:src="@drawable/ic_message_holo_dark" />
+        android:src="@drawable/ic_message_holo_dark"
+        android:contentDescription="@string/contact_host" />
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -19,7 +18,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/imageContent"
             android:orientation="horizontal">
 
@@ -37,7 +36,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
-                    android:text="Name"
+                    android:text="@string/name"
                     android:textColor="#fff"
                     android:textSize="24sp"
                     android:textStyle="bold"
@@ -51,7 +50,7 @@
                     android:layout_below="@+id/name"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="12dp"
-                    android:text="About"
+                    android:text="@string/about"
                     android:textColor="#fff"
                     android:textSize="14sp" />
 
@@ -65,8 +64,8 @@
                     android:elevation="5dp"
                     android:padding="20dp"
                     android:scaleType="centerCrop"
-                    android:layout_weight="1"
-                    android:src="@drawable/ic_profile" />
+                    android:src="@drawable/ic_profile"
+                    android:contentDescription="@string/user_image" />
             </RelativeLayout>
 
             <LinearLayout
@@ -86,7 +85,7 @@
                     android:clickable="true"
                     android:elevation="4dp"
                     android:padding="20dp"
-                    android:text="Username" />
+                    android:text="@string/username" />
 
                 <TextView
                     android:id="@+id/email"
@@ -99,7 +98,7 @@
                     android:clickable="true"
                     android:elevation="4dp"
                     android:padding="20dp"
-                    android:text="Email" />
+                    android:text="@string/profile_email" />
 
                 <TextView
                     android:id="@+id/phonenumber"
@@ -110,7 +109,7 @@
                     android:clickable="true"
                     android:elevation="4dp"
                     android:padding="20dp"
-                    android:text="Mobile Number" />
+                    android:text="@string/profile_number" />
 
                 <TextView
                     android:id="@+id/birthDate"
@@ -123,7 +122,7 @@
                     android:clickable="true"
                     android:elevation="4dp"
                     android:padding="20dp"
-                    android:text="Birth Date" />
+                    android:text="@string/profile_date_of_birth" />
 
                 <TextView
                     android:id="@+id/city"
@@ -134,7 +133,7 @@
                     android:clickable="true"
                     android:elevation="4dp"
                     android:padding="20dp"
-                    android:hint="City" />
+                    android:hint="@string/profile_city" />
                 <TextView
                     android:id="@+id/country"
                     android:layout_width="fill_parent"
@@ -144,7 +143,7 @@
                     android:clickable="true"
                     android:elevation="4dp"
                     android:padding="20dp"
-                    android:hint="Country" />
+                    android:hint="@string/profile_country" />
             </LinearLayout>
         </RelativeLayout>
     </ScrollView>

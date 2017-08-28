@@ -3,6 +3,7 @@ package util;
 import java.util.List;
 
 import fromRESTful.Conversations;
+import fromRESTful.Images;
 import fromRESTful.Messages;
 import fromRESTful.Reservations;
 import fromRESTful.Residences;
@@ -33,7 +34,7 @@ public interface RestAPI {
 
     /***** Images Facade Methods *****/
     @Multipart
-    @POST("images/profilepic/{id}")
+    @PUT("images/profilepic/{id}")
     Call<String> uploadProfileImg(@Path("id")Integer id, @Part("description") RequestBody description, @Part MultipartBody.Part file);
 
     @Multipart
@@ -64,6 +65,12 @@ public interface RestAPI {
 
     @GET("images/img/{name}")
     Call<ResponseBody> getUserImage(@Path("name")String name);
+
+    @PUT("images/deleteimg/profile/{id}")
+    Call<String> deleteUserImg(@Path("id")Integer id);
+
+    @GET("images/residence/{id}")
+    Call<List<Images>> getResidencePhotos(@Path("id")Integer id);
 
     /** Searches Facade Methods **/
     @GET("searches/city")

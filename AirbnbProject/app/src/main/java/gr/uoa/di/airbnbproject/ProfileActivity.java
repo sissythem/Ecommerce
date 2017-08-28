@@ -22,6 +22,7 @@ import util.Session;
 import util.Utils;
 
 import static util.Utils.getSessionData;
+import static util.Utils.goToActivity;
 
 public class ProfileActivity extends AppCompatActivity {
     Users loggedinUser;
@@ -88,9 +89,10 @@ public class ProfileActivity extends AppCompatActivity {
 
         /** Get the user **/
         retrofitCalls = new RetrofitCalls();
-        loggedinUser    = retrofitCalls.getUserbyUsername(token, username).get(0);
+        loggedinUser  = retrofitCalls.getUserbyUsername(token, username).get(0);
 
         setUpProfile();
+
         userImage = (ImageView) findViewById(R.id.userImage);
         Utils.loadProfileImage(ProfileActivity.this, userImage, loggedinUser.getPhoto());
 
@@ -145,22 +147,16 @@ public class ProfileActivity extends AppCompatActivity {
             /** User can see a history of his reviews **/
             case R.id.reviews:
                 if (item.getItemId() == R.id.reviews) {
-                    Intent historyReviewsIntent = new Intent(ProfileActivity.this, HistoryReviewsActivity.class);
-                    historyReviewsIntent.putExtras(buser);
-                    startActivity(historyReviewsIntent);
+                    goToActivity(ProfileActivity.this, HistoryReviewsActivity.class, buser);
                     break;
                 }
                 /** User can see a history of his reservations **/
             case R.id.reservations:
-                Intent historyReservationsIntent = new Intent(ProfileActivity.this, HistoryReservationsActivity.class);
-                historyReservationsIntent.putExtras(buser);
-                startActivity(historyReservationsIntent);
+                goToActivity(ProfileActivity.this, HistoryReservationsActivity.class, buser);
                 break;
             /** User can edit his profile **/
             case R.id.editprofile:
-                Intent editIntent = new Intent(ProfileActivity.this, EditProfileActivity.class);
-                editIntent.putExtras(buser);
-                startActivity(editIntent);
+                goToActivity(ProfileActivity.this, EditProfileActivity.class, buser);
                 break;
             /** User can delete his profile **/
             case R.id.deleteProfile:

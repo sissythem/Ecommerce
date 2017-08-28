@@ -50,7 +50,7 @@
                 android:layout_gravity="end"
                 android:textAlignment="viewEnd"
                 android:textSize="@dimen/text_size_normal"
-                android:text="Booked by Vasso" />
+                android:text="Booked by" />
 
             <TextView
                 android:id="@+id/period"

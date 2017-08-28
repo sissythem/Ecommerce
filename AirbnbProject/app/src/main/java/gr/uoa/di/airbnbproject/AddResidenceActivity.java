@@ -209,8 +209,6 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
             @Override
             public void onClick(View v) {
                 //Log.w("","SETTING HARDCODED RESIDENCE VALUES FOR DEBUGGING!");
-                //final String photo                      = etUpload.getText().toString();
-                final String photo                      = "sdgdfg";
                 final String title                      = etTitle.getText().toString();
                 final String type                       = resType;
                 final String about                      = etAbout.getText().toString();
@@ -240,7 +238,7 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
                 if (title.length() == 0 || type.length() == 0 || about.length() == 0 || address.length() == 0 || city.length() == 0 || country.length() == 0 || amenities.length() == 0 || floor.length() == 0
                         || rooms.length() == 0 || baths.length() == 0 || view.length() == 0 || spaceArea.length() == 0 || guests.length() == 0 || minPrice.length() == 0
                         || additionalCostPerPerson.length() == 0 || cancellationPolicy.length() == 0 || rules.length() == 0
-                        || startDate <= 0 || endDate <= 0 || endDate <= startDate || photo.length() == 0) {
+                        || startDate <= 0 || endDate <= 0 || endDate <= startDate) {
                     Toast.makeText(c, "Please fill in all fields!", Toast.LENGTH_SHORT).show();
                     return;
                 } else {
@@ -268,8 +266,7 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
                             kitchen,
                             livingRoom,
                             startDate,
-                            endDate,
-                            photo
+                            endDate
                     );
 
                     RetrofitCalls retrofitCalls = new RetrofitCalls();
