@@ -12,13 +12,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/include"
-        android:layout_marginBottom="@dimen/height_of_footer"
+        android:layout_above="@+id/rate"
+        android:layout_marginBottom="100dp"
         android:divider="#b5b5b5"
         android:dividerHeight="1dp"
         android:listSelector="@drawable/list_selector">
     </ListView>
 
-    <include layout="@layout/layout_review" />
 
-    <include layout="@layout/footer" />
+    <include
+        layout="@layout/layout_review"
+        android:id="@+id/rate"
+        android:layout_height="100dp"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true" />
+
 </RelativeLayout>

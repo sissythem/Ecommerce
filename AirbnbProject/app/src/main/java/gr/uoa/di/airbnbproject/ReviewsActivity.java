@@ -127,9 +127,6 @@ public class ReviewsActivity extends AppCompatActivity
         reviewsList = (ListView)findViewById(R.id.reviewslist);
         reviewsList.setAdapter(adapter);
 
-        /** FOOTER TOOLBAR **/
-        Utils.manageFooter(ReviewsActivity.this, user);
-        View footer = findViewById(R.id.footer);
         etcomment = (EditText)findViewById(R.id.writeComment);
         btnreview = (ImageButton)findViewById(R.id.btnreview);
         ratingBar = (RatingBar)findViewById(R.id.rating);
@@ -160,11 +157,9 @@ public class ReviewsActivity extends AppCompatActivity
             btnreview.setVisibility(View.GONE);
             ratingBar.setVisibility(View.GONE);
             txtrating.setVisibility(View.GONE);
-            footer.setVisibility(View.VISIBLE);
         }
         else
         {
-            footer.setVisibility(View.GONE);
             btnreview.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v)
@@ -195,5 +190,13 @@ public class ReviewsActivity extends AppCompatActivity
                 }
             });
         }
+    }
+
+    @Override
+    public void onBackPressed(){
+        Bundle btores = new Bundle();
+        btores.putBoolean("type", user);
+        btores.putInt("residenceId", residenceId);
+        Utils.goToActivity(ReviewsActivity.this, ResidenceActivity.class, btores);
     }
 }
