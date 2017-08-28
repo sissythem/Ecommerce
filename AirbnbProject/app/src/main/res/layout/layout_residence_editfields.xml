@@ -24,15 +24,6 @@
             android:focusable="true"
             android:focusableInTouchMode="true">
 
-            <!--<ScrollView android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/scroll1">-->
-                <!--<LinearLayout-->
-                    <!--android:id="@+id/lnrImages"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:orientation="vertical">-->
-                <!--</LinearLayout>-->
-            <!--</ScrollView>-->
-
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -51,7 +42,8 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/include"
                     android:layout_marginBottom="@dimen/height_of_footer"
-                    android:id="@+id/linearLayout">
+                    android:id="@+id/linearLayout"
+                    android:orientation="horizontal">
                     <include layout="@layout/recycler_main" android:layout_width="match_parent" android:layout_height="wrap_content" />
                 </LinearLayout>
 

@@ -38,7 +38,6 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Users.findByRegistrationDate", query = "SELECT u FROM Users u WHERE u.registrationDate = :registrationDate"),
     @NamedQuery(name = "Users.findByAbout", query = "SELECT u FROM Users u WHERE u.about = :about"),
     @NamedQuery(name = "Users.findByBirthDate", query = "SELECT u FROM Users u WHERE u.birthDate = :birthDate"),
-    @NamedQuery(name = "Users.findByHost", query = "SELECT u FROM Users u WHERE u.host = :host"),
     
     /* Custom */
     @NamedQuery(name = "loginUser", query = "SELECT u FROM Users u WHERE u.username = :username AND u.password = :password")
@@ -88,9 +87,6 @@ public class Users implements Serializable {
     @Size(max = 50)
     @Column(name = "birth_date")
     private String birthDate;
-    @Size(max = 45)
-    @Column(name = "host")
-    private String host;
     @OneToMany(mappedBy = "userId")
     private Collection<Searches> searchesCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tenantId")
@@ -217,14 +213,6 @@ public class Users implements Serializable {
 
     public void setBirthDate(String birthDate) {
         this.birthDate = birthDate;
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
     }
 
     @XmlTransient

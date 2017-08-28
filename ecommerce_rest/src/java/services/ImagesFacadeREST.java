@@ -165,7 +165,7 @@ public class ImagesFacadeREST extends AbstractFacade<Images> {
     @DELETE
     @Path("deleteimg/residence/{id}/{name}")
     @Produces(MediaType.TEXT_XML)
-    public String deleteUserImg(@HeaderParam("Authorization")String token, @PathParam("id") Integer id, @PathParam("name") String name) {
+    public String deleteUserImg(@HeaderParam("Authorization")String token, @PathParam("id") Integer id, @PathParam("resId") Integer resId, @PathParam("name") String name) {
         if (KeyHolder.checkToken(token, className)) {
             try {
                 
@@ -194,8 +194,6 @@ public class ImagesFacadeREST extends AbstractFacade<Images> {
             @PathParam("id")Integer id,
             @FormDataParam("picture") InputStream uploadedInputStream, @FormDataParam("picture") FormDataContentDisposition fileDetail) {
         
-        System.out.println("uploadeeedstream::: "+uploadedInputStream);
-        System.out.println("filedetails::: "+fileDetail);
         if (KeyHolder.checkToken(token, className)) {
             try {
                 deleteFileByUser(id);
@@ -229,7 +227,7 @@ public class ImagesFacadeREST extends AbstractFacade<Images> {
                 
                 Query query = em.createNativeQuery("INSERT INTO images (residence_id, name) VALUES ("+id+", '"+newFile.getName()+"')");
                 query.executeUpdate();
-                return token;
+                return newFile.getName();
             } catch (Exception e) {
                 return "not";
             }

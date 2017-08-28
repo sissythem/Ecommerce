@@ -69,7 +69,7 @@ public class HostActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_host);
-        //set up the upper toolbar
+        /** Set up the upper toolbar **/
 
         toolbar = (Toolbar) findViewById(R.id.backToolbar);
         toolbar.setTitle("Your Residences");
@@ -82,16 +82,9 @@ public class HostActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                Intent addResidenceIntent = new Intent(HostActivity.this, AddResidenceActivity.class);
                 Bundle buser = new Bundle();
                 buser.putBoolean("type", user);
-                addResidenceIntent.putExtras(buser);
-                try {
-                    startActivity(addResidenceIntent);
-                } catch (Exception ex) {
-                    System.out.println(ex.getMessage());
-                    Log.i("",ex.getMessage());
-                }
+                goToActivity(HostActivity.this, AddResidenceActivity.class, buser);
             }
         });
 
@@ -147,7 +140,7 @@ public class HostActivity extends AppCompatActivity {
         /** Host can delete his residence **/
         else if (item.getTitle().equals(DELETE_ACTION)) {
             new AlertDialog.Builder(this)
-                .setTitle("Delete Residence").setMessage("Do you really want to delete this residence?").setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Delete Residence").setMessage("Do you really want to delete this residence?").setIcon(android.R.drawable.ic_menu_delete)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         RetrofitCalls retrofitCalls = new RetrofitCalls();

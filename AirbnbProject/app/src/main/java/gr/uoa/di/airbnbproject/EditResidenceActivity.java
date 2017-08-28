@@ -1,16 +1,11 @@
 package gr.uoa.di.airbnbproject;
 
 import android.app.DatePickerDialog;
-import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -26,8 +21,6 @@ import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,12 +29,8 @@ import com.facebook.drawee.backends.pipeline.Fresco;
 import com.zfdang.multiple_images_selector.ImagesSelectorActivity;
 import com.zfdang.multiple_images_selector.SelectorSettings;
 
-import org.w3c.dom.Text;
-
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -54,7 +43,6 @@ import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Response;
 import util.RecyclerAdapterImages;
-import util.RecyclerAdapterResidences;
 import util.RestAPI;
 import util.RestClient;
 import util.RetrofitCalls;
@@ -63,15 +51,13 @@ import util.Utils;
 
 import static util.Utils.DELETE_ACTION;
 import static util.Utils.FORMAT_DATE_DMY;
+import static util.Utils.SET_AS_MAIN_IMAGE_ACTION;
 import static util.Utils.convertDateToMillisSec;
 import static util.Utils.convertTimestampToDateStr;
 import static util.Utils.goToActivity;
-import static util.Utils.reloadActivity;
 
 public class EditResidenceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener
 {
-    public static final int GET_FROM_GALLERY = 3;
-
     String resType, token;
     Integer residenceId;
     Residences selectedResidence;
@@ -230,8 +216,6 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
                             RetrofitCalls retrofitCalls = new RetrofitCalls();
-
-                            /** TODO: call delete residence image method **/
                             token = retrofitCalls.deleteResidenceImage(token, imgId, resName);
                             if (!token.isEmpty() && token!=null && token!="not") {
                                 Toast.makeText(EditResidenceActivity.this, "Image was successfully deleted!", Toast.LENGTH_SHORT).show();
@@ -242,7 +226,18 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
                         }})
                     .setNegativeButton(android.R.string.no, null).show();
 
-        } else {
+        } else if (item.getTitle().equals(SET_AS_MAIN_IMAGE_ACTION)) {
+            RetrofitCalls retrofitCalls = new RetrofitCalls();
+            token = retrofitCalls.setMainResidencePhoto(token, residenceId, resName);
+            if (!token.isEmpty() && token!=null && token!="not") {
+                Toast.makeText(EditResidenceActivity.this, "Image was successfully set as main photo!", Toast.LENGTH_SHORT).show();
+                goToActivity(EditResidenceActivity.this, EditResidenceActivity.class, btype);
+            } else {
+                Toast.makeText(EditResidenceActivity.this, "Something went wrong, image could not be set as main photo. Please try again!", Toast.LENGTH_SHORT).show();
+            }
+
+        }
+        else {
             Toast.makeText(this, item.getTitle(), Toast.LENGTH_LONG).show();
         }
         return true;
@@ -260,6 +255,8 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
                 imagesPathList.add(result);
             }
         }
+        String noofimage = (imagesPathList.size() > 1) ? " images are selected" : " image is selected";
+        Toast.makeText(EditResidenceActivity.this, imagesPathList.size() + noofimage, Toast.LENGTH_SHORT).show();
         super.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -271,8 +268,7 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
             for(int i=0; i<selectedFiles.size(); i++){
                 File file = new File(selectedFiles.get(i));
 
-                //RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpg"), file);
-                RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+                RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpg"), file);
                 /** MultipartBody.Part is used to send also the actual file name **/
                 MultipartBody.Part body = MultipartBody.Part.createFormData("picture", file.getName(), requestFile);
                 /** add another part within the multipart request **/
@@ -282,7 +278,7 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
                 Call<String> call = restAPI.uploadResidenceImg(residenceId, description, body);
                 try {
                     Response<String> resp = call.execute();
-                    token = resp.body();
+                    photo = resp.body();
                 } catch(IOException e){
                     Log.i("",e.getMessage());
                 }
@@ -413,8 +409,6 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
             @Override
             public void onClick(View v) {
                 if(imagesPathList !=null && imagesPathList.size() > 0){
-                    String noofimage = (imagesPathList.size() > 1) ? " images are selected" : " image is selected";
-                    Toast.makeText(EditResidenceActivity.this, imagesPathList.size() + noofimage, Toast.LENGTH_SHORT).show();
                     new EditResidenceActivity.SendImageTask().execute(imagesPathList);
                 } else {
                     Toast.makeText(EditResidenceActivity.this," no images are selected", Toast.LENGTH_SHORT).show();
@@ -484,17 +478,10 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
 
                     /** If the PUT request is successful user can go back to HostActivity **/
                     if (!token.isEmpty() && token!=null && token!="not") {
-                        Intent hostIntent = new Intent(EditResidenceActivity.this, HostActivity.class);
                         Bundle bhost = new Bundle();
-                        user=false;
+                        user = false;
                         bhost.putBoolean("type", user);
-                        hostIntent.putExtras(bhost);
-                        try {
-                            startActivity(hostIntent);
-                            finish();
-                        } catch (Exception e) {
-                            Log.e("",e.getMessage());
-                        }
+                        goToActivity(EditResidenceActivity.this, HostActivity.class, bhost);
                     } else {
                         Toast.makeText(c, "Your session has finished, please log in again!", Toast.LENGTH_SHORT).show();
                         Utils.logout(EditResidenceActivity.this);

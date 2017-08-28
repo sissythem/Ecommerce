@@ -20,13 +20,12 @@ public class Users implements Serializable {
     private Date registrationDate;
     private String about;
     private String birthDate;
-    private String host;
 
     public Users(){}
 
     /** For edit profile **/
     public Users(int userId, String firstName, String lastName, String username, String password, String email, String phoneNumber, String country, String city,
-                 String photo, String about, String birthDate, Date registrationDate)
+                 String about, String birthDate, Date registrationDate)
     {
         this.id             = userId;
         this.firstName      = firstName;
@@ -37,7 +36,6 @@ public class Users implements Serializable {
         this.phoneNumber    = phoneNumber;
         this.country        = country;
         this.city           = city;
-        this.photo          = photo;
         this.about          = about;
         this.birthDate      = birthDate;
         this.registrationDate   = registrationDate;
@@ -164,14 +162,6 @@ public class Users implements Serializable {
 
     public void setBirthDate(String birthDate) {
         this.birthDate = birthDate;
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
     }
 
     @Override

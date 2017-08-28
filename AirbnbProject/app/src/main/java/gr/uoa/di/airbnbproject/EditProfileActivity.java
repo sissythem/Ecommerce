@@ -66,6 +66,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
     Session sessionData;
     String imageName;
+    String realpath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -220,7 +221,7 @@ public class EditProfileActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        //Detects request codes
+        /** Detects request codes **/
         if(requestCode == GET_FROM_GALLERY && resultCode == RESULT_OK) {
             Uri selectedImage = data.getData();
             mImageView = (ImageView) findViewById(R.id.userImage);
@@ -230,10 +231,8 @@ public class EditProfileActivity extends AppCompatActivity {
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
                 mImageView.setImageBitmap(bitmap);
-                String realpath = Utils.getRealPathFromURI(EditProfileActivity.this, selectedImage);
+                realpath = Utils.getRealPathFromURI(EditProfileActivity.this, selectedImage);
                 System.out.println(realpath);
-                new EditProfileActivity.SendImageTask().execute(realpath);
-
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -252,8 +251,8 @@ public class EditProfileActivity extends AppCompatActivity {
             File file = new File(params[0]);
             System.out.println(file);
 
-            RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpg"), file);
-//            RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+//            RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpg"), file);
+            RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
             /** MultipartBody.Part is used to send also the actual file name **/
             MultipartBody.Part body = MultipartBody.Part.createFormData("picture", file.getName(), requestFile);
             /** add another part within the multipart request **/
@@ -263,7 +262,7 @@ public class EditProfileActivity extends AppCompatActivity {
             Call<String> call = restAPI.uploadProfileImg(userId, description, body);
             try {
                 Response<String> resp = call.execute();
-                imageName = resp.body();
+                resp.body();
             } catch(IOException e){
                 Toast.makeText(c, "Uploading profile image failed.", Toast.LENGTH_SHORT).show();
                 Log.i("",e.getMessage());
@@ -277,7 +276,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
     public boolean checkEmail (String Email) {
         boolean emailIsNew=false;
-        //same process for email
+        /** Same process for email **/
         ArrayList<Users> users = retrofitCalls.getUserbyEmail(token, Email);
         if(users.size() == 0) emailIsNew = true;
         return  emailIsNew;
@@ -295,7 +294,6 @@ public class EditProfileActivity extends AppCompatActivity {
         final String country        = etCountry.getText().toString();
         final String city           = etCity.getText().toString();
         final String birthdate      = tvBirthDate.getText().toString();
-        final String photo          = imageName;
         final String about          = etAbout.getText().toString();
         final Date registrationDate = loggedinUser.getRegistrationDate();
 
@@ -324,8 +322,10 @@ public class EditProfileActivity extends AppCompatActivity {
         if(emailIsNew)
         {
             //send user input to the database in order to update the specific user
-            token = PutResult(loggedinUser.getId(), name, lastName, Username, password, Email, phoneNumber, country, city, photo, about, birthdate, registrationDate);
+            token = PutResult(loggedinUser.getId(), name, lastName, Username, password, Email, phoneNumber, country, city, about, birthdate, registrationDate);
             if (!token.isEmpty() && token!=null && token!="not") {
+                new EditProfileActivity.SendImageTask().execute(realpath);
+
                 sessionData.setToken(token);
                 sessionData.setUsername(username);
                 sessionData.setUserLoggedInState(true);
@@ -349,8 +349,8 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     public String PutResult(int userId, String firstName, String lastName, String username, String password, String email, String phoneNumber, String country, String city,
-                            String photo, String about, String birthDate, Date registrationDate) {
-        Users UserParameters = new Users(userId, firstName, lastName, username, password, email, phoneNumber, country, city, photo, about, birthDate, registrationDate);
+                            String about, String birthDate, Date registrationDate) {
+        Users UserParameters = new Users(userId, firstName, lastName, username, password, email, phoneNumber, country, city, about, birthDate, registrationDate);
         RetrofitCalls retrofitCalls = new RetrofitCalls();
         token = retrofitCalls.editUser(token, userId, UserParameters);
         return token;

@@ -66,6 +66,8 @@ public class Utils {
     public static final String CONTACT_HOST_ACTION          = "Contact Host";
     public static final String CONTACT_USER_ACTION          = "Contact User";
     public static final String CANCEL_RESERVATION_ACTION    = "Cancel Reservation";
+    public static final String SET_AS_MAIN_IMAGE_ACTION     = "Set as Main Image";
+
 
     /** When an activity starts, it is checked if token is expired in order to terminate the session **/
     public static boolean isTokenExpired(String token) {

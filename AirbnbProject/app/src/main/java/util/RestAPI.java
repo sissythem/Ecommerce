@@ -78,6 +78,9 @@ public interface RestAPI {
     Call<List<Searches>> getCitiesByUserId(@Query("userId") String userId);
 
     /** Residences Facade Methods **/
+    @PUT("residences/main/{id}/{name}")
+    Call<String> setMainResidencePhoto(@Path("id")Integer id, @Path("name")String name);
+
     @GET("residences/city")
     Call<List<Residences>> getResidenceByCity(@Query("city") String city);
 

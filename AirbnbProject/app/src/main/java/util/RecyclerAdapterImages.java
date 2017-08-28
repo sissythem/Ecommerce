@@ -15,6 +15,7 @@ import fromRESTful.Images;
 import gr.uoa.di.airbnbproject.R;
 
 import static util.Utils.DELETE_ACTION;
+import static util.Utils.SET_AS_MAIN_IMAGE_ACTION;
 
 /** RecyclerView for Residence Images used in EditResidenceActivity **/
 public class RecyclerAdapterImages extends RecyclerView.Adapter<RecyclerAdapterImages.ImagesCardHolder> {
@@ -43,6 +44,7 @@ public class RecyclerAdapterImages extends RecyclerView.Adapter<RecyclerAdapterI
 
                 if (!user) {
                     menu.add(0, position, 0, DELETE_ACTION);
+                    menu.add(0, position, 1, SET_AS_MAIN_IMAGE_ACTION);
                 }
             }
         });

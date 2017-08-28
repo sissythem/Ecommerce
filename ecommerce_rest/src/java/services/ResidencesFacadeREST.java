@@ -66,18 +66,6 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
     /*** CUSTOM METHODS ***/
     private static String className = ResidencesFacadeREST.class.getName();
     
-//    @PUT
-//    @Path("{id}")
-//    @Consumes({MediaType.APPLICATION_JSON})
-//    public String edit(@HeaderParam("Authorization") String token, @PathParam("id") Integer id, Residences entity) {
-//        System.out.println("here");
-//        if (KeyHolder.checkToken(token, className)) {
-//            super.edit(entity);
-//            return token;
-//        }
-//        return "not";
-//    }
-    
     @PUT
     @Path("put/{id}")
     @Consumes({MediaType.APPLICATION_JSON})
@@ -255,4 +243,21 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
         System.out.println(date);
         return date;
     }
+    
+    @PUT
+    @Path("main/{id}/{name}")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String setMainResidencePhoto(@HeaderParam("Authorization") String token, @PathParam("id")Integer id, @PathParam("name")String name) {
+        if (KeyHolder.checkToken(token, className)) {
+            try {                
+                Query query = em.createNativeQuery("UPDATE residences SET photos ='"+name+"' WHERE id ="+id);
+                query.executeUpdate();
+                return token;
+            } catch (Exception e) {
+                return "not";
+            }
+        }
+        return "not";
+    }
+    
 }

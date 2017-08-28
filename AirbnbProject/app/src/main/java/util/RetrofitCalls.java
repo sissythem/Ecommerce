@@ -508,8 +508,37 @@ public class RetrofitCalls {
         return token;
     }
 
-
     /***** Calls for Residences *****/
+    private class setMainResidencePhotoHttpRequestTask extends AsyncTask<Object, Object, String> {
+        @Override
+        protected String doInBackground(Object... params) {
+            String token="";
+            RestAPI restAPI = RestClient.getClient((String)params[0]).create(RestAPI.class);
+            Call<String> call = restAPI.setMainResidencePhoto((Integer)params[1], (String)params[2]);
+            try {
+                Response<String> resp = call.execute();
+                token = resp.body();
+            }
+            catch(IOException e){
+                Log.i("",e.getMessage());
+            }
+            return token;
+        }
+    }
+
+    public String setMainResidencePhoto(String token, Integer id, String name) {
+        setMainResidencePhotoHttpRequestTask setMainResidencePhoto = new setMainResidencePhotoHttpRequestTask();
+        setMainResidencePhoto.execute(token, id, name);
+        try {
+            token = setMainResidencePhoto.get();
+        } catch (InterruptedException e) {
+            Log.i("",e.getMessage());
+        } catch (ExecutionException e) {
+            Log.i("",e.getMessage());
+        }
+        return token;
+    }
+
     private class deleteResidenceImageHttpRequestTask extends AsyncTask<Object, Object, String> {
         @Override
         protected String doInBackground(Object... params) {
