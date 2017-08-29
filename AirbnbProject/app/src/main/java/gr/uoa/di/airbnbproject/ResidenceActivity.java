@@ -182,28 +182,27 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
     public void setUpSlider() {
         RetrofitCalls retrofitCalls = new RetrofitCalls();
         ArrayList<Images> residencePhotos = retrofitCalls.getResidencePhotos(token, residenceId);
-        if (residencePhotos.size() > 0)
+        
+        for(Images residenceImage : residencePhotos)
         {
-            for(Images residenceImage : residencePhotos)
-            {
-                TextSliderView textSliderView = new TextSliderView(this);
-                /** Initialize a SliderLayout **/
-                textSliderView.image(BASE_URL + "images/img/" + residenceImage.getName())
-                        .setScaleType(BaseSliderView.ScaleType.Fit)
-                        .setOnSliderClickListener(this)
-                        .empty(R.drawable.ic_upload_image);
+            TextSliderView textSliderView = new TextSliderView(this);
+            /** Initialize a SliderLayout **/
+            textSliderView.image(BASE_URL + "images/img/" + residenceImage.getName())
+                    .setScaleType(BaseSliderView.ScaleType.Fit)
+                    .setOnSliderClickListener(this)
+                    .empty(R.drawable.ic_upload_image);
 
-                /** Add your extra information **/
-                textSliderView.bundle(new Bundle());
-                textSliderView.getBundle().putString("extra",residenceImage.getName());
-                mPhotosSlider.addSlider(textSliderView);
-            }
-            mPhotosSlider.setPresetTransformer(SliderLayout.Transformer.Accordion);
-            mPhotosSlider.setPresetIndicator(SliderLayout.PresetIndicators.Center_Bottom);
-            mPhotosSlider.setCustomAnimation(new DescriptionAnimation());
-            mPhotosSlider.setDuration(4000);
-            mPhotosSlider.addOnPageChangeListener(this);
+            /** Add your extra information **/
+            textSliderView.bundle(new Bundle());
+            textSliderView.getBundle().putString("extra",residenceImage.getName());
+            mPhotosSlider.addSlider(textSliderView);
         }
+        mPhotosSlider.setPresetTransformer(SliderLayout.Transformer.Accordion);
+        mPhotosSlider.setPresetIndicator(SliderLayout.PresetIndicators.Center_Bottom);
+        mPhotosSlider.setCustomAnimation(new DescriptionAnimation());
+        mPhotosSlider.setDuration(4000);
+        mPhotosSlider.addOnPageChangeListener(this);
+
     }
 
     public void setUpResidenceView ()
