@@ -27,7 +27,6 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RatingBar;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -86,7 +85,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
     FrameLayout mWrapperFL;
     EditText etGuests;
     GoogleMap mMap;
-    ImageView resPhoto, profilePic;
+    ImageView profilePic;
 
     Users loggedinUser, host;
     Residences selectedResidence;
@@ -98,11 +97,9 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
     ArrayList <Date> reservedDates, datesDisabled_byGuestCount;
     Toolbar toolbar;
     private AppCompatDelegate delegate;
-
-    RelativeLayout ivResidencePhotosCont;
     RetrofitCalls retrofitCalls;
-
     private SliderLayout mPhotosSlider;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -159,7 +156,8 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
 
         /** BACK BUTTON **/
         // add back arrow to toolbar
-        if (delegate.getSupportActionBar() != null){
+        if (delegate.getSupportActionBar() != null)
+        {
             delegate.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             delegate.getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
@@ -173,7 +171,6 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
             }
         });
 
-        resPhoto = (ImageView) findViewById(R.id.ivResidencePhotos);
         mPhotosSlider = (SliderLayout)findViewById(R.id.residencesslider);
 
         setUpSlider();
@@ -185,14 +182,16 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
     public void setUpSlider() {
         RetrofitCalls retrofitCalls = new RetrofitCalls();
         ArrayList<Images> residencePhotos = retrofitCalls.getResidencePhotos(token, residenceId);
-        if (residencePhotos.size() > 0) {
-            resPhoto.setVisibility(View.GONE);
-            for(Images residenceImage : residencePhotos){
+        if (residencePhotos.size() > 0)
+        {
+            for(Images residenceImage : residencePhotos)
+            {
                 TextSliderView textSliderView = new TextSliderView(this);
                 /** Initialize a SliderLayout **/
                 textSliderView.image(BASE_URL + "images/img/" + residenceImage.getName())
                         .setScaleType(BaseSliderView.ScaleType.Fit)
-                        .setOnSliderClickListener(this);
+                        .setOnSliderClickListener(this)
+                        .empty(R.drawable.ic_upload_image);
 
                 /** Add your extra information **/
                 textSliderView.bundle(new Bundle());
@@ -204,13 +203,6 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
             mPhotosSlider.setCustomAnimation(new DescriptionAnimation());
             mPhotosSlider.setDuration(4000);
             mPhotosSlider.addOnPageChangeListener(this);
-        } else {
-            resPhoto.setVisibility(View.VISIBLE);
-            findViewById(R.id.ivResidencePhotos).setVisibility(View.VISIBLE);
-            findViewById(R.id.ivResidencePhotos).invalidate();
-
-            mPhotosSlider.setVisibility(View.GONE);
-            findViewById(R.id.residencesslider).setVisibility(View.GONE);
         }
     }
 
