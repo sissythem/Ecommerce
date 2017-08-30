@@ -31,7 +31,6 @@ import static util.Utils.FORMAT_DATE_DMY;
 import static util.Utils.VIEW_RESIDENCE_ACTION;
 import static util.Utils.convertTimestampToDateStr;
 import static util.Utils.goToActivity;
-import static util.Utils.reloadActivity;
 
 public class HistoryReservationsActivity extends AppCompatActivity {
     Boolean user;
@@ -43,6 +42,7 @@ public class HistoryReservationsActivity extends AppCompatActivity {
     Bundle buser;
 
     RecyclerView reservationsRecyclerView;
+    RecyclerAdapterReservations adapterReservations;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,7 +117,8 @@ public class HistoryReservationsActivity extends AppCompatActivity {
 
         try {
             if (userReservations.size() > 0) {
-                reservationsRecyclerView.setAdapter(new RecyclerAdapterReservations(this, user, userReservations, buser.containsKey("residenceId")));
+                adapterReservations = new RecyclerAdapterReservations(this, user, userReservations, buser.containsKey("residenceId"));
+                reservationsRecyclerView.setAdapter(adapterReservations);
             }
         } catch (Exception e) {
             Log.e("", e.getMessage());
@@ -154,7 +155,9 @@ public class HistoryReservationsActivity extends AppCompatActivity {
                                 token = retrofitCalls.deleteReservation(token, userReservations.get(item.getItemId()).getId());
                                 if (!token.isEmpty() && token != null && token != "not") {
                                     Toast.makeText(c, "Reservation was cancelled!", Toast.LENGTH_SHORT).show();
-                                    reloadHistoryReservations();
+                                    userReservations.remove(item.getItemId());
+                                    adapterReservations.setReservations(userReservations);
+                                    adapterReservations.notifyDataSetChanged();
                                 } else if (token.equals("not")) {
                                     Toast.makeText(c, "Failed to cancel reservation! Your session has finished, please log in again!", Toast.LENGTH_SHORT).show();
                                     Utils.logout(HistoryReservationsActivity.this);
@@ -164,6 +167,7 @@ public class HistoryReservationsActivity extends AppCompatActivity {
                                 }
                             }
                         }).setNegativeButton(android.R.string.no, null).show();
+
             }
             /** User can see the residence he has performed the specific reservation */
         } else if (item.getTitle().equals(VIEW_RESIDENCE_ACTION)) {
@@ -195,13 +199,6 @@ public class HistoryReservationsActivity extends AppCompatActivity {
             Toast.makeText(this, item.getTitle(), Toast.LENGTH_LONG).show();
         }
         return true;
-    }
-
-    public void reloadHistoryReservations()
-    {
-        Bundle bupdated = new Bundle();
-        bupdated.putBoolean("type", user);
-        reloadActivity(c, bupdated);
     }
 
     @Override

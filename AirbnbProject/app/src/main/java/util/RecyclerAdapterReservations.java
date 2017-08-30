@@ -26,6 +26,15 @@ public class RecyclerAdapterReservations extends RecyclerView.Adapter<RecyclerAd
     Context context;
     Boolean user, residenceExists;
     ArrayList<Reservations> reservations = new ArrayList<>();
+
+    public ArrayList<Reservations> getReservations() {
+        return reservations;
+    }
+
+    public void setReservations(ArrayList<Reservations> reservations) {
+        this.reservations = reservations;
+    }
+
     public RecyclerAdapterReservations(Context context, Boolean user, ArrayList<Reservations> reservations, Boolean residenceExists) {
         this.context            = context;
         this.user               = user;

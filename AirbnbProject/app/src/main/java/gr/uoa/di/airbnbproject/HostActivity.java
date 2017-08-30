@@ -45,6 +45,7 @@ public class HostActivity extends AppCompatActivity {
     ArrayList<Residences> storedResidences;
     ArrayList<Reviews> reviewsByResidence;
     RecyclerView residencesRecyclerView;
+    RecyclerAdapterResidences adapterResidences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,7 +108,8 @@ public class HostActivity extends AppCompatActivity {
         }
         try {
             if (storedResidences.size() > 0) {
-                residencesRecyclerView.setAdapter(new RecyclerAdapterResidences(this, user, storedResidences, 1, "", ""));
+                adapterResidences = new RecyclerAdapterResidences(this, user, storedResidences, 1, "", "");
+                residencesRecyclerView.setAdapter(adapterResidences);
             }
         } catch (Exception e) {
             Log.e("", e.getMessage());
@@ -158,6 +160,9 @@ public class HostActivity extends AppCompatActivity {
                         }
                     }})
                 .setNegativeButton(android.R.string.no, null).show();
+            storedResidences.remove(resId);
+            adapterResidences.setSearchList(storedResidences);
+            adapterResidences.notifyDataSetChanged();
 
         } else {
             Toast.makeText(this, item.getTitle(), Toast.LENGTH_LONG).show();

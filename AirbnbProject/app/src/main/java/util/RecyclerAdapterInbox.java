@@ -27,6 +27,15 @@ public class RecyclerAdapterInbox extends RecyclerView.Adapter<RecyclerAdapterIn
     Context context;
     Boolean user;
     ArrayList<Conversations> conversations = new ArrayList<>();
+
+    public ArrayList<Conversations> getConversations() {
+        return conversations;
+    }
+
+    public void setConversations(ArrayList<Conversations> conversations) {
+        this.conversations = conversations;
+    }
+
     int currentUserId;
     public RecyclerAdapterInbox(Context context, Boolean user, ArrayList<Conversations> conversations, Integer currentUserId) {
         this.context            = context;

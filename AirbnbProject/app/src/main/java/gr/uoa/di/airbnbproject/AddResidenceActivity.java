@@ -16,7 +16,7 @@ import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -141,6 +141,9 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
         upload              = (Button)findViewById(R.id.uploadImage);
         bcontinue           = (ImageButton)findViewById(R.id.ibContinue);
 
+        upload.setVisibility(View.GONE);
+        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.customultiple);
+        linearLayout.setVisibility(View.GONE);
         /** When user clicks on the button, a calendar appears in order to pick up a date*/
         btnStartDate.setOnClickListener(new View.OnClickListener() {
             @Override

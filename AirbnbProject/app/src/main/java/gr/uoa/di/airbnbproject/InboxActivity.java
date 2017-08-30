@@ -44,6 +44,7 @@ public class InboxActivity extends AppCompatActivity
     Context c;
 
     RecyclerView inboxRecyclerView;
+    RecyclerAdapterInbox adapterInbox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,7 +118,8 @@ public class InboxActivity extends AppCompatActivity
         System.out.println(currentUserId);
         try {
             if (Conversations.size() > 0) {
-                inboxRecyclerView.setAdapter(new RecyclerAdapterInbox(this, user, Conversations, currentUserId));
+                adapterInbox = new RecyclerAdapterInbox(this, user, Conversations, currentUserId);
+                inboxRecyclerView.setAdapter(adapterInbox);
             }
         } catch (Exception e) {
             Log.e("", e.getMessage());
@@ -144,7 +146,9 @@ public class InboxActivity extends AppCompatActivity
                         token = retrofitCalls.deleteConversation(token, Conversations.get(item.getItemId()).getId(), currentUserId, userType);
                         if (!token.isEmpty() && token != null && token != "not") {
                             Toast.makeText(c, "Conversation was deleted!", Toast.LENGTH_SHORT).show();
-                            reloadInbox();
+                            Conversations.remove(item.getItemId());
+                            adapterInbox.setConversations(Conversations);
+                            adapterInbox.notifyDataSetChanged();
                         } else if (token.equals("not")) {
                             Toast.makeText(c, "Failed to delete conversation! Your session has finished, please log in again!", Toast.LENGTH_SHORT).show();
                             Utils.logout(InboxActivity.this);
@@ -197,20 +201,5 @@ public class InboxActivity extends AppCompatActivity
         btype.putString("msgSubject", Conversations.get(pos).getSubject());
 
         goToActivity(this, MessageActivity.class, btype);
-    }
-
-    public void reloadInbox() {
-        Bundle bupdated = new Bundle();
-        bupdated.putBoolean("type", user);
-
-        Intent currentIntent = getIntent();
-        currentIntent.putExtras(bupdated);
-
-        try {
-            startActivity(currentIntent);
-            finish();
-        } catch (Exception e) {
-            Log.e("",e.getMessage());
-        }
     }
 }
