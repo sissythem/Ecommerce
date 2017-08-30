@@ -27,6 +27,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -182,7 +183,19 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
     public void setUpSlider() {
         RetrofitCalls retrofitCalls = new RetrofitCalls();
         ArrayList<Images> residencePhotos = retrofitCalls.getResidencePhotos(token, residenceId);
-
+        if(residencePhotos.size() == 0)
+        {
+            FrameLayout frameLayout = (FrameLayout)findViewById(R.id.frameLayout);
+            RelativeLayout relativeLayout = (RelativeLayout)findViewById(R.id.relativelayout);
+            relativeLayout.setVisibility(View.GONE);
+            try {
+                FrameLayout.LayoutParams params = (FrameLayout.LayoutParams)frameLayout.getLayoutParams();
+                params.setMargins(0, 50, 0, 0);
+                frameLayout.setLayoutParams(params);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         for(Images residenceImage : residencePhotos)
         {
             TextSliderView textSliderView = new TextSliderView(this);
@@ -202,7 +215,6 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         mPhotosSlider.setCustomAnimation(new DescriptionAnimation());
         mPhotosSlider.setDuration(4000);
         mPhotosSlider.addOnPageChangeListener(this);
-
     }
 
     public void setUpResidenceView ()
