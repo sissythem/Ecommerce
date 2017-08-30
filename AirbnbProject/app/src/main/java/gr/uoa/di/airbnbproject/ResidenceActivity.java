@@ -182,7 +182,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
     public void setUpSlider() {
         RetrofitCalls retrofitCalls = new RetrofitCalls();
         ArrayList<Images> residencePhotos = retrofitCalls.getResidencePhotos(token, residenceId);
-        
+
         for(Images residenceImage : residencePhotos)
         {
             TextSliderView textSliderView = new TextSliderView(this);

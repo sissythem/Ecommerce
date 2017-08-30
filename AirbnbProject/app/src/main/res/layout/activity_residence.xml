@@ -1,6 +1,5 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -32,14 +31,6 @@
                     android:layout_height="200dp"
                     custom:auto_cycle="true"
                     custom:pager_animation_span="1100" />
-
-                <ImageView
-                    android:id="@+id/ivResidencePhotos"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/res_images"
-                    app:srcCompat="@android:drawable/ic_menu_camera"
-                    android:scaleType="centerCrop"
-                    android:contentDescription="@string/residence_photos" />
             </RelativeLayout>
 
             <LinearLayout
