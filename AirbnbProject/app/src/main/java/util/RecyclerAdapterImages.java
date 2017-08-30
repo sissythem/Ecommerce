@@ -22,6 +22,11 @@ public class RecyclerAdapterImages extends RecyclerView.Adapter<RecyclerAdapterI
     Context context;
     Boolean user;
     ArrayList<Images> images = new ArrayList<>();
+
+    public void setImages(ArrayList<Images> images) {
+        this.images = images;
+    }
+
     public RecyclerAdapterImages(Context context, Boolean user, ArrayList<Images> images) {
         this.context    = context;
         this.user       = user;

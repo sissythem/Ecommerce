@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -80,6 +81,7 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
     RetrofitCalls retrofitCalls;
 
     RecyclerView imagesRecyclerView;
+    RecyclerAdapterImages adapterImages;
 
     private Button btnAddPhots;
     private ArrayList<String> imagesPathList;
@@ -148,6 +150,8 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         imagesRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
         imagesRecyclerView.setHasFixedSize(true);
 
+
+
         /** Initialize RetrofitCalls Instance **/
         retrofitCalls = new RetrofitCalls();
 
@@ -155,7 +159,12 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         residencePhotos = retrofitCalls.getResidencePhotos(token, residenceId);
         try {
             if (residencePhotos.size() > 0) {
-                imagesRecyclerView.setAdapter(new RecyclerAdapterImages(this, user, residencePhotos));
+                adapterImages = new RecyclerAdapterImages(this, user, residencePhotos);
+                imagesRecyclerView.setAdapter(adapterImages);
+                LinearLayoutManager horizontalLayoutManager
+                        = new LinearLayoutManager(EditResidenceActivity.this, LinearLayoutManager.HORIZONTAL, false);
+                imagesRecyclerView.setLayoutManager(horizontalLayoutManager);
+                imagesRecyclerView.setAdapter(adapterImages);
             }
         } catch (Exception e) {
             Log.e("", e.getMessage());
@@ -219,7 +228,9 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
                             token = retrofitCalls.deleteResidenceImage(token, imgId, resName);
                             if (!token.isEmpty() && token!=null && token!="not") {
                                 Toast.makeText(EditResidenceActivity.this, "Image was successfully deleted!", Toast.LENGTH_SHORT).show();
-                                goToActivity(EditResidenceActivity.this, EditResidenceActivity.class, btype);
+                                residencePhotos.remove(item.getItemId());
+                                adapterImages.setImages(residencePhotos);
+                                adapterImages.notifyDataSetChanged();
                             } else {
                                 Toast.makeText(EditResidenceActivity.this, "Something went wrong, image is not deleted. Please try again!", Toast.LENGTH_SHORT).show();
                             }
