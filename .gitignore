@@ -43,3 +43,13 @@ AirbnbProject/local.properties
 ecommerce_rest/web/images/img1085664803931824014.jpg
 ecommerce_rest/src/java/services/ImagesFacadeREST.java
 AirbnbProject/app/src/main/java/util/RestClient.java
+ecommerce_rest/src/java/services/ImagesFacadeREST.java
+ecommerce_rest/nbproject/private/private.xml
+ecommerce_rest/nbproject/private/private.properties
+ecommerce_rest/src/java/services/ImagesFacadeREST.java
+ecommerce_rest/nbproject/private/private.properties
+ecommerce_rest/nbproject/private/private.xml
+AirbnbProject/local.properties
+AirbnbProject/app/src/main/res/layout/activity_profile.xml
+AirbnbProject/app/src/main/java/util/RestClient.java
+AirbnbProject/app/app.iml
