@@ -138,5 +138,8 @@
             </LinearLayout>
         </RelativeLayout>
     </ScrollView>
-    <include layout="@layout/footer" android:id="@+id/includeFooter"/>
+    <include layout="@layout/footer" android:id="@+id/includeFooter"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="24dp" />
 </RelativeLayout>
