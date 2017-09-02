@@ -35,7 +35,6 @@ import android.widget.Toast;
 import com.daimajia.slider.library.Animations.DescriptionAnimation;
 import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
-import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.daimajia.slider.library.Tricks.ViewPagerEx;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -57,6 +56,7 @@ import fromRESTful.Images;
 import fromRESTful.Reservations;
 import fromRESTful.Residences;
 import fromRESTful.Users;
+import util.MyTextSlider;
 import util.RestCalls;
 import util.RetrofitCalls;
 import util.Session;
@@ -198,7 +198,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         }
         for(Images residenceImage : residencePhotos)
         {
-            TextSliderView textSliderView = new TextSliderView(this);
+            MyTextSlider textSliderView = new MyTextSlider(this);
             /** Initialize a SliderLayout **/
             textSliderView.image(BASE_URL + "images/img/" + residenceImage.getName())
                     .setScaleType(BaseSliderView.ScaleType.Fit)
