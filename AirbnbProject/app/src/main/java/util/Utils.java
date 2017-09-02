@@ -418,7 +418,7 @@ public class Utils {
 
     public static void loadProfileImage(Context context, ImageView imgView, String imgName) {
         String imgpath = BASE_URL + "images/img/" + imgName;
-        com.squareup.picasso.Picasso.with(context).load(imgpath)
+        PicassoTrustAll.getInstance(context).load(imgpath)
                 .placeholder(R.drawable.ic_profile)
                 .error(R.drawable.ic_profile)
                 .resize(200, 200)
@@ -427,7 +427,7 @@ public class Utils {
 
     public static void loadResidenceImage(Context context, ImageView imgView, String imgName) {
         String imgpath = BASE_URL + "images/img/" + imgName;
-        com.squareup.picasso.Picasso.with(context).load(imgpath)
+        PicassoTrustAll.getInstance(context).load(imgpath)
                 .placeholder(R.drawable.ic_upload_image)
                 .error(R.drawable.ic_upload_image)
                 .resize(200, 200)
