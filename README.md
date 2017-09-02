@@ -40,7 +40,7 @@ The purpose of this project is the development of an Android Application for boo
 
  For our Database Model to become more clear, an Entity Relationship model was designed, showing only the most important fields of the Database, as per below:
 
- ![alt text](./Report/images/MonteloOntotitonSusxetiseon.jpg)
+ ![alt text](./MonteloOntotitonSusxetiseon.jpg)
 
   ### RESTful Services
   
