@@ -311,7 +311,7 @@ public class MessageActivity extends AppCompatActivity {
             Bundle btores = new Bundle();
             btores.putBoolean("type", user);
             btores.putInt("residenceId", residenceId);
-            Utils.goToActivity(MessageActivity.this, ResidenceActivity.class, btores);
+            Utils.goToActivity(MessageActivity.this, ViewHostProfileActivity.class, btores);
         }
         else if (bextras.containsKey("conversationId")) {
             Utils.manageBackButton(MessageActivity.this, InboxActivity.class, user);

@@ -428,7 +428,7 @@ public class Utils {
                 .placeholder(R.drawable.ic_profile)
                 .transform(new CircleTransform())
                 .error(R.drawable.ic_profile)
-                .resize(200, 200)
+                .resize(300, 300)
                 .into(imgView);
     }
 
