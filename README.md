@@ -40,13 +40,13 @@ All above tables have a field id which is unique and auto-increment.
 
 For our Database Model to become more clear, an Entity Relationship model was designed, showing only the most important fields of the Database, as per below:
 
-![alt text](./Images/MonteloOntotitonSusxetiseon.jpg)
+![alt text](./Images/MonteloOntotitonSusxetiseon.jpg=250x250)
 
 In above Model, all entities, their relationship and the main fields are shown. All primary keys are underlined and the foreign keys are emphasized with Italics. 
 	
 Furthermore, the Enhanced Entity Relationship Model was extracted from MySQL Workbench, also showing the relations between the tables. 
 
-![alt text](./Images/sxesiakomonetelo.jpg)
+![alt text](./Images/sxesiakomonetelo.jpg=250x250)
 
   ### RESTful Services
   
@@ -86,7 +86,7 @@ The first screen of our application is related to HomeActivity.java (activity_ho
     
 From GreetingActivity, the user can only have access either to Register or Login activities. If they press the back button of their device, they can minimize the application, but they can never go to HomeActivity without previously having logged in or registered. The same logic is followed in HomeActivity and HostActivity screens. The first activity is the home page presented when the user has the role of tenant, while the second is for the host role. In both of these activities when the user goes back, the application is minimized.
 
-![alt text](./Images/greeting.png)
+![alt text](./Images/greeting.png=250x250)
 
 The data passed to HomeActivity are: username, login status and token. The Session Class is used here in order to hold all this information and pass it to all the activities as user navigates. In case of the expiration of the token, a logout method is called in order to clear the SharedPreferences and redirect the user to the GreetingActivity. As the HomeActivity is the first activity every user sees when they enter the app, the permissions functionality has been implemented in there and is called every time home is triggered. Of course, if the user has given permission to the actions needed, no notification message will appear to them again.
 
