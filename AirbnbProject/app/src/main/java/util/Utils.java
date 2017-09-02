@@ -420,6 +420,7 @@ public class Utils {
         String imgpath = BASE_URL + "images/img/" + imgName;
         PicassoTrustAll.getInstance(context).load(imgpath)
                 .placeholder(R.drawable.ic_profile)
+                .transform(new CircleTransform())
                 .error(R.drawable.ic_profile)
                 .resize(200, 200)
                 .into(imgView);
