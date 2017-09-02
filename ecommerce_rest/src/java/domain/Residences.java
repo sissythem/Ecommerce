@@ -51,7 +51,6 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Residences.findByAvailableDateEnd", query = "SELECT r FROM Residences r WHERE r.availableDateEnd = :availableDateEnd"),
     @NamedQuery(name = "Residences.findByMinPrice", query = "SELECT r FROM Residences r WHERE r.minPrice = :minPrice"),
     @NamedQuery(name = "Residences.findByAdditionalCostPerPerson", query = "SELECT r FROM Residences r WHERE r.additionalCostPerPerson = :additionalCostPerPerson"),
-    @NamedQuery(name = "Residences.findByActive", query = "SELECT r FROM Residences r WHERE r.active = :active"),
     
     /* Custom */
     @NamedQuery(name = "findByHost", query = "SELECT r FROM Residences r WHERE r.hostId.id = :hostId")
@@ -124,10 +123,7 @@ public class Residences implements Serializable {
     private Double minPrice;
     @Column(name = "additional_cost_per_person")
     private Double additionalCostPerPerson;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "active")
-    private short active;
+ 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "residenceId")
     private Collection<Reservations> reservationsCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "residenceId")
@@ -147,10 +143,9 @@ public class Residences implements Serializable {
         this.id = id;
     }
 
-    public Residences(Integer id, String title, short active) {
+    public Residences(Integer id, String title) {
         this.id = id;
         this.title = title;
-        this.active = active;
     }
 
     public Integer getId() {
@@ -335,14 +330,6 @@ public class Residences implements Serializable {
 
     public void setAdditionalCostPerPerson(Double additionalCostPerPerson) {
         this.additionalCostPerPerson = additionalCostPerPerson;
-    }
-
-    public short getActive() {
-        return active;
-    }
-
-    public void setActive(short active) {
-        this.active = active;
     }
 
     @XmlTransient

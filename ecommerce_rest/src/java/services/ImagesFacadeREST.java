@@ -111,7 +111,7 @@ public class ImagesFacadeREST extends AbstractFacade<Images> {
     
     /*** CUSTOM METHODS ***/
     private static String className = ImagesFacadeREST.class.getName();
-    private static String ImagesDirectory = "/home/sissy/Documents/Professional/University/UOA/graduate/Semester2/Ecommerce/Project/ecommerce_rest/images/";
+    private static String ImagesDirectory = "/home/sissy/Documents/Professional/University/UOA/graduate/Semester2/Ecommerce/Project/ecommerce_rest/web/images/";
     
     @DELETE
     @Path("delete/{id}")
@@ -136,7 +136,7 @@ public class ImagesFacadeREST extends AbstractFacade<Images> {
             List<Users> usr = usrQuery.getResultList();
             String imgName = usr.get(0).getPhoto();
 
-            File file = new File(ImagesDirectory + "\\" + imgName);
+            File file = new File(ImagesDirectory + imgName);
             if (file.exists()) {
                 file.delete();
             } else {
@@ -170,7 +170,7 @@ public class ImagesFacadeREST extends AbstractFacade<Images> {
             try {
                 
                 /** Delete saved residence image file **/
-                File file = new File(ImagesDirectory + "\\" + name);
+                File file = new File(ImagesDirectory + name);
                 if (file.exists()) {
                     file.delete();
                 } else {
@@ -250,7 +250,7 @@ public class ImagesFacadeREST extends AbstractFacade<Images> {
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces("image/*")
     public Response getUserImage(@HeaderParam("Authorization")String token, @PathParam("name")String name) {
-        String impath = ImagesDirectory + "\\" + name;
+        String impath = ImagesDirectory + name;
         File f = new File(impath);
         if (!f.exists()) {
             Logger.getAnonymousLogger().severe("Image at path " + impath + " not found!");
