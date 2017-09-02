@@ -197,23 +197,12 @@
                 android:inputType="textMultiLine|textPersonName" />
 
             <EditText
-                android:id="@+id/etSpaceArea"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/etView"
-                android:ems="10"
-                android:hint="@string/space_area"
-                android:inputType="numberDecimal"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentStart="true" />
-
-            <EditText
                 android:id="@+id/etGuests"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentStart="true"
-                android:layout_below="@+id/etSpaceArea"
+                android:layout_below="@+id/etView"
                 android:ems="10"
                 android:hint="@string/guests"
                 android:inputType="number" />

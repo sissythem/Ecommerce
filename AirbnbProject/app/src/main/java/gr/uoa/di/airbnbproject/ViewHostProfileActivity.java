@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -67,6 +68,7 @@ public class ViewHostProfileActivity extends AppCompatActivity {
         Bundle buser = getIntent().getExtras();
         user = buser.getBoolean("type");
         hostId = buser.getInt("host");
+        System.out.println(hostId);
         residenceId = buser.getInt("residenceId");
 
         RetrofitCalls retrofitCalls = new RetrofitCalls();
@@ -141,31 +143,32 @@ public class ViewHostProfileActivity extends AppCompatActivity {
     public void setUpProfile()
     {
         /** Display info about the host **/
-        tvName = (TextView)findViewById(R.id.name);
-        tvAbout = (TextView)findViewById(R.id.about);
-        tvUsername = (TextView)findViewById(R.id.about);
-        tvEmail = (TextView)findViewById(R.id.email);
-        tvPhoneNumber = (TextView)findViewById(R.id.phonenumber);
-        tvCity = (TextView)findViewById(R.id.city);
-        tvCountry = (TextView)findViewById(R.id.country);
-        tvBirthDate = (TextView)findViewById(R.id.birthDate);
+        ImageView userImage = (ImageView) findViewById(R.id.userImage);
+        Utils.loadProfileImage(ViewHostProfileActivity.this, userImage, host.getPhoto());
 
-        tvName.setText(loggedinUser.getFirstName() + " " + loggedinUser.getLastName());
-        if(loggedinUser.getAbout() != null)
+        tvName          = (TextView)findViewById(R.id.name);
+        tvAbout         = (TextView)findViewById(R.id.about);
+        tvUsername      = (TextView)findViewById(R.id.about);
+        tvEmail         = (TextView)findViewById(R.id.email);
+        tvPhoneNumber   = (TextView)findViewById(R.id.phonenumber);
+        tvCity          = (TextView)findViewById(R.id.city);
+        tvCountry       = (TextView)findViewById(R.id.country);
+        tvBirthDate     = (TextView)findViewById(R.id.birthDate);
+
+        tvName.setText(host.getFirstName() + " " + host.getLastName());
+        if(host.getAbout() != null)
         {
-            tvAbout.setText(loggedinUser.getAbout());
+            tvAbout.setText(host.getAbout());
         }
         else {
             tvAbout.setText("About this user");
         }
-        tvUsername.setText(loggedinUser.getUsername());
-        tvEmail.setText(loggedinUser.getEmail());
-        tvPhoneNumber.setText(loggedinUser.getPhoneNumber());
-        if(loggedinUser.getCity() != null)
-            tvCity.setText(loggedinUser.getCity());
-        if(loggedinUser.getCountry() !=null)
-            tvCountry.setText(loggedinUser.getCountry());
-        tvBirthDate.setText(loggedinUser.getBirthDate());
+        tvUsername.setText(host.getUsername());
+        tvEmail.setText(host.getEmail());
+        tvPhoneNumber.setText(host.getPhoneNumber());
+        if(loggedinUser.getCity() != null) tvCity.setText(host.getCity());
+        if(loggedinUser.getCountry() !=null) tvCountry.setText(host.getCountry());
+        tvBirthDate.setText(host.getBirthDate());
     }
 
     //handle the back action from the phone

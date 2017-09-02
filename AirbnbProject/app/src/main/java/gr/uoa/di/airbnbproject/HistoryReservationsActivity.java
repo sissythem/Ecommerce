@@ -207,18 +207,19 @@ public class HistoryReservationsActivity extends AppCompatActivity {
     }
 
     public void handleBackAction(){
-        if(buser.getString("source").equals("residence")){
-            Bundle btores = new Bundle();
-            btores.putBoolean("type", user);
-            btores.putInt("residenceId", buser.getInt("residenceId"));
-            Utils.goToActivity(HistoryReservationsActivity.this, ResidenceActivity.class, btores);
-        }
-        else if(buser.getString("source").equals("host")){
-            Bundle btores = new Bundle();
-            btores.putBoolean("type", user);
-            Utils.goToActivity(HistoryReservationsActivity.this, HostActivity.class, btores);
-        }
-        else{
+        if (buser.containsKey("source")) {
+            if(buser.getString("source").equals("residence")){
+                Bundle btores = new Bundle();
+                btores.putBoolean("type", user);
+                btores.putInt("residenceId", buser.getInt("residenceId"));
+                Utils.goToActivity(HistoryReservationsActivity.this, ResidenceActivity.class, btores);
+            }
+            else if(buser.getString("source").equals("host")){
+                Bundle btores = new Bundle();
+                btores.putBoolean("type", user);
+                Utils.goToActivity(HistoryReservationsActivity.this, HostActivity.class, btores);
+            }
+        } else{
             Utils.manageBackButton(HistoryReservationsActivity.this, ProfileActivity.class, user);
         }
     }

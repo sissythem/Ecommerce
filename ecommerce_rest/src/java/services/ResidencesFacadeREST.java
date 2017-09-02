@@ -67,11 +67,12 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
     @PUT
     @Path("put/{id}")
     @Consumes({MediaType.APPLICATION_JSON})
-    public String editResidence(@HeaderParam("Authorization") String token, @PathParam("id") Integer id, Residences entity) {
+    public String editResidence(@HeaderParam("Authorization") String token, @PathParam("id") Integer id, Residences residence) {
         if (KeyHolder.checkToken(token, className)) {
-            super.edit(entity);
+            super.edit(residence);
             return token;
         }
+        System.out.println("333333");
         return "not";
     }  
     

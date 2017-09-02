@@ -67,7 +67,7 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
     Boolean user;
 
     ImageButton bcontinue, btnStartDate, btnEndDate;
-    EditText etTitle, etAbout, etAddress, etCity, etCountry, etAmenities, etFloor, etRooms, etBaths, etView, etSpaceArea, etGuests, etMinPrice, etAdditionalCost, etCancellationPolicy, etRules;
+    EditText etTitle, etAbout, etAddress, etCity, etCountry, etAmenities, etFloor, etRooms, etBaths, etView, etGuests, etMinPrice, etAdditionalCost, etCancellationPolicy, etRules;
     TextView tvStartDate, tvEndDate;
     Spinner etType;
     String photo;
@@ -314,7 +314,6 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         etRooms              = (EditText)findViewById(R.id.etRooms);
         etBaths              = (EditText)findViewById(R.id.etBaths);
         etView               = (EditText)findViewById(R.id.etView);
-        etSpaceArea          = (EditText)findViewById(R.id.etSpaceArea);
         etGuests             = (EditText)findViewById(R.id.etGuests);
         etMinPrice           = (EditText)findViewById(R.id.etMinPrice);
         etAdditionalCost     = (EditText)findViewById(R.id.etAdditionalCost);
@@ -355,7 +354,6 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         etRooms.setText(Integer.toString(selectedResidence.getRooms()));
         etBaths.setText(Integer.toString(selectedResidence.getBaths()));
         etView.setText(selectedResidence.getView());
-        etSpaceArea.setText(Double.toString(selectedResidence.getSpaceArea()));
         etGuests.setText(Integer.toString(selectedResidence.getGuests()));
         etMinPrice.setText(Double.toString(selectedResidence.getMinPrice()));
         etAdditionalCost.setText(Double.toString(selectedResidence.getAdditionalCostPerPerson()));
@@ -436,7 +434,6 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
                 final String rooms                      = etRooms.getText().toString();
                 final String baths                      = etBaths.getText().toString();
                 final String view                       = etView.getText().toString();
-                final String spaceArea                  = etSpaceArea.getText().toString();
                 final String guests                     = etGuests.getText().toString();
                 final String minPrice                   = etMinPrice.getText().toString();
                 final String additionalCostPerPerson    = etAdditionalCost.getText().toString();
@@ -451,7 +448,7 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
                 long endDate = convertDateToMillisSec(availableEndDate, FORMAT_DATE_DMY);
 
                 if (type.length() == 0 || title.length() == 0 || about.length() == 0 || address.length() == 0 || city.length() == 0 || country.length() == 0 || amenities.length() == 0 || floor.length() == 0
-                        || rooms.length() == 0 || baths.length() == 0 || view.length() == 0 || spaceArea.length() == 0 || guests.length() == 0 || minPrice.length() == 0
+                        || rooms.length() == 0 || baths.length() == 0 || view.length() == 0 || guests.length() == 0 || minPrice.length() == 0
                         || additionalCostPerPerson.length() == 0 || cancellationPolicy.length() == 0 || rules.length() == 0
                         || startDate <= 0 || endDate <= 0 || endDate <= startDate) {
                     Toast.makeText(c, "Please fill in all fields!", Toast.LENGTH_SHORT).show();
@@ -471,7 +468,6 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
                             Integer.parseInt(rooms),
                             Integer.parseInt(baths),
                             view,
-                            Double.parseDouble(spaceArea),
                             Integer.parseInt(guests),
                             Double.parseDouble(minPrice),
                             Double.parseDouble(additionalCostPerPerson),

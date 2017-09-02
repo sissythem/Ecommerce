@@ -723,23 +723,25 @@ public class RetrofitCalls {
         return this.token;
     }
 
-    private class editResidenceHttpRequestTesk extends AsyncTask<Object, Object, String> {
+    private class editResidenceHttpRequestTask extends AsyncTask<Object, Object, String> {
         @Override
         protected String doInBackground(Object... params){
-            RestAPI restAPI = RestClient.getClient((String)params[0]).create(RestAPI.class);
-            Call<String> call = restAPI.editResidenceById((Integer)params[1],(Residences) params[2]);
             try{
+                RestAPI restAPI = RestClient.getClient((String)params[0]).create(RestAPI.class);
+                Call<String> call = restAPI.editResidenceById((Integer)params[1],(Residences) params[2]);
+
                 Response<String> resp = call.execute();
                 token = resp.body();
             } catch (IOException e){
                 Log.i("",e.getMessage());
             }
+            System.out.println(token);
             return token;
         }
     }
 
     public String editResidence(String token, Integer residenceId, Residences residence){
-        editResidenceHttpRequestTesk editResidenceTask = new editResidenceHttpRequestTesk();
+        editResidenceHttpRequestTask editResidenceTask = new editResidenceHttpRequestTask();
         editResidenceTask.execute(token, residenceId, residence);
         try{
             editResidenceTask.get();

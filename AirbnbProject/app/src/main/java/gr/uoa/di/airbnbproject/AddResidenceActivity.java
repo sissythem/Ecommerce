@@ -124,7 +124,6 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
         etRooms              = (EditText)findViewById(R.id.etRooms);
         etBaths              = (EditText)findViewById(R.id.etBaths);
         etView               = (EditText)findViewById(R.id.etView);
-        etSpaceArea          = (EditText)findViewById(R.id.etSpaceArea);
         etGuests             = (EditText)findViewById(R.id.etGuests);
         etMinPrice           = (EditText)findViewById(R.id.etMinPrice);
         etAdditionalCost     = (EditText)findViewById(R.id.etAdditionalCost);
@@ -261,7 +260,6 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
                             Integer.parseInt(rooms),
                             Integer.parseInt(baths),
                             view,
-                            Double.parseDouble(spaceArea),
                             Integer.parseInt(guests),
                             Double.parseDouble(minPrice),
                             Double.parseDouble(additionalCostPerPerson),

@@ -27,7 +27,6 @@ public class Residences implements Serializable, Comparable {
     private short kitchen;
     private short livingRoom;
     private String view;
-    private double spaceArea;
     private String photos;
     private int guests;
     private long availableDateStart;
@@ -52,7 +51,6 @@ public class Residences implements Serializable, Comparable {
                       int rooms,
                       int baths,
                       String view,
-                      double spaceArea,
                       int guests,
                       double minPrice,
                       double additionalCostPerPerson,
@@ -75,7 +73,6 @@ public class Residences implements Serializable, Comparable {
         this.rooms                      = rooms;
         this.baths                      = baths;
         this.view                       = view;
-        this.spaceArea                  = spaceArea;
         this.guests                     = guests;
         this.minPrice                   = minPrice;
         this.additionalCostPerPerson    = additionalCostPerPerson;
@@ -101,7 +98,6 @@ public class Residences implements Serializable, Comparable {
                       int rooms,
                       int baths,
                       String view,
-                      double spaceArea,
                       int guests,
                       double minPrice,
                       double additionalCostPerPerson,
@@ -126,7 +122,6 @@ public class Residences implements Serializable, Comparable {
         this.rooms                      = rooms;
         this.baths                      = baths;
         this.view                       = view;
-        this.spaceArea                  = spaceArea;
         this.guests                     = guests;
         this.minPrice                   = minPrice;
         this.additionalCostPerPerson    = additionalCostPerPerson;
@@ -269,14 +264,6 @@ public class Residences implements Serializable, Comparable {
 
     public void setView(String view) {
         this.view = view;
-    }
-
-    public double getSpaceArea() {
-        return spaceArea;
-    }
-
-    public void setSpaceArea(double spaceArea) {
-        this.spaceArea = spaceArea;
     }
 
     public String getPhotos() {
