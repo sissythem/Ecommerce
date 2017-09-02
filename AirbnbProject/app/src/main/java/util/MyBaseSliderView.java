@@ -1,7 +1,6 @@
 package util;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -19,29 +18,18 @@ import gr.uoa.di.airbnbproject.R;
  */
 
 public class MyBaseSliderView extends BaseSliderView {
-    protected Context mContext;
-    private Bundle mBundle;
-    private int mErrorPlaceHolderRes;
-    private int mEmptyPlaceHolderRes;
-
-    private String mUrl;
-    private File mFile;
-    private int mRes;
-
-    protected OnSliderClickListener mOnSliderClickListener;
-
-    private boolean mErrorDisappear;
-
-    private ImageLoadListener mLoadListener;
-
-    private String mDescription;
-
-    private Picasso mPicasso;
-    private ScaleType mScaleType = ScaleType.Fit;
-
+    protected Context myContext;
+    private String myUrl;
+    private File myFile;
+    private int myRes;
+    private ImageLoadListener myLoadListener;
+    private Picasso myPicasso;
+    private ScaleType myScaleType = ScaleType.Fit;
+    protected OnSliderClickListener myOnSliderClickListener;
 
     protected MyBaseSliderView(Context context) {
         super(context);
+        myContext=context;
     }
 
     @Override
@@ -49,14 +37,15 @@ public class MyBaseSliderView extends BaseSliderView {
         return null;
     }
 
+    @Override
     protected void bindEventAndShow(final View v, ImageView targetImageView){
         final BaseSliderView me = this;
 
         v.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mOnSliderClickListener != null){
-                    mOnSliderClickListener.onSliderClick(me);
+                if(myOnSliderClickListener != null){
+                    myOnSliderClickListener.onSliderClick(me);
                 }
             }
         });
@@ -64,18 +53,18 @@ public class MyBaseSliderView extends BaseSliderView {
         if (targetImageView == null)
             return;
 
-        if (mLoadListener != null) {
-            mLoadListener.onStart(me);
+        if (myLoadListener != null) {
+            myLoadListener.onStart(me);
         }
 
-        Picasso p = (mPicasso != null) ? mPicasso : PicassoTrustAll.getInstance(mContext);
-        RequestCreator rq = null;
-        if(mUrl!=null){
-            rq = p.load(mUrl);
-        }else if(mFile != null){
-            rq = p.load(mFile);
-        }else if(mRes != 0){
-            rq = p.load(mRes);
+        myPicasso = PicassoTrustAll.getInstance(myContext);
+        RequestCreator rq;
+        if(myUrl !=null){
+            rq = myPicasso.load(myUrl);
+        }else if(myFile != null){
+            rq = myPicasso.load(myFile);
+        }else if(myRes != 0){
+            rq = myPicasso.load(myRes);
         }else{
             return;
         }
@@ -92,7 +81,7 @@ public class MyBaseSliderView extends BaseSliderView {
             rq.error(getError());
         }
 
-        switch (mScaleType){
+        switch (myScaleType){
             case Fit:
                 rq.fit();
                 break;
@@ -114,8 +103,8 @@ public class MyBaseSliderView extends BaseSliderView {
 
             @Override
             public void onError() {
-                if(mLoadListener != null){
-                    mLoadListener.onEnd(false,me);
+                if(myLoadListener != null){
+                    myLoadListener.onEnd(false,me);
                 }
                 if(v.findViewById(R.id.loading_bar) != null){
                     v.findViewById(R.id.loading_bar).setVisibility(View.INVISIBLE);
@@ -124,12 +113,14 @@ public class MyBaseSliderView extends BaseSliderView {
         });
     }
 
+    @Override
     public Picasso getPicasso() {
-        return mPicasso;
+        return myPicasso;
     }
 
+    @Override
     public void setPicasso(Picasso picasso) {
-        mPicasso = picasso;
+        myPicasso = picasso;
     }
 
 }

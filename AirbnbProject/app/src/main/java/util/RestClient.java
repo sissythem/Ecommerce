@@ -87,7 +87,7 @@ public class RestClient {
         return stringRetrofit;
     }
     /** OkHttp **/
-    private static OkHttpClient getUnsafeOkHttpClient(final String token) {
+    public static OkHttpClient getUnsafeOkHttpClient(final String token) {
         try {
             /** Create a trust manager that does not validate certificate chains **/
             final TrustManager[] trustAllCerts = new TrustManager[] {
