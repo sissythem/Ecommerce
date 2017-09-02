@@ -41,7 +41,6 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Residences.findByKitchen", query = "SELECT r FROM Residences r WHERE r.kitchen = :kitchen"),
     @NamedQuery(name = "Residences.findByLivingRoom", query = "SELECT r FROM Residences r WHERE r.livingRoom = :livingRoom"),
     @NamedQuery(name = "Residences.findByView", query = "SELECT r FROM Residences r WHERE r.view = :view"),
-    @NamedQuery(name = "Residences.findBySpaceArea", query = "SELECT r FROM Residences r WHERE r.spaceArea = :spaceArea"),
     @NamedQuery(name = "Residences.findByPhotos", query = "SELECT r FROM Residences r WHERE r.photos = :photos"),
     @NamedQuery(name = "Residences.findByGuests", query = "SELECT r FROM Residences r WHERE r.guests = :guests"),
     @NamedQuery(name = "Residences.findByAvailableDateStart", query = "SELECT r FROM Residences r WHERE r.availableDateStart = :availableDateStart"),
@@ -70,10 +69,10 @@ public class Residences implements Serializable {
     @Size(max = 45)
     @Column(name = "type")
     private String type;
-    @Size(max = 45)
+    @Size(max = 255)
     @Column(name = "about")
     private String about;
-    @Size(max = 45)
+    @Size(max = 255)
     @Column(name = "cancellation_policy")
     private String cancellationPolicy;
     @Size(max = 45)
@@ -104,9 +103,6 @@ public class Residences implements Serializable {
     @Size(max = 50)
     @Column(name = "view")
     private String view;
-    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
-    @Column(name = "space_area")
-    private Double spaceArea;
     @Size(max = 45)
     @Column(name = "photos")
     private String photos;
@@ -120,10 +116,6 @@ public class Residences implements Serializable {
     private Double minPrice;
     @Column(name = "additional_cost_per_person")
     private Double additionalCostPerPerson;
-<<<<<<< HEAD
-=======
- 
->>>>>>> origin/master
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "residenceId")
     private Collection<Reservations> reservationsCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "residenceId")
@@ -274,14 +266,6 @@ public class Residences implements Serializable {
 
     public void setView(String view) {
         this.view = view;
-    }
-
-    public Double getSpaceArea() {
-        return spaceArea;
-    }
-
-    public void setSpaceArea(Double spaceArea) {
-        this.spaceArea = spaceArea;
     }
 
     public String getPhotos() {

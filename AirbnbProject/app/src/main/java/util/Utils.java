@@ -281,7 +281,7 @@ public class Utils {
             public void onClick(View v) {
                 /** Show confirmation message to user in order to logout **/
                 new AlertDialog.Builder(context)
-                    .setTitle("Delete Residence").setMessage("Are you sure you want to logout from the application?").setIcon(android.R.drawable.ic_lock_lock)
+                    .setTitle("Logout").setMessage("Are you sure you want to logout from the application?").setIcon(android.R.drawable.ic_lock_lock)
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
                             logout(this_context);
@@ -434,12 +434,7 @@ public class Utils {
 
     public static void loadResidenceImage(Context context, ImageView imgView, String imgName) {
         String imgpath = BASE_URL + "images/img/" + imgName;
-<<<<<<< HEAD
-
-        com.squareup.picasso.Picasso.with(context).load(imgpath)
-=======
         PicassoTrustAll.getInstance(context).load(imgpath)
->>>>>>> origin/master
                 .placeholder(R.drawable.ic_upload_image)
                 .error(R.drawable.ic_upload_image)
                 .resize(200, 200)
