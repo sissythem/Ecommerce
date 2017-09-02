@@ -201,11 +201,13 @@ public class Utils {
                 if(this_user == true) {
                     Intent homeIntent = new Intent(this_context, HomeActivity.class);
                     buser.putBoolean("type", true);
+                    buser.putString("source", this_context.toString());
                     homeIntent.putExtras(buser);
                     this_context.startActivity(homeIntent);
                 } else {
                     Intent hostIntent = new Intent(this_context, HostActivity.class);
                     buser.putBoolean("type", false);
+                    buser.putString("source", this_context.toString());
                     hostIntent.putExtras(buser);
                     this_context.startActivity(hostIntent);
                 }
@@ -219,6 +221,7 @@ public class Utils {
                 Intent inboxintent = new Intent(this_context, InboxActivity.class);
                 Bundle buser = new Bundle();
                 buser.putBoolean("type", this_user);
+                buser.putString("source", this_context.toString());
                 inboxintent.putExtras(buser);
                 try {
                     this_context.startActivity(inboxintent);
@@ -235,6 +238,7 @@ public class Utils {
                 Intent profileintent = new Intent(this_context, ProfileActivity.class);
                 Bundle buser = new Bundle();
                 buser.putBoolean("type", this_user);
+                buser.putString("source", this_context.toString());
                 profileintent.putExtras(buser);
                 try {
                     this_context.startActivity(profileintent);
@@ -259,9 +263,11 @@ public class Utils {
                                 if(this_user == false) {
                                     newIntent = new Intent(this_context, HomeActivity.class);
                                     buser.putBoolean("type", true);
+                                    buser.putString("source", this_context.toString());
                                 } else {
                                     newIntent = new Intent(this_context, HostActivity.class);
                                     buser.putBoolean("type", false);
+                                    buser.putString("source", this_context.toString());
                                 }
 
                                 newIntent.putExtras(buser);
