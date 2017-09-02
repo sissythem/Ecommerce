@@ -38,16 +38,6 @@ For the successful initialization of the application, seven tables have been cre
 
 All above tables have a field id which is unique and auto-increment. 
 
-For our Database Model to become more clear, an Entity Relationship model was designed, showing only the most important fields of the Database, as per below:
-
-![alt text](./Images/MonteloOntotitonSusxetiseon.jpg=250x250)
-
-In above Model, all entities, their relationship and the main fields are shown. All primary keys are underlined and the foreign keys are emphasized with Italics. 
-	
-Furthermore, the Enhanced Entity Relationship Model was extracted from MySQL Workbench, also showing the relations between the tables. 
-
-![alt text](./Images/sxesiakomonetelo.jpg=250x250)
-
   ### RESTful Services
   
 The way that the application communicates with the stored information, relies absolutely to the implementation of RESTful web services. REST describes any simple interface that transmits data over a standardized interface (such as HTTP). It provides an architectural set of design rules for creating stateless services that are viewed as resources, or sources of specific information (data and functionality). Each resource can be identified by its unique Uniform Resource Identifiers (URIs). Consequently, a client (either a consumer or a business) accesses a resource using only a URI that returns the proper information needed, in a specific format that the client can handle as they want. No extra keys or credentials are required for this connection as the permissions for this access have already been set between the client and the provider of the REST service.
@@ -86,8 +76,6 @@ The first screen of our application is related to HomeActivity.java (activity_ho
     
 From GreetingActivity, the user can only have access either to Register or Login activities. If they press the back button of their device, they can minimize the application, but they can never go to HomeActivity without previously having logged in or registered. The same logic is followed in HomeActivity and HostActivity screens. The first activity is the home page presented when the user has the role of tenant, while the second is for the host role. In both of these activities when the user goes back, the application is minimized.
 
-![alt text](./Images/greeting.png=250x250)
-
 The data passed to HomeActivity are: username, login status and token. The Session Class is used here in order to hold all this information and pass it to all the activities as user navigates. In case of the expiration of the token, a logout method is called in order to clear the SharedPreferences and redirect the user to the GreetingActivity. As the HomeActivity is the first activity every user sees when they enter the app, the permissions functionality has been implemented in there and is called every time home is triggered. Of course, if the user has given permission to the actions needed, no notification message will appear to them again.
 
 #### Register Activity
@@ -102,7 +90,7 @@ On the other hand, when user clicks the Login button, a corresponding form appea
   
   ### Home Screen
   
-  In this activity, it is checked if the user is logged in. If not, the application redirects them to the Greeting Activity, as mentioned above. SharedPreference values are passed to the HomeActivity's methods onCreate, onResume and onRestart. The BackPressed method restricts the logged in user to go back to the Login screen. Instead it puts the application on the background (minimizes the app). The main content of the HomeActivity is a list of recommendations of residences. with two main toolbars: header (in this case search bar) and footer.
+In this activity, it is checked if the user is logged in. If not, the application redirects them to the Greeting Activity, as mentioned above. SharedPreference values are passed to the HomeActivity's methods onCreate, onResume and onRestart. The BackPressed method restricts the logged in user to go back to the Login screen. Instead it puts the application on the background (minimizes the app). The main content of the HomeActivity is a list of recommendations of residences. with two main toolbars: header (in this case search bar) and footer.
 	
 Search bar appears on the top of the Home screen, allowing the user to search on specific residences either by city, dates availability (arrival/departure date), and number of guests. The footer is stable at the bottom of the screen, indicating the main menu of the application (Messages, User Profile, Switch Roles, Logout).
     
@@ -181,7 +169,7 @@ Here, we have selected to present the reservation with a RecyclerView showing fo
 
 #### Edit Profile
 
-By pressing the edit profile option, a new activity starts (*EditProfileActivity.java*) presenting all user information and giving the possibility to update these details. A screenshot of this activity is presented below:
+By pressing the edit profile option, a new activity starts (*EditProfileActivity.java*) presenting all user information and giving the possibility to update these details.
 
 User can edit all the fields of his profile, except his username. However, for the email field, we check if the email is used by another user. In case the email being new or being the same as before, we set the boolean variable emailIsNew as true, otherwise as false. Only in case it is true we let the user to proceed and save the changes. 
 
@@ -266,7 +254,7 @@ Finally, in Android side, the URL provided to the RestClient was changed from HT
 
 ### Messages - Notifications
 
-Having implemented a logic of a chat conversation between the users, giving them the ability to check which of their conversations are unread or not, we have set up a notification logic through the benefits of Android, in order for the application to notify the user when they have a new message, no matter if they use the app or have it minimized. More specifically, we implemented a private class "Worker" into the HomeActivity, which is called only when it is verified that the user is logged in. This Worker class works in the background of the application using the overridden methods doInBackground and onPostExecute. It makes a call on an initialized TimerTask which makes a @GET call on the RESTful service every five minutes checking for the number of unread messages into every active conversation of the current logged in user. if the number of unread conversations is higher than zero, a notification bar appears on top of the screen as shown below.
+Having implemented a logic of a chat conversation between the users, giving them the ability to check which of their conversations are unread or not, we have set up a notification logic through the benefits of Android, in order for the application to notify the user when they have a new message, no matter if they use the app or have it minimized. More specifically, we implemented a private class "Worker" into the HomeActivity, which is called only when it is verified that the user is logged in. This Worker class works in the background of the application using the overridden methods doInBackground and onPostExecute. It makes a call on an initialized TimerTask which makes a @GET call on the RESTful service every five minutes checking for the number of unread messages into every active conversation of the current logged in user. if the number of unread conversations is higher than zero, a notification bar appears on top of the screen.
 
 The user can dismiss this notification or click on it and get navigated directly into the InboxActivity screen, where they can see how many conversations they haven't opened yet. It is important to mention that this functionality works correctly only when the application is already working. No matter if the user minimizes the app or has it resumed on some screen, even different from Home, the background timer works and pops up the notification when needed. Of course, when the user opens a conversation (and the read value is changed to one), the next time the handler of the timer executes, it will count one less unread conversation and therefore, change its' value.
 
