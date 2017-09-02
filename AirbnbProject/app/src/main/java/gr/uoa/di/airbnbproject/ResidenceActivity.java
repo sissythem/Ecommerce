@@ -415,7 +415,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         datesDisabled_byGuestCount = new ArrayList<>();
 
         /** This field is completed if user has already provided number of guests **/
-        if(guests != null) {
+        if(guests != null && guests.equals("0")) {
             etGuests.setText(guests);
             filterDates();
         }
@@ -458,7 +458,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
             @Override
             public void onSelectDate(Date date, View view) {
                 /** In order to select dates, user must first select a number of guests **/
-                if(guests == null) {
+                if(guests == null || guests.equals("0")) {
                     Toast.makeText(c, "Please select number of guests first", Toast.LENGTH_SHORT).show();
                     return;
                 }
