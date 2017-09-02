@@ -224,7 +224,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
 
         /** Show the images of this residence **/
         profilePic = (ImageView)findViewById(R.id.ivHostPic);
-        Utils.loadProfileImage(this, profilePic, loggedinUser.getPhoto());
+        Utils.loadProfileImage(this, profilePic, host.getPhoto());
 
         tvTitle                 = (TextView)findViewById(R.id.tvTitle);
         tvDetails               = (TextView)findViewById(R.id.tvDetails);
