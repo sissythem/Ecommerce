@@ -40,13 +40,13 @@ All above tables have a field id which is unique and auto-increment.
 
 For our Database Model to become more clear, an Entity Relationship model was designed, showing only the most important fields of the Database, as per below:
 
-![alt text](./MonteloOntotitonSusxetiseon.jpg)
+![alt text](./Images/MonteloOntotitonSusxetiseon.jpg)
 
 In above Model, all entities, their relationship and the main fields are shown. All primary keys are underlined and the foreign keys are emphasized with Italics. 
 	
 Furthermore, the Enhanced Entity Relationship Model was extracted from MySQL Workbench, also showing the relations between the tables. 
 
-![alt text](./sxesiakomonetelo.jpg)
+![alt text](./Images/sxesiakomonetelo.jpg)
 
   ### RESTful Services
   
