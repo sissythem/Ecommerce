@@ -92,6 +92,10 @@ public class ProfileActivity extends AppCompatActivity {
         setUpProfile();
 
         userImage = (ImageView) findViewById(R.id.userImage);
+
+        String imgnam = loggedinUser.getPhoto();
+        System.out.println(imgnam);
+
         Utils.loadProfileImage(ProfileActivity.this, userImage, loggedinUser.getPhoto());
 
         /** FOOTER TOOLBAR **/

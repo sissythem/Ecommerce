@@ -53,6 +53,7 @@
     <string name="residence_view">View Residence</string>
     <string name="residence_title">Residence Title</string>
     <string name="residence_photos">Residence Photos</string>
+    <string name="residence_image">Residence Image</string>
     <string name="representative_photo">Representative Photo</string>
     <string name="residence_type">Type</string>
     <string name="residence_address">Address</string>

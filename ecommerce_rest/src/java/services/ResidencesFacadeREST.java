@@ -2,8 +2,6 @@ package services;
 
 import domain.Residences;
 import java.io.File;
-import java.nio.file.Files;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;

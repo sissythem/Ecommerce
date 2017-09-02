@@ -566,14 +566,6 @@ public class HomeActivity extends AppCompatActivity
             String data = null;
 
             try {
-                //getNewMessages();
-//                Utils.callAsynchronousTask(HomeActivity.this, HomeActivity.class);
-//                DefaultHttpClient httpClient = new DefaultHttpClient();
-//                HttpGet httpGet = new HttpGet("https://stackoverflow.com/questions/tagged/android");
-//
-//                HttpResponse httpResponse = httpClient.execute(httpGet);
-//                HttpEntity httpEntity = httpResponse.getEntity();
-//                data = EntityUtils.toString(httpEntity);
                 Log.i("SomeTag", "doInBackGround done at " + System.currentTimeMillis());
             } catch (Exception e) {}
             return data;

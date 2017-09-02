@@ -19,7 +19,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -274,8 +273,15 @@ public class Utils {
         blogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                logout(this_context);
-                return;
+                /** Show confirmation message to user in order to logout **/
+                new AlertDialog.Builder(context)
+                    .setTitle("Delete Residence").setMessage("Are you sure you want to logout from the application?").setIcon(android.R.drawable.ic_lock_lock)
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            logout(this_context);
+                            return;
+                        }})
+                    .setNegativeButton(android.R.string.no, null).show();
             }
         });
     }
@@ -421,6 +427,7 @@ public class Utils {
 
     public static void loadResidenceImage(Context context, ImageView imgView, String imgName) {
         String imgpath = BASE_URL + "images/img/" + imgName;
+
         com.squareup.picasso.Picasso.with(context).load(imgpath)
                 .placeholder(R.drawable.ic_upload_image)
                 .error(R.drawable.ic_upload_image)

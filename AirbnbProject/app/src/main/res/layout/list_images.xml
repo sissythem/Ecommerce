@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:card_view="http://schemas.android.com/tools"
     android:id="@+id/rImgCardView"
     style="@style/AppTheme.Card.Margins"
@@ -12,6 +11,5 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        app:srcCompat="@drawable/ic_profile"
-        android:contentDescription="@string/user_image" />
+        android:contentDescription="@string/residence_image" />
 </android.support.v7.widget.CardView>
