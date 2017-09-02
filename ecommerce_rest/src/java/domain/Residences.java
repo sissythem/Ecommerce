@@ -120,6 +120,10 @@ public class Residences implements Serializable {
     private Double minPrice;
     @Column(name = "additional_cost_per_person")
     private Double additionalCostPerPerson;
+<<<<<<< HEAD
+=======
+ 
+>>>>>>> origin/master
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "residenceId")
     private Collection<Reservations> reservationsCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "residenceId")

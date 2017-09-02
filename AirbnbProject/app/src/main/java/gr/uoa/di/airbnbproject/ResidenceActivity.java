@@ -35,7 +35,6 @@ import android.widget.Toast;
 import com.daimajia.slider.library.Animations.DescriptionAnimation;
 import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
-import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.daimajia.slider.library.Tricks.ViewPagerEx;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -57,6 +56,7 @@ import fromRESTful.Images;
 import fromRESTful.Reservations;
 import fromRESTful.Residences;
 import fromRESTful.Users;
+import util.MyTextSlider;
 import util.RestCalls;
 import util.RetrofitCalls;
 import util.Session;
@@ -198,7 +198,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         }
         for(Images residenceImage : residencePhotos)
         {
-            TextSliderView textSliderView = new TextSliderView(this);
+            MyTextSlider textSliderView = new MyTextSlider(this);
             /** Initialize a SliderLayout **/
             textSliderView.image(BASE_URL + "images/img/" + residenceImage.getName())
                     .setScaleType(BaseSliderView.ScaleType.Fit)
@@ -224,7 +224,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
 
         /** Show the images of this residence **/
         profilePic = (ImageView)findViewById(R.id.ivHostPic);
-        Utils.loadProfileImage(this, profilePic, loggedinUser.getPhoto());
+        Utils.loadProfileImage(this, profilePic, host.getPhoto());
 
         tvTitle                 = (TextView)findViewById(R.id.tvTitle);
         tvDetails               = (TextView)findViewById(R.id.tvDetails);
@@ -415,7 +415,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         datesDisabled_byGuestCount = new ArrayList<>();
 
         /** This field is completed if user has already provided number of guests **/
-        if(guests != null) {
+        if(guests != null && guests.equals("0")) {
             etGuests.setText(guests);
             filterDates();
         }
@@ -458,7 +458,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
             @Override
             public void onSelectDate(Date date, View view) {
                 /** In order to select dates, user must first select a number of guests **/
-                if(guests == null) {
+                if(guests == null || guests.equals("0")) {
                     Toast.makeText(c, "Please select number of guests first", Toast.LENGTH_SHORT).show();
                     return;
                 }
