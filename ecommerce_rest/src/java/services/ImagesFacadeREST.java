@@ -97,7 +97,7 @@ public class ImagesFacadeREST extends AbstractFacade<Images> {
     
     /*** CUSTOM METHODS ***/
     private static String className = ImagesFacadeREST.class.getName();
-    private static String ImagesDirectory = "C:\\Users\\vasso\\Documents\\Github\\Ecommerce\\ecommerce_rest\\web\\images/";
+    private static String ImagesDirectory = "/home/sissy/Documents/Professional/University/UOA/graduate/Semester2/Ecommerce/Project/ecommerce_rest/web/images/";
     
     @DELETE
     @Path("delete/{id}")

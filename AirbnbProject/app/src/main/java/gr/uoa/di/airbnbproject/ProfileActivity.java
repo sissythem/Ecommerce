@@ -183,7 +183,8 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     public void handleBackAction(){
-        if(buser.getString("source").equals("residence")){
+        if(buser.getString("source").equals("residence"))
+        {
             Intent residenceIntent = new Intent(ProfileActivity.this, ResidenceActivity.class);
             Bundle btype = new Bundle();
             btype.putBoolean("type", user);
