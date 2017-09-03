@@ -67,7 +67,6 @@ public class EditProfileActivity extends AppCompatActivity {
     private int mYear, mMonth, mDay;
 
     Session sessionData;
-    String imageName;
     String realpath;
 
     @Override
@@ -234,7 +233,6 @@ public class EditProfileActivity extends AppCompatActivity {
                 bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
                 mImageView.setImageBitmap(bitmap);
                 realpath = Utils.getRealPathFromURI(EditProfileActivity.this, selectedImage);
-                System.out.println(realpath);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -249,9 +247,7 @@ public class EditProfileActivity extends AppCompatActivity {
     private class SendImageTask extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            System.out.println(params[0]);
             File file = new File(params[0]);
-            System.out.println(file);
 
 //            RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpg"), file);
             RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
@@ -299,6 +295,8 @@ public class EditProfileActivity extends AppCompatActivity {
         final String about          = etAbout.getText().toString();
         final Date registrationDate = loggedinUser.getRegistrationDate();
 
+        final String imageName      = loggedinUser.getPhoto();
+
         boolean emailIsNew;
 
         //check if all fields are completed
@@ -324,9 +322,11 @@ public class EditProfileActivity extends AppCompatActivity {
         if(emailIsNew)
         {
             //send user input to the database in order to update the specific user
-            token = PutResult(loggedinUser.getId(), name, lastName, Username, password, Email, phoneNumber, country, city, about, birthdate, registrationDate);
+            token = PutResult(loggedinUser.getId(), name, lastName, Username, password, Email, phoneNumber, country, city, about, birthdate, registrationDate, imageName);
             if (!token.isEmpty() && token!=null && token!="not") {
-                new EditProfileActivity.SendImageTask().execute(realpath);
+                if (realpath != null) {
+                    new EditProfileActivity.SendImageTask().execute(realpath);
+                }
 
                 sessionData.setToken(token);
                 sessionData.setUsername(username);
@@ -351,8 +351,8 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     public String PutResult(int userId, String firstName, String lastName, String username, String password, String email, String phoneNumber, String country, String city,
-                            String about, String birthDate, Date registrationDate) {
-        Users UserParameters = new Users(userId, firstName, lastName, username, password, email, phoneNumber, country, city, about, birthDate, registrationDate);
+                            String about, String birthDate, Date registrationDate, String photo) {
+        Users UserParameters = new Users(userId, firstName, lastName, username, password, email, phoneNumber, country, city, about, birthDate, registrationDate, photo);
         RetrofitCalls retrofitCalls = new RetrofitCalls();
         token = retrofitCalls.editUser(token, userId, UserParameters);
         return token;

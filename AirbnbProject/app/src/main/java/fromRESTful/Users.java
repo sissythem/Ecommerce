@@ -25,7 +25,7 @@ public class Users implements Serializable {
 
     /** For edit profile **/
     public Users(int userId, String firstName, String lastName, String username, String password, String email, String phoneNumber, String country, String city,
-                 String about, String birthDate, Date registrationDate)
+                 String about, String birthDate, Date registrationDate, String photo)
     {
         this.id             = userId;
         this.firstName      = firstName;
@@ -39,6 +39,7 @@ public class Users implements Serializable {
         this.about          = about;
         this.birthDate      = birthDate;
         this.registrationDate   = registrationDate;
+        this.photo              = photo;
     }
 
     /** For Register **/
