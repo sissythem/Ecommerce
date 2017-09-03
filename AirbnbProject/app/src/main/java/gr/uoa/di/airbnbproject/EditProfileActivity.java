@@ -2,6 +2,7 @@ package gr.uoa.di.airbnbproject;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,6 +10,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -24,9 +26,9 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 import fromRESTful.Users;
 import okhttp3.MediaType;
@@ -118,7 +120,7 @@ public class EditProfileActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Utils.manageBackButton(EditProfileActivity.this, ProfileActivity.class, user);
+                handleBackAction();
             }
         });
 
@@ -354,5 +356,23 @@ public class EditProfileActivity extends AppCompatActivity {
         RetrofitCalls retrofitCalls = new RetrofitCalls();
         token = retrofitCalls.editUser(token, userId, UserParameters);
         return token;
+    }
+
+    @Override
+    public void onBackPressed(){
+        handleBackAction();
+    }
+
+    public void handleBackAction()
+    {
+        /** Show confirmation message to user in order to logout **/
+        new AlertDialog.Builder(this)
+                .setTitle("Back").setMessage("Are you sure you want to go back? Your changes will not be saved!").setIcon(R.drawable.ic_back)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        Utils.manageBackButton(EditProfileActivity.this, ProfileActivity.class, user);
+                        return;
+                    }})
+                .setNegativeButton(android.R.string.no, null).show();
     }
 }

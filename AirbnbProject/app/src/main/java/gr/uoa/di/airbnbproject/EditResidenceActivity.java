@@ -501,6 +501,14 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
 
     @Override
     public void onBackPressed(){
-        Utils.manageBackButton(EditResidenceActivity.this, HostActivity.class, user);
+        /** Show confirmation message to user in order to go back **/
+        new AlertDialog.Builder(this)
+                .setTitle("Back").setMessage("Are you sure you want to go back? Your changes will not be saved!").setIcon(R.drawable.ic_back)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        Utils.manageBackButton(EditResidenceActivity.this, HostActivity.class, user);
+                        return;
+                    }})
+                .setNegativeButton(android.R.string.no, null).show();
     }
 }
