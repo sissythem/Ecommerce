@@ -137,12 +137,13 @@ public class AddResidenceActivity extends AppCompatActivity implements AdapterVi
 
         cbKitchen           = (CheckBox)findViewById(R.id.cbKitchen);
         cbLivingRoom        = (CheckBox)findViewById(R.id.cbLivingRoom);
-        upload              = (Button)findViewById(R.id.uploadImage);
+        upload              = (Button)findViewById(R.id.btnAddPhots);
         bcontinue           = (ImageButton)findViewById(R.id.ibContinue);
 
-        upload.setVisibility(View.GONE);
         LinearLayout linearLayout = (LinearLayout) findViewById(R.id.customultiple);
         linearLayout.setVisibility(View.GONE);
+        upload.setVisibility(View.GONE);
+
         /** When user clicks on the button, a calendar appears in order to pick up a date*/
         btnStartDate.setOnClickListener(new View.OnClickListener() {
             @Override
