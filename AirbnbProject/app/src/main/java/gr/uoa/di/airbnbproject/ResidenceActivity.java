@@ -286,6 +286,9 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
                     Toast.makeText(c, "Please fill in the dates and the number of guests", Toast.LENGTH_SHORT).show();
                     return;
                 } else {
+                    long diff = selectedEndDate.getTime() - selectedStartDate.getTime();
+                    int days = (int) (diff / (1000*60*60*24));
+                    double totalAmount = selectedResidence.getMinPrice() + (selectedResidence.getAdditionalCostPerPerson()*guestsInt*days);
                     new AlertDialog.Builder(ResidenceActivity.this)
                         .setTitle("Booking Confirmation")
                         .setMessage("Please confirm the details below:"
@@ -293,6 +296,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
                             + "\n\n" + guestsInt + (guestsInt == 1 ? " guest" : " guests")
                             + "\n" + "Arrival Date: " + selectedStartDate
                             + "\n" + "Departure Date: " + selectedEndDate
+                                + "\n" + "Total Amount: " + totalAmount
                             + "\n\n" + "Click OK to continue, or CANCEL to go back to the residence"
                         )
                         .setIcon(android.R.drawable.ic_secure)

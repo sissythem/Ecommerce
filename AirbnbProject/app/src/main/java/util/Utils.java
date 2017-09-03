@@ -442,7 +442,7 @@ public class Utils {
         PicassoTrustAll.getInstance(context).load(imgpath)
                 .placeholder(R.drawable.ic_upload_image)
                 .error(R.drawable.ic_upload_image)
-                .resize(200, 200)
+                .resize(300, 300)
                 .into(imgView);
     }
 
