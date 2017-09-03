@@ -445,11 +445,11 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         selectedDates[1] = null;
 
         /** If user has already selected dates from the search field in the home or search activity, he can see his selection on the calendar **/
-        if(date_start != null) {
+        if(date_start != null && !reservedDates.contains(date_start) && !datesDisabled_byGuestCount.contains(date_start)) {
             selectedDates[0] = Utils.ConvertStringToDate(date_start, FORMAT_DATE_YMD);
             caldroidFragment.setBackgroundDrawableForDate(blue, selectedDates[0]);
         }
-        if(date_end !=null) {
+        if(date_end !=null && !reservedDates.contains(date_end) && !datesDisabled_byGuestCount.contains(date_end)) {
             selectedDates[1] = Utils.ConvertStringToDate(date_end, FORMAT_DATE_YMD);
             caldroidFragment.setBackgroundDrawableForDate(blue, selectedDates[1]);
         }
