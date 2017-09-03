@@ -257,7 +257,7 @@ In Android side, the URL provided to the RestClient was changed from HTTP to HTT
 
 * __Single Image View:__ This change caused the images to not be able to load correctly on the Android side. This was happening because the image url (REST call) from the library Picasso was called directly and not through RestClient in order to verify the SSL encryption. Therefore, as a solution, we have implemented the PicassoTrustAll class, which uses the OkHttp library and in this way the application can get all images from the server. So the single image loading managed to work correctly, but not on images slider too, as the library being used there is also different dealing also with a direct url call.
 
-* __Images Slider View:__
+* __Images Slider View:__  In order to show all images of a residence in the ResidenceActivity, we have used a [slider found in GitHub](https://github.com/daimajia/AndroidImageSlider). However, as mentioned above, we faced the same problem with image loading due to SSL encryption. The solution we came up with in order to solve this issue, was to override two classes of this library: the TextSliderView and the BaseSliderView. Therefore, we have created the MyBaseSliderView and the MyTextSlider class which extends the first one. Our goal was to replace the Picasso object, created for each image, with the PicassoTrustAll in order to include the OkHttp client. For this purpose, we have overridden the method bindEventAndShow in our MyBaseSliderView class, the value of myPicasso object is set to an instance of PicassoTrustAll.
 
 ### Messages - Notifications
 
