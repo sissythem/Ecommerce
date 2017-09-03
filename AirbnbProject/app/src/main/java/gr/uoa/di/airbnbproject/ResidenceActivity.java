@@ -419,7 +419,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         datesDisabled_byGuestCount = new ArrayList<>();
 
         /** This field is completed if user has already provided number of guests **/
-        if(guests != null && guests.equals("0")) {
+        if(guests != null && !guests.equals("0")) {
             etGuests.setText(guests);
             filterDates();
         }
