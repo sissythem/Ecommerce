@@ -1,6 +1,7 @@
 package util;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -19,7 +20,7 @@ import gr.uoa.di.airbnbproject.R;
 
 public class MyBaseSliderView extends BaseSliderView {
     protected Context myContext;
-    private String myUrl;
+//    private String myUrl;
     private File myFile;
     private int myRes;
     private ImageLoadListener myLoadListener;
@@ -50,8 +51,10 @@ public class MyBaseSliderView extends BaseSliderView {
             }
         });
 
-        if (targetImageView == null)
+        if (targetImageView == null) {
+            Log.e("MBSV", "Null target image view ");
             return;
+        }
 
         if (myLoadListener != null) {
             myLoadListener.onStart(me);
@@ -59,25 +62,31 @@ public class MyBaseSliderView extends BaseSliderView {
 
         myPicasso = PicassoTrustAll.getInstance(myContext);
         RequestCreator rq;
-        if(myUrl !=null){
-            rq = myPicasso.load(myUrl);
+        Log.e("MBSV","Populating rq");
+
+        if(getUrl() !=null){
+            rq = myPicasso.load(getUrl());
         }else if(myFile != null){
             rq = myPicasso.load(myFile);
         }else if(myRes != 0){
             rq = myPicasso.load(myRes);
         }else{
+            Log.e("MBSV","rq error or something");
             return;
         }
 
         if(rq == null){
+            Log.e("MBSV","Null request creator on mybasesliderview ! Returning..");
             return;
         }
 
         if(getEmpty() != 0){
+            Log.e("MBSV","Gettting empty for url : " + getUrl());
             rq.placeholder(getEmpty());
         }
 
         if(getError() != 0){
+            Log.e("MBSV","Getting error");
             rq.error(getError());
         }
 
@@ -99,6 +108,7 @@ public class MyBaseSliderView extends BaseSliderView {
                 if(v.findViewById(R.id.loading_bar) != null){
                     v.findViewById(R.id.loading_bar).setVisibility(View.INVISIBLE);
                 }
+                Log.e("MBSV","Entered success function with url " + getUrl());
             }
 
             @Override
@@ -109,6 +119,8 @@ public class MyBaseSliderView extends BaseSliderView {
                 if(v.findViewById(R.id.loading_bar) != null){
                     v.findViewById(R.id.loading_bar).setVisibility(View.INVISIBLE);
                 }
+
+                Log.e("MBSV","Entered error function with url " + getUrl());
             }
         });
     }

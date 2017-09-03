@@ -29,7 +29,7 @@
                 <com.daimajia.slider.library.SliderLayout
                     android:id="@+id/residencesslider"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
+                    android:layout_height="@dimen/res_images"
                     custom:auto_cycle="true"
                     custom:pager_animation_span="1100" />
             </RelativeLayout>
@@ -188,5 +188,7 @@
             </LinearLayout>
         </FrameLayout>
     </ScrollView>
-    <include layout="@layout/toolbar_residence" />
+    <include layout="@layout/toolbar_residence"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
 </RelativeLayout>
