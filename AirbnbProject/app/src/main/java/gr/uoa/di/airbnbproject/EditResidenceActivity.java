@@ -141,7 +141,7 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Utils.manageBackButton(EditResidenceActivity.this, HostActivity.class, user);
+                handleBackAction();
             }
         });
 
@@ -501,6 +501,10 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
 
     @Override
     public void onBackPressed(){
+       handleBackAction();
+    }
+
+    public void handleBackAction() {
         /** Show confirmation message to user in order to go back **/
         new AlertDialog.Builder(this)
                 .setTitle("Back").setMessage("Are you sure you want to go back? Your changes will not be saved!").setIcon(R.drawable.ic_back)

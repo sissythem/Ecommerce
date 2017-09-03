@@ -365,7 +365,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
     public void handleBackAction()
     {
-        /** Show confirmation message to user in order to logout **/
+        /** Show confirmation message to user in order to go back **/
         new AlertDialog.Builder(this)
                 .setTitle("Back").setMessage("Are you sure you want to go back? Your changes will not be saved!").setIcon(R.drawable.ic_back)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
