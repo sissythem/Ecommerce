@@ -78,3 +78,10 @@ ecommerce_rest/nbproject/project.properties
 ecommerce_rest/src/java/services/ImagesFacadeREST.java
 AirbnbProject/app/app.iml
 AirbnbProject/app/src/main/java/util/RestClient.java
+AirbnbProject/local.properties
+AirbnbProject/app/src/main/java/util/RestClient.java
+ecommerce_rest/nbproject/private/private.properties
+AirbnbProject/app/app.iml
+ecommerce_rest/nbproject/private/private.xml
+ecommerce_rest/src/java/services/ImagesFacadeREST.java
+ecommerce_rest/nbproject/project.properties
