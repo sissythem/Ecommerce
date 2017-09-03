@@ -72,7 +72,6 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
             super.edit(residence);
             return token;
         }
-        System.out.println("333333");
         return "not";
     }  
     

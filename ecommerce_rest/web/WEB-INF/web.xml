@@ -14,7 +14,7 @@
     <security-constraint>
         <display-name>Encryption</display-name>
         <web-resource-collection>
-            <web-resource-name>rooms</web-resource-name>
+            <web-resource-name>ecommerce_rest</web-resource-name>
             <description/>
             <url-pattern>/*</url-pattern>
         </web-resource-collection>

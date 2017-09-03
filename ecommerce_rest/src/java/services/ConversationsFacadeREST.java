@@ -163,10 +163,6 @@ public class ConversationsFacadeREST extends AbstractFacade<Conversations> {
             @QueryParam("type") String type, 
             @QueryParam("id") String id) {
         
-        System.out.println(isRead);
-        System.out.println(type);
-        System.out.println(id);
-        
         if (KeyHolder.checkToken(token, className)) {
             if (isRead != null && type != null && id != null) {
                 String userType = "";
@@ -183,9 +179,6 @@ public class ConversationsFacadeREST extends AbstractFacade<Conversations> {
                     query.executeUpdate();
                 }
             }
-            //Conversations conv = super.find(Integer.parseInt(id));
-            //System.out.println(conv);
-            //return conv;
         } else {
             token = KeyHolder.issueToken(null);
         }
