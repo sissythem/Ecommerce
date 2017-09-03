@@ -66,6 +66,7 @@ import static gr.uoa.di.airbnbproject.R.id.calendar;
 import static gr.uoa.di.airbnbproject.R.id.reservations;
 import static gr.uoa.di.airbnbproject.R.id.reviews;
 import static util.RestClient.BASE_URL;
+import static util.Utils.FORMAT_DATETIME_DMY_HMS;
 import static util.Utils.FORMAT_DATE_DMY;
 import static util.Utils.FORMAT_DATE_YMD;
 import static util.Utils.convertTimestampToDate;
@@ -75,7 +76,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
 {
     Bundle buser;
     Boolean user;
-    String date_start, date_end, guests, token;
+    String selected_date_start_str, selected_date_end_str, guests, token;
 
     int residenceId, maxGuests, guestsInt;
     Context c;
@@ -141,8 +142,8 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         user                = buser.getBoolean("type");
         residenceId         = buser.getInt("residenceId");
 
-        if (buser.containsKey("startDate")) date_start = buser.getString("startDate");
-        if (buser.containsKey("endDate")) date_end = buser.getString("endDate");
+        if (buser.containsKey("startDate")) selected_date_start_str = buser.getString("startDate");
+        if (buser.containsKey("endDate")) selected_date_end_str = buser.getString("endDate");
         if (buser.containsKey("guests")) guests = buser.getString("guests");
 
         retrofitCalls = new RetrofitCalls();
@@ -335,15 +336,15 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
     public void setCalendar ()
     {
         /** Get available dates from host **/
-        long available_date_start = selectedResidence.getAvailableDateStart();
-        long available_date_end = selectedResidence.getAvailableDateEnd();
+        long available_date_start_millis = selectedResidence.getAvailableDateStart();
+        long available_date_end_millis = selectedResidence.getAvailableDateEnd();
         reservedDates = new ArrayList<>();
 
-        Date startDate = convertTimestampToDate(available_date_start, FORMAT_DATE_YMD);
-        Date endDate = convertTimestampToDate(available_date_end, FORMAT_DATE_YMD);
+        Date startDateHost = convertTimestampToDate(available_date_start_millis, FORMAT_DATE_YMD);
+        Date endDateHost = convertTimestampToDate(available_date_end_millis, FORMAT_DATE_YMD);
 
         /** Something went wrong and did not get the available period for this residence **/
-        if(startDate == null || endDate == null)
+        if(startDateHost == null || endDateHost == null)
         {
             Toast.makeText(c, "There are no available dates", Toast.LENGTH_SHORT).show();
             TextView tvNoAvailability = new TextView(c);
@@ -356,21 +357,20 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         FragmentTransaction t = getSupportFragmentManager().beginTransaction();
         t.replace(calendar, caldroidFragment);
         t.commit();
-        /** Set the color of selected dates **/
-        ColorDrawable blue = new ColorDrawable(Color.BLUE);
+
         /** Calendar will show only the period set by host as available **/
-        caldroidFragment.setMinDate(startDate);
-        caldroidFragment.setMaxDate(endDate);
+        caldroidFragment.setMinDate(startDateHost);
+        caldroidFragment.setMaxDate(endDateHost);
 
         Calendar calendar = Calendar.getInstance();
         /** Calendar starts from the start date of the available period **/
-        calendar.setTime(startDate);
+        calendar.setTime(startDateHost);
         /** Count of guests for each date of the available period. Used to find all fully booked dates **/
         NumGuestsPerDay = new HashMap<>();
         Date current = calendar.getTime();
 
         /** Initialize guest sum **/
-        while (!current.after(endDate)) {
+        while (!current.after(endDateHost)) {
             NumGuestsPerDay.put(current, 0);
             calendar.add(Calendar.DAY_OF_MONTH,1);
             current = calendar.getTime();
@@ -444,15 +444,41 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         selectedDates[0] = null;
         selectedDates[1] = null;
 
+
+
         /** If user has already selected dates from the search field in the home or search activity, he can see his selection on the calendar **/
-        if(date_start != null && !reservedDates.contains(date_start) && !datesDisabled_byGuestCount.contains(date_start)) {
-            selectedDates[0] = Utils.ConvertStringToDate(date_start, FORMAT_DATE_YMD);
-            caldroidFragment.setBackgroundDrawableForDate(blue, selectedDates[0]);
+        if(selected_date_start_str != null && selected_date_end_str!=null ) {
+            Date selected_date_start = Utils.ConvertStringToDate(selected_date_start_str, FORMAT_DATETIME_DMY_HMS);
+            Date selected_date_end = Utils.ConvertStringToDate(selected_date_end_str, FORMAT_DATETIME_DMY_HMS);
+
+
+            boolean startEndIsReserved = reservedDates.contains(selected_date_start) || datesDisabled_byGuestCount.contains(selected_date_start) ||
+                    reservedDates.contains(selected_date_end) || datesDisabled_byGuestCount.contains(selected_date_end);
+            boolean startEndIsOutsideHostRange = (selected_date_start.before(startDateHost) || selected_date_start.after(endDateHost)) ||
+                    (selected_date_end.before(startDateHost) || selected_date_end.after(endDateHost));
+
+            // check in-between dates
+            if (selected_date_end.before(selected_date_start)) {
+                Date temp = selected_date_end;
+                selected_date_end = selected_date_start;
+                selected_date_start = temp;
+            }
+
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(selected_date_start);
+            Date curr = selected_date_start;
+            boolean inBetweenIsValid = true;
+            while (!curr.after(selected_date_end)) {
+                inBetweenIsValid = !(reservedDates.contains(curr) || datesDisabled_byGuestCount.contains(curr));
+                if (!inBetweenIsValid) break;
+                cal.add(Calendar.DAY_OF_MONTH, 1);
+                curr = cal.getTime();
+            }
+            if (inBetweenIsValid && !startEndIsReserved && !startEndIsOutsideHostRange) {
+                colorCalendarDates();
+            }
         }
-        if(date_end !=null && !reservedDates.contains(date_end) && !datesDisabled_byGuestCount.contains(date_end)) {
-            selectedDates[1] = Utils.ConvertStringToDate(date_end, FORMAT_DATE_YMD);
-            caldroidFragment.setBackgroundDrawableForDate(blue, selectedDates[1]);
-        }
+
         final CaldroidListener listener = new CaldroidListener() {
             View view;
             //user can deselect a date
@@ -492,6 +518,21 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         };
         caldroidFragment.setCaldroidListener(listener);
     }
+
+    public void colorCalendarDates()
+    {
+        /** Set the color of selected dates **/
+        ColorDrawable blue = new ColorDrawable(Color.BLUE);
+
+        selectedDates[0] = Utils.ConvertStringToDate(selected_date_start_str, FORMAT_DATE_YMD);
+        caldroidFragment.setBackgroundDrawableForDate(blue, selectedDates[0]);
+
+        selectedDates[1] = Utils.ConvertStringToDate(selected_date_end_str, FORMAT_DATE_YMD);
+        caldroidFragment.setBackgroundDrawableForDate(blue, selectedDates[1]);
+    }
+
+
+
 
     /** In case app is minimized, caldroid saves the state left **/
     @Override
