@@ -150,8 +150,6 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
         imagesRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
         imagesRecyclerView.setHasFixedSize(true);
 
-
-
         /** Initialize RetrofitCalls Instance **/
         retrofitCalls = new RetrofitCalls();
 
@@ -161,8 +159,7 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
             if (residencePhotos.size() > 0) {
                 adapterImages = new RecyclerAdapterImages(this, user, residencePhotos);
                 imagesRecyclerView.setAdapter(adapterImages);
-                LinearLayoutManager horizontalLayoutManager
-                        = new LinearLayoutManager(EditResidenceActivity.this, LinearLayoutManager.HORIZONTAL, false);
+                LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(EditResidenceActivity.this, LinearLayoutManager.HORIZONTAL, false);
                 imagesRecyclerView.setLayoutManager(horizontalLayoutManager);
                 imagesRecyclerView.setAdapter(adapterImages);
             }
@@ -404,6 +401,8 @@ public class EditResidenceActivity extends AppCompatActivity implements AdapterV
                 }
             }
         });
+
+        photo = selectedResidence.getPhotos();
     }
 
     /**  An item was selected. You can retrieve the selected item using parent.getItemAtPosition(pos) **/

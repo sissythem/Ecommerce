@@ -726,10 +726,9 @@ public class RetrofitCalls {
     private class editResidenceHttpRequestTask extends AsyncTask<Object, Object, String> {
         @Override
         protected String doInBackground(Object... params){
+            RestAPI restAPI = RestClient.getClient((String)params[0]).create(RestAPI.class);
+            Call<String> call = restAPI.editResidenceById((Integer)params[1],(Residences) params[2]);
             try{
-                RestAPI restAPI = RestClient.getClient((String)params[0]).create(RestAPI.class);
-                Call<String> call = restAPI.editResidenceById((Integer)params[1],(Residences) params[2]);
-
                 Response<String> resp = call.execute();
                 token = resp.body();
             } catch (IOException e){
