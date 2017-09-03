@@ -260,13 +260,16 @@ public class HomeActivity extends AppCompatActivity
 
                 /** Update recommendations based on user input **/
                 Recommendations = retrofitCalls.getRecommendations(token, username, city, start_timestamp, end_timestamp, numGuests);
-                if(Recommendations.size() !=0) {
-                    residencesAdapter.setSearchList(Recommendations);
-                    residencesAdapter.setGuests(numGuests);
-                    residencesAdapter.setStartDate(date_start);
-                    residencesAdapter.setEndDate(date_end);
-                    residencesAdapter.notifyDataSetChanged();
-                }
+                /** In case that no residence matches user's input, popular recommendations will appear again **/
+                if(Recommendations.size() == 0)
+                    Recommendations = popularRecommendations();
+
+                residencesAdapter.setSearchList(Recommendations);
+                residencesAdapter.setGuests(numGuests);
+                residencesAdapter.setStartDate(date_start);
+                residencesAdapter.setEndDate(date_end);
+                residencesAdapter.notifyDataSetChanged();
+
                 progressBar.setVisibility(View.GONE);
 
             }
