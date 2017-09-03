@@ -249,8 +249,7 @@ In the Android side, when user performs a login or register call the method getS
 
 In addition, a method to check if token is expired is implemented and called at the beginning of each activity. In all calls the token is sent in the header  so as to be checked in the Restful services side. When user chooses either to login or to register, a token is received from the Restful services and it is stored in a session object so as to be checked when an activity starts. In the class RetrofitCalls, in all methods implemented, we provide the token to be also checked in the Restful services side. Finally, if Android finds out that token is expired, the logout method is called, user is redirected to the GreetingActivity and a Toast message appears to inform him that the session has expired.
 
-
-Finally, in Android side, the URL provided to the RestClient was changed from HTTP to HTTPS and the port of glassfish from 8080 to 8181.
+Finally, in Android side, the URL provided to the RestClient was changed from HTTP to HTTPS and the port of glassfish from 8080 to 8181. However, this has caused us problems in loading images. Therefore, instead of using the Picasso Library, we have implemented the PicassoTrustAll class, which uses the OkHttp library and in this way the application can get all images from the server. Although, thanks to this solution we managed to display the images in the Android side, we also faced a problem with the slider used in ResidenceActivity.
 
 ### Messages - Notifications
 
