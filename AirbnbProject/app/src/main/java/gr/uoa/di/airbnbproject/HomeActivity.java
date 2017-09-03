@@ -263,7 +263,7 @@ public class HomeActivity extends AppCompatActivity
                 /** In case that no residence matches user's input, popular recommendations will appear again **/
                 if(Recommendations.size() == 0)
                     Recommendations = popularRecommendations();
-
+                /** Set up the ArrayList<Residences with the new results and notify the adapter **/
                 residencesAdapter.setSearchList(Recommendations);
                 residencesAdapter.setGuests(numGuests);
                 residencesAdapter.setStartDate(date_start);

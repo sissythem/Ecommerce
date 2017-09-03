@@ -117,7 +117,7 @@ public class ReviewsActivity extends AppCompatActivity
         double[] rating                 = new double[reviewsForSelectedResidence.size()];
 
         for(int i=0; i<reviewsForSelectedResidence.size();i++) {
-            representativePhoto[i] = reviewsForSelectedResidence.get(i).getHostId().getPhoto();
+            representativePhoto[i] = reviewsForSelectedResidence.get(i).getTenantId().getPhoto();
             username[i] = reviewsForSelectedResidence.get(i).getTenantId().getUsername();
             comment[i] = reviewsForSelectedResidence.get(i).getComment();
             rating [i] = reviewsForSelectedResidence.get(i).getRating();
