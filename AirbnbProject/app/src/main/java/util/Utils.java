@@ -428,7 +428,7 @@ public class Utils {
                 .placeholder(R.drawable.ic_profile)
                 .transform(new CircleTransform())
                 .error(R.drawable.ic_profile)
-                .resize(300, 300)
+                .resize(200, 200)
                 .into(imgView);
     }
 
@@ -437,7 +437,7 @@ public class Utils {
         PicassoTrustAll.getInstance(context).load(imgpath)
                 .placeholder(R.drawable.ic_upload_image)
                 .error(R.drawable.ic_upload_image)
-                .resize(300, 300)
+                .resize(200, 200)
                 .into(imgView);
     }
 
