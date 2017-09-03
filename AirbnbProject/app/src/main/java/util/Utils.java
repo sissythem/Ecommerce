@@ -43,6 +43,7 @@ public class Utils {
 
     /** SHARED PREFERENCES TITLE FOR LOGGED IN USER **/
     public static String USER_LOGIN_PREFERENCES         = "login_preferences";
+    public static String workerPrefStr                  = "WORKER_PREFS";
 
     /** DATE FORMATS **/
     public static final String FORMAT_DATE_YMD          = "yyyy-MM-dd";
@@ -296,6 +297,10 @@ public class Utils {
     /** SharedPreferences are cleared and user is redirected in the GreetingActivity **/
     public static void logout(Activity context)
     {
+        /** Clear worker notifications **/
+        runWorker(context, false);
+        callAsynchronousTask(context, null, null);
+
     /* Reset Shared Preferences */
         SharedPreferences sharedPrefs = context.getApplicationContext().getSharedPreferences(USER_LOGIN_PREFERENCES, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPrefs.edit();
@@ -442,6 +447,26 @@ public class Utils {
     }
 
     /** MANAGE MESSAGES AND NOTIFICATIONS **/
+    public static boolean workerIsRunning(Context context) {
+        SharedPreferences workerPrefs = context.getApplicationContext().getSharedPreferences(workerPrefStr, Context.MODE_PRIVATE);
+
+        boolean workerExists = workerPrefs.contains("workerRuns");
+        boolean workerVar = workerPrefs.getBoolean("workerRuns", false);
+        if (workerExists && workerVar) return true;
+        return false;
+    }
+
+    public static void runWorker(Context context, boolean workerRuns) {
+        SharedPreferences workerPrefs = context.getApplicationContext().getSharedPreferences(workerPrefStr, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = workerPrefs.edit();
+        if (!workerRuns) {
+            editor.clear();
+        } else {
+            editor.putBoolean("workerRuns", workerRuns);
+        }
+        editor.commit();
+    }
+
     protected static Integer getNewMessages(String token, Integer userId) {
         RetrofitCalls retrofitCalls = new RetrofitCalls();
         Integer countMsg = retrofitCalls.countNewMessages(token, userId);
@@ -451,27 +476,31 @@ public class Utils {
     public static NotificationCompat.Builder notification;
     private static final int uniqueID = 45612;
 
-    public static void callAsynchronousTask(final Context context, final String token, final Integer userId) {
+
+    public static TimerTask setupAsyncTask(final Context context, final String token, final Integer userId) {
         final Handler handler = new Handler();
-        Timer timer = new Timer();
         TimerTask doAsynchronousTask = new TimerTask() {
             @Override
             public void run() {
+                if (!workerIsRunning(context)) {
+                    cancel();
+                }
                 handler.post(new Runnable() {
                     public void run() {
                         try {
-                            notification = new NotificationCompat.Builder(context);
-                            notification.setAutoCancel(true);
-
-                            Integer unreadConversations = getNewMessages(token, userId);
-                            if (unreadConversations > 0) {
-                                buckysButtonClicked(context,
-                                        HomeActivity.class,
-                                        InboxActivity.class,
-                                        "New messages",
-                                        "Residence Conversation",
-                                        "You have new messages in " + unreadConversations + " " + (unreadConversations == 1 ? "conversation" : "conversations")
-                                );
+                            if (token!=null && userId!=null) {
+                                notification = new NotificationCompat.Builder(context);
+                                notification.setAutoCancel(true);
+                                Integer unreadConversations = getNewMessages(token, userId);
+                                if (unreadConversations > 0) {
+                                    buckysButtonClicked(context,
+                                            HomeActivity.class,
+                                            InboxActivity.class,
+                                            "New messages",
+                                            "Residence Conversation",
+                                            "You have new messages in " + unreadConversations + " " + (unreadConversations == 1 ? "conversation" : "conversations")
+                                    );
+                                }
                             }
 
 //                            PerformBackgroundTask performBackgroundTask = new PerformBackgroundTask();
@@ -484,7 +513,17 @@ public class Utils {
                 });
             }
         };
-        timer.schedule(doAsynchronousTask, 0, 300000); //execute in every 300000ms (5 minutes)
+        return doAsynchronousTask;
+    }
+
+    public static void callAsynchronousTask(Context context, String token, Integer userId) {
+        Timer timer = new Timer();
+
+        if (!workerIsRunning(context)) {
+            timer.cancel();
+        } else {
+            timer.schedule(setupAsyncTask(context, token, userId), 0, 240000); //execute in every 240000 (4 minutes)
+        }
     }
 
     public static void buckysButtonClicked(Context context, Class newContextClass, Class newIntentClass, String ticker, String title, String text){

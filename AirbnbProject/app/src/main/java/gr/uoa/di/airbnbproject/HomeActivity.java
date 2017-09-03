@@ -49,6 +49,8 @@ import static android.text.TextUtils.isEmpty;
 import static util.Utils.FORMAT_DATE_DM;
 import static util.Utils.FORMAT_DATE_YMD;
 import static util.Utils.getSessionData;
+import static util.Utils.runWorker;
+import static util.Utils.workerIsRunning;
 
 public class HomeActivity extends AppCompatActivity
 {
@@ -75,6 +77,7 @@ public class HomeActivity extends AppCompatActivity
 
     boolean isShow = false;
     int scrollRange = -1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -111,7 +114,8 @@ public class HomeActivity extends AppCompatActivity
             finish();
             return;
         }
-        //check if token is expired
+
+        /** Check if token is expired **/
         if(Utils.isTokenExpired(token)){
             Toast.makeText(c, "Session is expired", Toast.LENGTH_SHORT).show();
             Utils.logout(this);
@@ -122,7 +126,11 @@ public class HomeActivity extends AppCompatActivity
         getPermissions();
         resetActivity();
         /** Start Worker for Notifications **/
-        new Worker().execute();
+
+        if (!workerIsRunning(HomeActivity.this)) {
+            runWorker(HomeActivity.this, true);
+            new Worker().execute();
+        }
 
         /** FOOTER TOOLBAR **/
         Utils.manageFooter(HomeActivity.this, true);
@@ -555,21 +563,24 @@ public class HomeActivity extends AppCompatActivity
         }
     }
 
-    /** Worker options for notification messages **/
     @Override
     protected void onDestroy() {
+        /** Reset worker as it wasnt running. Clear SharedPreferences state value **/
+        runWorker(HomeActivity.this, false);
+        Log.i("LogNotifications", System.currentTimeMillis() / 1000L + "  onDestroy()");
+
         super.onDestroy();
-        Log.i("SomeTag", System.currentTimeMillis() / 1000L + "  onDestroy()");
     }
 
+    /** Worker options for notification messages **/
     private class Worker extends AsyncTask<Void, Void, String> {
         @Override
         protected String doInBackground(Void... arg0) {
-            Log.i("SomeTag", "start do in background at " + System.currentTimeMillis());
+            Log.i("LogNotifications", "start do in background at " + System.currentTimeMillis());
             String data = null;
 
             try {
-                Log.i("SomeTag", "doInBackGround done at " + System.currentTimeMillis());
+                Log.i("LogNotifications", "doInBackGround done at " + System.currentTimeMillis());
             } catch (Exception e) {}
             return data;
         }
@@ -577,8 +588,11 @@ public class HomeActivity extends AppCompatActivity
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            Utils.callAsynchronousTask(HomeActivity.this, token, loggedInUser.getId());
-            Log.i("SomeTag", System.currentTimeMillis() / 1000L + " post execute \n" + result);
+            /** Set up Shared Preference in order to know when to initialize worker from the beginning **/
+            if (workerIsRunning(HomeActivity.this)) {
+                Utils.callAsynchronousTask(HomeActivity.this, token, loggedInUser.getId());
+                Log.i("LogNotifications", System.currentTimeMillis() / 1000L + " post execute \n" + result);
+            }
         }
     }
 }
