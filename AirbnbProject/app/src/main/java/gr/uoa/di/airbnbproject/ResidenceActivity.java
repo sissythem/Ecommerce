@@ -66,6 +66,7 @@ import static gr.uoa.di.airbnbproject.R.id.calendar;
 import static gr.uoa.di.airbnbproject.R.id.reservations;
 import static gr.uoa.di.airbnbproject.R.id.reviews;
 import static util.RestClient.BASE_URL;
+import static util.Utils.FORMAT_DATE_DMY;
 import static util.Utils.FORMAT_DATE_YMD;
 import static util.Utils.convertTimestampToDate;
 import static util.Utils.goToActivity;
@@ -294,8 +295,8 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
                         .setMessage("Please confirm the details below:"
                             + "\n\n" + selectedResidence.getTitle()
                             + "\n\n" + guestsInt + (guestsInt == 1 ? " guest" : " guests")
-                            + "\n" + "Arrival Date: " + selectedStartDate
-                            + "\n" + "Departure Date: " + selectedEndDate
+                            + "\n" + "Arrival Date: " + Utils.ConvertDateToString(selectedStartDate, FORMAT_DATE_DMY)
+                                + "\n" + "Departure Date: " + Utils.ConvertDateToString(selectedEndDate, FORMAT_DATE_DMY)
                                 + "\n" + "Total Amount: " + totalAmount
                             + "\n\n" + "Click OK to continue, or CANCEL to go back to the residence"
                         )
@@ -411,7 +412,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
                 reservedDates.add(date);
             }
             /** Disable all dates in the past **/
-            if(date.before(Utils.ConvertStringToDate(Utils.getCurrentDate(Utils.FORMAT_DATE_DMY), Utils.FORMAT_DATE_DMY))){
+            if(date.before(Utils.ConvertStringToDate(Utils.getCurrentDate(FORMAT_DATE_DMY), FORMAT_DATE_DMY))){
                 reservedDates.add(date);
             }
         }
