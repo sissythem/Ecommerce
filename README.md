@@ -207,8 +207,6 @@ While host is in the HostActivity, he can choose a residence and from the contex
 
 ## Conclusion
 
-### Image upload - Cache(Rest) - MultiPartFormData(Retrofit-Rest) - Picasso - Android Multiple Images Selector - Android Image Slider
-
 ### Date Format
 
 Before the Retrofit 2.0 library was presented during the Android lessons, we have tried to perform the rest calls in the same way as we do for the map in ResidenceActivity. After the calls, a JSON object had been received and we mapped the fields with the fields of our objects (Users, Residences etc) manually. In this way we have not faced any problems with POST, PUT, GET etc calls.
