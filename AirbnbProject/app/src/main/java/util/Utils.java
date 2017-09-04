@@ -358,7 +358,10 @@ public class Utils {
 
     public static void reloadActivity(Context context, Bundle extras) {
         Intent currentIntent = ((Activity) context).getIntent();
-        currentIntent.putExtras(extras);
+
+        if (extras != null) {
+            currentIntent.putExtras(extras);
+        }
 
         try {
             context.startActivity(currentIntent);

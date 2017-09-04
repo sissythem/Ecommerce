@@ -49,6 +49,8 @@ import static android.text.TextUtils.isEmpty;
 import static util.Utils.FORMAT_DATE_DM;
 import static util.Utils.FORMAT_DATE_YMD;
 import static util.Utils.getSessionData;
+import static util.Utils.goToActivity;
+import static util.Utils.reloadActivity;
 import static util.Utils.runWorker;
 import static util.Utils.workerIsRunning;
 
@@ -260,7 +262,6 @@ public class HomeActivity extends AppCompatActivity
                 String str_enddate = Utils.getDefaultEndDate(FORMAT_DATE_DM);
                 String str_guests = guests + " " + ((numGuests > 1) ? "guests" : "guest");
 
-                searchbar.setText(str_city + ", " + str_startdate + "-" + str_enddate + ", " + str_guests);
                 RetrofitCalls retrofitCalls = new RetrofitCalls();
 
                 long start_timestamp = Utils.convertDateToMillisSec(date_start, FORMAT_DATE_YMD);
@@ -268,18 +269,29 @@ public class HomeActivity extends AppCompatActivity
 
                 /** Update recommendations based on user input **/
                 Recommendations = retrofitCalls.getRecommendations(token, username, city, start_timestamp, end_timestamp, numGuests);
+
                 /** In case that no residence matches user's input, popular recommendations will appear again **/
-                if(Recommendations.size() == 0)
-                    Recommendations = popularRecommendations();
-                /** Set up the ArrayList<Residences with the new results and notify the adapter **/
-                residencesAdapter.setSearchList(Recommendations);
-                residencesAdapter.setGuests(numGuests);
-                residencesAdapter.setStartDate(date_start);
-                residencesAdapter.setEndDate(date_end);
-                residencesAdapter.notifyDataSetChanged();
+                if(Recommendations.size() == 0) {
+                    /** Show confirmation message to user in order to logout **/
+                    new AlertDialog.Builder(HomeActivity.this)
+                            .setMessage("No available residences for city " + city + " were found.").setIcon(android.R.drawable.ic_dialog_alert)
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+//                                    reloadActivity(HomeActivity.this, null);
+                                    return;
+                                }}).show();
 
+                } else {
+                    searchbar.setText(str_city + ", " + str_startdate + "-" + str_enddate + ", " + str_guests);
+
+                    /** Set up the ArrayList<Residences with the new results and notify the adapter **/
+                    residencesAdapter.setSearchList(Recommendations);
+                    residencesAdapter.setGuests(numGuests);
+                    residencesAdapter.setStartDate(date_start);
+                    residencesAdapter.setEndDate(date_end);
+                    residencesAdapter.notifyDataSetChanged();
+                }
                 progressBar.setVisibility(View.GONE);
-
             }
         });
 
