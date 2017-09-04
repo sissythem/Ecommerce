@@ -164,14 +164,7 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
         @QueryParam("startDate")long startDate,
         @QueryParam("endDate")long endDate,
         @QueryParam("guests") Integer guests
-    ) {
-        System.out.println("findRecommendations with params:");
-        System.out.println(token);
-        System.out.println(username);
-        System.out.println(city);
-        System.out.println(startDate);
-        System.out.println(endDate);
-        
+    ) { 
         List<Residences> data = new ArrayList<Residences>();
         if (KeyHolder.checkToken(token, className)) {
             Query query;
@@ -205,8 +198,6 @@ public class ResidencesFacadeREST extends AbstractFacade<Residences> {
             }
         
             querystring += " order by res.min_price ASC";
-        
-            System.out.println(querystring);
             query = em.createNativeQuery(querystring, Residences.class);
             data = query.getResultList();
         }
