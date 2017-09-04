@@ -293,10 +293,7 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
                         curr = cal.getTime();
                     }
                     /** If user has chosen a valid period the dates now appear selected**/
-                    if (inBetweenIsValid) {
-                        colorCalendarDates();
-                    }
-                    else{
+                    if (!inBetweenIsValid) {
                         /** If not user has to choose again **/
                         Toast.makeText(c, "You have chosen a period with fully booked dates, please try again", Toast.LENGTH_SHORT).show();
                         return;
