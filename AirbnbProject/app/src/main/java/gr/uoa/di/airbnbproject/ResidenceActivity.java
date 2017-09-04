@@ -281,6 +281,26 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
                         selectedStartDate = selectedDates[1];
                         selectedEndDate = selectedDates[0];
                     }
+                    /** Check the availability of the days between the selected by the user start and end dates **/
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(selectedStartDate);
+                    Date curr = selectedStartDate;
+                    boolean inBetweenIsValid = true;
+                    while (!curr.after(selectedEndDate)) {
+                        inBetweenIsValid = !(reservedDates.contains(curr) || datesDisabled_byGuestCount.contains(curr));
+                        if (!inBetweenIsValid) break;
+                        cal.add(Calendar.DAY_OF_MONTH, 1);
+                        curr = cal.getTime();
+                    }
+                    /** If user has chosen a valid period the dates now appear selected**/
+                    if (inBetweenIsValid) {
+                        colorCalendarDates();
+                    }
+                    else{
+                        /** If not user has to choose again **/
+                        Toast.makeText(c, "You have chosen a period with fully booked dates, please try again", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                 }
 
                 /** In case user has not specified the period for booking or the number of guests, reservation cannot be performed **/
@@ -444,26 +464,23 @@ public class ResidenceActivity extends FragmentActivity implements OnMapReadyCal
         selectedDates[0] = null;
         selectedDates[1] = null;
 
-
-
         /** If user has already selected dates from the search field in the home or search activity, he can see his selection on the calendar **/
         if(selected_date_start_str != null && selected_date_end_str!=null ) {
             Date selected_date_start = Utils.ConvertStringToDate(selected_date_start_str, FORMAT_DATETIME_DMY_HMS);
             Date selected_date_end = Utils.ConvertStringToDate(selected_date_end_str, FORMAT_DATETIME_DMY_HMS);
-
-
+            /** Check if the selected dates are between the available period of the host and if the two dates are fully booked **/
             boolean startEndIsReserved = reservedDates.contains(selected_date_start) || datesDisabled_byGuestCount.contains(selected_date_start) ||
                     reservedDates.contains(selected_date_end) || datesDisabled_byGuestCount.contains(selected_date_end);
             boolean startEndIsOutsideHostRange = (selected_date_start.before(startDateHost) || selected_date_start.after(endDateHost)) ||
                     (selected_date_end.before(startDateHost) || selected_date_end.after(endDateHost));
 
-            // check in-between dates
+            /** check in-between dates **/
             if (selected_date_end.before(selected_date_start)) {
                 Date temp = selected_date_end;
                 selected_date_end = selected_date_start;
                 selected_date_start = temp;
             }
-
+            /** Boolean variable isValid is used in order to check the hole period between the two selected dates **/
             Calendar cal = Calendar.getInstance();
             cal.setTime(selected_date_start);
             Date curr = selected_date_start;
