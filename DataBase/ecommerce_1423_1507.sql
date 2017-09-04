@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Sep 03, 2017 at 06:53 PM
+-- Generation Time: Sep 04, 2017 at 12:52 AM
 -- Server version: 5.7.19-0ubuntu0.17.04.1
 -- PHP Version: 7.0.22-0ubuntu0.17.04.1
 
@@ -212,7 +212,9 @@ INSERT INTO `reservations` (`id`, `residence_id`, `tenant_id`, `start_date`, `en
 (13, 3, 107, 1505250000000, 1505509200000, 1),
 (15, 44, 1, 1504386000000, 1504904400000, 2),
 (16, 53, 109, 1505250000000, 1505509200000, 2),
-(17, 18, 1, 1504386000000, 1504558800000, 2);
+(17, 18, 1, 1504386000000, 1504558800000, 2),
+(18, 57, 1, 1504472400000, 1505077200000, 2),
+(19, 18, 1, 1504472400000, 1504731600000, 2);
 
 -- --------------------------------------------------------
 
@@ -321,11 +323,15 @@ INSERT INTO `searches` (`id`, `user_id`, `city`) VALUES
 (69, 1, 'amsterdam'),
 (48, 1, 'athens'),
 (93, 1, 'barcelona'),
+(112, 1, 'hawai'),
 (94, 1, 'lefkada'),
+(117, 1, 'london'),
 (96, 1, 'madrid'),
+(116, 1, 'makati'),
 (92, 1, 'new york'),
 (5, 1, 'newyork'),
 (1, 1, 'Paris'),
+(110, 1, 'prague'),
 (81, 2, 'amsterdam'),
 (91, 2, 'athens'),
 (83, 3, 'athens'),
@@ -367,13 +373,13 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `first_name`, `last_name`, `username`, `password`, `email`, `phone_number`, `country`, `city`, `photo`, `registration_date`, `about`, `birth_date`) VALUES
-(1, 'Chrysoula', 'Themeli', 'sissythem', 'sissythem', 'cthemeli@di.uoa.gr', '+306988888888', 'Greece', 'Athens', 'img4429635089029021548.jpg', '2017-09-02 13:54:38', 'MSc Information & Communications Technologies', '5-8-1990'),
+(1, 'Sissy', 'Themeli', 'sissythem', 'sissythem', 'cthemeli@di.uoa.gr', '+306988888888', 'Greece', 'Athens', 'img244589186713089022.jpg', '2017-09-03 22:16:59', 'MSc Information & Communications Technologies', '5-8-1990'),
 (2, 'Nikiforos', 'Pittaras', 'nikpit', 'nikpit', 'nik@email.com', '+306999999999', 'France', 'Paris', 'man02.jpg', '2017-08-28 03:58:53', 'Master on Data Analytics', '27-2-1988'),
 (3, 'Eva', 'Themeli', 'evathem', 'evathem', 'eva@email.com', '+302105555555', 'Germany', 'Berlin', 'img1591210373903992438.jpg', '2017-09-02 20:34:17', 'Civil Mechanic', '27-8-1994'),
 (4, 'Minos', 'Themelis', 'minosthem', 'minosthem', 'minos@email.com', '+302102222222', 'Netherlands', 'Amsterdam', 'man04.jpg', '2017-07-12 13:30:16', 'football, music, cinema', '13-2-1993'),
 (6, 'Anna', 'Karavokiri', 'annakara', 'annakara', 'anna@email.com', '4552587563', 'Greece', 'Athens', 'woman05.jpg', '2017-08-28 03:58:57', 'reading, swimming, theatre', '13-1-1963'),
 (103, 'anatoli', 'rontogianni', 'anatoli', 'anatoli', 'anatoli@email.com', '6945784216', 'Greece', 'Chania', 'woman04.jpg', '2017-08-26 18:17:54', 'Chemical engineer. Sea is my passion', '16-8-2017'),
-(107, 'Vassiliki', 'Moschou', 'vasso', 'vasso', 'vmoschou@di.uoa.gr', '+306988256856', 'Greece', 'Athens', 'woman03.jpg', '2017-04-28 17:48:36', 'Web Developer: PHP, JavaScript, JAVA, Android', '13-11-1990'),
+(107, 'Vassiliki', 'Moschou', 'vasso', 'vasso', 'vmoschou@di.uoa.gr', '6988256856', 'Greece', 'Athens', 'img1659323902822089168.jpg', '2017-09-03 23:06:38', 'Web Developer:PHP, JavaScript, JAVA, Android', '13-11-1990'),
 (108, 'Nick', 'Kass', 'nick', 'nick', 'nick@itmail.com', '206899999', 'Greece', 'Athens', 'man01.jpg', '2017-09-01 11:39:46', 'IT Security - Pen Test', '30-4-1983'),
 (109, 'George', 'Ster', 'george', 'georgest', 'georgest@mail.com', '2103636366', '', '', NULL, '2017-09-02 06:23:39', '', '24-4-1988');
 
@@ -471,7 +477,7 @@ ALTER TABLE `messages`
 -- AUTO_INCREMENT for table `reservations`
 --
 ALTER TABLE `reservations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 --
 -- AUTO_INCREMENT for table `residences`
 --
@@ -486,7 +492,7 @@ ALTER TABLE `reviews`
 -- AUTO_INCREMENT for table `searches`
 --
 ALTER TABLE `searches`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=107;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=141;
 --
 -- AUTO_INCREMENT for table `users`
 --
