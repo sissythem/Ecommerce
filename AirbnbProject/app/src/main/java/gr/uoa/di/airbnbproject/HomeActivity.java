@@ -49,8 +49,6 @@ import static android.text.TextUtils.isEmpty;
 import static util.Utils.FORMAT_DATE_DM;
 import static util.Utils.FORMAT_DATE_YMD;
 import static util.Utils.getSessionData;
-import static util.Utils.goToActivity;
-import static util.Utils.reloadActivity;
 import static util.Utils.runWorker;
 import static util.Utils.workerIsRunning;
 
@@ -282,6 +280,13 @@ public class HomeActivity extends AppCompatActivity
                                 }}).show();
 
                 } else {
+                    for(int i=0;i<Recommendations.size(); i++){
+                        ArrayList<Reviews>reviewsByResidence = retrofitCalls.getReviewsByResidenceId(token, Integer.toString(Recommendations.get(i).getId()));
+                        /** Set up the Reviews Collection so as to show it in the rating bar */
+                        if (reviewsByResidence != null && reviewsByResidence.size() != 0) {
+                            Recommendations.get(i).setReviewsCollection(reviewsByResidence);
+                        }
+                    }
                     searchbar.setText(str_city + ", " + str_startdate + "-" + str_enddate + ", " + str_guests);
 
                     /** Set up the ArrayList<Residences with the new results and notify the adapter **/

@@ -339,6 +339,8 @@ public class Residences implements Serializable, Comparable {
         return hash;
     }
 
+    /** We use this method to find if the Residence is the same with another in HomeActivity
+     * If they are the same they are excluded from the HashSet**/
     @Override
     public boolean equals(Object object) {
         if (object == null) {
@@ -360,6 +362,7 @@ public class Residences implements Serializable, Comparable {
         return "domain.Residences[ id=" + id + " ]";
     }
 
+    /** We use the compareTo method in order to sort the residences in HomeActivity**/
     @Override
     public int compareTo(@NonNull Object o) {
         Double averageRating = this.getAverageRating();

@@ -392,7 +392,7 @@ public class Utils {
         return sessionData;
     }
 
-    /** MANAGE IMAGE UPLOAD**/
+    /** Used in Map URL **/
     public static String encodeParameterizedURL(ArrayList<String> paramNames, ArrayList<String> paramValues) {
         if(paramNames.size() != paramValues.size()) {
             System.err.printf("Unequal number of params + values : %d vs %d \n",paramNames.size(), paramValues.size());
@@ -414,7 +414,7 @@ public class Utils {
         }
         return result;
     }
-
+    /** MANAGE IMAGE UPLOAD**/
     public static String getRealPathFromURI(Context context, Uri contentUri) {
         Cursor cursor = null;
         try {
