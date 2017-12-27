@@ -4,7 +4,6 @@
 
 In order to meet the requirements of the course of E-commerce Technologies, an Android application for booking rooms/residences was implemented, following the logic of the known Airbnb application. This report includes a short definition and description of E-commerce characteristics, as well as the purpose of developing this application. There is a thorough analysis of any important decisions regarding the design process, the assumptions and all necessary details related to the project. 
 
-
 ### Description of E-commerce
 
 Electronic commerce (e-commerce) is a type of a business model, or a segment of a larger business model, that enables a firm or an individual to conduct business over an electronic network, typically the Internet. Electronic commerce operates in all four of the major market segments: business to business, business to consumer, consumer to consumer and consumer to business. Almost any product or service can be offered via e-commerce, from books and music to financial services and plane tickets. E-commerce has allowed firms to establish a market presence, or to enhance an existing market position, by providing a cheaper and more efficient distribution chain for their products or services.
