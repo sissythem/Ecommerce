@@ -15,6 +15,8 @@ AirbnbProject/local.properties
 AirbnbProject/app/src/main/java/util/RestClient.java
 *.iml
 *.iml
+*.idea/
+*/target/
 AirbnbProject/app/app.iml
 AirbnbProject/app/src/main/java/util/RestClient.java
 AirbnbProject/local.properties
