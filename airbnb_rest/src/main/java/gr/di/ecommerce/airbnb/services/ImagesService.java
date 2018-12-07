@@ -3,12 +3,11 @@ package gr.di.ecommerce.airbnb.services;
 import gr.di.ecommerce.airbnb.entities.Images;
 import gr.di.ecommerce.airbnb.entities.Users;
 import gr.di.ecommerce.airbnb.repositories.ImagesRepository;
-import gr.di.ecommerce.airbnb.repositories.ResidencesRepository;
 import org.apache.log4j.Logger;
-import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.activation.MimetypesFileTypeMap;
 import javax.ws.rs.core.Response;
@@ -71,17 +70,17 @@ public class ImagesService {
         removeImage(id);
     }
 
-    public String uploadUserImage(Integer id, InputStream uploadedInputStream, FormDataContentDisposition fileDetail) throws IOException {
+    public String uploadUserImage(Integer id, MultipartFile fileDetail) throws IOException {
         userService.deleteUserPhoto(id);
         File newFile = File.createTempFile("img", ".jpg", new File(imagesPath));
-        saveToFile(uploadedInputStream, newFile);
+        saveToFile(fileDetail, newFile);
         userService.updateUserPhoto(newFile.getName(), id);
         return newFile.getName();
     }
 
-    public String uploadResidenceImage(Integer residenceId, InputStream uploadedInputStream, FormDataContentDisposition fileDetail) throws IOException {
+    public String uploadResidenceImage(Integer residenceId, MultipartFile fileDetail) throws IOException {
         File newFile = File.createTempFile("img", ".jpg", new File(imagesPath));
-        saveToFile(uploadedInputStream, newFile);
+        saveToFile(fileDetail, newFile);
         Images images = new Images();
         images.setName(newFile.getName());
         images.setResidenceId(residencesService.getResidence(residenceId));
@@ -102,8 +101,9 @@ public class ImagesService {
         return imagesRepository.findAllImagesByResidenceId(residenceId);
     }
 
-    private void saveToFile(InputStream inStream, File target) throws IOException {
+    private void saveToFile(MultipartFile file, File target) throws IOException {
         java.nio.file.Path path = target.toPath();
-        Files.copy(inStream, path, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+        File convFile = new File(file.getOriginalFilename());
+        Files.copy(convFile.toPath(), path, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
     }
 }

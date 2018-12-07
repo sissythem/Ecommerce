@@ -2,14 +2,12 @@ package gr.di.ecommerce.airbnb.controllers;
 
 import gr.di.ecommerce.airbnb.entities.Conversations;
 import gr.di.ecommerce.airbnb.services.ConversationsService;
+import gr.di.ecommerce.airbnb.utils.Constants;
 import gr.di.ecommerce.airbnb.utils.KeyHolder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,12 +16,13 @@ import java.util.List;
 public class ConversationsController {
 
     private static String className = ConversationsController.class.getSimpleName();
+
     @Autowired
     private ConversationsService conversationsService;
 
     @RequestMapping(value = "add", method = RequestMethod.POST)
-    @Consumes({MediaType.APPLICATION_JSON})
-    public String createConversation(@HeaderParam("Authorization") String token, Conversations entity) {
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody String createConversation(@RequestHeader(Constants.AUTHORIZATION) String token, Conversations entity) {
         if (KeyHolder.checkToken(token, className)) {
             conversationsService.createConversation(entity);
             return token;
@@ -32,8 +31,8 @@ public class ConversationsController {
     }
 
     @RequestMapping(value = "delete/{id}", method = RequestMethod.DELETE)
-    @Produces({MediaType.APPLICATION_JSON})
-    public String remove(@HeaderParam("Authorization") String token, @PathParam("id") String id) {
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody String remove(@RequestHeader(Constants.AUTHORIZATION) String token, @PathVariable("id") String id) {
         if (KeyHolder.checkToken(token, className)) {
             conversationsService.removeConversation(Integer.parseInt(id));
             token = KeyHolder.issueToken(null);
@@ -42,22 +41,88 @@ public class ConversationsController {
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    @Produces({MediaType.APPLICATION_JSON})
-    public Conversations find(@HeaderParam("Authorization") String token, @PathParam("id") Integer id) {
-        Conversations data = new Conversations();
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Conversations find(@RequestHeader(Constants.AUTHORIZATION) String token, @PathVariable("id") Integer id) {
         if (KeyHolder.checkToken(token, className)) {
-            data = conversationsService.getConversation(id);
+            return conversationsService.getConversation(id);
         }
-        return data;
+        return null;
     }
 
-    @GET
-    @Produces({MediaType.APPLICATION_JSON})
-    public List<Conversations> findAll(@HeaderParam("Authorization") String token)  {
-        List<Conversations> data = new ArrayList<>();
+    @RequestMapping(method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody List<Conversations> findAll(@RequestHeader(Constants.AUTHORIZATION) String token)  {
         if (KeyHolder.checkToken(token, className)) {
-            data = conversationsService.getAllConversations();
+            return conversationsService.getAllConversations();
         }
-        return data;
+        return null;
+    }
+
+    @RequestMapping(value = "user", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody List<Conversations> getConversationsByUser(@RequestHeader(Constants.AUTHORIZATION) String token,
+                                                                    @RequestParam("userId") String userId) {
+        if (KeyHolder.checkToken(token, className)) {
+            return conversationsService.getConversationsByUserId(Integer.parseInt(userId));
+        }
+        return null;
+    }
+
+    @RequestMapping(value = "last", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Conversations lastConversationEntry(@RequestHeader(Constants.AUTHORIZATION) String token,
+                                                             @RequestParam("senderId") Integer senderId,
+                                                             @RequestParam("receiverId") Integer receiverId) {
+        if (KeyHolder.checkToken(token, className)) {
+            return conversationsService.getLastConversation(senderId, receiverId);
+        }
+        return null;
+    }
+
+    @RequestMapping(value = "residence/{id}/{user}", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody List<Conversations> getConversationsByResidence(@RequestHeader(Constants.AUTHORIZATION) String token,
+                                                                         @PathVariable("residenceId") Integer residenceId,
+                                                                         @PathVariable("usedId") Integer userId) {
+        if (KeyHolder.checkToken(token, className)) {
+            return conversationsService.getConversationsByResidence(residenceId, userId);
+        }
+        return null;
+    }
+
+    @RequestMapping(value = "update_conversation", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody String updateReadConversation(@RequestHeader(Constants.AUTHORIZATION) String token, @RequestParam("read") String isRead,
+                                                       @RequestParam("type") String type, @RequestParam("id") String id) {
+        if (KeyHolder.checkToken(token, className)) {
+            conversationsService.updateReadConversation(isRead, type, Integer.parseInt(id));
+        } else {
+            token = KeyHolder.issueToken(null);
+        }
+        return token;
+    }
+
+    @RequestMapping(value = "deletecnv/{id}/{user}/{type}", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody String removeConversation(@RequestHeader(Constants.AUTHORIZATION) String token, @PathVariable("id") Integer id,
+                                                   @PathVariable("user") Integer userId, @PathVariable("type") String type) {
+        if (KeyHolder.checkToken(token, className)) {
+            conversationsService.deleteConversation(id, userId, type);
+        } else {
+            token = KeyHolder.issueToken(null);
+        }
+        return token;
+    }
+
+    @RequestMapping(value = "restore/{id}/{user}/{type}", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody String restoreConversation(@RequestHeader(Constants.AUTHORIZATION) String token, @PathVariable("id") Integer id,
+                                                    @PathVariable("user") Integer userId, @PathVariable("type") String type) {
+        if (KeyHolder.checkToken(token, className)) {
+            conversationsService.restoreConversation(id, userId, type);
+        } else {
+            token = KeyHolder.issueToken(null);
+        }
+        return token;
     }
 }

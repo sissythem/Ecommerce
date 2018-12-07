@@ -67,12 +67,12 @@ public class ConversationsService {
         return null;
     }
 
-    public Conversations getConversationByResidence(Integer residenceId, Integer userId) {
-        List<Conversations> conversations = conversationsRepository.findConversationByResidence(residenceId, userId);
-        if (!CollectionUtils.isEmpty(conversations)) {
-            return conversations.get(0);
-        }
-        return null;
+    public List<Conversations> getConversationsByResidence(Integer residenceId, Integer userId) {
+        return conversationsRepository.findConversationByResidence(residenceId, userId);
+    }
+
+    public List<Conversations> getConversationsByUserId(Integer userId) {
+        return conversationsRepository.findConversationByUserId(userId);
     }
 
     public void updateReadConversation(String isRead, String type, Integer id) {
